@@ -33,6 +33,7 @@ public final class TryThrow {
     static Direction td;
     static double best;
     static double score;
+    static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
     static RobotInfo occ_m4_4;
@@ -125,6 +126,7 @@ public final class TryThrow {
         bytecodeBudget = Math.min(9000, Clock.getBytecodesLeft() - 2000);
         md = null;
         td = null;
+        isSecondary = false;
         best = -1e9;
         resetThrowGrid();
         populateThrowGrid();
@@ -147,24 +149,313 @@ public final class TryThrow {
     }
 
     private static void selectMoves() throws GameActionException {
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveN();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveNE();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveE();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveSE();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveS();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveSW();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveW();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveNW();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveC();
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySEN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryWE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNES();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNES();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryES();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryNESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                    moveC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySEN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondarySW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryEN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryEW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
     }
 
     private static void moveN() throws GameActionException {
@@ -2160,6 +2451,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowNNE() throws GameActionException {
@@ -2289,6 +2581,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNE() throws GameActionException {
@@ -2435,6 +2728,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNSE() throws GameActionException {
@@ -2581,6 +2875,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNS() throws GameActionException {
@@ -2744,6 +3039,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowNSW() throws GameActionException {
@@ -2890,6 +3186,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNW() throws GameActionException {
@@ -3036,6 +3333,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNNW() throws GameActionException {
@@ -3165,6 +3463,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTH;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNEN() throws GameActionException {
@@ -3294,6 +3593,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowNENE() throws GameActionException {
@@ -3423,6 +3723,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNEE() throws GameActionException {
@@ -3552,6 +3853,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNESE() throws GameActionException {
@@ -3681,6 +3983,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNES() throws GameActionException {
@@ -3844,6 +4147,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowNESW() throws GameActionException {
@@ -4007,6 +4311,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNEW() throws GameActionException {
@@ -4170,6 +4475,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNENW() throws GameActionException {
@@ -4299,6 +4605,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHEAST;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowEN() throws GameActionException {
@@ -4445,6 +4752,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowENE() throws GameActionException {
@@ -4574,6 +4882,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowEE() throws GameActionException {
@@ -4703,6 +5012,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowESE() throws GameActionException {
@@ -4832,6 +5142,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowES() throws GameActionException {
@@ -4978,6 +5289,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowESW() throws GameActionException {
@@ -5124,6 +5436,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowEW() throws GameActionException {
@@ -5287,6 +5600,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowENW() throws GameActionException {
@@ -5433,6 +5747,7 @@ public final class TryThrow {
             best = score;
             md = Direction.EAST;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSEN() throws GameActionException {
@@ -5596,6 +5911,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowSENE() throws GameActionException {
@@ -5725,6 +6041,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSEE() throws GameActionException {
@@ -5854,6 +6171,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSESE() throws GameActionException {
@@ -5983,6 +6301,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSES() throws GameActionException {
@@ -6112,6 +6431,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowSESW() throws GameActionException {
@@ -6241,6 +6561,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSEW() throws GameActionException {
@@ -6404,6 +6725,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSENW() throws GameActionException {
@@ -6567,6 +6889,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHEAST;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSN() throws GameActionException {
@@ -6730,6 +7053,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowSNE() throws GameActionException {
@@ -6876,6 +7200,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSE() throws GameActionException {
@@ -7022,6 +7347,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSSE() throws GameActionException {
@@ -7151,6 +7477,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSS() throws GameActionException {
@@ -7280,6 +7607,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowSSW() throws GameActionException {
@@ -7409,6 +7737,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSW() throws GameActionException {
@@ -7555,6 +7884,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSNW() throws GameActionException {
@@ -7701,6 +8031,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTH;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWN() throws GameActionException {
@@ -7864,6 +8195,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWNE() throws GameActionException {
@@ -8027,6 +8359,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWE() throws GameActionException {
@@ -8190,6 +8523,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWSE() throws GameActionException {
@@ -8319,6 +8653,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWS() throws GameActionException {
@@ -8448,6 +8783,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWSW() throws GameActionException {
@@ -8577,6 +8913,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWW() throws GameActionException {
@@ -8706,6 +9043,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowSWNW() throws GameActionException {
@@ -8835,6 +9173,7 @@ public final class TryThrow {
             best = score;
             md = Direction.SOUTHWEST;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowWN() throws GameActionException {
@@ -8981,6 +9320,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowWNE() throws GameActionException {
@@ -9127,6 +9467,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowWE() throws GameActionException {
@@ -9290,6 +9631,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowWSE() throws GameActionException {
@@ -9436,6 +9778,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowWS() throws GameActionException {
@@ -9582,6 +9925,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowWSW() throws GameActionException {
@@ -9711,6 +10055,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowWW() throws GameActionException {
@@ -9840,6 +10185,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowWNW() throws GameActionException {
@@ -9969,6 +10315,7 @@ public final class TryThrow {
             best = score;
             md = Direction.WEST;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWN() throws GameActionException {
@@ -10098,6 +10445,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWNE() throws GameActionException {
@@ -10227,6 +10575,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWE() throws GameActionException {
@@ -10390,6 +10739,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWSE() throws GameActionException {
@@ -10553,6 +10903,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWS() throws GameActionException {
@@ -10716,6 +11067,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWSW() throws GameActionException {
@@ -10845,6 +11197,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWW() throws GameActionException {
@@ -10974,6 +11327,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowNWNW() throws GameActionException {
@@ -11103,6 +11457,7 @@ public final class TryThrow {
             best = score;
             md = Direction.NORTHWEST;
             td = Direction.NORTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowCN() throws GameActionException {
@@ -11249,6 +11604,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.NORTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowCNE() throws GameActionException {
@@ -11395,6 +11751,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.NORTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowCE() throws GameActionException {
@@ -11541,6 +11898,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.EAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowCSE() throws GameActionException {
@@ -11687,6 +12045,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.SOUTHEAST;
+            isSecondary = false;
         }
     }
     private static void tryThrowCS() throws GameActionException {
@@ -11833,6 +12192,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.SOUTH;
+            isSecondary = false;
         }
     }
     private static void tryThrowCSW() throws GameActionException {
@@ -11979,6 +12339,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.SOUTHWEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowCW() throws GameActionException {
@@ -12125,6 +12486,7 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.WEST;
+            isSecondary = false;
         }
     }
     private static void tryThrowCNW() throws GameActionException {
@@ -12271,6 +12633,10527 @@ public final class TryThrow {
             best = score;
             md = Direction.CENTER;
             td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+
+    public static boolean canSecondary(Direction moveDir, Direction throwDir) {
+        assert(moveDir != Direction.CENTER);
+        if (!rc.canTurn() && throwDir != myDir) return false;
+        if (!rc.isMovementReady() || !CombatCommon.canMove(moveDir)) return false;
+        return true;
+    }
+
+    private static void tryThrowSecondaryNN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNEN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNENE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNEE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNESE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNES() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNESW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNEW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNENW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryEN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryENE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryEE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryESE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryES() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryESW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryEW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryENW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySEN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySENE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySEE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySESE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySES() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySESW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySEW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySENW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondarySWNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryWNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryNWNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_4 != null) {
+                if (occ_0_4.getTeam() == team) {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_4 != null) {
+                if (occ_4_4.getTeam() == team) {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_0 != null) {
+                if (occ_4_0.getTeam() == team) {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX < mapWidth - 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + 4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_4_m4 != null) {
+                if (occ_4_m4.getTeam() == team) {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX < mapWidth - 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + 5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_0_m4 != null) {
+                if (occ_0_m4.getTeam() == team) {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_0_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY >= 4) {
+                  c = CellTracker.mapData[myLocY + -4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_m4 != null) {
+                if (occ_m4_m4.getTeam() == team) {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_m4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY >= 5) {
+                  c = CellTracker.mapData[myLocY + -5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_0 != null) {
+                if (occ_m4_0.getTeam() == team) {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryCNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 36;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 36;
+                        break scan;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                score += 36;
+                break scan;
+            }
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 32;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 16;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 21.0;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                score += 32;
+                break scan;
+            }
+            if (myLocX >= 4 && myLocY < mapHeight - 4) {
+                  c = CellTracker.mapData[myLocY + 4].charAt(myLocX + -4);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 28;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (occ_m4_4 != null) {
+                if (occ_m4_4.getTeam() == team) {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score = -1000;
+                        break scan;
+                    } else {
+                        score -= 14;
+                    }
+                } else {
+                    if (occ_m4_4.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 12.666666666666666;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
+                score += 28;
+                break scan;
+            }
+            if (myLocX >= 5 && myLocY < mapHeight - 5) {
+                  c = CellTracker.mapData[myLocY + 5].charAt(myLocX + -5);
+                if (c == '\0') {
+                    break scan;
+                }
+                if (c == '\2') {
+                    score += 10 + 24;
+                    break scan;
+                }
+            } else {
+                score += 10;
+                break scan; 
+            }
+            if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
+                score += 24;
+                break scan;
+            }
+        }
+        if (enemyHit == null) {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
         }
     }
 }

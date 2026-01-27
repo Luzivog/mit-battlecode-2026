@@ -47,24 +47,169 @@ public final class TryPosition {
     }
 
     private static void selectMoves() throws GameActionException {
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveN();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveNE();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveE();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveSE();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveS();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveSW();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveW();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveNW();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        moveC();
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                moveC();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                moveSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
     }
 
     private static void moveN() throws GameActionException {

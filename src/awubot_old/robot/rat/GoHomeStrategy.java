@@ -1,0 +1,62 @@
+
+
+package awubot_old.robot.rat;
+
+import battlecode.common.*;
+import awubot_old.Pathfinder;
+import awubot_old.comms.GlobalArray;
+import awubot_old.robot.Strategy;
+import static awubot_old.Game.*;
+import static awubot_old.util.Util.*;
+import static awubot_old.robot.rat.BabyRat.*;
+
+public class GoHomeStrategy extends Strategy {
+    private int king;
+
+    public GoHomeStrategy() {
+        king = GlobalArray.nearestRatKingId;
+    }
+
+    @Override
+    public boolean runTick() throws GameActionException {
+        if(rc.getRawCheese() == 0) return false;
+        indicate("going home");
+
+                if(rc.getRawCheese() != 0 && rc.canTurn()) {
+            var nearestKingLoc = GlobalArray.nearestRatKing;
+            int dx = Integer.compare(myLoc.x, nearestKingLoc.x);
+            int dy = Integer.compare(myLoc.y, nearestKingLoc.y);
+            var transferTarget = new MapLocation(nearestKingLoc.x + dx, nearestKingLoc.y + dy);
+            if(transferTarget.distanceSquaredTo(myLoc) <= 9) {
+                turn(myLoc.directionTo(transferTarget));
+                return false;
+            }
+        }
+
+
+        var kingLoc = GlobalArray.getRatKing(king);
+
+        if (kingLoc == null) {
+            // king died, try to find another king
+            king = GlobalArray.nearestRatKingId;
+            kingLoc = GlobalArray.nearestRatKing;
+            if (kingLoc == null) return false;
+        }
+
+        rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
+        BabyRat.autoMove(Pathfinder.getMove(kingLoc));
+
+                if(rc.getRawCheese() != 0 && rc.canTurn()) {
+            var nearestKingLoc = GlobalArray.nearestRatKing;
+            int dx = Integer.compare(myLoc.x, nearestKingLoc.x);
+            int dy = Integer.compare(myLoc.y, nearestKingLoc.y);
+            var transferTarget = new MapLocation(nearestKingLoc.x + dx, nearestKingLoc.y + dy);
+            if(transferTarget.distanceSquaredTo(myLoc) <= 9) {
+                turn(myLoc.directionTo(transferTarget));
+                return false;
+            }
+        }
+
+        return true;
+    }
+}

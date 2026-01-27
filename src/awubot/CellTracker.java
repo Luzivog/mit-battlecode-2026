@@ -12088,7 +12088,7 @@ public class CellTracker {
         }
     }
     static MapLocation localBfsPos = new MapLocation(-1, -1);
-    public static void computeLocalBfsMasks() throws GameActionException {
+    public static void computeLocalBfsMasks() {
         if(myLoc.equals(localBfsPos)) return;
         localBfsPos = myLoc;
         computeLocalDirt();

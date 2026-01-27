@@ -238,10 +238,17 @@ public class GlobalArray {
     public static void readCheeseMines() throws GameActionException {
         int i = N - 1;
         while (i >= MIN_CHEESE) {
-            int x  = rc.readSharedArray(i);
+            int x = rc.readSharedArray(i);
             if (x == 1023) break;
-            globalCheeseMines.add(x);
+
+            int canonical = getCanonicalEncoded(x);
+            globalCheeseMines.add(canonical);
+
             Game.knownCheeseMines.add(x);
+            int symX = getSymmetricEncoded(x);
+            if (symX >= 0) {
+                Game.knownCheeseMines.add(symX);
+            }
             i--;
         }
     }

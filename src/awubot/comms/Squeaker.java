@@ -35,8 +35,16 @@ public class Squeaker {
     private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
 
     public static void registerMine(MapLocation loc) {
-        minesToSend.add(encode2x2(loc));
-        Game.knownCheeseMines.add(encode2x2(loc));
+        int encoded = encode2x2(loc);
+        int canonical = getCanonicalEncoded(encoded);
+
+        minesToSend.add(canonical);
+
+        Game.knownCheeseMines.add(encoded);
+        int symEncoded = getSymmetricEncoded(encoded);
+        if (symEncoded >= 0) {
+            Game.knownCheeseMines.add(symEncoded);
+        }
     }
 
     // im lazy so im only squeaking one for now
@@ -60,14 +68,22 @@ public class Squeaker {
         if (bytes < 0) {
             switch (1 & (bytes >>> 30)) {
                 case 0:
-                    // again, only processing one
                     int loc = bytes & 1023;
+                    int canonical = getCanonicalEncoded(loc);
+
                     if (isRatKing) {
-                        GlobalArray.globalCheeseMines.add(loc);
+                        GlobalArray.globalCheeseMines.add(canonical);
                     }
+
+                    // Add both to local knowledge
                     Game.knownCheeseMines.add(loc);
+                    int symLoc = getSymmetricEncoded(loc);
+                    if (symLoc >= 0) {
+                        Game.knownCheeseMines.add(symLoc);
+                    }
+
                     if (!isRatKing) {
-                        minesToSend.add(loc);
+                        minesToSend.add(canonical);
                     }
                     break;
                 case 1:

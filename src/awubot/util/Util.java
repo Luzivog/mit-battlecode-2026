@@ -3730,6 +3730,33 @@ public class Util {
         return new MapLocation(mapWidth - 1 - loc.x, mapHeight - 1 - loc.y);
     }
 
+    public static MapLocation getSymmetricLocation(MapLocation loc) {
+        if (!CellTracker.isSymmetryKnown()) return null;
+        return switch (CellTracker.getSymmetry()) {
+            case Rotational -> rot180(loc);
+            case Horizontal -> flipVer(loc); 
+            case Vertical -> flipHor(loc);  
+            default -> null;
+        };
+    }
+
+    public static int getCanonicalEncoded(int encoded) {
+        if (!CellTracker.isSymmetryKnown()) return encoded;
+        MapLocation loc = decode2x2(encoded);
+        MapLocation symLoc = getSymmetricLocation(loc);
+        if (symLoc == null) return encoded;
+        int symEncoded = encode2x2(symLoc);
+        return Math.min(encoded, symEncoded);
+    }
+
+    public static int getSymmetricEncoded(int encoded) {
+        if (!CellTracker.isSymmetryKnown()) return -1;
+        MapLocation loc = decode2x2(encoded);
+        MapLocation symLoc = getSymmetricLocation(loc);
+        if (symLoc == null) return -1;
+        return encode2x2(symLoc);
+    }
+
     // for debugging purposes
     public static String indicatorString = "";
     public static void indicate(Object o) {

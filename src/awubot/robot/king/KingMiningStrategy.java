@@ -122,7 +122,14 @@ public class KingMiningStrategy extends Strategy {
         for (MapInfo myInfo : rc.senseNearbyMapInfos()) {
             if (myInfo.hasCheeseMine()) {
                 MapLocation myMine = myInfo.getMapLocation();
-                GlobalArray.globalCheeseMines.add(encode2x2(myMine));
+                int encoded = encode2x2(myMine);
+                int canonical = getCanonicalEncoded(encoded);
+                GlobalArray.globalCheeseMines.add(canonical);
+                Game.knownCheeseMines.add(encoded);
+                int symEncoded = getSymmetricEncoded(encoded);
+                if (symEncoded >= 0) {
+                    Game.knownCheeseMines.add(symEncoded);
+                }
 
                 if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
                 if (isInTabooZone(myMine)) continue;

@@ -10044,6 +10044,10 @@ public class Pathfinder {
 
     // returns a mask of good directions according to the default order
     public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
+        if (sourceCnt == 0) {
+            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MULTISOURCE BFS NO SOURCES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            return new int[] {0, 1000};
+        }
         CellTracker.computeLocalBfsMasks();
         long reach0 = 0, reach1 = 0;
         for (int i = 0; i < sourceCnt; i++) {

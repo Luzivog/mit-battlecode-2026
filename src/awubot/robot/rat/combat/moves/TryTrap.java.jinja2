@@ -329,8 +329,8 @@ public final class TryTrap {
             case {{ f }} -> {
                 {% for place_dir in related_map[f] %}
                 if (moveDir != {{ place_dir }}) {
-                    double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }};
-                    if (score >= 0) {
+                    if ({{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }} > 0.1) {
+                        double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }};
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -374,7 +374,7 @@ public final class TryTrap {
     {%- set dx_total = dir_dx[move_dir] + dir_dx[place_dir] -%}
     {%- set dy_total = dir_dy[move_dir] + dir_dy[place_dir] -%}
     private static void place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() {
-        if ({{ wvar(dx_total, dy_total) }} >= 0) {
+        if ({{ wvar(dx_total, dy_total) }} > 0.1) {
             double score = {{ wvar(dx_total, dy_total) }};
             if ({{ facing }} != myDir) score *= 1.1;
             if (score > best) {

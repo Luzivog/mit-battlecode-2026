@@ -3,6 +3,7 @@ package awubot;
 import battlecode.common.*;
 import awubot.comms.EnemyManager;
 import awubot.comms.GlobalArray;
+import awubot.comms.MapManager;
 import awubot.comms.Squeaker;
 import awubot.robot.king.RatKing;
 import awubot.robot.rat.BabyRat;
@@ -10,6 +11,7 @@ import awubot.robot.rat.BabyRat;
 import static awubot.Game.*;
 import static awubot.util.Util.println;
 
+import awubot.util.Profiler;
 import awubot.util.Rng;
 import awubot.util.Util;
 
@@ -28,6 +30,7 @@ public class RobotPlayer {
         EnemyManager.init();
         GlobalArray.init();
         CellTracker.init();
+        MapManager.init();
 
         while (true) {
             try {
@@ -35,9 +38,11 @@ public class RobotPlayer {
                 Util.preTick();
                 CellTracker.preTick();
                 GlobalArray.preTick();
-                rc.resign();
                 RobotTracker.preTick();
                 EnemyManager.preTick();
+                Profiler.push();
+                MapManager.preTick();
+                Profiler.pop("map manager pretick");
                 Squeaker.preTick();
 
                 if (!hasInitialisedRobot) {

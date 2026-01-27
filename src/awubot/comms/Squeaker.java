@@ -17,20 +17,21 @@ public class Squeaker {
     public static final int SQUEAK_RAD = 16; // radius squared
 
     /*
-
-    // special cases
-    10: cheese mine locations (up to 3) (rounded to 2x2)
-    11: enemy combat !!!!
-
-    rest will be prefixed with 0:
-    (0)00: symmetry
-    (0)01: strategy
-    (0)10: lure signal
-      
-
+        Packet layout:
+        - Negative bytes: legacy special cases
+            * 10: cheese mine locations (rounded to 2x2)
+            * 11: enemy combat
+        - Non-negative bytes: 3-bit header (bits 31..29)
+            * 000: map chunk (29-bit payload, MapTracker.encodeChunk)
+            * 001: symmetry (payload uses low 2 bits)
+            * others unused
     */
-    public static final int HEADER = 3; // can be extended later
-    public static final int BODY = 31 - HEADER;
+    public static final int HEADER_BITS = 3;
+    private static final int HEADER_SHIFT = 32 - HEADER_BITS; // 29
+    private static final int BODY_BITS = 32 - HEADER_BITS;    // 29
+    private static final int BODY_MASK = (1 << BODY_BITS) - 1;
+    private static final int HEADER_MAP = 0;
+    private static final int HEADER_SYMMETRY = 1;
 
     private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
 
@@ -80,23 +81,20 @@ public class Squeaker {
                     assert(false);
             }
         } else {
-            int header = bytes >>> (31 - HEADER);
-            bytes &= (1 << (31 - HEADER)) - 1;
+            int header = bytes >>> HEADER_SHIFT;
+            int payload = bytes & BODY_MASK;
             switch (header) {
-                case 0: // set symmetry
-                    if (!isRatKing) return; // probably dont need this line
-                    CellTracker.setSymmetry(bytes & 0b11);
+                case HEADER_MAP:
+                    MapManager.applyGlobalChunk(payload);
                     break;
-                case 1: // set strategy
-                    // TODO: decide
-                    break;
-                case 2: // Lure signal - cat location + enemy king location from rat king
-                    // TODO
+                case HEADER_SYMMETRY:
+                    if (!isRatKing) return; // symmetry is for rat kings
+                    CellTracker.setSymmetry(payload & 0b11);
                     break;
                 default:
                     println("recieved bad packet " + msg);
                     println("header is " + header);
-                    assert(false);
+                    break;
             }
         }
     }
@@ -111,7 +109,7 @@ public class Squeaker {
     public static void squeakLureSignal(MapLocation myCatLoc, MapLocation myEnemyKingLoc) {
         int myEncodedCatLoc = encode2x2(myCatLoc);
         int myEncodedEnemyLoc = encode2x2(myEnemyKingLoc);
-        int mySqueakContent = (0b10 << BODY) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
+        int mySqueakContent = (0b10 << HEADER_SHIFT) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
         rc.squeak(mySqueakContent);
     }
 
@@ -154,14 +152,28 @@ public class Squeaker {
         if (nearRatKing()) {
             indicate("NEAR RAT KING");
             if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {
-                rc.squeak((0b00 << BODY) + CellTracker.getSymmetry().ordinal());
+                rc.squeak((HEADER_SYMMETRY << HEADER_SHIFT) | CellTracker.getSymmetry().ordinal());
                 indicate("SQUEAKING SYMMETRY");
                 return;
             }
+            if (!isRatKing && squeakMap()) return;
         }
         if (EnemyManager.trySqueak()) return;
         if (!isRatKing) {
             squeakMine(); // can add other squeaks later
         }
+    }
+
+    /**
+     * Baby-rat map squeak: diff local vs global and send one differing chunk.
+     * @return true if a chunk was squeaked.
+     */
+    private static boolean squeakMap() throws GameActionException {
+        int payload = MapManager.getLocalDiffChunk();
+        if (payload == -1) return false;
+        rc.squeak((HEADER_MAP << HEADER_SHIFT) | payload);
+        // Optimistically apply to our global copy to reduce repeat squeaks.
+        MapManager.applyGlobalChunk(payload);
+        return true;
     }
 }

@@ -33,7 +33,8 @@ public class GlobalArray {
       14-15: unused
       16-20: king mine assignments (5 slots for 5 kings)
       21-31: rat spawn roles
-      32-63: cheese mines (count upwards from 32)
+      32-37: map chunk comms (two chunks, 3 slots each)
+      38-63: cheese mines (count upwards from 38)
     */
 
     private static final int COUNTER = 0;
@@ -52,12 +53,25 @@ public class GlobalArray {
     // upper bits: strategy index (0 to 3)
     private static final int KING_EXPAND = 21;
     private static final int RAT_SPAWN_INFO = 22;  // spam until MIN_CHEESE is hit
-    private static final int MIN_CHEESE = 32;
+    private static final int MAP_CHUNK_START = 32; // slots 32-37
+    private static final int MAP_CHUNK_SLOTS = 6;
+    private static final int MAP_CHUNK_SLOTS_PER_CHUNK = 3;
+    private static final int MAP_CHUNK_EMPTY_FLAG = 1 << 29; // top bit of 30-bit payload
+    private static final int MAP_CHUNK_MASK = MAP_CHUNK_EMPTY_FLAG - 1; // low 29 bits
+    private static final int MIN_CHEESE = MAP_CHUNK_START + MAP_CHUNK_SLOTS;
     public static FastIndexedIntSet globalCheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
     public static int ratCounter;
     public static int numberOfRatsAlive;
+
+    // Map chunk queue (per-robot, used by rat kings to broadcast chunks via shared array).
+    private static final int MAP_CHUNK_QUEUE_MAX = 16;
+    private static final int MAP_CHUNK_QUEUE_MASK = MAP_CHUNK_QUEUE_MAX - 1;
+    private static final int[] mapChunkQueue = new int[MAP_CHUNK_QUEUE_MAX];
+    private static int mapChunkQueueHead = 0;
+    private static int mapChunkQueueSize = 0;
+    private static int mapChunkSeenMask = 0;
 
     private static MapLocation toSpawn0 = null, toSpawn1 = null;
     private static int pendingPayload0 = -1, pendingPayload1 = -1;
@@ -105,7 +119,7 @@ public class GlobalArray {
     }
 
     public static int loadSpawnInfo() throws GameActionException {
-        for (int i = RAT_SPAWN_INFO, king = 0; i < MIN_CHEESE; i += 2, king++) {
+        for (int i = RAT_SPAWN_INFO, king = 0; i < RAT_SPAWN_INFO + 10; i += 2, king++) {
             int x = rc.readSharedArray(i);
             // println("looking for spawn info in slot " + i + ": " + x);
             if (x == 1023) continue;
@@ -132,6 +146,9 @@ public class GlobalArray {
     }
 
     public static void init() throws GameActionException {
+        mapChunkQueueHead = 0;
+        mapChunkQueueSize = 0;
+        mapChunkSeenMask = 0;
         if (isRatKing && time == 1) {
             kingId = findRatKingSlot();
             writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
@@ -152,12 +169,14 @@ public class GlobalArray {
 
     public static void preTick() throws GameActionException {
         indicate("my id " + kingId);
-        for (int i = 0; i < 5; i++) println("rat king " + i + " at " + getRatKing(i));
         ratCounter = rc.readSharedArray(COUNTER);
         numberOfRatsAlive = rc.readSharedArray(ALIVE_RAT_COUNT);
+        Profiler.push();
+        readMapChunks();
+        Profiler.pop("read map chunks");
         if (isRatKing) {
             if (isFirstKingInRound()) {
-                for (int i = RAT_SPAWN_INFO; i < MIN_CHEESE; i++) {
+                for (int i = RAT_SPAWN_INFO; i < RAT_SPAWN_INFO + 10; i++) {
                     writeSharedArray(i, 1023);
                 }
             }
@@ -188,6 +207,7 @@ public class GlobalArray {
             if (cur_sym == 0 && CellTracker.isSymmetryKnown()) {
                 writeSharedArray(SYMMETRY, CellTracker.getSymmetry().ordinal());
             }
+            writeMapChunks();
             writeCheeseMines();
             writeMyLoc();
             if (toSpawn0 != null) {
@@ -200,6 +220,87 @@ public class GlobalArray {
         }
     }
 
+    /**
+     * Records a chunk as seen by this rat king and pushes it to the front of the queue
+     * if it has never been seen before.
+     */
+    public static void noteMapChunkSeen(int encodedChunk) {
+        if (!isRatKing) return;
+        int chunkX = MapTracker.decodeChunkX(encodedChunk);
+        int chunkY = MapTracker.decodeChunkY(encodedChunk);
+        int chunkIndex = (chunkY << 2) | chunkX;
+        int bit = 1 << chunkIndex;
+        if ((mapChunkSeenMask & bit) != 0) return;
+        mapChunkSeenMask |= bit;
+        if (mapChunkQueueSize < MAP_CHUNK_QUEUE_MAX) {
+            mapChunkQueueHead = (mapChunkQueueHead - 1) & MAP_CHUNK_QUEUE_MASK;
+            mapChunkQueue[mapChunkQueueHead] = chunkIndex;
+            mapChunkQueueSize++;
+        }
+    }
+
+    private static int readChunkPayload(int slotBase) throws GameActionException {
+        int a = rc.readSharedArray(slotBase);
+        int b = rc.readSharedArray(slotBase + 1);
+        int c = rc.readSharedArray(slotBase + 2);
+        int value = a | (b << 10) | (c << 20);
+        if ((value & MAP_CHUNK_EMPTY_FLAG) != 0) return -1;
+        return value & MAP_CHUNK_MASK;
+    }
+
+    private static void writeChunkPayload(int slotBase, int payload) throws GameActionException {
+        int value = (payload < 0) ? MAP_CHUNK_EMPTY_FLAG : (payload & MAP_CHUNK_MASK);
+        writeSharedArray(slotBase, value & 1023);
+        writeSharedArray(slotBase + 1, (value >>> 10) & 1023);
+        writeSharedArray(slotBase + 2, (value >>> 20) & 1023);
+    }
+
+    private static void readMapChunks() throws GameActionException {
+        int payload0 = readChunkPayload(MAP_CHUNK_START);
+        if (payload0 != -1) {
+            Profiler.push();
+            MapManager.applyGlobalChunk(payload0);
+            Profiler.pop("applying global chunk");
+        }
+        int payload1 = readChunkPayload(MAP_CHUNK_START + MAP_CHUNK_SLOTS_PER_CHUNK);
+        if (payload1 != -1) {
+            Profiler.push();
+            MapManager.applyGlobalChunk(payload1);
+            Profiler.pop("applying global chunk");
+        }
+    }
+
+    private static int queueAt(int offset) {
+        return mapChunkQueue[(mapChunkQueueHead + offset) & MAP_CHUNK_QUEUE_MASK];
+    }
+
+    private static void rotateQueueOnce() {
+        if (mapChunkQueueSize <= 1) return;
+        int front = mapChunkQueue[mapChunkQueueHead];
+        mapChunkQueueHead = (mapChunkQueueHead + 1) & MAP_CHUNK_QUEUE_MASK;
+        int tailIndex = (mapChunkQueueHead + mapChunkQueueSize - 1) & MAP_CHUNK_QUEUE_MASK;
+        mapChunkQueue[tailIndex] = front;
+    }
+
+    private static int payloadForChunkIndex(int chunkIndex) {
+        if (chunkIndex < 0 || MapManager.globalTracker == null) return -1;
+        int chunkX = chunkIndex & 0b11;
+        int chunkY = chunkIndex >>> 2;
+        int mask = MapManager.globalTracker.getChunkMask(chunkX, chunkY);
+        return MapTracker.encodeChunk(chunkX, chunkY, mask);
+    }
+
+    private static void writeMapChunks() throws GameActionException {
+        int first = (mapChunkQueueSize >= 1) ? queueAt(0) : -1;
+        int second = (mapChunkQueueSize >= 2) ? queueAt(1) : -1;
+
+        writeChunkPayload(MAP_CHUNK_START, payloadForChunkIndex(first));
+        writeChunkPayload(MAP_CHUNK_START + MAP_CHUNK_SLOTS_PER_CHUNK, payloadForChunkIndex(second));
+
+        if (mapChunkQueueSize >= 1) rotateQueueOnce();
+        if (mapChunkQueueSize >= 2) rotateQueueOnce();
+    }
+
     private static void updateRatKingTurnCounters() throws GameActionException {
         // check living
         int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
@@ -209,6 +310,7 @@ public class GlobalArray {
                 if (j == kingId) {
                     rc.setTimelineMarker("RAT KING THOUGHT THEY DIED", 255, 0, 0);
                 }
+                rc.setTimelineMarker("RAT KING " + j + " DIED", 255, 0, 0);
                 writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
                 writeSharedArray(RAT_KING_LOC + j, 1023);
             }

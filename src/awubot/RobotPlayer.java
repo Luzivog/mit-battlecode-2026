@@ -40,9 +40,7 @@ public class RobotPlayer {
                 GlobalArray.preTick();
                 RobotTracker.preTick();
                 EnemyManager.preTick();
-                Profiler.push();
                 MapManager.preTick();
-                Profiler.pop("map manager pretick");
                 Squeaker.preTick();
 
                 if (!hasInitialisedRobot) {

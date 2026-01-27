@@ -57,6 +57,7 @@ public final class TryRatNap {
             if (info.getType() != UnitType.BABY_RAT) continue;
             // double weight = scoreEnemy(info);
             weight = 30;
+            if (info.getCarryingRobot() != null) weight += 20;
             selectMoves();
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
         }

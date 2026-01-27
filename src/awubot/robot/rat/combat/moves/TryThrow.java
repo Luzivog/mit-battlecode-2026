@@ -12,6 +12,7 @@ import battlecode.common.MapInfo;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.combat.CombatTracker;
 import awubot.CellTracker;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
@@ -137,6 +138,10 @@ public final class TryThrow {
         }
         if (best < 0) {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
+            if (-1 < best && best < 50 && rc.getMovementCooldownTurns() < 20 && RobotTracker.numEnemies > 0 && !CombatTracker.hasThreat(md, td)) {
+                // try wait for a better shot 
+                return false;  
+            }
             // debugThrowFail();
         }
         if (isSecondary) {
@@ -2375,7 +2380,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_3.getHealth());
                         enemyHit = occ_0_3;
                         break scan;
                     }
@@ -2511,7 +2516,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_3.getHealth());
                         enemyHit = occ_2_3;
                         break scan;
                     }
@@ -2647,7 +2652,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_1.getHealth());
                         enemyHit = occ_2_1;
                         break scan;
                     }
@@ -2800,7 +2805,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m1.getHealth());
                         enemyHit = occ_2_m1;
                         break scan;
                     }
@@ -2953,7 +2958,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m1.getHealth());
                         enemyHit = occ_0_m1;
                         break scan;
                     }
@@ -3123,7 +3128,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m1.getHealth());
                         enemyHit = occ_m2_m1;
                         break scan;
                     }
@@ -3276,7 +3281,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_1.getHealth());
                         enemyHit = occ_m2_1;
                         break scan;
                     }
@@ -3429,7 +3434,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_3.getHealth());
                         enemyHit = occ_m2_3;
                         break scan;
                     }
@@ -3565,7 +3570,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_3.getHealth());
                         enemyHit = occ_1_3;
                         break scan;
                     }
@@ -3701,7 +3706,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_3.getHealth());
                         enemyHit = occ_3_3;
                         break scan;
                     }
@@ -3837,7 +3842,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_1.getHealth());
                         enemyHit = occ_3_1;
                         break scan;
                     }
@@ -3973,7 +3978,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_m1.getHealth());
                         enemyHit = occ_3_m1;
                         break scan;
                     }
@@ -4109,7 +4114,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m1.getHealth());
                         enemyHit = occ_1_m1;
                         break scan;
                     }
@@ -4279,7 +4284,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m1.getHealth());
                         enemyHit = occ_m1_m1;
                         break scan;
                     }
@@ -4449,7 +4454,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_1.getHealth());
                         enemyHit = occ_m1_1;
                         break scan;
                     }
@@ -4619,7 +4624,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_3.getHealth());
                         enemyHit = occ_m1_3;
                         break scan;
                     }
@@ -4755,7 +4760,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_2.getHealth());
                         enemyHit = occ_1_2;
                         break scan;
                     }
@@ -4908,7 +4913,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_2.getHealth());
                         enemyHit = occ_3_2;
                         break scan;
                     }
@@ -5044,7 +5049,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_0.getHealth());
                         enemyHit = occ_3_0;
                         break scan;
                     }
@@ -5180,7 +5185,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_m2.getHealth());
                         enemyHit = occ_3_m2;
                         break scan;
                     }
@@ -5316,7 +5321,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m2.getHealth());
                         enemyHit = occ_1_m2;
                         break scan;
                     }
@@ -5469,7 +5474,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m2.getHealth());
                         enemyHit = occ_m1_m2;
                         break scan;
                     }
@@ -5622,7 +5627,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_0.getHealth());
                         enemyHit = occ_m1_0;
                         break scan;
                     }
@@ -5792,7 +5797,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_2.getHealth());
                         enemyHit = occ_m1_2;
                         break scan;
                     }
@@ -5945,7 +5950,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_1.getHealth());
                         enemyHit = occ_1_1;
                         break scan;
                     }
@@ -6115,7 +6120,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_1.getHealth());
                         enemyHit = occ_3_1;
                         break scan;
                     }
@@ -6251,7 +6256,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_m1.getHealth());
                         enemyHit = occ_3_m1;
                         break scan;
                     }
@@ -6387,7 +6392,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_3_m3.getHealth());
                         enemyHit = occ_3_m3;
                         break scan;
                     }
@@ -6523,7 +6528,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m3.getHealth());
                         enemyHit = occ_1_m3;
                         break scan;
                     }
@@ -6659,7 +6664,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m3.getHealth());
                         enemyHit = occ_m1_m3;
                         break scan;
                     }
@@ -6795,7 +6800,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m1.getHealth());
                         enemyHit = occ_m1_m1;
                         break scan;
                     }
@@ -6965,7 +6970,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_1.getHealth());
                         enemyHit = occ_m1_1;
                         break scan;
                     }
@@ -7135,7 +7140,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_1.getHealth());
                         enemyHit = occ_0_1;
                         break scan;
                     }
@@ -7305,7 +7310,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_1.getHealth());
                         enemyHit = occ_2_1;
                         break scan;
                     }
@@ -7458,7 +7463,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m1.getHealth());
                         enemyHit = occ_2_m1;
                         break scan;
                     }
@@ -7611,7 +7616,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m3.getHealth());
                         enemyHit = occ_2_m3;
                         break scan;
                     }
@@ -7747,7 +7752,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m3.getHealth());
                         enemyHit = occ_0_m3;
                         break scan;
                     }
@@ -7883,7 +7888,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m3.getHealth());
                         enemyHit = occ_m2_m3;
                         break scan;
                     }
@@ -8019,7 +8024,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m1.getHealth());
                         enemyHit = occ_m2_m1;
                         break scan;
                     }
@@ -8172,7 +8177,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_1.getHealth());
                         enemyHit = occ_m2_1;
                         break scan;
                     }
@@ -8325,7 +8330,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_1.getHealth());
                         enemyHit = occ_m1_1;
                         break scan;
                     }
@@ -8495,7 +8500,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_1.getHealth());
                         enemyHit = occ_1_1;
                         break scan;
                     }
@@ -8665,7 +8670,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m1.getHealth());
                         enemyHit = occ_1_m1;
                         break scan;
                     }
@@ -8835,7 +8840,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m3.getHealth());
                         enemyHit = occ_1_m3;
                         break scan;
                     }
@@ -8971,7 +8976,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m3.getHealth());
                         enemyHit = occ_m1_m3;
                         break scan;
                     }
@@ -9107,7 +9112,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_m3.getHealth());
                         enemyHit = occ_m3_m3;
                         break scan;
                     }
@@ -9243,7 +9248,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_m1.getHealth());
                         enemyHit = occ_m3_m1;
                         break scan;
                     }
@@ -9379,7 +9384,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_1.getHealth());
                         enemyHit = occ_m3_1;
                         break scan;
                     }
@@ -9515,7 +9520,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_2.getHealth());
                         enemyHit = occ_m1_2;
                         break scan;
                     }
@@ -9668,7 +9673,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_2.getHealth());
                         enemyHit = occ_1_2;
                         break scan;
                     }
@@ -9821,7 +9826,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_0.getHealth());
                         enemyHit = occ_1_0;
                         break scan;
                     }
@@ -9991,7 +9996,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m2.getHealth());
                         enemyHit = occ_1_m2;
                         break scan;
                     }
@@ -10144,7 +10149,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m2.getHealth());
                         enemyHit = occ_m1_m2;
                         break scan;
                     }
@@ -10297,7 +10302,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_m2.getHealth());
                         enemyHit = occ_m3_m2;
                         break scan;
                     }
@@ -10433,7 +10438,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_0.getHealth());
                         enemyHit = occ_m3_0;
                         break scan;
                     }
@@ -10569,7 +10574,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_2.getHealth());
                         enemyHit = occ_m3_2;
                         break scan;
                     }
@@ -10705,7 +10710,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_3.getHealth());
                         enemyHit = occ_m1_3;
                         break scan;
                     }
@@ -10841,7 +10846,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_3.getHealth());
                         enemyHit = occ_1_3;
                         break scan;
                     }
@@ -10977,7 +10982,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_1.getHealth());
                         enemyHit = occ_1_1;
                         break scan;
                     }
@@ -11147,7 +11152,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_1_m1.getHealth());
                         enemyHit = occ_1_m1;
                         break scan;
                     }
@@ -11317,7 +11322,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m1_m1.getHealth());
                         enemyHit = occ_m1_m1;
                         break scan;
                     }
@@ -11487,7 +11492,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_m1.getHealth());
                         enemyHit = occ_m3_m1;
                         break scan;
                     }
@@ -11623,7 +11628,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_1.getHealth());
                         enemyHit = occ_m3_1;
                         break scan;
                     }
@@ -11759,7 +11764,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m3_3.getHealth());
                         enemyHit = occ_m3_3;
                         break scan;
                     }
@@ -11895,7 +11900,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -12048,7 +12053,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -12201,7 +12206,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -12354,7 +12359,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -12507,7 +12512,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -12660,7 +12665,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -12813,7 +12818,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -12966,7 +12971,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -13120,7 +13125,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -13266,7 +13271,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -13412,7 +13417,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -13558,7 +13563,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -13704,7 +13709,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -13850,7 +13855,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -13996,7 +14001,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -14142,7 +14147,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -14288,7 +14293,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -14434,7 +14439,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -14580,7 +14585,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -14726,7 +14731,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -14872,7 +14877,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -15018,7 +15023,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -15164,7 +15169,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -15310,7 +15315,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -15456,7 +15461,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -15602,7 +15607,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -15748,7 +15753,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -15894,7 +15899,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -16040,7 +16045,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -16186,7 +16191,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -16332,7 +16337,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -16478,7 +16483,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -16624,7 +16629,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -16770,7 +16775,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -16916,7 +16921,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -17062,7 +17067,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -17208,7 +17213,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -17354,7 +17359,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -17500,7 +17505,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -17646,7 +17651,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -17792,7 +17797,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -17938,7 +17943,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -18084,7 +18089,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -18230,7 +18235,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -18376,7 +18381,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -18522,7 +18527,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -18668,7 +18673,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -18814,7 +18819,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -18960,7 +18965,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -19106,7 +19111,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -19252,7 +19257,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -19398,7 +19403,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -19544,7 +19549,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -19690,7 +19695,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -19836,7 +19841,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -19982,7 +19987,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -20128,7 +20133,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -20274,7 +20279,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -20420,7 +20425,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -20566,7 +20571,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -20712,7 +20717,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -20858,7 +20863,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -21004,7 +21009,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -21150,7 +21155,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -21296,7 +21301,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -21442,7 +21447,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -21588,7 +21593,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -21734,7 +21739,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -21880,7 +21885,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -22026,7 +22031,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -22172,7 +22177,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -22318,7 +22323,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }
@@ -22464,7 +22469,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_2.getHealth());
                         enemyHit = occ_0_2;
                         break scan;
                     }
@@ -22610,7 +22615,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_2.getHealth());
                         enemyHit = occ_2_2;
                         break scan;
                     }
@@ -22756,7 +22761,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_0.getHealth());
                         enemyHit = occ_2_0;
                         break scan;
                     }
@@ -22902,7 +22907,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_2_m2.getHealth());
                         enemyHit = occ_2_m2;
                         break scan;
                     }
@@ -23048,7 +23053,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_0_m2.getHealth());
                         enemyHit = occ_0_m2;
                         break scan;
                     }
@@ -23194,7 +23199,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_m2.getHealth());
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
@@ -23340,7 +23345,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_0.getHealth());
                         enemyHit = occ_m2_0;
                         break scan;
                     }
@@ -23486,7 +23491,7 @@ public final class TryThrow {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 46 + Math.min(46, occ_m2_2.getHealth());
                         enemyHit = occ_m2_2;
                         break scan;
                     }

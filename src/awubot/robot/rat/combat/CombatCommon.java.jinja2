@@ -2,10 +2,15 @@ package awubot.robot.rat.combat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotInfo;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Profiler;
+import awubot.RobotTracker;
+import awubot.comms.Enemy;
+import awubot.comms.EnemyManager;
 
 public final class CombatCommon {
     private CombatCommon() {
@@ -17,6 +22,8 @@ public final class CombatCommon {
     {% for idx in range(move_dirs|length) %}
     public static boolean canMove{{ move_short[idx] }};
     {% endfor %}
+    public static int[] minDistToEnemy = new int[{{ move_dirs|length }}];
+    public static double[] totDistToEnemy = new double[{{ move_dirs|length }}];
 
     public static void precomp() throws GameActionException {
         {% for idx in range(move_dirs|length) %}
@@ -26,6 +33,36 @@ public final class CombatCommon {
         canMove{{ move_short[idx] }} = rc.canMove({{ move_dirs[idx] }});
         {% endif %}
         {% endfor %}
+
+        {% for idx in range(move_dirs|length) %}
+        minDistToEnemy[{{ idx }}] = 999;
+        totDistToEnemy[{{ idx }}] = 0;
+        {% endfor %}
+
+        {% for idx in range(move_dirs|length) %}
+        MapLocation to{{ move_short[idx] }} = myLoc{% if move_dirs[idx] != 'Direction.CENTER' %}.add({{ move_dirs[idx] }}){% endif %};
+        {% endfor %}
+
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo enemy = RobotTracker.sortedEnemies[i];
+            {% for idx in range(move_dirs|length) %}
+            {
+                int dist = chebyshevDistance(to{{ move_short[idx] }}, enemy.location);
+                totDistToEnemy[{{ idx }}] += dist;
+                if (dist < minDistToEnemy[{{ idx }}]) minDistToEnemy[{{ idx }}] = dist;
+            }
+            {% endfor %}
+        }
+
+        for (int i = 0; i < EnemyManager.numKnownEnemies; i++) {
+            Enemy enemy = EnemyManager.knownEnemies[i];
+            {% for idx in range(move_dirs|length) %}
+            {
+                int dist = chebyshevDistance(to{{ move_short[idx] }}, enemy.location);
+                totDistToEnemy[{{ idx }}] += dist * 0.33333334;
+            }
+            {% endfor %}
+        }
     }
 
     public static boolean canMove(Direction dir) {

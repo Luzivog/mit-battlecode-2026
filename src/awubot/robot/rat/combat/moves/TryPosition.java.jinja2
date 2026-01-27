@@ -86,12 +86,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[{{ loop.index0 }}];
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
         if ({{ face_dir }} != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + {{ face_dir }} + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;

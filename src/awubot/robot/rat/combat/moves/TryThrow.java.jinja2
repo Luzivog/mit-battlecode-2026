@@ -10,6 +10,7 @@ import battlecode.common.MapInfo;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.combat.CombatTracker;
 import awubot.CellTracker;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
@@ -87,6 +88,10 @@ public final class TryThrow {
         }
         if (best < 0) {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
+            if (-1 < best && best < 50 && rc.getMovementCooldownTurns() < 20 && RobotTracker.numEnemies > 0 && !CombatTracker.hasThreat(md, td)) {
+                // try wait for a better shot 
+                return false;  
+            }
             // debugThrowFail();
         }
         if (isSecondary) {
@@ -363,7 +368,7 @@ public final class TryThrow {
                         break scan;
                     } else {
                         {% if loop.index0 == 0 %}
-                        score += {{ 2 * (10 + 4 * rem) + 10 }};
+                        score += {{ 10 + 4 * rem }} + Math.min({{ 10 + 4 * rem }}, {{ occ_var(dx, dy) }}.getHealth());
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}
@@ -464,7 +469,7 @@ public final class TryThrow {
                         break scan;
                     } else {
                         {% if loop.index0 == 0 %}
-                        score += {{ 2 * (10 + 4 * rem) + 10 }};
+                        score += {{ 10 + 4 * rem }} + Math.min({{ 10 + 4 * rem }}, {{ occ_var(dx, dy) }}.getHealth());
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}

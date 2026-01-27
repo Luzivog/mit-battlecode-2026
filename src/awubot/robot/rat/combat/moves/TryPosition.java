@@ -867,12 +867,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[0];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH);
         if (Direction.NORTH != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.NORTH + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -886,12 +884,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[1];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST);
         if (Direction.NORTHEAST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.NORTHEAST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -905,12 +901,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[2];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST);
         if (Direction.EAST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.EAST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -924,12 +918,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[3];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST);
         if (Direction.SOUTHEAST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.SOUTHEAST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -943,12 +935,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[4];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH);
         if (Direction.SOUTH != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.SOUTH + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -962,12 +952,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[5];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST);
         if (Direction.SOUTHWEST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.SOUTHWEST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -981,12 +969,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[6];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST);
         if (Direction.WEST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.WEST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;
@@ -1000,12 +986,10 @@ public final class TryPosition {
         score = 0;
         if (moveCost == 1) score += 10;
         if (moveDir != Direction.CENTER) score += 5;
+        score += CombatCommon.totDistToEnemy[7];
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST);
         if (Direction.NORTHWEST != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + Direction.NORTHWEST + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;

@@ -33,11 +33,13 @@ public class CheeseStrategy extends Strategy {
             && (rc.senseMapInfo(cheeseTarget).getCheeseAmount() == 0)) {
             cheeseTarget = null;
         }
+        if(cheeseTarget != null) return;
         int bestAmount = 0;
         for (var info : rc.senseNearbyMapInfos()) {
-            if(cheeseTarget == null && info.getCheeseAmount() > bestAmount)  {
+            var amt = info.getCheeseAmount();
+            if(amt > 0 && (cheeseTarget == null || amt > bestAmount)) {
                 cheeseTarget = info.getMapLocation();
-                bestAmount = info.getCheeseAmount();
+                bestAmount = amt;
             }
         }
         if(cheeseTarget != null && (traverseStrategy == null ||

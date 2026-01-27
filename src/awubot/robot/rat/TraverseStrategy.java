@@ -1,7 +1,6 @@
 package awubot.robot.rat;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
+import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
 
@@ -22,7 +21,9 @@ public class TraverseStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         if(rc.getLocation().distanceSquaredTo(target) <= distSquared) return false;
         indicate("TRAVELLING TO " + target);
+        indicate("before move: " + Clock.getBytecodeNum());
         BabyRat.autoMove(Pathfinder.getMove(target));
+        indicate("after move: " + Clock.getBytecodeNum());
         if(Pathfinder.givenUp()) {
             indicate("GIVEN UP ON " + target);
             return false;

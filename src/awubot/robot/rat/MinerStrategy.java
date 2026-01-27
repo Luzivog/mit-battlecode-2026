@@ -41,6 +41,7 @@ public class MinerStrategy extends Strategy {
             goHomeStrategy = new GoHomeStrategy();
             cheeseStrategy.cheeseTarget = null;
         }
+
         if(tryStrategy(goHomeStrategy)) return true;
 
         if(tryStrategy(formationStrategy)) return true;
@@ -70,7 +71,6 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickSeenMine() {
-        System.out.println("picking seen mine");
         boolean nearKing = GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 25;
         var mines = new StringBuilder();
         outerLoop:
@@ -100,7 +100,6 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickExplorationTarget() {
-        System.out.println("picking exploration target");
         MapLocation target = null;
         outerLoop:
         for(int i = 5; i >= 0; i--) { // tle guard

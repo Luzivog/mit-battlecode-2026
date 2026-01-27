@@ -42,6 +42,7 @@ import awubot.util.Profiler;public class RobotTracker {
         // kind of a hack job
         allyCount = 0;
         allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
 
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
@@ -1406,6 +1407,7 @@ import awubot.util.Profiler;public class RobotTracker {
         // kind of a hack job
         allyCount = 0;
         allySet = new FastMapLocationSet();
+        kingSet = new FastMapLocationSet();
 
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
@@ -2778,7 +2780,7 @@ import awubot.util.Profiler;public class RobotTracker {
 
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[120];
-    public static FastMapLocationSet allySet;
+    public static FastMapLocationSet allySet, kingSet;
     public static void addAlly(MapLocation loc) {
         if(!allySet.contains(loc)) {
             allies[allyCount++] = loc;
@@ -2793,44 +2795,215 @@ import awubot.util.Profiler;public class RobotTracker {
                 addAlly(robot.location);
             }
         }
-    }
-
-    public static boolean isInsideKing(MapLocation loc) throws GameActionException {
         {
             var kingLoc = GlobalArray.getRatKing(0);
             if(kingLoc != null) {
-                var distsq = GlobalArray.isKingExpanded(0) ? 8 : 2;
-                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
+                if(GlobalArray.isKingExpanded(0)) {
+                    kingSet.add(kingLoc.translate(-2, -2));
+                    kingSet.add(kingLoc.translate(-2, -1));
+                    kingSet.add(kingLoc.translate(-2, 0));
+                    kingSet.add(kingLoc.translate(-2, 1));
+                    kingSet.add(kingLoc.translate(-2, 2));
+                    kingSet.add(kingLoc.translate(-1, -2));
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(-1, 2));
+                    kingSet.add(kingLoc.translate(0, -2));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(0, 2));
+                    kingSet.add(kingLoc.translate(1, -2));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                    kingSet.add(kingLoc.translate(1, 2));
+                    kingSet.add(kingLoc.translate(2, -2));
+                    kingSet.add(kingLoc.translate(2, -1));
+                    kingSet.add(kingLoc.translate(2, 0));
+                    kingSet.add(kingLoc.translate(2, 1));
+                    kingSet.add(kingLoc.translate(2, 2));
+                } else {
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                }
             }
         }
         {
             var kingLoc = GlobalArray.getRatKing(1);
             if(kingLoc != null) {
-                var distsq = GlobalArray.isKingExpanded(1) ? 8 : 2;
-                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
+                if(GlobalArray.isKingExpanded(1)) {
+                    kingSet.add(kingLoc.translate(-2, -2));
+                    kingSet.add(kingLoc.translate(-2, -1));
+                    kingSet.add(kingLoc.translate(-2, 0));
+                    kingSet.add(kingLoc.translate(-2, 1));
+                    kingSet.add(kingLoc.translate(-2, 2));
+                    kingSet.add(kingLoc.translate(-1, -2));
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(-1, 2));
+                    kingSet.add(kingLoc.translate(0, -2));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(0, 2));
+                    kingSet.add(kingLoc.translate(1, -2));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                    kingSet.add(kingLoc.translate(1, 2));
+                    kingSet.add(kingLoc.translate(2, -2));
+                    kingSet.add(kingLoc.translate(2, -1));
+                    kingSet.add(kingLoc.translate(2, 0));
+                    kingSet.add(kingLoc.translate(2, 1));
+                    kingSet.add(kingLoc.translate(2, 2));
+                } else {
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                }
             }
         }
         {
             var kingLoc = GlobalArray.getRatKing(2);
             if(kingLoc != null) {
-                var distsq = GlobalArray.isKingExpanded(2) ? 8 : 2;
-                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
+                if(GlobalArray.isKingExpanded(2)) {
+                    kingSet.add(kingLoc.translate(-2, -2));
+                    kingSet.add(kingLoc.translate(-2, -1));
+                    kingSet.add(kingLoc.translate(-2, 0));
+                    kingSet.add(kingLoc.translate(-2, 1));
+                    kingSet.add(kingLoc.translate(-2, 2));
+                    kingSet.add(kingLoc.translate(-1, -2));
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(-1, 2));
+                    kingSet.add(kingLoc.translate(0, -2));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(0, 2));
+                    kingSet.add(kingLoc.translate(1, -2));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                    kingSet.add(kingLoc.translate(1, 2));
+                    kingSet.add(kingLoc.translate(2, -2));
+                    kingSet.add(kingLoc.translate(2, -1));
+                    kingSet.add(kingLoc.translate(2, 0));
+                    kingSet.add(kingLoc.translate(2, 1));
+                    kingSet.add(kingLoc.translate(2, 2));
+                } else {
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                }
             }
         }
         {
             var kingLoc = GlobalArray.getRatKing(3);
             if(kingLoc != null) {
-                var distsq = GlobalArray.isKingExpanded(3) ? 8 : 2;
-                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
+                if(GlobalArray.isKingExpanded(3)) {
+                    kingSet.add(kingLoc.translate(-2, -2));
+                    kingSet.add(kingLoc.translate(-2, -1));
+                    kingSet.add(kingLoc.translate(-2, 0));
+                    kingSet.add(kingLoc.translate(-2, 1));
+                    kingSet.add(kingLoc.translate(-2, 2));
+                    kingSet.add(kingLoc.translate(-1, -2));
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(-1, 2));
+                    kingSet.add(kingLoc.translate(0, -2));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(0, 2));
+                    kingSet.add(kingLoc.translate(1, -2));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                    kingSet.add(kingLoc.translate(1, 2));
+                    kingSet.add(kingLoc.translate(2, -2));
+                    kingSet.add(kingLoc.translate(2, -1));
+                    kingSet.add(kingLoc.translate(2, 0));
+                    kingSet.add(kingLoc.translate(2, 1));
+                    kingSet.add(kingLoc.translate(2, 2));
+                } else {
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                }
             }
         }
         {
             var kingLoc = GlobalArray.getRatKing(4);
             if(kingLoc != null) {
-                var distsq = GlobalArray.isKingExpanded(4) ? 8 : 2;
-                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
+                if(GlobalArray.isKingExpanded(4)) {
+                    kingSet.add(kingLoc.translate(-2, -2));
+                    kingSet.add(kingLoc.translate(-2, -1));
+                    kingSet.add(kingLoc.translate(-2, 0));
+                    kingSet.add(kingLoc.translate(-2, 1));
+                    kingSet.add(kingLoc.translate(-2, 2));
+                    kingSet.add(kingLoc.translate(-1, -2));
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(-1, 2));
+                    kingSet.add(kingLoc.translate(0, -2));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(0, 2));
+                    kingSet.add(kingLoc.translate(1, -2));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                    kingSet.add(kingLoc.translate(1, 2));
+                    kingSet.add(kingLoc.translate(2, -2));
+                    kingSet.add(kingLoc.translate(2, -1));
+                    kingSet.add(kingLoc.translate(2, 0));
+                    kingSet.add(kingLoc.translate(2, 1));
+                    kingSet.add(kingLoc.translate(2, 2));
+                } else {
+                    kingSet.add(kingLoc.translate(-1, -1));
+                    kingSet.add(kingLoc.translate(-1, 0));
+                    kingSet.add(kingLoc.translate(-1, 1));
+                    kingSet.add(kingLoc.translate(0, -1));
+                    kingSet.add(kingLoc.translate(0, 0));
+                    kingSet.add(kingLoc.translate(0, 1));
+                    kingSet.add(kingLoc.translate(1, -1));
+                    kingSet.add(kingLoc.translate(1, 0));
+                    kingSet.add(kingLoc.translate(1, 1));
+                }
             }
         }
-        return false;
     }
 }

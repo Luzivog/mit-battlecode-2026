@@ -332,6 +332,7 @@ public final class TryTrap {
                     if ({{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }} > 0.1) {
                         double score = {{ wvar(dir_dx[place_dir], dir_dy[place_dir]) }};
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += CombatCommon.minDistToEnemy[moveDir.ordinal()];
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
                         if (score > best) {
@@ -376,6 +377,7 @@ public final class TryTrap {
     private static void place{{ dir_short_map[place_dir] }}{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() {
         if ({{ wvar(dx_total, dy_total) }} > 0.1) {
             double score = {{ wvar(dx_total, dy_total) }};
+            score += CombatCommon.minDistToEnemy[{{ move_dir }}.ordinal()];       
             if ({{ facing }} != myDir) score *= 1.1;
             if (score > best) {
                 best = score;

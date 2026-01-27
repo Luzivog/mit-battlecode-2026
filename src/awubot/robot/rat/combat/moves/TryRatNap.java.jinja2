@@ -144,6 +144,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }}, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if ({{ face_dir }} != myDir) {
             score += 2; // prefer turning
         }
@@ -165,6 +166,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (facing != myDir) {
             score += 2;
         }

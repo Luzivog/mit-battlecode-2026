@@ -1100,6 +1100,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.NORTH != myDir) {
             score += 2; // prefer turning
         }
@@ -1120,6 +1121,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.NORTHEAST != myDir) {
             score += 2; // prefer turning
         }
@@ -1140,6 +1142,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.EAST != myDir) {
             score += 2; // prefer turning
         }
@@ -1160,6 +1163,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.SOUTHEAST != myDir) {
             score += 2; // prefer turning
         }
@@ -1180,6 +1184,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.SOUTH != myDir) {
             score += 2; // prefer turning
         }
@@ -1200,6 +1205,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.SOUTHWEST != myDir) {
             score += 2; // prefer turning
         }
@@ -1220,6 +1226,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.WEST != myDir) {
             score += 2; // prefer turning
         }
@@ -1240,6 +1247,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (Direction.NORTHWEST != myDir) {
             score += 2; // prefer turning
         }
@@ -1260,6 +1268,7 @@ public final class TryRatNap {
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
+        score += CombatCommon.totDistToEnemy[moveDir.ordinal()];
         if (facing != myDir) {
             score += 2;
         }

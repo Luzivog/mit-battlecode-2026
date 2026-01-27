@@ -114,16 +114,14 @@ public final class TryThrow {
                 {% for move_dir, is_wide_related in ordered_dirs %}
                     move{{ dir_short_map[move_dir] }}();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                    {# dont enable secondary yet until verified that we didnt bork it
-                        {% if move_dir == directions[ord] %}
-                            {% for dir in related_map[ord] %}
-                                {% for throw_dir in related_map[ord] %}
-                                    tryThrowSecondary{{ dir_short_map[dir_opposite_map[dir]] }}{{ dir_short_map[throw_dir] }}();
-                                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                                {% endfor %}
+                    {% if move_dir == directions[ord] %}
+                        {% for dir in related_map[ord] %}
+                            {% for throw_dir in related_map[ord] %}
+                                tryThrowSecondary{{ dir_short_map[dir] }}{{ dir_short_map[throw_dir] }}();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                             {% endfor %}
-                        {% endif %}
-                    #}
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             }
             {% endfor %}
@@ -306,13 +304,19 @@ public final class TryThrow {
         {% set base_dx = dir_dx[move_dir] + dir_dx[throw_dir] %}
         {% set base_dy = dir_dy[move_dir] + dir_dy[throw_dir] %}
         {% if debug %} println("considered throwing {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
-        MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ throw_dir }});
         if (moveCost == -1) return;
-        if ({{ occ_var(base_dx, base_dy) }} != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
+        // can optimise statically
+        MapLocation newLoc = myLoc.add({{ move_dir }});
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if ({{ occ_var(base_dx, base_dy) }} != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         {% if debug %} println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
         score = 0;
         RobotInfo enemyHit = null;

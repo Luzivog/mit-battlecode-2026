@@ -816,8 +816,8 @@ public class Pathfinder {
                     var nextLoc = myLoc.add({{dir}});
                     boolean isDirt = false;
                     if((rc.canMove({{dir}})
-                        || (isDirt = CellTracker.isDirt(nextLoc))
-                        && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST)
+                        || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
+                        || isRatKing && CellTracker.isKingPassable(nextLoc))
                        && (isRatKing || !RobotTracker.isInsideKing(nextLoc))) {
                         double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                         // prefer staying away from walls, this helps when changing direction

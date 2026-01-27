@@ -149,17 +149,47 @@ public class KingMiningStrategy extends Strategy {
     private void moveIfBugTargetFar(MapLocation target) throws GameActionException {
         var dir = Pathfinder.getMove(target);
         if(Pathfinder.getBugPos().distanceSquaredTo(myLoc) > 2) {
-            if(dir != Direction.CENTER && rc.canMove(dir)) {
-                RatKing.rawMove(dir);
+            if(dir != Direction.CENTER) {
                 stuckTurns = 0;
-                if(pending5x5 && CellTracker.isPassable5x5(myLoc)) {
-                    RatKing.is5x5 = true;
+                digDirtInDirection(dir);
+                if(rc.canMove(dir)) {
+                    RatKing.rawMove(dir);
+                    if(pending5x5 && CellTracker.isPassable5x5(myLoc)) {
+                        RatKing.is5x5 = true;
+                    }
                 }
             } else if(!RatKing.spawnedThisTurn) {
                 stuckTurns++;
                 if(stuckTurns == 17) {
                     GlobalArray.expandKing();
                     pending5x5 = true;
+                }
+            }
+        }
+    }
+
+    private void digDirtInDirection(Direction dir) throws GameActionException {
+        if(!rc.isActionReady()) return;
+        indicate("dig " + dir);
+        int dx = dir.dx;
+        int dy = dir.dy;
+
+        if (dx != 0) {
+            for (int y = -1; y <= 1; y++) {
+                var loc = new MapLocation(myLocX + dx * 2, myLocY + dy + y);
+                if(rc.canRemoveDirt(loc)) {
+                    rc.removeDirt(loc);
+                    return;
+                }
+            }
+        }
+
+        if (dy != 0) {
+            for (int x = -1; x <= 1; x++) {
+                var loc = new MapLocation(myLocX + dx + x, myLocY + dy * 2);
+                if(rc.canRemoveDirt(loc)) {
+                    rc.removeDirt(loc);
+                    return;
                 }
             }
         }

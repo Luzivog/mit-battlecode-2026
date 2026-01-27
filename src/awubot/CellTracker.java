@@ -20,8 +20,6 @@ public class CellTracker {
 
     */
     public static StringBuilder[] mapData;
-    public static MapLocation nearbyRatTraps[] = new MapLocation[30];
-    public static int numNearbyRatTraps = 0;
 
     public static void init() {
         mapData = new StringBuilder[60];
@@ -114,13 +112,6 @@ public class CellTracker {
     }
 
     public static void preTick() {
-        numNearbyRatTraps = 0;
-        for (MapInfo info : rc.senseNearbyMapInfos()) {
-            if (info.getTrap() == TrapType.RAT_TRAP) {
-                // println("found rat trap at " + info.getMapLocation());
-                nearbyRatTraps[numNearbyRatTraps++] = info.getMapLocation();
-            }
-        }
     }
 
     static long seen0;

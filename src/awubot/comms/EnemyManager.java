@@ -104,20 +104,6 @@ public class EnemyManager {
             data |= (encodeEnemy(enemy) << ENC_WIDTH);
             squeaked += 2;
         }
-        if (numKnownEnemies > 1 && squeaked == 0) {
-            int i = Rng.mcg() % (numKnownEnemies - 1) + 1;
-            Enemy enemy = knownEnemies[i];
-            data |= encodeEnemy(enemy);
-            int j = Rng.mcg() % i;
-            enemy = knownEnemies[j];
-            data |= (encodeEnemy(enemy) << ENC_WIDTH);
-            squeaked += 2;
-        } else if (numKnownEnemies > 0 && squeaked == 1) {
-            int i = Rng.mcg() % numKnownEnemies;
-            Enemy enemy = knownEnemies[i];
-            data |= (encodeEnemy(enemy) << ENC_WIDTH);
-            squeaked++;
-        }
         if (squeaked == 0) return false;
         if (squeaked == 1) data |= (NULL << ENC_WIDTH);
         Squeaker.squeakEnemy(data);

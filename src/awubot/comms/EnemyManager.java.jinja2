@@ -103,7 +103,7 @@ public class EnemyManager {
             data |= (encodeEnemy(enemy) << ENC_WIDTH);
             squeaked += 2;
         }
-        if (numKnownEnemies > 1 && squeaked == 0) {
+        {# if (numKnownEnemies > 1 && squeaked == 0) {
             int i = Rng.mcg() % (numKnownEnemies - 1) + 1;
             Enemy enemy = knownEnemies[i];
             data |= encodeEnemy(enemy);
@@ -116,7 +116,7 @@ public class EnemyManager {
             Enemy enemy = knownEnemies[i];
             data |= (encodeEnemy(enemy) << ENC_WIDTH);
             squeaked++;
-        }
+        } #}
         if (squeaked == 0) return false;
         if (squeaked == 1) data |= (NULL << ENC_WIDTH);
         Squeaker.squeakEnemy(data);

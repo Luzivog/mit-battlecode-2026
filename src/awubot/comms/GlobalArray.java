@@ -200,7 +200,7 @@ public class GlobalArray {
         int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
         for (int j = 0; j < 5; j++, x >>= 2) {
             int t = (x & 0b11);
-            if (t == (time + 2) % 3) {
+            if (t == (time + 1) % 3) {
                 if (j == kingId) {
                     rc.setTimelineMarker("RAT KING THOUGHT THEY DIED", 255, 0, 0);
                 }

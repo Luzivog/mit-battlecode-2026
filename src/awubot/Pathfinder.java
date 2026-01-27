@@ -2111,7 +2111,7 @@ public class Pathfinder {
         }
 
         }
-        // can't dig dirt if we don't have enough cheese or are a rat king
+        // can't dig dirt if we don't have enough cheese
         if(rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST) {
             localPassableExceptAllies0 &= ~CellTracker.localDirt0;
             localPassableExceptAllies1 &= ~CellTracker.localDirt1;
@@ -3883,7 +3883,7 @@ public class Pathfinder {
                 if(isRatKing) {
             localPassableExceptAllies0 &= (localPassableExceptAllies0 & 0xfbff7feffdffbffl) << 1;
             localPassableExceptAllies1 &= ((localPassableExceptAllies1 & 0x7feffdffbff7fefl) << 1) | 1;
-            localPassableExceptAllies0 &= ((localPassableExceptAllies0 & 0x1f7feffdffbff7fel) >> 1) | 1;
+            localPassableExceptAllies0 &= ((localPassableExceptAllies0 & 0x1f7feffdffbff7fel) >> 1) | 0x1000000000000000l;
             localPassableExceptAllies1 &= (localPassableExceptAllies1 & 0xffdffbff7feffdel) >> 1;
 
             localPassableExceptAllies1 &= ((localPassableExceptAllies1 & 0x1ffffffffffffl) << 11) | (localPassableExceptAllies0 >> 50);

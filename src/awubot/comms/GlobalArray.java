@@ -133,6 +133,7 @@ public class GlobalArray {
 
     public static void init() throws GameActionException {
         if (isRatKing && time == 1) {
+            kingId = findRatKingSlot();
             writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
             writeSharedArray(RAT_KING_LSBS, 0);
             writeSharedArray(N - 1, 1023);
@@ -144,14 +145,14 @@ public class GlobalArray {
     }
 
     public static void initRatKing() throws GameActionException {
-        int i = findRatKingSlot();
-        kingId = i;
+        kingId = findRatKingSlot();
         writeMyLoc();
         markKingAlive();
-        readCheeseMines();
     }
 
     public static void preTick() throws GameActionException {
+        indicate("my id " + kingId);
+        for (int i = 0; i < 5; i++) println("rat king " + i + " at " + getRatKing(i));
         ratCounter = rc.readSharedArray(COUNTER);
         numberOfRatsAlive = rc.readSharedArray(ALIVE_RAT_COUNT);
         if (isRatKing) {
@@ -164,6 +165,7 @@ public class GlobalArray {
             pendingPayload0 = pendingPayload1;
             toSpawn1 = null;
             pendingPayload1 = -1;
+            writeMyLoc();
             markKingAlive();
             updateRatKingTurnCounters();
         }

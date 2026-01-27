@@ -45,6 +45,7 @@ exact chunk variable and bit without any array indexing or coordinate arithmetic
             int _bit = 1 << {{ bit }};
             if (({{ chunk_var(chunkX, chunkY) }} & _bit) == 0) {
                 {{ chunk_var(chunkX, chunkY) }} |= _bit;
+                hasNewInfo = true;
                 if (unseenUnits != null) {
                     removeFromUnseen({{ unitIndex }});
                 }
@@ -138,6 +139,11 @@ public class MapTracker {
     {% endfor %}
     {% endfor %}
 
+    // Tracks whether any new info was added since last consumption.
+    // Tracks whether any new chunk bits were added since last consumeNewInfo().
+    // This lets callers skip scanning all chunks when nothing changed.
+    private boolean hasNewInfo;
+
     // Optional unseen-unit bag for explorers. Null when not tracking unseen units.
     private final StringBuilder unseenUnits;
 
@@ -226,6 +232,7 @@ public class MapTracker {
             case {{ cy * 4 + cx }} -> {
                 if (({{ chunk_var(cx, cy) }} & bit) != 0) return false;
                 {{ chunk_var(cx, cy) }} |= bit;
+                hasNewInfo = true;
                 if (unseenUnits != null) {
                     removeFromUnseen(unitIndex(unitX, unitY));
                 }
@@ -359,6 +366,15 @@ public class MapTracker {
     }
 
     /**
+     * @return true if new info was added since last call, and clears the flag.
+     */
+    public boolean consumeNewInfo() {
+        boolean ret = hasNewInfo;
+        hasNewInfo = false;
+        return ret;
+    }
+
+    /**
      * Removes a unit index from unseenUnits by swapping with the last char.
      * This avoids O(n) shifts when removing frequently.
      */
@@ -399,6 +415,7 @@ public class MapTracker {
                 int newBits = mask & ~existing;
                 if (newBits == 0) return false;
                 {{ chunk_var(cx, cy) }} = existing | mask;
+                hasNewInfo = true;
                 if (unseenUnits != null) {
                     while (newBits != 0) {
                         // Extract lowest-set bit with bit tricks and switch on its value.

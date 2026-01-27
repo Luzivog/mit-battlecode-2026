@@ -19,7 +19,7 @@ public class Squeaker {
     /*
         Packet layout:
         - Negative bytes: legacy special cases
-            * 10: cheese mine locations (rounded to 2x2)
+            * 10: cheese mine locations (rounded to 2x2), packed as 3x 10-bit slots
             * 11: enemy combat
         - Non-negative bytes: 3-bit header (bits 31..29)
             * 000: map chunk (29-bit payload, MapTracker.encodeChunk)
@@ -32,6 +32,12 @@ public class Squeaker {
     private static final int BODY_MASK = (1 << BODY_BITS) - 1;
     private static final int HEADER_MAP = 0;
     private static final int HEADER_SYMMETRY = 1;
+
+    private static final int CHEESE_LOC_BITS = 10;
+    private static final int CHEESE_LOC_MASK = (1 << CHEESE_LOC_BITS) - 1; // 1023
+    // encode2x2 never reaches 1023 on 60x60 maps, so we can use it as a sentinel.
+    private static final int CHEESE_EMPTY = CHEESE_LOC_MASK;
+    private static final int CHEESE_SLOTS = 3;
 
     private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
 
@@ -48,18 +54,39 @@ public class Squeaker {
         }
     }
 
-    // im lazy so im only squeaking one for now
+    // Squeak up to 3 mines per message (full 30-bit payload).
     private static boolean squeakMine() {
-        while (minesToSend.set.length() > 0) {
-            int i = time % minesToSend.set.length();
-            if (GlobalArray.seenCheeseMine(minesToSend.at(i))) {
-                minesToSend.remove(minesToSend.at(i));
-            } else {
-                rc.squeak((1 << 31) + minesToSend.at(i));
-                return true;
+        int len = minesToSend.set.length();
+        if (len == 0) return false;
+
+        int packed = 0;
+        int sent = 0;
+        int idx = time % len;
+        int scanned = 0;
+
+        while (len > 0 && sent < CHEESE_SLOTS && scanned < len) {
+            int loc = minesToSend.at(idx);
+            if (GlobalArray.seenCheeseMine(loc)) {
+                minesToSend.remove(loc);
+                len--;
+                if (len == 0) break;
+                if (idx >= len) idx = 0;
+                continue;
             }
+            packed |= (loc & CHEESE_LOC_MASK) << (sent * CHEESE_LOC_BITS);
+            sent++;
+            scanned++;
+            idx++;
+            if (idx >= len) idx = 0;
         }
-        return false;
+
+        if (sent == 0) return false;
+        for (; sent < CHEESE_SLOTS; sent++) {
+            packed |= CHEESE_EMPTY << (sent * CHEESE_LOC_BITS);
+        }
+
+        rc.squeak((1 << 31) | packed);
+        return true;
     }
 
     private static void processMessage(Message msg) {

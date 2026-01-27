@@ -52,6 +52,15 @@ public final class TryTrap {
     static double w_0_m2;
     static double w_1_m2;
     static double w_2_m2;
+    static boolean isMoveAdjEnemyN;
+    static boolean isMoveAdjEnemyNE;
+    static boolean isMoveAdjEnemyE;
+    static boolean isMoveAdjEnemySE;
+    static boolean isMoveAdjEnemyS;
+    static boolean isMoveAdjEnemySW;
+    static boolean isMoveAdjEnemyW;
+    static boolean isMoveAdjEnemyNW;
+    static boolean isMoveAdjEnemyC;
     static MapLocation bestPlaceLoc;
     static Direction bestMoveDir;
     static Direction bestSecondaryMoveDir;
@@ -573,6 +582,15 @@ public final class TryTrap {
     }
 
     private static void applyEnemyWeights() throws GameActionException {
+        isMoveAdjEnemyN = false;
+        isMoveAdjEnemyNE = false;
+        isMoveAdjEnemyE = false;
+        isMoveAdjEnemySE = false;
+        isMoveAdjEnemyS = false;
+        isMoveAdjEnemySW = false;
+        isMoveAdjEnemyW = false;
+        isMoveAdjEnemyNW = false;
+        isMoveAdjEnemyC = false;
         for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -693,6 +711,51 @@ public final class TryTrap {
         }
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
+        if (!isMoveAdjEnemyN) {
+            if (x >= 0 - 1 && x <= 0 + 1 && y >= 1 - 1 && y <= 1 + 1) {
+                isMoveAdjEnemyN = true;
+            }
+        }
+        if (!isMoveAdjEnemyNE) {
+            if (x >= 1 - 1 && x <= 1 + 1 && y >= 1 - 1 && y <= 1 + 1) {
+                isMoveAdjEnemyNE = true;
+            }
+        }
+        if (!isMoveAdjEnemyE) {
+            if (x >= 1 - 1 && x <= 1 + 1 && y >= 0 - 1 && y <= 0 + 1) {
+                isMoveAdjEnemyE = true;
+            }
+        }
+        if (!isMoveAdjEnemySE) {
+            if (x >= 1 - 1 && x <= 1 + 1 && y >= -1 - 1 && y <= -1 + 1) {
+                isMoveAdjEnemySE = true;
+            }
+        }
+        if (!isMoveAdjEnemyS) {
+            if (x >= 0 - 1 && x <= 0 + 1 && y >= -1 - 1 && y <= -1 + 1) {
+                isMoveAdjEnemyS = true;
+            }
+        }
+        if (!isMoveAdjEnemySW) {
+            if (x >= -1 - 1 && x <= -1 + 1 && y >= -1 - 1 && y <= -1 + 1) {
+                isMoveAdjEnemySW = true;
+            }
+        }
+        if (!isMoveAdjEnemyW) {
+            if (x >= -1 - 1 && x <= -1 + 1 && y >= 0 - 1 && y <= 0 + 1) {
+                isMoveAdjEnemyW = true;
+            }
+        }
+        if (!isMoveAdjEnemyNW) {
+            if (x >= -1 - 1 && x <= -1 + 1 && y >= 1 - 1 && y <= 1 + 1) {
+                isMoveAdjEnemyNW = true;
+            }
+        }
+        if (!isMoveAdjEnemyC) {
+            if (x >= 0 - 1 && x <= 0 + 1 && y >= 0 - 1 && y <= 0 + 1) {
+                isMoveAdjEnemyC = true;
+            }
+        }
         switch (x) {
             case -3 -> {
                 switch (y) {
@@ -2891,27 +2954,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveN();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                        considerSecondaryMoveS(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                        considerSecondaryMoveS(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                        considerSecondaryMoveS(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                        considerSecondaryMoveSE(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
+                        considerSecondaryMoveSE(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                        considerSecondaryMoveSE(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                        considerSecondaryMoveSW(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                        considerSecondaryMoveSW(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
+                        considerSecondaryMoveSW(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -2923,27 +2986,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                        considerSecondaryMoveSW(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
+                        considerSecondaryMoveSW(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                        considerSecondaryMoveSW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveN();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
+                        considerSecondaryMoveS(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                        considerSecondaryMoveS(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.EAST);
+                        considerSecondaryMoveS(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                        considerSecondaryMoveW(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.NORTH);
+                        considerSecondaryMoveW(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.EAST);
+                        considerSecondaryMoveW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -2955,27 +3018,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.EAST);
+                        considerSecondaryMoveW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
+                        considerSecondaryMoveW(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                        considerSecondaryMoveW(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
+                        considerSecondaryMoveSW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
+                        considerSecondaryMoveSW(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
+                        considerSecondaryMoveSW(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                        considerSecondaryMoveNW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
+                        considerSecondaryMoveNW(Direction.NORTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                        considerSecondaryMoveNW(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveS();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -2987,27 +3050,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                        considerSecondaryMoveNW(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                        considerSecondaryMoveNW(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
+                        considerSecondaryMoveNW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveS();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
+                        considerSecondaryMoveW(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.SOUTH);
+                        considerSecondaryMoveW(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.WEST, Direction.EAST);
+                        considerSecondaryMoveW(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                        considerSecondaryMoveN(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                        considerSecondaryMoveN(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.EAST);
+                        considerSecondaryMoveN(Direction.EAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -3019,27 +3082,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveS();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                        considerSecondaryMoveN(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
+                        considerSecondaryMoveN(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                        considerSecondaryMoveN(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
+                        considerSecondaryMoveNW(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
+                        considerSecondaryMoveNW(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
+                        considerSecondaryMoveNW(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                        considerSecondaryMoveNE(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
+                        considerSecondaryMoveNE(Direction.SOUTHEAST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                        considerSecondaryMoveNE(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -3051,27 +3114,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                        considerSecondaryMoveNE(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
+                        considerSecondaryMoveNE(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                        considerSecondaryMoveNE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveS();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
+                        considerSecondaryMoveN(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
+                        considerSecondaryMoveN(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTH, Direction.WEST);
+                        considerSecondaryMoveN(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                        considerSecondaryMoveE(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.SOUTH);
+                        considerSecondaryMoveE(Direction.SOUTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.WEST);
+                        considerSecondaryMoveE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -3083,27 +3146,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.WEST);
+                        considerSecondaryMoveE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                        considerSecondaryMoveE(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
+                        considerSecondaryMoveE(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveSW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
+                        considerSecondaryMoveNE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
+                        considerSecondaryMoveNE(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
+                        considerSecondaryMoveNE(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                        considerSecondaryMoveSE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                        considerSecondaryMoveSE(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
+                        considerSecondaryMoveSE(Direction.SOUTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveN();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -3115,27 +3178,27 @@ w_2_2 += 10 * (2) * mult;
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
+                        considerSecondaryMoveSE(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
+                        considerSecondaryMoveSE(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
+                        considerSecondaryMoveSE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveN();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
+                        considerSecondaryMoveE(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.NORTH);
+                        considerSecondaryMoveE(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.EAST, Direction.WEST);
+                        considerSecondaryMoveE(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
+                        considerSecondaryMoveS(Direction.NORTHWEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
+                        considerSecondaryMoveS(Direction.NORTH);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                        considerSecondaryMove(Direction.SOUTH, Direction.WEST);
+                        considerSecondaryMoveS(Direction.WEST);
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                         moveNE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
@@ -3146,11 +3209,13 @@ w_2_2 += 10 * (2) * mult;
         }
     }
 
-    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+    private static void considerSecondaryMoveN(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.NORTH;
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
         if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyN ? 0 : 30;
         switch (facing.ordinal()) {
             case 0 -> {
                 if (moveDir != Direction.NORTH) {
@@ -3159,6 +3224,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTH);
@@ -3174,6 +3240,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
@@ -3189,6 +3256,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
@@ -3206,6 +3274,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
@@ -3221,6 +3290,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTH);
@@ -3236,6 +3306,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.EAST);
@@ -3253,6 +3324,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.EAST);
@@ -3268,6 +3340,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
@@ -3283,6 +3356,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
@@ -3300,6 +3374,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
@@ -3315,6 +3390,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTH);
@@ -3330,6 +3406,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.EAST);
@@ -3347,6 +3424,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTH);
@@ -3362,6 +3440,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
@@ -3377,6 +3456,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
@@ -3394,6 +3474,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
@@ -3409,6 +3490,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTH);
@@ -3424,6 +3506,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.WEST);
@@ -3441,6 +3524,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.WEST);
@@ -3456,6 +3540,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
@@ -3471,6 +3556,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
@@ -3488,6 +3574,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
@@ -3503,6 +3590,7 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.NORTH);
@@ -3518,6 +3606,3295 @@ w_2_2 += 10 * (2) * mult;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveNE(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.NORTHEAST;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyNE ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveE(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.EAST;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyE ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveSE(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.SOUTHEAST;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemySE ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveS(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.SOUTH;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyS ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveSW(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.SOUTHWEST;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemySW ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveW(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.WEST;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyW ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveNW(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.NORTHWEST;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyNW ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+    private static void considerSecondaryMoveC(Direction facing) throws GameActionException {
+        Direction moveDir = Direction.CENTER;
+        int moveCost = CombatCommon.movementCost(moveDir, facing);
+        if (moveCost == -1) return;
+        double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
+        if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemyC ? 0 : 30;
+        switch (facing.ordinal()) {
+            case 0 -> {
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 2 -> {
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHEAST) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 3 -> {
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.EAST) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.EAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 4 -> {
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHEAST) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHEAST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 5 -> {
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTH) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 6 -> {
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.WEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.SOUTHWEST) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.SOUTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+            }
+            case 7 -> {
+                if (moveDir != Direction.NORTHWEST) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTHWEST);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.NORTH) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
+                        if (score > best) {
+                            best = score;
+                            bestPlaceLoc = myLoc.add(Direction.NORTH);
+                            bestMoveDir = null;
+                            bestSecondaryMoveDir = moveDir;
+                            bestFacing = facing;
+                        }
+                    }
+                }
+                if (moveDir != Direction.WEST) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
+                        if (moveCost == 0) score -= CombatCommon.strafeCost();
+                        score += moveScore;
+                        if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add(Direction.WEST);
@@ -3556,6 +6933,7 @@ private static void placeNNN() {
         if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -3569,6 +6947,7 @@ private static void placeNENN() {
         if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3582,6 +6961,7 @@ private static void placeNWNN() {
         if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -3604,6 +6984,7 @@ private static void placeNENEN() {
         if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3617,6 +6998,7 @@ private static void placeNNEN() {
         if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -3630,6 +7012,7 @@ private static void placeENEN() {
         if (w_1_1 > 0.1) {
             double score = w_1_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -3652,6 +7035,7 @@ private static void placeNWNWN() {
         if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -3665,6 +7049,7 @@ private static void placeNNWN() {
         if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -3678,6 +7063,7 @@ private static void placeWNWN() {
         if (w_m1_1 > 0.1) {
             double score = w_m1_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyN) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -3711,6 +7097,7 @@ private static void placeNENENE() {
         if (w_2_2 > 0.1) {
             double score = w_2_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3724,6 +7111,7 @@ private static void placeNNENE() {
         if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -3737,6 +7125,7 @@ private static void placeENENE() {
         if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -3759,6 +7148,7 @@ private static void placeNNNE() {
         if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -3772,6 +7162,7 @@ private static void placeNENNE() {
         if (w_2_2 > 0.1) {
             double score = w_2_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3785,6 +7176,7 @@ private static void placeNWNNE() {
         if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -3807,6 +7199,7 @@ private static void placeEENE() {
         if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -3820,6 +7213,7 @@ private static void placeNEENE() {
         if (w_2_2 > 0.1) {
             double score = w_2_2;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3833,6 +7227,7 @@ private static void placeSEENE() {
         if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -3866,6 +7261,7 @@ private static void placeEEE() {
         if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -3879,6 +7275,7 @@ private static void placeNEEE() {
         if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3892,6 +7289,7 @@ private static void placeSEEE() {
         if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -3914,6 +7312,7 @@ private static void placeNENEE() {
         if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -3927,6 +7326,7 @@ private static void placeNNEE() {
         if (w_1_1 > 0.1) {
             double score = w_1_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -3940,6 +7340,7 @@ private static void placeENEE() {
         if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -3962,6 +7363,7 @@ private static void placeSESEE() {
         if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -3975,6 +7377,7 @@ private static void placeSSEE() {
         if (w_1_m1 > 0.1) {
             double score = w_1_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -3988,6 +7391,7 @@ private static void placeESEE() {
         if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -4021,6 +7425,7 @@ private static void placeSESESE() {
         if (w_2_m2 > 0.1) {
             double score = w_2_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -4034,6 +7439,7 @@ private static void placeSSESE() {
         if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4047,6 +7453,7 @@ private static void placeESESE() {
         if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -4069,6 +7476,7 @@ private static void placeSSSE() {
         if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4082,6 +7490,7 @@ private static void placeSESSE() {
         if (w_2_m2 > 0.1) {
             double score = w_2_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -4095,6 +7504,7 @@ private static void placeSWSSE() {
         if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4117,6 +7527,7 @@ private static void placeEESE() {
         if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -4130,6 +7541,7 @@ private static void placeNEESE() {
         if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -4143,6 +7555,7 @@ private static void placeSEESE() {
         if (w_2_m2 > 0.1) {
             double score = w_2_m2;
             if (Direction.EAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySE) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -4176,6 +7589,7 @@ private static void placeSSS() {
         if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4189,6 +7603,7 @@ private static void placeSESS() {
         if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -4202,6 +7617,7 @@ private static void placeSWSS() {
         if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4224,6 +7640,7 @@ private static void placeSESES() {
         if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -4237,6 +7654,7 @@ private static void placeSSES() {
         if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4250,6 +7668,7 @@ private static void placeESES() {
         if (w_1_m1 > 0.1) {
             double score = w_1_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.EAST);
@@ -4272,6 +7691,7 @@ private static void placeSWSWS() {
         if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4285,6 +7705,7 @@ private static void placeSSWS() {
         if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4298,6 +7719,7 @@ private static void placeWSWS() {
         if (w_m1_m1 > 0.1) {
             double score = w_m1_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyS) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4331,6 +7753,7 @@ private static void placeSWSWSW() {
         if (w_m2_m2 > 0.1) {
             double score = w_m2_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4344,6 +7767,7 @@ private static void placeSSWSW() {
         if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4357,6 +7781,7 @@ private static void placeWSWSW() {
         if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4379,6 +7804,7 @@ private static void placeSSSW() {
         if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4392,6 +7818,7 @@ private static void placeSESSW() {
         if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
@@ -4405,6 +7832,7 @@ private static void placeSWSSW() {
         if (w_m2_m2 > 0.1) {
             double score = w_m2_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4427,6 +7855,7 @@ private static void placeWWSW() {
         if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4440,6 +7869,7 @@ private static void placeNWWSW() {
         if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -4453,6 +7883,7 @@ private static void placeSWWSW() {
         if (w_m2_m2 > 0.1) {
             double score = w_m2_m2;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemySW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4486,6 +7917,7 @@ private static void placeWWW() {
         if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4499,6 +7931,7 @@ private static void placeNWWW() {
         if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -4512,6 +7945,7 @@ private static void placeSWWW() {
         if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4534,6 +7968,7 @@ private static void placeNWNWW() {
         if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -4547,6 +7982,7 @@ private static void placeNNWW() {
         if (w_m1_1 > 0.1) {
             double score = w_m1_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -4560,6 +7996,7 @@ private static void placeWNWW() {
         if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4582,6 +8019,7 @@ private static void placeSWSWW() {
         if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
@@ -4595,6 +8033,7 @@ private static void placeSSWW() {
         if (w_m1_m1 > 0.1) {
             double score = w_m1_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
@@ -4608,6 +8047,7 @@ private static void placeWSWW() {
         if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4641,6 +8081,7 @@ private static void placeNWNWNW() {
         if (w_m2_2 > 0.1) {
             double score = w_m2_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -4654,6 +8095,7 @@ private static void placeNNWNW() {
         if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -4667,6 +8109,7 @@ private static void placeWNWNW() {
         if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4689,6 +8132,7 @@ private static void placeNNNW() {
         if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
@@ -4702,6 +8146,7 @@ private static void placeNENNW() {
         if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
@@ -4715,6 +8160,7 @@ private static void placeNWNNW() {
         if (w_m2_2 > 0.1) {
             double score = w_m2_2;
             if (Direction.NORTH != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -4737,6 +8183,7 @@ private static void placeWWNW() {
         if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.WEST);
@@ -4750,6 +8197,7 @@ private static void placeNWWNW() {
         if (w_m2_2 > 0.1) {
             double score = w_m2_2;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
@@ -4763,6 +8211,7 @@ private static void placeSWWNW() {
         if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
+            if (!isMoveAdjEnemyNW) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);

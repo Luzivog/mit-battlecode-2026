@@ -45,6 +45,9 @@ public final class TryTrap {
     static double {{ wvar(dx, dy) }};
     {% endfor %}
     {% endfor %}
+    {% for move_dir in allDirections %}
+    static boolean isMoveAdjEnemy{{ dir_short_map[move_dir] }};
+    {% endfor %}
     static MapLocation bestPlaceLoc;
     static Direction bestMoveDir;
     static Direction bestSecondaryMoveDir;
@@ -161,6 +164,9 @@ public final class TryTrap {
     }
 
     private static void applyEnemyWeights() throws GameActionException {
+        {% for move_dir in allDirections %}
+        isMoveAdjEnemy{{ dir_short_map[move_dir] }} = false;
+        {% endfor %}
         for (int i = 0; i < RobotTracker.numEnemies && i < 5; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -193,6 +199,13 @@ public final class TryTrap {
         }
         int x = rinfo.location.x - myLocX;
         int y = rinfo.location.y - myLocY;
+        {% for move_dir in allDirections %}
+        if (!isMoveAdjEnemy{{ dir_short_map[move_dir] }}) {
+            if (x >= {{ dir_dx[move_dir] }} - 1 && x <= {{ dir_dx[move_dir] }} + 1 && y >= {{ dir_dy[move_dir] }} - 1 && y <= {{ dir_dy[move_dir] }} + 1) {
+                isMoveAdjEnemy{{ dir_short_map[move_dir] }} = true;
+            }
+        }
+        {% endfor %}
         switch (x) {
             {% for dx in range(-3, 4) %}
             case {{ dx }} -> {
@@ -308,7 +321,7 @@ public final class TryTrap {
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     {% else %}
                     {% for facing_dir in related_map[ord] %}
-                        considerSecondaryMove({{ move_dir }}, {{ facing_dir }});
+                        considerSecondaryMove{{ dir_short_map[move_dir] }}({{ facing_dir }});
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     {% endfor %}
                     {% endif %}
@@ -319,11 +332,14 @@ public final class TryTrap {
         }
     }
 
-    private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
+    {% for move_dir in allDirections %}
+    private static void considerSecondaryMove{{ dir_short_map[move_dir] }}(Direction facing) throws GameActionException {
+        Direction moveDir = {{ move_dir }};
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         double moveScore = CombatStrategy.getCellScoreFor(moveDir, facing);
         if (moveScore <= -100) return;
+        double adjBonus = isMoveAdjEnemy{{ dir_short_map[move_dir] }} ? 0 : 30;
         switch (facing.ordinal()) {
             {% for f in range(8) %}
             case {{ f }} -> {
@@ -334,6 +350,7 @@ public final class TryTrap {
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
+                        score += adjBonus;
                         if (score > best) {
                             best = score;
                             bestPlaceLoc = myLoc.add({{ place_dir }});
@@ -349,6 +366,7 @@ public final class TryTrap {
             default -> { }
         }
     }
+    {% endfor %}
 
     {% for move_dir in allDirections %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
@@ -377,6 +395,7 @@ public final class TryTrap {
         if ({{ wvar(dx_total, dy_total) }} > 0.1) {
             double score = {{ wvar(dx_total, dy_total) }};
             if ({{ facing }} != myDir) score *= 1.1;
+            if (!isMoveAdjEnemy{{ dir_short_map[move_dir] }}) score += 30;
             if (score > best) {
                 best = score;
                 bestPlaceLoc = curMoveLoc.add({{ place_dir }});

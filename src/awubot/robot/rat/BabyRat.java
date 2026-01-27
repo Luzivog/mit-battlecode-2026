@@ -39,7 +39,15 @@ public class BabyRat {
         tryPickUpCheese();
         tryTransferCheese();
 
-        if (rc.isBeingThrown() || rc.isBeingCarried()) {
+        if (rc.isBeingCarried()) {
+            if (rc.getHealth() < 15 && rc.senseRobotAtLocation(myLoc).getTeam() != team) {
+                rc.disintegrate();
+                Clock.yield();
+            }
+            return;
+        }
+
+        if (rc.isBeingThrown()) {
             return;
         }
 

@@ -96,11 +96,11 @@ public final class TryRatNap {
                         moveN();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveNE();
@@ -108,19 +108,19 @@ public final class TryRatNap {
                         moveNW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveE();
@@ -134,11 +134,11 @@ public final class TryRatNap {
                         moveNE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.EAST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveE();
@@ -146,19 +146,19 @@ public final class TryRatNap {
                         moveN();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTH, Direction.EAST);
+                            considerSecondaryMove(Direction.SOUTH, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.EAST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.EAST, Direction.NORTH);
+                            considerSecondaryMove(Direction.WEST, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.EAST, Direction.EAST);
+                            considerSecondaryMove(Direction.WEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveSE();
@@ -172,11 +172,11 @@ public final class TryRatNap {
                         moveE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.EAST, Direction.EAST);
+                            considerSecondaryMove(Direction.WEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.EAST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.WEST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.EAST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveSE();
@@ -184,19 +184,19 @@ public final class TryRatNap {
                         moveNE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.EAST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.EAST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHEAST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveS();
@@ -210,11 +210,11 @@ public final class TryRatNap {
                         moveSE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.EAST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveS();
@@ -222,19 +222,19 @@ public final class TryRatNap {
                         moveE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.EAST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.WEST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.EAST, Direction.SOUTH);
+                            considerSecondaryMove(Direction.WEST, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.EAST, Direction.EAST);
+                            considerSecondaryMove(Direction.WEST, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTH, Direction.EAST);
+                            considerSecondaryMove(Direction.NORTH, Direction.EAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveSW();
@@ -248,11 +248,11 @@ public final class TryRatNap {
                         moveS();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveSW();
@@ -260,19 +260,19 @@ public final class TryRatNap {
                         moveSE();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHEAST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHEAST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveW();
@@ -286,11 +286,11 @@ public final class TryRatNap {
                         moveSW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.WEST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveW();
@@ -298,19 +298,19 @@ public final class TryRatNap {
                         moveS();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTH, Direction.SOUTH);
+                            considerSecondaryMove(Direction.NORTH, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTH, Direction.WEST);
+                            considerSecondaryMove(Direction.NORTH, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.WEST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.WEST, Direction.SOUTH);
+                            considerSecondaryMove(Direction.EAST, Direction.SOUTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.WEST, Direction.WEST);
+                            considerSecondaryMove(Direction.EAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveNW();
@@ -324,11 +324,11 @@ public final class TryRatNap {
                         moveW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.WEST, Direction.WEST);
+                            considerSecondaryMove(Direction.EAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.WEST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.WEST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.EAST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveNW();
@@ -336,19 +336,19 @@ public final class TryRatNap {
                         moveSW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.WEST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.SOUTHWEST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.NORTHEAST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.WEST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.SOUTHWEST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.SOUTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveN();
@@ -362,11 +362,11 @@ public final class TryRatNap {
                         moveNW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTHWEST, Direction.WEST);
+                            considerSecondaryMove(Direction.SOUTHEAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveN();
@@ -374,19 +374,19 @@ public final class TryRatNap {
                         moveW();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.WEST, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.EAST, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.WEST, Direction.NORTH);
+                            considerSecondaryMove(Direction.EAST, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.WEST, Direction.WEST);
+                            considerSecondaryMove(Direction.EAST, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                     if (canPerformSecondary) {
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTHWEST);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTHWEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTH, Direction.NORTH);
+                            considerSecondaryMove(Direction.SOUTH, Direction.NORTH);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-                            considerSecondaryMove(Direction.NORTH, Direction.WEST);
+                            considerSecondaryMove(Direction.SOUTH, Direction.WEST);
                             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     }
                         moveNE();
@@ -1256,6 +1256,7 @@ public final class TryRatNap {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         double score = weight + 5;
+        if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;
         if (facing != myDir) {

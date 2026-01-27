@@ -127,7 +127,7 @@ public final class TryThrow {
                 {% endfor %}
             }
             {% endfor %}
-            default -> { throw new RuntimException("unreachable"); }
+            default -> { throw new RuntimeException("unreachable"); }
         }
     }
 

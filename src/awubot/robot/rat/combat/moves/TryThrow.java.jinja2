@@ -91,12 +91,13 @@ public final class TryThrow {
         if (isSecondary) {
             if (td != myDir) turn(td);
             assert(rc.canThrowRat());
+            rc.throwRat();
             assert(CombatStrategy.performMoves(md, td));
         } else {
             assert(CombatStrategy.performMoves(md, td));
             assert(rc.canThrowRat());
+            rc.throwRat();
         }
-        rc.throwRat();
         println("threw a rat! come look ! <--------------------------------------------------------------------------------");
         println("movedir " + md + " throwdir " + td + " score " + best);
         indicate("COMBAT STRAT: THROW");
@@ -302,13 +303,19 @@ public final class TryThrow {
         {% set base_dx = dir_dx[move_dir] + dir_dx[throw_dir] %}
         {% set base_dy = dir_dy[move_dir] + dir_dy[throw_dir] %}
         {% if debug %} println("considered throwing {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
-        MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ throw_dir }});
         if (moveCost == -1) return;
-        if ({{ occ_var(base_dx, base_dy) }} != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
+        // can optimise statically
+        MapLocation newLoc = myLoc.add({{ move_dir }});
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if ({{ occ_var(base_dx, base_dy) }} != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         {% if debug %} println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
         score = 0;
         RobotInfo enemyHit = null;

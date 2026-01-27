@@ -65,7 +65,7 @@ public final class TryAttack {
         }
         // Profiler.pop("try attack");
         if (target == null) return false;
-        if (bestScore < 0.5 && bestScore > -100) {
+        if (bestScore < 0.5) {
             indicate("didnt find good attack");
             return false;
         }
@@ -77,13 +77,20 @@ public final class TryAttack {
             assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
-        indicate("COMBAT STRAT: ATTACK");
+        indicate("COMBAT STRAT: ATTACK score " + bestScore);
         return true;
     }
 
     private static void considerEnemy() throws GameActionException {
+        if (am(13385, 30)) {
+            println("considering attacking enemy at " + info.location + " health " + info.getHealth());
+            println("max damage " + CombatStrategy.getMaxBiteDamage());
+        }
         if (!CombatStrategy.shouldFight(info)) return;
         if (chebyshevDistance(myLoc, info) > 2) return;
+        if (am(13385, 30)) {
+            println("considering attacking enemy at " + info.location + " health " + info.getHealth() + " passed should fight and distance");
+        }
 
         t = info.location;
         enemyHealth = info.getHealth();
@@ -1133,7 +1140,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.NORTH != myDir) {
             score += 2; // prefer turning
@@ -1145,6 +1152,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTH;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1154,7 +1162,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.NORTHEAST != myDir) {
             score += 2; // prefer turning
@@ -1166,6 +1174,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHEAST;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1175,7 +1184,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.EAST != myDir) {
             score += 2; // prefer turning
@@ -1187,6 +1196,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.EAST;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1196,7 +1206,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.SOUTHEAST != myDir) {
             score += 2; // prefer turning
@@ -1208,6 +1218,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHEAST;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1217,7 +1228,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.SOUTH != myDir) {
             score += 2; // prefer turning
@@ -1229,6 +1240,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTH;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1238,7 +1250,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.SOUTHWEST != myDir) {
             score += 2; // prefer turning
@@ -1250,6 +1262,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.SOUTHWEST;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1259,7 +1272,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.WEST != myDir) {
             score += 2; // prefer turning
@@ -1271,6 +1284,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.WEST;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }
@@ -1280,7 +1294,7 @@ public final class TryAttack {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
         if (moveCost == -1) return;
         score = weight;
-        if (x == 1) score += 5;
+        if (x == 2) score += 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         if (Direction.NORTHWEST != myDir) {
             score += 2; // prefer turning
@@ -1292,6 +1306,7 @@ public final class TryAttack {
             target = info;
             bestMove = moveDir;
             bestFacing = Direction.NORTHWEST;
+            bestSecondaryMove = null;
             bestDamage = damageToDeal;
         }
     }

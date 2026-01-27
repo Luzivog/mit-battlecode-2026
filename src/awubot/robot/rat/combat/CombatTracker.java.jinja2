@@ -374,10 +374,14 @@ public class CombatTracker {
         if (enemyDx < -3 || enemyDx > 3 || enemyDy < -3 || enemyDy > 3) return base != 0L;
         boolean beforeHigh = target.getHealth() > rc.getHealth();
         boolean afterHigh = (target.getHealth() - damage) > rc.getHealth();
-        if (rc.getHealth() <= damage || afterHigh != beforeHigh) {
+        if (am(13385, 30)) {
+            println("hasThreat moveDir " + moveDir + " facing " + facing + " targetHealth " + target.getHealth() + " damage " + damage + " beforeHigh " + beforeHigh + " afterHigh " + afterHigh);
+            println(beforeHigh + " -> " + afterHigh);
+        }
+        if (target.getHealth() <= damage || afterHigh != beforeHigh) {
             long sub = enemyMaskForMove(enemyDx, enemyDy, target.direction, moveDir);
             long threat = getMoveThreatMask(moveDir);
-            if (rc.getHealth() <= damage) {
+            if (target.getHealth() <= damage) {
                 if (beforeHigh) {
                     base -= (sub & threat);
                 } else {

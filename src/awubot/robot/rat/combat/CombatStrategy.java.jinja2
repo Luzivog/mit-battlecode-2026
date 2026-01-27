@@ -123,7 +123,7 @@ public class CombatStrategy extends Strategy {
             Profiler.pop("compute cell scores");
         }
     }
-
+    
     public boolean runTick() throws GameActionException {
         Profiler.push();
         try {
@@ -448,8 +448,12 @@ public class CombatStrategy extends Strategy {
             if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= 36) return true;
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
+        if (am(13385, 30)) {
+            println("should fight check against enemy at " + enemy.location + " type " + enemy.getType() + " health " + enemy.getHealth());
+        }   
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() - getMaxBiteDamage() <= rc.getHealth()) return true;
+        println("cannot safely fight enemy at " + enemy.location + " health " + enemy.getHealth());
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
         if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;

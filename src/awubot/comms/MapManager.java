@@ -41,10 +41,10 @@ public class MapManager {
      * and prints the local seen-map at round 50.
      */
     public static void preTick() {
-        if (time % 50 == 0) {
-            printLocalSeenUnits();
-            printGlobalSeenUnits();
-        }
+        // if (time % 50 == 0) {
+        //     printLocalSeenUnits();
+        //     printGlobalSeenUnits();
+        // }
         if (localTracker == null) return;
 
         localTracker.updateVisibleUnits();

@@ -5,6 +5,7 @@ import awubot.CellTracker;
 import awubot.Game;
 import awubot.robot.Strategy;
 import awubot.comms.GlobalArray;
+import awubot.comms.MapManager;
 import awubot.util.Rng;
 import awubot.util.string.FastIndexedIntSet;
 import awubot.robot.rat.goHome.GoHomeStrategy;
@@ -101,13 +102,15 @@ public class MinerStrategy extends Strategy {
         MapLocation target = null;
         outerLoop:
         for(int i = 5; i >= 0; i--) { // tle guard
-            target = new MapLocation(Rng.mcg() % mapWidth, Rng.mcg() % mapHeight);
-            // not seen
-            if(CellTracker.isSeen(target)) continue;
+            target = MapManager.localTracker.sampleUnseenUnitCenter();
+            if (target == null) {
+                target = new MapLocation(Rng.mcg() % mapWidth, Rng.mcg() % mapHeight);
+                break;
+            }
             // not too close to a king
-            for(int j = 0; j < 5; j++) {
+            for (int j = 0; j < 5; j++) {
                 var kingLoc = GlobalArray.getRatKing(j);
-                if(kingLoc != null && kingLoc.distanceSquaredTo(target) <= 36) {
+                if (kingLoc != null && kingLoc.distanceSquaredTo(target) <= 36) {
                     continue outerLoop;
                 }
             }

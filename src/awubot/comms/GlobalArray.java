@@ -171,9 +171,7 @@ public class GlobalArray {
         indicate("my id " + kingId);
         ratCounter = rc.readSharedArray(COUNTER);
         numberOfRatsAlive = rc.readSharedArray(ALIVE_RAT_COUNT);
-        Profiler.push();
         readMapChunks();
-        Profiler.pop("read map chunks");
         if (isRatKing) {
             if (isFirstKingInRound()) {
                 for (int i = RAT_SPAWN_INFO; i < RAT_SPAWN_INFO + 10; i++) {
@@ -267,15 +265,11 @@ public class GlobalArray {
     private static void readMapChunks() throws GameActionException {
         int payload0 = readChunkPayload(MAP_CHUNK_START);
         if (payload0 != -1) {
-            Profiler.push();
             MapManager.applyGlobalChunk(payload0);
-            Profiler.pop("applying global chunk");
         }
         int payload1 = readChunkPayload(MAP_CHUNK_START + MAP_CHUNK_SLOTS_PER_CHUNK);
         if (payload1 != -1) {
-            Profiler.push();
             MapManager.applyGlobalChunk(payload1);
-            Profiler.pop("applying global chunk");
         }
     }
 
@@ -319,7 +313,8 @@ public class GlobalArray {
                 if (j == kingId) {
                     rc.setTimelineMarker("RAT KING THOUGHT THEY DIED", 255, 0, 0);
                 }
-                rc.setTimelineMarker("RAT KING " + j + " DIED", 255, 0, 0);
+                // rc.setTimelineMarker("RAT KING " + j + " DIED", 255, 0, 0);
+                println("RAT KING " + j + " DIED");
                 writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
                 writeSharedArray(RAT_KING_LOC + j, 1023);
             }

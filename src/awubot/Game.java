@@ -57,6 +57,7 @@ public class Game {
         isRatKing = true;
         RobotPlayer.hasInitialisedRobot = false;
         GlobalArray.initRatKing();
+        awubot.comms.MapManager.onConvertKing();
         Pathfinder.bug.clearPath();
         Clock.yield();
     }

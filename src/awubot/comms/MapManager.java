@@ -26,9 +26,9 @@ public class MapManager {
         maxUnitY = (mapHeight - MapTracker.UNIT_SIZE) / MapTracker.UNIT_SIZE;
 
         if (isRatKing) {
-            // Kings do not use MapManager yet; keep a valid but inert tracker.
-            globalTracker = new MapTracker(false);
-            localTracker = globalTracker;
+            // Kings still need trackers for map comms.
+            localTracker = new MapTracker(false);
+            globalTracker = localTracker;
             return;
         }
 
@@ -41,14 +41,29 @@ public class MapManager {
      * and prints the local seen-map at round 50.
      */
     public static void preTick() {
-        // if (time % 50 == 0) {
-        //     printLocalSeenUnits();
-        //     printGlobalSeenUnits();
-        // }
-        if (isRatKing || localTracker == null) return;
+        if (time % 50 == 0) {
+            printLocalSeenUnits();
+            printGlobalSeenUnits();
+        }
+        if (localTracker == null) return;
 
-        // Only local vision is available for now; global tracker remains empty.
         localTracker.updateVisibleUnits();
+        if (isRatKing && localTracker.consumeNewInfo()) {
+            enqueueSeenChunks();
+        }
+    }
+
+    /**
+     * Call when a baby rat converts to king so map comms keep working.
+     * We reuse the baby's local tracker as the global source and seed the queue.
+     */
+    public static void onConvertKing() {
+        if (localTracker == null) {
+            localTracker = new MapTracker(false);
+        }
+        globalTracker = localTracker;
+        GlobalArray.resetMapChunkQueue();
+        enqueueSeenChunks();
     }
 
     /**
@@ -106,5 +121,20 @@ public class MapManager {
             sb.append('\n');
         }
         println(sb.toString());
+    }
+
+    /**
+     * Pushes all seen chunk indices into the global queue (idempotent).
+     */
+    private static void enqueueSeenChunks() {
+        if (!isRatKing || globalTracker == null) return;
+        for (int cy = 0; cy < MapTracker.CHUNKS_PER_SIDE; cy++) {
+            for (int cx = 0; cx < MapTracker.CHUNKS_PER_SIDE; cx++) {
+                int mask = globalTracker.getChunkMask(cx, cy);
+                if (mask != 0) {
+                    GlobalArray.noteMapChunkSeen(MapTracker.encodeChunk(cx, cy, mask));
+                }
+            }
+        }
     }
 }

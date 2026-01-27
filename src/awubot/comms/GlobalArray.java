@@ -239,6 +239,15 @@ public class GlobalArray {
         }
     }
 
+    /**
+     * Clears the per-robot map chunk queue/state (used when a baby converts to king).
+     */
+    public static void resetMapChunkQueue() {
+        mapChunkQueueHead = 0;
+        mapChunkQueueSize = 0;
+        mapChunkSeenMask = 0;
+    }
+
     private static int readChunkPayload(int slotBase) throws GameActionException {
         int a = rc.readSharedArray(slotBase);
         int b = rc.readSharedArray(slotBase + 1);

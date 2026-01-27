@@ -3154,8 +3154,8 @@ w_2_2 += (2) * mult;
         switch (facing.ordinal()) {
             case 0 -> {
                 if (moveDir != Direction.NORTH) {
-                    double score = w_0_1;
-                    if (score >= 0) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3169,8 +3169,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHEAST) {
-                    double score = w_1_1;
-                    if (score >= 0) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3184,8 +3184,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHWEST) {
-                    double score = w_m1_1;
-                    if (score >= 0) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3201,8 +3201,8 @@ w_2_2 += (2) * mult;
             }
             case 1 -> {
                 if (moveDir != Direction.NORTHEAST) {
-                    double score = w_1_1;
-                    if (score >= 0) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3216,8 +3216,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTH) {
-                    double score = w_0_1;
-                    if (score >= 0) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3231,8 +3231,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.EAST) {
-                    double score = w_1_0;
-                    if (score >= 0) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3248,8 +3248,8 @@ w_2_2 += (2) * mult;
             }
             case 2 -> {
                 if (moveDir != Direction.EAST) {
-                    double score = w_1_0;
-                    if (score >= 0) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3263,8 +3263,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHEAST) {
-                    double score = w_1_1;
-                    if (score >= 0) {
+                    if (w_1_1 > 0.1) {
+                        double score = w_1_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3278,8 +3278,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHEAST) {
-                    double score = w_1_m1;
-                    if (score >= 0) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3295,8 +3295,8 @@ w_2_2 += (2) * mult;
             }
             case 3 -> {
                 if (moveDir != Direction.SOUTHEAST) {
-                    double score = w_1_m1;
-                    if (score >= 0) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3310,8 +3310,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTH) {
-                    double score = w_0_m1;
-                    if (score >= 0) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3325,8 +3325,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.EAST) {
-                    double score = w_1_0;
-                    if (score >= 0) {
+                    if (w_1_0 > 0.1) {
+                        double score = w_1_0;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3342,8 +3342,8 @@ w_2_2 += (2) * mult;
             }
             case 4 -> {
                 if (moveDir != Direction.SOUTH) {
-                    double score = w_0_m1;
-                    if (score >= 0) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3357,8 +3357,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHEAST) {
-                    double score = w_1_m1;
-                    if (score >= 0) {
+                    if (w_1_m1 > 0.1) {
+                        double score = w_1_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3372,8 +3372,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHWEST) {
-                    double score = w_m1_m1;
-                    if (score >= 0) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3389,8 +3389,8 @@ w_2_2 += (2) * mult;
             }
             case 5 -> {
                 if (moveDir != Direction.SOUTHWEST) {
-                    double score = w_m1_m1;
-                    if (score >= 0) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3404,8 +3404,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTH) {
-                    double score = w_0_m1;
-                    if (score >= 0) {
+                    if (w_0_m1 > 0.1) {
+                        double score = w_0_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3419,8 +3419,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.WEST) {
-                    double score = w_m1_0;
-                    if (score >= 0) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3436,8 +3436,8 @@ w_2_2 += (2) * mult;
             }
             case 6 -> {
                 if (moveDir != Direction.WEST) {
-                    double score = w_m1_0;
-                    if (score >= 0) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3451,8 +3451,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTHWEST) {
-                    double score = w_m1_1;
-                    if (score >= 0) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3466,8 +3466,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.SOUTHWEST) {
-                    double score = w_m1_m1;
-                    if (score >= 0) {
+                    if (w_m1_m1 > 0.1) {
+                        double score = w_m1_m1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3483,8 +3483,8 @@ w_2_2 += (2) * mult;
             }
             case 7 -> {
                 if (moveDir != Direction.NORTHWEST) {
-                    double score = w_m1_1;
-                    if (score >= 0) {
+                    if (w_m1_1 > 0.1) {
+                        double score = w_m1_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3498,8 +3498,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.NORTH) {
-                    double score = w_0_1;
-                    if (score >= 0) {
+                    if (w_0_1 > 0.1) {
+                        double score = w_0_1;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3513,8 +3513,8 @@ w_2_2 += (2) * mult;
                     }
                 }
                 if (moveDir != Direction.WEST) {
-                    double score = w_m1_0;
-                    if (score >= 0) {
+                    if (w_m1_0 > 0.1) {
+                        double score = w_m1_0;
                         if (moveCost == 0) score -= CombatCommon.strafeCost();
                         score += moveScore;
                         if (facing != myDir) score *= 1.1;
@@ -3553,7 +3553,7 @@ w_2_2 += (2) * mult;
     }
 
 private static void placeNNN() {
-        if (w_0_2 >= 0) {
+        if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -3566,7 +3566,7 @@ private static void placeNNN() {
         }
     }
 private static void placeNENN() {
-        if (w_1_2 >= 0) {
+        if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -3579,7 +3579,7 @@ private static void placeNENN() {
         }
     }
 private static void placeNWNN() {
-        if (w_m1_2 >= 0) {
+        if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -3601,7 +3601,7 @@ private static void placeNWNN() {
     }
 
 private static void placeNENEN() {
-        if (w_1_2 >= 0) {
+        if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3614,7 +3614,7 @@ private static void placeNENEN() {
         }
     }
 private static void placeNNEN() {
-        if (w_0_2 >= 0) {
+        if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3627,7 +3627,7 @@ private static void placeNNEN() {
         }
     }
 private static void placeENEN() {
-        if (w_1_1 >= 0) {
+        if (w_1_1 > 0.1) {
             double score = w_1_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3649,7 +3649,7 @@ private static void placeENEN() {
     }
 
 private static void placeNWNWN() {
-        if (w_m1_2 >= 0) {
+        if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -3662,7 +3662,7 @@ private static void placeNWNWN() {
         }
     }
 private static void placeNNWN() {
-        if (w_0_2 >= 0) {
+        if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -3675,7 +3675,7 @@ private static void placeNNWN() {
         }
     }
 private static void placeWNWN() {
-        if (w_m1_1 >= 0) {
+        if (w_m1_1 > 0.1) {
             double score = w_m1_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -3708,7 +3708,7 @@ private static void placeWNWN() {
     }
 
 private static void placeNENENE() {
-        if (w_2_2 >= 0) {
+        if (w_2_2 > 0.1) {
             double score = w_2_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3721,7 +3721,7 @@ private static void placeNENENE() {
         }
     }
 private static void placeNNENE() {
-        if (w_1_2 >= 0) {
+        if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3734,7 +3734,7 @@ private static void placeNNENE() {
         }
     }
 private static void placeENENE() {
-        if (w_2_1 >= 0) {
+        if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3756,7 +3756,7 @@ private static void placeENENE() {
     }
 
 private static void placeNNNE() {
-        if (w_1_2 >= 0) {
+        if (w_1_2 > 0.1) {
             double score = w_1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -3769,7 +3769,7 @@ private static void placeNNNE() {
         }
     }
 private static void placeNENNE() {
-        if (w_2_2 >= 0) {
+        if (w_2_2 > 0.1) {
             double score = w_2_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -3782,7 +3782,7 @@ private static void placeNENNE() {
         }
     }
 private static void placeNWNNE() {
-        if (w_0_2 >= 0) {
+        if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -3804,7 +3804,7 @@ private static void placeNWNNE() {
     }
 
 private static void placeEENE() {
-        if (w_2_1 >= 0) {
+        if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3817,7 +3817,7 @@ private static void placeEENE() {
         }
     }
 private static void placeNEENE() {
-        if (w_2_2 >= 0) {
+        if (w_2_2 > 0.1) {
             double score = w_2_2;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3830,7 +3830,7 @@ private static void placeNEENE() {
         }
     }
 private static void placeSEENE() {
-        if (w_2_0 >= 0) {
+        if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3863,7 +3863,7 @@ private static void placeSEENE() {
     }
 
 private static void placeEEE() {
-        if (w_2_0 >= 0) {
+        if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3876,7 +3876,7 @@ private static void placeEEE() {
         }
     }
 private static void placeNEEE() {
-        if (w_2_1 >= 0) {
+        if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3889,7 +3889,7 @@ private static void placeNEEE() {
         }
     }
 private static void placeSEEE() {
-        if (w_2_m1 >= 0) {
+        if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3911,7 +3911,7 @@ private static void placeSEEE() {
     }
 
 private static void placeNENEE() {
-        if (w_2_1 >= 0) {
+        if (w_2_1 > 0.1) {
             double score = w_2_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3924,7 +3924,7 @@ private static void placeNENEE() {
         }
     }
 private static void placeNNEE() {
-        if (w_1_1 >= 0) {
+        if (w_1_1 > 0.1) {
             double score = w_1_1;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3937,7 +3937,7 @@ private static void placeNNEE() {
         }
     }
 private static void placeENEE() {
-        if (w_2_0 >= 0) {
+        if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.NORTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3959,7 +3959,7 @@ private static void placeENEE() {
     }
 
 private static void placeSESEE() {
-        if (w_2_m1 >= 0) {
+        if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3972,7 +3972,7 @@ private static void placeSESEE() {
         }
     }
 private static void placeSSEE() {
-        if (w_1_m1 >= 0) {
+        if (w_1_m1 > 0.1) {
             double score = w_1_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -3985,7 +3985,7 @@ private static void placeSSEE() {
         }
     }
 private static void placeESEE() {
-        if (w_2_0 >= 0) {
+        if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4018,7 +4018,7 @@ private static void placeESEE() {
     }
 
 private static void placeSESESE() {
-        if (w_2_m2 >= 0) {
+        if (w_2_m2 > 0.1) {
             double score = w_2_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4031,7 +4031,7 @@ private static void placeSESESE() {
         }
     }
 private static void placeSSESE() {
-        if (w_1_m2 >= 0) {
+        if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4044,7 +4044,7 @@ private static void placeSSESE() {
         }
     }
 private static void placeESESE() {
-        if (w_2_m1 >= 0) {
+        if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4066,7 +4066,7 @@ private static void placeESESE() {
     }
 
 private static void placeSSSE() {
-        if (w_1_m2 >= 0) {
+        if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4079,7 +4079,7 @@ private static void placeSSSE() {
         }
     }
 private static void placeSESSE() {
-        if (w_2_m2 >= 0) {
+        if (w_2_m2 > 0.1) {
             double score = w_2_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4092,7 +4092,7 @@ private static void placeSESSE() {
         }
     }
 private static void placeSWSSE() {
-        if (w_0_m2 >= 0) {
+        if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4114,7 +4114,7 @@ private static void placeSWSSE() {
     }
 
 private static void placeEESE() {
-        if (w_2_m1 >= 0) {
+        if (w_2_m1 > 0.1) {
             double score = w_2_m1;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4127,7 +4127,7 @@ private static void placeEESE() {
         }
     }
 private static void placeNEESE() {
-        if (w_2_0 >= 0) {
+        if (w_2_0 > 0.1) {
             double score = w_2_0;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4140,7 +4140,7 @@ private static void placeNEESE() {
         }
     }
 private static void placeSEESE() {
-        if (w_2_m2 >= 0) {
+        if (w_2_m2 > 0.1) {
             double score = w_2_m2;
             if (Direction.EAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4173,7 +4173,7 @@ private static void placeSEESE() {
     }
 
 private static void placeSSS() {
-        if (w_0_m2 >= 0) {
+        if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4186,7 +4186,7 @@ private static void placeSSS() {
         }
     }
 private static void placeSESS() {
-        if (w_1_m2 >= 0) {
+        if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4199,7 +4199,7 @@ private static void placeSESS() {
         }
     }
 private static void placeSWSS() {
-        if (w_m1_m2 >= 0) {
+        if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4221,7 +4221,7 @@ private static void placeSWSS() {
     }
 
 private static void placeSESES() {
-        if (w_1_m2 >= 0) {
+        if (w_1_m2 > 0.1) {
             double score = w_1_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4234,7 +4234,7 @@ private static void placeSESES() {
         }
     }
 private static void placeSSES() {
-        if (w_0_m2 >= 0) {
+        if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4247,7 +4247,7 @@ private static void placeSSES() {
         }
     }
 private static void placeESES() {
-        if (w_1_m1 >= 0) {
+        if (w_1_m1 > 0.1) {
             double score = w_1_m1;
             if (Direction.SOUTHEAST != myDir) score *= 1.1;
             if (score > best) {
@@ -4269,7 +4269,7 @@ private static void placeESES() {
     }
 
 private static void placeSWSWS() {
-        if (w_m1_m2 >= 0) {
+        if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4282,7 +4282,7 @@ private static void placeSWSWS() {
         }
     }
 private static void placeSSWS() {
-        if (w_0_m2 >= 0) {
+        if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4295,7 +4295,7 @@ private static void placeSSWS() {
         }
     }
 private static void placeWSWS() {
-        if (w_m1_m1 >= 0) {
+        if (w_m1_m1 > 0.1) {
             double score = w_m1_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4328,7 +4328,7 @@ private static void placeWSWS() {
     }
 
 private static void placeSWSWSW() {
-        if (w_m2_m2 >= 0) {
+        if (w_m2_m2 > 0.1) {
             double score = w_m2_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4341,7 +4341,7 @@ private static void placeSWSWSW() {
         }
     }
 private static void placeSSWSW() {
-        if (w_m1_m2 >= 0) {
+        if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4354,7 +4354,7 @@ private static void placeSSWSW() {
         }
     }
 private static void placeWSWSW() {
-        if (w_m2_m1 >= 0) {
+        if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4376,7 +4376,7 @@ private static void placeWSWSW() {
     }
 
 private static void placeSSSW() {
-        if (w_m1_m2 >= 0) {
+        if (w_m1_m2 > 0.1) {
             double score = w_m1_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4389,7 +4389,7 @@ private static void placeSSSW() {
         }
     }
 private static void placeSESSW() {
-        if (w_0_m2 >= 0) {
+        if (w_0_m2 > 0.1) {
             double score = w_0_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4402,7 +4402,7 @@ private static void placeSESSW() {
         }
     }
 private static void placeSWSSW() {
-        if (w_m2_m2 >= 0) {
+        if (w_m2_m2 > 0.1) {
             double score = w_m2_m2;
             if (Direction.SOUTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4424,7 +4424,7 @@ private static void placeSWSSW() {
     }
 
 private static void placeWWSW() {
-        if (w_m2_m1 >= 0) {
+        if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4437,7 +4437,7 @@ private static void placeWWSW() {
         }
     }
 private static void placeNWWSW() {
-        if (w_m2_0 >= 0) {
+        if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4450,7 +4450,7 @@ private static void placeNWWSW() {
         }
     }
 private static void placeSWWSW() {
-        if (w_m2_m2 >= 0) {
+        if (w_m2_m2 > 0.1) {
             double score = w_m2_m2;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4483,7 +4483,7 @@ private static void placeSWWSW() {
     }
 
 private static void placeWWW() {
-        if (w_m2_0 >= 0) {
+        if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4496,7 +4496,7 @@ private static void placeWWW() {
         }
     }
 private static void placeNWWW() {
-        if (w_m2_1 >= 0) {
+        if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4509,7 +4509,7 @@ private static void placeNWWW() {
         }
     }
 private static void placeSWWW() {
-        if (w_m2_m1 >= 0) {
+        if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4531,7 +4531,7 @@ private static void placeSWWW() {
     }
 
 private static void placeNWNWW() {
-        if (w_m2_1 >= 0) {
+        if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4544,7 +4544,7 @@ private static void placeNWNWW() {
         }
     }
 private static void placeNNWW() {
-        if (w_m1_1 >= 0) {
+        if (w_m1_1 > 0.1) {
             double score = w_m1_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4557,7 +4557,7 @@ private static void placeNNWW() {
         }
     }
 private static void placeWNWW() {
-        if (w_m2_0 >= 0) {
+        if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4579,7 +4579,7 @@ private static void placeWNWW() {
     }
 
 private static void placeSWSWW() {
-        if (w_m2_m1 >= 0) {
+        if (w_m2_m1 > 0.1) {
             double score = w_m2_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4592,7 +4592,7 @@ private static void placeSWSWW() {
         }
     }
 private static void placeSSWW() {
-        if (w_m1_m1 >= 0) {
+        if (w_m1_m1 > 0.1) {
             double score = w_m1_m1;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4605,7 +4605,7 @@ private static void placeSSWW() {
         }
     }
 private static void placeWSWW() {
-        if (w_m2_0 >= 0) {
+        if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.SOUTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4638,7 +4638,7 @@ private static void placeWSWW() {
     }
 
 private static void placeNWNWNW() {
-        if (w_m2_2 >= 0) {
+        if (w_m2_2 > 0.1) {
             double score = w_m2_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4651,7 +4651,7 @@ private static void placeNWNWNW() {
         }
     }
 private static void placeNNWNW() {
-        if (w_m1_2 >= 0) {
+        if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4664,7 +4664,7 @@ private static void placeNNWNW() {
         }
     }
 private static void placeWNWNW() {
-        if (w_m2_1 >= 0) {
+        if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.NORTHWEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4686,7 +4686,7 @@ private static void placeWNWNW() {
     }
 
 private static void placeNNNW() {
-        if (w_m1_2 >= 0) {
+        if (w_m1_2 > 0.1) {
             double score = w_m1_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4699,7 +4699,7 @@ private static void placeNNNW() {
         }
     }
 private static void placeNENNW() {
-        if (w_0_2 >= 0) {
+        if (w_0_2 > 0.1) {
             double score = w_0_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4712,7 +4712,7 @@ private static void placeNENNW() {
         }
     }
 private static void placeNWNNW() {
-        if (w_m2_2 >= 0) {
+        if (w_m2_2 > 0.1) {
             double score = w_m2_2;
             if (Direction.NORTH != myDir) score *= 1.1;
             if (score > best) {
@@ -4734,7 +4734,7 @@ private static void placeNWNNW() {
     }
 
 private static void placeWWNW() {
-        if (w_m2_1 >= 0) {
+        if (w_m2_1 > 0.1) {
             double score = w_m2_1;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4747,7 +4747,7 @@ private static void placeWWNW() {
         }
     }
 private static void placeNWWNW() {
-        if (w_m2_2 >= 0) {
+        if (w_m2_2 > 0.1) {
             double score = w_m2_2;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {
@@ -4760,7 +4760,7 @@ private static void placeNWWNW() {
         }
     }
 private static void placeSWWNW() {
-        if (w_m2_0 >= 0) {
+        if (w_m2_0 > 0.1) {
             double score = w_m2_0;
             if (Direction.WEST != myDir) score *= 1.1;
             if (score > best) {

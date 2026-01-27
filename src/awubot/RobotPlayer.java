@@ -68,7 +68,7 @@ public class RobotPlayer {
                 if (!Game.DISABLE_OUTPUT) {
                     e.printStackTrace();
                     rc.setTimelineMarker("RE " + rc.getID() + " " + rc.getLocation(), 255, 0, 0);
-                    if (isRatKing) rc.resign();
+                    // if (isRatKing) rc.resign();
                 }
                 // rc.resign();
             } finally {

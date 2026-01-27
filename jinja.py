@@ -106,6 +106,8 @@ ALLOWED_ROOT = Path("src/awubot").resolve()
 TEMPLATES_DIR = (ALLOWED_ROOT / "templates").resolve()
 GLOBAL_EXPORTS = set()
 GLOBAL_EXPORTS_READY = False
+GLOBAL_TEMPLATE_NAMES = None
+WRAPPED_TEMPLATE_CACHE = {}
 
 
 def _in_allowed_root(path: Path) -> bool:
@@ -140,8 +142,12 @@ def _red(text: str) -> str:
 
 
 def _global_template_names():
+    global GLOBAL_TEMPLATE_NAMES
+    if GLOBAL_TEMPLATE_NAMES is not None:
+        return GLOBAL_TEMPLATE_NAMES
     if not TEMPLATES_DIR.exists():
-        return []
+        GLOBAL_TEMPLATE_NAMES = []
+        return GLOBAL_TEMPLATE_NAMES
     names = []
     for path in sorted(TEMPLATES_DIR.rglob("*.jinja2")):
         if path.name.startswith("."):
@@ -149,14 +155,17 @@ def _global_template_names():
         name = _template_name(path)
         if name:
             names.append(name)
+    GLOBAL_TEMPLATE_NAMES = names
     return names
 
 
 def _refresh_global_exports():
-    global GLOBAL_EXPORTS_READY
+    global GLOBAL_EXPORTS_READY, GLOBAL_TEMPLATE_NAMES
     for key in list(GLOBAL_EXPORTS):
         ENV.globals.pop(key, None)
     GLOBAL_EXPORTS.clear()
+    WRAPPED_TEMPLATE_CACHE.clear()
+    GLOBAL_TEMPLATE_NAMES = None
 
     for name in _global_template_names():
         module = ENV.get_template(name).module
@@ -170,20 +179,29 @@ def _refresh_global_exports():
 
 
 def _wrap_with_globals(template_name: str):
+    cached = WRAPPED_TEMPLATE_CACHE.get(template_name)
+    if cached is not None:
+        return cached
     global_templates = _global_template_names()
     if not global_templates:
-        return ENV.get_template(template_name)
+        tpl = ENV.get_template(template_name)
+        WRAPPED_TEMPLATE_CACHE[template_name] = tpl
+        return tpl
     parts = []
     for name in global_templates:
         parts.append(f"{{% include '{name}' %}}")
     parts.append(f"{{% include '{template_name}' %}}")
-    return ENV.from_string("\n".join(parts))
+    tpl = ENV.from_string("\n".join(parts))
+    WRAPPED_TEMPLATE_CACHE[template_name] = tpl
+    return tpl
 
 
-def compile_template(path: Path, debug: bool):
+def compile_template(path: Path, debug: bool, include_maptracker: bool):
     if not path.name.endswith(".jinja2"):
         return
     if path.name.startswith("."):
+        return
+    if (not include_maptracker) and path.name == "MapTracker.java.jinja2":
         return
     if not _in_allowed_root(path):
         return  # skip other directories
@@ -199,26 +217,25 @@ def compile_template(path: Path, debug: bool):
         output_path = path.with_suffix("")
         template = _wrap_with_globals(template_name)
 
-        rendered = template.render(
+        stream = template.stream(
             directions=directions_list,
             shortDirections=short_directions_list,
             allDirections=all_directions_list,
             debug=debug
         )
-
-        output_path.write_text(rendered)
+        stream.dump(str(output_path), encoding="utf-8")
         print(f"[compiled] {path} -> {output_path}")
 
     except Exception as e:
         print(_red(f"[error] {path}: {e}"))
 
 
-def compile_all(debug: bool):
+def compile_all(debug: bool, include_maptracker: bool):
     global GLOBAL_EXPORTS_READY
     GLOBAL_EXPORTS_READY = False
     _refresh_global_exports()
     for path in ALLOWED_ROOT.rglob("*.jinja2"):
-        compile_template(path, debug)
+        compile_template(path, debug, include_maptracker)
 
 
 # =====================
@@ -226,26 +243,27 @@ def compile_all(debug: bool):
 # =====================
 
 class JinjaWatchHandler(FileSystemEventHandler):
-    def __init__(self, debug: bool):
+    def __init__(self, debug: bool, include_maptracker: bool):
         self.debug = debug
+        self.include_maptracker = include_maptracker
 
     def on_modified(self, event):
         if not event.is_directory:
             path = Path(event.src_path)
             if _is_templates_path(path):
                 ENV.cache.clear()
-                compile_all(self.debug)
+                compile_all(self.debug, self.include_maptracker)
                 return
-            compile_template(path, self.debug)
+            compile_template(path, self.debug, self.include_maptracker)
 
     def on_created(self, event):
         if not event.is_directory:
             path = Path(event.src_path)
             if _is_templates_path(path):
                 ENV.cache.clear()
-                compile_all(self.debug)
+                compile_all(self.debug, self.include_maptracker)
                 return
-            compile_template(path, self.debug)
+            compile_template(path, self.debug, self.include_maptracker)
 
     def on_moved(self, event):
         if not event.is_directory:
@@ -253,9 +271,9 @@ class JinjaWatchHandler(FileSystemEventHandler):
             dest_path = Path(event.dest_path)
             if _is_templates_path(src_path) or _is_templates_path(dest_path):
                 ENV.cache.clear()
-                compile_all(self.debug)
+                compile_all(self.debug, self.include_maptracker)
                 return
-            compile_template(dest_path, self.debug)
+            compile_template(dest_path, self.debug, self.include_maptracker)
 
 
 # =====================
@@ -268,10 +286,12 @@ def main():
                         help="Watch for changes and recompile incrementally")
     parser.add_argument("--debug", action="store_true",
                         help="Enable debug rendering")
+    parser.add_argument("--include-maptracker", action="store_true",
+                        help="Include MapTracker.java.jinja2 in compilation")
     args = parser.parse_args()
 
     # Always do a full rebuild first
-    compile_all(args.debug)
+    compile_all(args.debug, args.include_maptracker)
 
     if not args.watch:
         return
@@ -279,7 +299,7 @@ def main():
     print("Watching for .jinja2 changes (Ctrl+C to stop)...")
     observer = Observer()
     observer.schedule(
-        JinjaWatchHandler(args.debug),
+        JinjaWatchHandler(args.debug, args.include_maptracker),
         path=".",
         recursive=True
     )

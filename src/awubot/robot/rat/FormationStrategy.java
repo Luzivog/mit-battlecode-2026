@@ -1,18 +1,18 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
-import awubot.Game;
-import awubot.Pathfinder;
-import awubot.RobotPlayer;
-import awubot.RobotTracker;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import static awubot.Game.*;
-import static awubot.util.Util.indicate;
+import awubot_test.Game;
+import awubot_test.Pathfinder;
+import awubot_test.RobotPlayer;
+import awubot_test.RobotTracker;
+import awubot_test.comms.GlobalArray;
+import awubot_test.robot.Strategy;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.indicate;
 
 // TODO: refactor this (AI slop)
 

@@ -1,10 +1,10 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 
-import static awubot.Game.rc;
+import static awubot_test.Game.rc;
 
-import awubot.Pathfinder;
-import awubot.robot.Strategy;
-import awubot.util.Util;
+import awubot_test.Pathfinder;
+import awubot_test.robot.Strategy;
+import awubot_test.util.Util;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 

@@ -1,10 +1,10 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 
 import battlecode.common.*;
-import awubot.Pathfinder;
-import awubot.robot.Strategy;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_test.Pathfinder;
+import awubot_test.robot.Strategy;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
 // TODO: go after a different target if given the opportunity
 // this strategy doesn't pick up cheese (that's handled in BabyRat

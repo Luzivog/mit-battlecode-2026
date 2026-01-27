@@ -1,17 +1,17 @@
-package awubot.robot.king;
+package awubot_test.robot.king;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import awubot.RobotTracker;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_test.comms.GlobalArray;
+import awubot_test.robot.Strategy;
+import awubot_test.RobotTracker;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
-import awubot.Game;
+import awubot_test.Game;
 
 public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int[] CHEESE_THRESHOLDS = {800, 1000, 1200, 1800, 1000000000};

@@ -1,13 +1,13 @@
 
 
-package awubot.comms;
+package awubot_test.comms;
 
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
-import awubot.RobotTracker;
-import awubot.util.Rng;
-import awubot.util.string.FastIndexedIntSet;
+import awubot_test.RobotTracker;
+import awubot_test.util.Rng;
+import awubot_test.util.string.FastIndexedIntSet;
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;
 

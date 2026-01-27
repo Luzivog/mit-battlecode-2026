@@ -1,11 +1,11 @@
-package awubot.util;
+package awubot_test.util;
 
 import battlecode.common.Clock;
 import battlecode.common.UnitType;
 
-import static awubot.Game.isRatKing;
-import static awubot.Game.rc;
-import static awubot.util.Util.*;
+import static awubot_test.Game.isRatKing;
+import static awubot_test.Game.rc;
+import static awubot_test.util.Util.*;
 
 public class Profiler {
     private static int cnt = 0, turnNum = 0;

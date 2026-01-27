@@ -1,4 +1,4 @@
-package awubot.util.string;
+package awubot_test.util.string;
 
 // only insert and query
 // if you actually want performance, inline this class

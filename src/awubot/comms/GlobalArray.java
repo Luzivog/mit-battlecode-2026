@@ -1,17 +1,17 @@
-package awubot.comms;
+package awubot_test.comms;
 
 import battlecode.common.*;
-import static awubot.util.Util.*;
+import static awubot_test.util.Util.*;
 
 import javax.management.RuntimeErrorException;
 
-import awubot.CellTracker;
-import awubot.Game;
-import awubot.util.Profiler;
-import awubot.util.Rng;
-import awubot.util.string.FastIndexedIntSet;
+import awubot_test.CellTracker;
+import awubot_test.Game;
+import awubot_test.util.Profiler;
+import awubot_test.util.Rng;
+import awubot_test.util.string.FastIndexedIntSet;
 
-import static awubot.Game.*;
+import static awubot_test.Game.*;
 
 public class GlobalArray {
     public static final int N = 64;

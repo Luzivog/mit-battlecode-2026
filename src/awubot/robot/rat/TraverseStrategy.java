@@ -1,11 +1,11 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 
 import battlecode.common.*;
-import awubot.Pathfinder;
-import awubot.robot.Strategy;
+import awubot_test.Pathfinder;
+import awubot_test.robot.Strategy;
 
-import static awubot.Game.*;
-import static awubot.util.Util.indicate;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.indicate;
 
 // *just* in case we optimise this in the future
 public class TraverseStrategy extends Strategy {

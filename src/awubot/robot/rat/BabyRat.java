@@ -1,17 +1,17 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 
 import battlecode.common.*;
-import awubot.CellTracker;
-import awubot.Pathfinder;
-import awubot.RobotTracker;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import awubot.robot.rat.combat.CombatStrategy;
-import awubot.robot.rat.goHome.AntColony;
-import awubot.util.Rng;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
-import awubot.util.Profiler;
+import awubot_test.CellTracker;
+import awubot_test.Pathfinder;
+import awubot_test.RobotTracker;
+import awubot_test.comms.GlobalArray;
+import awubot_test.robot.Strategy;
+import awubot_test.robot.rat.combat.CombatStrategy;
+import awubot_test.robot.rat.goHome.AntColony;
+import awubot_test.util.Rng;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
+import awubot_test.util.Profiler;
 
 public class BabyRat {
     private static Direction lastGlance;

@@ -1,14 +1,14 @@
 
 
-package awubot;
+package awubot_test;
 
 import battlecode.common.*;
 
-import awubot.util.Profiler;
-import awubot.comms.Squeaker;
-import static awubot.util.Util.*;
-import static awubot.Game.*;
-import awubot.robot.king.RatKing;
+import awubot_test.util.Profiler;
+import awubot_test.comms.Squeaker;
+import static awubot_test.util.Util.*;
+import static awubot_test.Game.*;
+import awubot_test.robot.king.RatKing;
 
 public class CellTracker {
     /*

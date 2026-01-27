@@ -1,4 +1,4 @@
-package awubot;
+package awubot_test;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -8,12 +8,12 @@ import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.Team;
 import battlecode.common.UnitType;
-import static awubot.util.Util.*;
+import static awubot_test.util.Util.*;
 
-import awubot.util.string.FastIndexedIntSet;
-import awubot.comms.GlobalArray;
-import awubot.util.Profiler;
-import awubot.util.Util;
+import awubot_test.util.string.FastIndexedIntSet;
+import awubot_test.comms.GlobalArray;
+import awubot_test.util.Profiler;
+import awubot_test.util.Util;
 
 public class Game {
     public static boolean DISABLE_OUTPUT = false;

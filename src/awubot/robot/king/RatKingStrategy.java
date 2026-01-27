@@ -1,11 +1,11 @@
-package awubot.robot.king;
+package awubot_test.robot.king;
 
 import battlecode.common.GameActionException;
-import awubot.robot.Strategy;
-import awubot.util.Profiler;
+import awubot_test.robot.Strategy;
+import awubot_test.util.Profiler;
 
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
 public class RatKingStrategy extends Strategy {
     private KingSpawningStrategy spawningStrategy;

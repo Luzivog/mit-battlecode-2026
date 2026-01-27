@@ -1,7 +1,7 @@
-package awubot.util;
+package awubot_test.util;
 
 import battlecode.common.*;
-import static awubot.Game.*;
+import static awubot_test.Game.*;
 
 public class Rng {
     static int s0, s1, s2, s3;

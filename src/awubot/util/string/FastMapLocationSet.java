@@ -1,4 +1,4 @@
-package awubot.util.string;
+package awubot_test.util.string;
 
 import battlecode.common.*;
 

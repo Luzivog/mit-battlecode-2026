@@ -1,6 +1,6 @@
 
 
-package awubot.robot.rat.combat;
+package awubot_test.robot.rat.combat;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -10,13 +10,13 @@ import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 
-import static awubot.Game.*;
-import static awubot.util.Util.*;
-import awubot.util.Profiler;
-import awubot.CellTracker;
-import awubot.RobotTracker;
-import awubot.comms.Enemy;
-import awubot.comms.EnemyManager;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
+import awubot_test.util.Profiler;
+import awubot_test.CellTracker;
+import awubot_test.RobotTracker;
+import awubot_test.comms.Enemy;
+import awubot_test.comms.EnemyManager;
 
 public class CombatTracker {
     private static final int GRID_RADIUS = 2;

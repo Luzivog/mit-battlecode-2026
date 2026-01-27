@@ -1,14 +1,14 @@
-package awubot.robot.king;
+package awubot_test.robot.king;
 
 import battlecode.common.*;
-import awubot.Game;
-import awubot.Pathfinder;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_test.Game;
+import awubot_test.Pathfinder;
+import awubot_test.comms.GlobalArray;
+import awubot_test.robot.Strategy;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
-import awubot.CellTracker;
+import awubot_test.CellTracker;
 
 // TODO: clean up
 

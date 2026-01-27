@@ -1,4 +1,4 @@
-package awubot.robot;
+package awubot_test.robot;
 
 import battlecode.common.GameActionException;
 

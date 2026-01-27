@@ -1,4 +1,4 @@
-package awubot.util.string;
+package awubot_test.util.string;
 
 public class FastIntIntMap {
     public static final int OFF = 65536 / 2;

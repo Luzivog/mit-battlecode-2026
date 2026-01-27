@@ -1,17 +1,17 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.GameConstants;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
-import awubot.robot.Strategy;
-import awubot.robot.rat.combat.CombatStrategy;
-import awubot.util.Util;
+import awubot_test.robot.Strategy;
+import awubot_test.robot.rat.combat.CombatStrategy;
+import awubot_test.util.Util;
 
-import static awubot.robot.rat.BabyRat.*;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import static awubot_test.robot.rat.BabyRat.*;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
 public class MicroTestStrategy extends Strategy {
 

@@ -1,4 +1,4 @@
-package awubot.util;
+package awubot_test.util;
 
 public final class FastRng {
     private static long S = 0x9E3779B97F4A7C15L; 

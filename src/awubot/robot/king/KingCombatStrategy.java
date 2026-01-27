@@ -1,15 +1,15 @@
 
 
-package awubot.robot.king;
+package awubot_test.robot.king;
 
 import battlecode.common.*;
-import awubot.robot.Strategy;
-import awubot.RobotTracker;
-import awubot.Pathfinder;
+import awubot_test.robot.Strategy;
+import awubot_test.RobotTracker;
+import awubot_test.Pathfinder;
 
-import static awubot.robot.king.RatKing.*;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import static awubot_test.robot.king.RatKing.*;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
 public class KingCombatStrategy extends Strategy {
 

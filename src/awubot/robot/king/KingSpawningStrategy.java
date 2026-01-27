@@ -1,13 +1,13 @@
-package awubot.robot.king;
+package awubot_test.robot.king;
 
 import battlecode.common.*;
-import awubot.robot.Strategy;
-import awubot.util.Rng;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_test.robot.Strategy;
+import awubot_test.util.Rng;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
-import awubot.RobotTracker;
-import awubot.comms.GlobalArray;
+import awubot_test.RobotTracker;
+import awubot_test.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;

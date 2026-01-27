@@ -1,15 +1,15 @@
-package awubot.comms;
+package awubot_test.comms;
 
 import battlecode.common.*;
-import static awubot.util.Util.*;
+import static awubot_test.util.Util.*;
 
-import awubot.CellTracker;
-import awubot.Game;
-import awubot.util.Profiler;
-import awubot.util.string.FastIndexedIntSet;
+import awubot_test.CellTracker;
+import awubot_test.Game;
+import awubot_test.util.Profiler;
+import awubot_test.util.string.FastIndexedIntSet;
 
-import static awubot.Game.*;
-import awubot.RobotTracker;
+import static awubot_test.Game.*;
+import awubot_test.RobotTracker;
 
 public class Squeaker {
     public static final int N = 32;

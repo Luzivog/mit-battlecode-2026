@@ -1,15 +1,15 @@
-package awubot.robot.rat;
+package awubot_test.robot.rat;
 
 import battlecode.common.*;
-import awubot.CellTracker;
-import awubot.Game;
-import awubot.robot.Strategy;
-import awubot.comms.GlobalArray;
-import awubot.util.Rng;
-import awubot.util.string.FastIndexedIntSet;
-import awubot.robot.rat.goHome.GoHomeStrategy;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
+import awubot_test.CellTracker;
+import awubot_test.Game;
+import awubot_test.robot.Strategy;
+import awubot_test.comms.GlobalArray;
+import awubot_test.util.Rng;
+import awubot_test.util.string.FastIndexedIntSet;
+import awubot_test.robot.rat.goHome.GoHomeStrategy;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
 
 public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;

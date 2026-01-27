@@ -1,4 +1,4 @@
-package awubot.comms;
+package awubot_test.comms;
 
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;

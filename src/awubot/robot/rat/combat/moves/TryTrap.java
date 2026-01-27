@@ -1,6 +1,6 @@
 
 
-package awubot.robot.rat.combat.moves;
+package awubot_test.robot.rat.combat.moves;
 
 import battlecode.common.Clock;
 import battlecode.common.Direction;
@@ -11,15 +11,15 @@ import battlecode.common.RobotInfo;
 import battlecode.common.TrapType;
 import battlecode.common.UnitType;
 
-import awubot.robot.rat.combat.CombatCommon;
-import awubot.robot.rat.combat.CombatStrategy;
-import awubot.robot.rat.combat.CombatTracker;
-import static awubot.Game.*;
-import static awubot.util.Util.*;
-import static awubot.robot.rat.BabyRat.*;
-import awubot.util.Profiler;
-import awubot.CellTracker;
-import awubot.RobotTracker;
+import awubot_test.robot.rat.combat.CombatCommon;
+import awubot_test.robot.rat.combat.CombatStrategy;
+import awubot_test.robot.rat.combat.CombatTracker;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
+import static awubot_test.robot.rat.BabyRat.*;
+import awubot_test.util.Profiler;
+import awubot_test.CellTracker;
+import awubot_test.RobotTracker;
 
 
 public final class TryTrap {

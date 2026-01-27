@@ -1,18 +1,18 @@
 
 
-package awubot.robot.rat.goHome;
+package awubot_test.robot.rat.goHome;
 
 import battlecode.common.*;
-import awubot.Pathfinder;
-import awubot.comms.GlobalArray;
-import awubot.robot.Strategy;
-import awubot.Pathfinder;
-import awubot.util.Profiler;
-import awubot.robot.rat.BabyRat;
+import awubot_test.Pathfinder;
+import awubot_test.comms.GlobalArray;
+import awubot_test.robot.Strategy;
+import awubot_test.Pathfinder;
+import awubot_test.util.Profiler;
+import awubot_test.robot.rat.BabyRat;
 
-import static awubot.Game.*;
-import static awubot.util.Util.*;
-import static awubot.robot.rat.BabyRat.*;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.*;
+import static awubot_test.robot.rat.BabyRat.*;
 
 public class GoHomeStrategy extends Strategy {
     private int king;

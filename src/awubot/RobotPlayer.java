@@ -1,17 +1,17 @@
-package awubot;
+package awubot_test;
 
 import battlecode.common.*;
-import awubot.comms.EnemyManager;
-import awubot.comms.GlobalArray;
-import awubot.comms.Squeaker;
-import awubot.robot.king.RatKing;
-import awubot.robot.rat.BabyRat;
+import awubot_test.comms.EnemyManager;
+import awubot_test.comms.GlobalArray;
+import awubot_test.comms.Squeaker;
+import awubot_test.robot.king.RatKing;
+import awubot_test.robot.rat.BabyRat;
 
-import static awubot.Game.*;
-import static awubot.util.Util.println;
+import static awubot_test.Game.*;
+import static awubot_test.util.Util.println;
 
-import awubot.util.Rng;
-import awubot.util.Util;
+import awubot_test.util.Rng;
+import awubot_test.util.Util;
 
 public class RobotPlayer {
     static int maxBytecode = 0;

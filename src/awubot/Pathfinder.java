@@ -1,16 +1,16 @@
 
 
-package awubot;
+package awubot_test;
 
 import battlecode.common.*;
-import static awubot.util.Util.*;
-import awubot.util.Rng;
-import awubot.util.Profiler;
-import awubot.util.string.FastMapLocationSet;
-import static awubot.Game.*;
-import static awubot.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
-import awubot.robot.king.RatKing;
-import awubot.comms.GlobalArray;
+import static awubot_test.util.Util.*;
+import awubot_test.util.Rng;
+import awubot_test.util.Profiler;
+import awubot_test.util.string.FastMapLocationSet;
+import static awubot_test.Game.*;
+import static awubot_test.robot.rat.BabyRat.*; // TODO: make pathfinder compatible with rat king
+import awubot_test.robot.king.RatKing;
+import awubot_test.comms.GlobalArray;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 

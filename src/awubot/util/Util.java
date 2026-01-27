@@ -1,14 +1,14 @@
 
 
-package awubot.util;
+package awubot_test.util;
 
 import battlecode.common.*;
-import static awubot.Game.*;
+import static awubot_test.Game.*;
 
 import java.util.*;
 
-import awubot.CellTracker;
-import awubot.Game;
+import awubot_test.CellTracker;
+import awubot_test.Game;
 import static java.lang.Math.*;
 
 public class Util {

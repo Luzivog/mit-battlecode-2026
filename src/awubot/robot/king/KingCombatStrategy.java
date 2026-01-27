@@ -33,6 +33,7 @@ public class KingCombatStrategy extends Strategy {
             int numDirts = 0;
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dy = -1; dy <= 1; dy++) {
+                    if (!rc.onTheMap(new MapLocation(loc.x + dx, loc.y + dy))) continue;
                     MapInfo checkInfo = rc.senseMapInfo(new MapLocation(loc.x + dx, loc.y + dy));
                     if (checkInfo.isDirt()) {
                         numDirts++;

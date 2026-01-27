@@ -146,6 +146,9 @@ public class GlobalArray {
     public static void initRatKing() throws GameActionException {
         int i = findRatKingSlot();
         kingId = i;
+        writeMyLoc();
+        markKingAlive();
+        readCheeseMines();
     }
 
     public static void preTick() throws GameActionException {
@@ -228,6 +231,16 @@ public class GlobalArray {
     public static int countRatKings() {
         int ret = 0;
         for (int i = 0; i < 5; i++) {
+            MapLocation king = getRatKing(i);
+            if (king == null) continue;
+            ret++;
+        }
+        return ret;
+    }
+
+    public static int getIndexAmongAliveRatKings() {
+        int ret = 0;
+        for (int i = 0; i < kingId; i++) {
             MapLocation king = getRatKing(i);
             if (king == null) continue;
             ret++;
@@ -395,17 +408,5 @@ public class GlobalArray {
             }
         }
         return false;
-    }
-
-    public static int countActiveKings() throws GameActionException {
-        int myCount = 0;
-        int myTurnCounter = rc.readSharedArray(RAT_KING_TURN_COUNTER);
-        for (int i = 0; i < 5; i++) {
-            if ((myTurnCounter & 0b11) != 0b11) {
-                myCount++;
-            }
-            myTurnCounter >>= 2;
-        }
-        return myCount;
     }
 }

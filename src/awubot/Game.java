@@ -12,6 +12,7 @@ import static awubot.util.Util.*;
 
 import awubot.util.string.FastIndexedIntSet;
 import awubot.comms.GlobalArray;
+import awubot.robot.king.RatKing;
 import awubot.util.Profiler;
 import awubot.util.Util;
 
@@ -54,6 +55,8 @@ public class Game {
     public static void convertKing() throws GameActionException {
         isRatKing = true;
         GlobalArray.initRatKing();
+        RatKing.init();
+        Pathfinder.bug.clearPath();
     }
 
     public static void init(RobotController rc) throws GameActionException {

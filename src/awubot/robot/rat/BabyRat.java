@@ -43,7 +43,7 @@ public class BabyRat {
             return;
         }
 
-        indicate("before combat strat: " + Clock.getBytecodeNum());
+        // indicate("before combat strat: " + Clock.getBytecodeNum());
         if (combatStrategy.runTick()) {
             return;
         }

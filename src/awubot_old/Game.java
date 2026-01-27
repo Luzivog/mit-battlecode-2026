@@ -16,7 +16,7 @@ import awubot_old.util.Profiler;
 import awubot_old.util.Util;
 
 public class Game {
-    public static boolean DISABLE_OUTPUT = false;
+    public static boolean DISABLE_OUTPUT = true;
 
     public static RobotController rc;
     public static int mapWidth, mapHeight;

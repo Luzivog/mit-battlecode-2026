@@ -214,7 +214,7 @@ public final class TryTrap {
                                 {%- set diff = (f - dord) | abs -%}
                                 {%- set ang = diff if diff < 8 - diff else 8 - diff -%}
                                 {%- if ang <= 1 -%}
-                                {{ wvar(cx, cy) }} += ({{ 3 - ang }}) * mult;
+                                {{ wvar(cx, cy) }} += 10 * ({{ 3 - ang }}) * mult;
                                 {# println("incremented weight at " + (myLocX + {{cx}}) + ", " + (myLocY + {{cy}})); #}
                                 {%- endif -%}
                                 {%- endif -%}
@@ -274,7 +274,7 @@ public final class TryTrap {
                         {% for ny in range(dy - 1, dy + 2) %}
                         {%- if nx >= -2 and nx <= 2 and ny >= -2 and ny <= 2 -%}
                         {# println("marked cell at " + x + ", " + y + " due to trap at " + x + ", " + y); #}
-                        {{ wvar(nx, ny) }} -= 100;
+                        {{ wvar(nx, ny) }} -= 1000;
                         {%- endif -%}
                         {% endfor %}
                         {% endfor %}

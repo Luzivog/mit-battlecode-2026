@@ -1,5 +1,6 @@
 package awubot;
 
+import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
@@ -54,9 +55,10 @@ public class Game {
 
     public static void convertKing() throws GameActionException {
         isRatKing = true;
+        RobotPlayer.hasInitialisedRobot = false;
         GlobalArray.initRatKing();
-        RatKing.init();
         Pathfinder.bug.clearPath();
+        Clock.yield();
     }
 
     public static void init(RobotController rc) throws GameActionException {

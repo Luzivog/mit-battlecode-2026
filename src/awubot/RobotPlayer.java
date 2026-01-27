@@ -15,7 +15,7 @@ import awubot.util.Util;
 
 public class RobotPlayer {
     static int maxBytecode = 0;
-    static boolean hasInitialisedRobot = false;
+    public static boolean hasInitialisedRobot = false;
 
     public static void resetHasInitialisedRobot() {
         hasInitialisedRobot = false;
@@ -35,6 +35,7 @@ public class RobotPlayer {
                 Util.preTick();
                 CellTracker.preTick();
                 GlobalArray.preTick();
+                rc.resign();
                 RobotTracker.preTick();
                 EnemyManager.preTick();
                 Squeaker.preTick();

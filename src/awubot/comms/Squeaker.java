@@ -178,7 +178,7 @@ public class Squeaker {
     public static boolean nearRatKing() throws GameActionException {
         RobotInfo bots[] = rc.senseNearbyRobots(SQUEAK_RAD);
         for (RobotInfo bot : bots) {
-            if (bot.getType() == UnitType.RAT_KING) {
+            if (bot.getType() == UnitType.RAT_KING && bot.getTeam() == team) {
                 return true;
             }
         }

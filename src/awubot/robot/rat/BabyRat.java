@@ -5,12 +5,10 @@ import awubot.CellTracker;
 import awubot.Pathfinder;
 import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
-import awubot.comms.Squeaker;
 import awubot.robot.Strategy;
-import awubot.robot.rat.MinerStrategy;
 import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.goHome.AntColony;
 import awubot.util.Rng;
-import awubot.util.Util;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Profiler;
@@ -27,6 +25,7 @@ public class BabyRat {
         primaryStrategy = new MinerStrategy();
         combatStrategy = new CombatStrategy();
         Pathfinder.init();
+        AntColony.init();
     }
 
     public static void run() throws GameActionException {
@@ -35,6 +34,7 @@ public class BabyRat {
         shouldGlance = true;
 
         CellTracker.storeVisibleCells();
+        AntColony.preTick();
 
         tryPickUpCheese();
         tryTransferCheese();
@@ -101,6 +101,7 @@ public class BabyRat {
         for(int i = 0; i < 5; i++) {
             var kingLoc = GlobalArray.getRatKing(i);
             if(kingLoc != null && kingLoc.distanceSquaredTo(myLoc) <= 18) {
+                AntColony.reachedHome();
                 var dir = kingLoc.directionTo(myLoc).rotateLeft();
                 for(int j = 0; j < 3; j++) {
                     var loc = kingLoc.add(dir);
@@ -123,6 +124,7 @@ public class BabyRat {
         _rawMove(dir);
         tryPickUpCheese();
         tryTransferCheese();
+        AntColony.markCurrent();
         // IF TLE: optimise this
         if (!isLastMove) {
             RobotTracker.updateRobots();
@@ -145,6 +147,7 @@ public class BabyRat {
         _rawMove(myDir);
         tryPickUpCheese();
         tryTransferCheese();
+        AntColony.markCurrent();
         if (!isLastMove) {
             RobotTracker.updateRobots();
             if(Clock.getBytecodesLeft() >= 2000) CellTracker.storeVisibleCellsPostMoveForward();

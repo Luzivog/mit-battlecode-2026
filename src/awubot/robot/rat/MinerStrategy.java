@@ -7,11 +7,9 @@ import awubot.robot.Strategy;
 import awubot.comms.GlobalArray;
 import awubot.util.Rng;
 import awubot.util.string.FastIndexedIntSet;
+import awubot.robot.rat.goHome.GoHomeStrategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;

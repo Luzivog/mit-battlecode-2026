@@ -478,37 +478,6 @@ public class Pathfinder {
         return bug.pos;
     }
 
-    static int bfsPathLength = 0;
-    {% for i in range(MAX_PATH) %}
-    static MapLocation bfsPath{{i}};
-    {% endfor %}
-    static void appendPosition(MapLocation loc) {
-        switch(bfsPathLength) {
-            {% for i in range(MAX_PATH) %}
-            case {{i}} -> {
-                bfsPath{{i}} = loc;
-                bfsPathLength = {{i + 1}};
-            }
-            {% endfor %}
-            default -> {
-                assert false;
-            }
-        }
-    }
-    static MapLocation getRecentPos(int i) {
-        switch(bfsPathLength - i - 1) {
-            {% for i in range(MAX_PATH) %}
-            case {{i}} -> {
-                return bfsPath{{i}};
-            }
-            {% endfor %}
-            default -> {
-                assert false : "index out of range";
-                return null;
-            }
-        }
-    }
-
     public static boolean givenUp() {
         return bug != null && bug.givenUp;
     }
@@ -598,30 +567,70 @@ public class Pathfinder {
         return doBugnavBfs(target);
     }
 
-    private static long localPassableExceptAllies0, localPassableExceptAllies1;
-    private static long nearCat0, nearCat1;
-    private static void prepareBfsMasks() throws GameActionException {
-        Profiler.begin();
-        CellTracker.computeLocalBfsMasks();
-        {% macro writePos(pos, mask, val, boundsCheck) %}
-        {% set op = "|=" if val else "&= ~" %}
+    {% macro writePos(pos, mask, val, boundsCheck) %}
+    {% set op = "|=" if val else "&= ~" %}
+    {
+        var pos = {{pos}};
+        int xi = pos.x - myLoc.x + 5;
+        int yi = pos.y - myLoc.y + 5;
+        {% if boundsCheck %}
+        if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+        {% endif %}
         {
-            var pos = {{pos}};
-            int xi = pos.x - myLoc.x + 5;
-            int yi = pos.y - myLoc.y + 5;
-            {% if boundsCheck %}
-            if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
-            {% endif %}
-            {
-                int idx = yi * 11 + xi;
-                if(idx < 61) {
-                    {{mask}}0 {{op}} (1l << idx);
-                } else {
-                    {{mask}}1 {{op}} (1l << (idx - 61));
+            int idx = yi * 11 + xi;
+            if(idx < 61) {
+                {{mask}}0 {{op}} (1l << idx);
+            } else {
+                {{mask}}1 {{op}} (1l << (idx - 61));
+            }
+        }
+    }
+    {% endmacro %}
+
+    {% macro bfsIteration(mask, localPassable) %}
+    // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    {{mask}}0 |= ({{mask}}0 & 0xfbff7feffdffbffl) << 1;
+    {{mask}}1 |= ({{mask}}1 & 0x7feffdffbff7fefl) << 1;
+    {{mask}}0 |= ({{mask}}0 & 0x1f7feffdffbff7fel) >> 1;
+    {{mask}}1 |= ({{mask}}1 & 0xffdffbff7feffdel) >> 1;
+
+    {{mask}}1 |= (({{mask}}1 & 0x1ffffffffffffl) << 11) | ({{mask}}0 >> 50);
+    {{mask}}0 |= ({{mask}}0 & 0x3ffffffffffffl) << 11;
+    {{mask}}0 |= ({{mask}}0 >> 11) | (({{mask}}1 & 0x7ffl) << 50);
+    {{mask}}1 |= {{mask}}1 >> 11;
+    {{mask}}0 &= {{localPassable}}0;
+    {{mask}}1 &= {{localPassable}}1;
+    {% endmacro %}
+
+    private static int catPenalty(MapLocation loc) {
+        // prefer avoiding cat vision range; weight visible cats more heavily
+        int score = 0;
+        for(int i = 0; i < 4; i++) {
+            int penalty, angle;
+            if(i == time % 4) {
+                penalty = 3000;
+                angle = 180;
+            } else {
+                penalty = 1300;
+                angle = 360;
+            }
+            for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
+                var cat = RobotTracker.catHist[i][j];
+                if(cat == null) continue;
+                if(cat.location.isWithinDistanceSquared(loc, UnitType.CAT.visionConeRadiusSquared, cat.direction, angle, true)) {
+                    score += penalty;
                 }
             }
         }
-        {% endmacro %}
+        return score;
+    }
+
+    private static long localPassableExceptAllies0, localPassableExceptAllies1;
+    private static long nearCat0, nearCat1;
+    {% for mode in ["bugnav", "source"] %}
+    private static void prepareBfsMasks{{capitalise(mode)}}() throws GameActionException {
+        Profiler.begin();
+        CellTracker.computeLocalBfsMasks();
         localPassableExceptAllies0 = CellTracker.localPassable0;
         localPassableExceptAllies1 = CellTracker.localPassable1;
         // minkowski sum the walls for the rat king
@@ -653,6 +662,7 @@ public class Pathfinder {
             }
             {{ writePos("RobotTracker.allies[i]", "localPassableExceptAllies", 0, True) }}
         }
+        {% if mode != "source" %}
         // IF TLE: definitely optimise this (and the one in multisourceBfs)
         for(int i = 0; i < 5; i++) {
             var kingLoc = GlobalArray.getRatKing(i);
@@ -661,6 +671,7 @@ public class Pathfinder {
             {{ writePos("kingLoc.add(%s)" % dir, "localPassableExceptAllies", 0, True) }}
             {% endfor %}
         }
+        {% endif %}
         nearCat0 = nearCat1 = 0;
         for(int i = 0; i < 4; i++) {
             catLoop:
@@ -714,53 +725,24 @@ public class Pathfinder {
         localPassableExceptAllies0 &= ~(1l << 60);
     }
 
-    private static int catPenalty(MapLocation loc) {
-        // prefer avoiding cat vision range; weight visible cats more heavily
-        int score = 0;
-        for(int i = 0; i < 4; i++) {
-            int penalty, angle;
-            if(i == time % 4) {
-                penalty = 3000;
-                angle = 180;
-            } else {
-                penalty = 1300;
-                angle = 360;
-            }
-            for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
-                var cat = RobotTracker.catHist[i][j];
-                if(cat == null) continue;
-                if(cat.location.isWithinDistanceSquared(loc, UnitType.CAT.visionConeRadiusSquared, cat.direction, angle, true)) {
-                    score += penalty;
-                }
-            }
-        }
-        return score;
-    }
-
-    {% macro bfsIteration(mask, localPassable) %}
-    // we don't need to worry about the "seam" here because it's at the cell we are standing on
-    {{mask}}0 |= ({{mask}}0 & 0xfbff7feffdffbffl) << 1;
-    {{mask}}1 |= ({{mask}}1 & 0x7feffdffbff7fefl) << 1;
-    {{mask}}0 |= ({{mask}}0 & 0x1f7feffdffbff7fel) >> 1;
-    {{mask}}1 |= ({{mask}}1 & 0xffdffbff7feffdel) >> 1;
-
-    {{mask}}1 |= (({{mask}}1 & 0x1ffffffffffffl) << 11) | ({{mask}}0 >> 50);
-    {{mask}}0 |= ({{mask}}0 & 0x3ffffffffffffl) << 11;
-    {{mask}}0 |= ({{mask}}0 >> 11) | (({{mask}}1 & 0x7ffl) << 50);
-    {{mask}}1 |= {{mask}}1 >> 11;
-    {{mask}}0 &= {{localPassable}}0;
-    {{mask}}1 &= {{localPassable}}1;
-    {% endmacro %}
-
-    private static Direction doBugnavBfs(MapLocation target) throws GameActionException {
-        prepareBfsMasks();
+    {% if mode == "bugnav" %}
+    private static Direction doBugnavBfs(MapLocation target) throws GameActionException
+    {% else %}
+    public static Direction doBfs(MapLocation target) throws GameActionException
+    {% endif %}
+    {
+        prepareBfsMasks{{capitalise(mode)}}();
         // d{i}0 + d{i}1 is the mask of reachable within i steps
         long d00 = 0, d01 = 0;
         long d10 = 0, d11 = 0;
 
+        {% if mode == "source" %}
+        {{ writePos("target", "d0", 1, True) }}
+        {% endif %}
         boolean lastIteration = false;
         bfsLoop: {
             {% for i in range(MAX_PATH) %}
+            {% if mode == "bugnav" %}
             if(lastIteration) break bfsLoop;
             {% if i % 2 == 0 %}
             {
@@ -776,7 +758,8 @@ public class Pathfinder {
                 }
             }
             {% endif %}
-            // if(amAfter(1, 76)) {
+            {% endif %}
+            // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d{{i}}0, d{{i}}1);
             //     // CellTracker.printLocalMask(localPassableExceptAllies0, localPassableExceptAllies1);
@@ -819,7 +802,11 @@ public class Pathfinder {
                         || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
                         || isRatKing && CellTracker.isKingPassable(nextLoc))
                        && (isRatKing || !RobotTracker.kingSet.contains(nextLoc))) {
-                        double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
+                        double score = nextLoc.distanceSquaredTo(target)
+                            {% if mode == "bugnav" %}
+                            + nextLoc.distanceSquaredTo(bug.pos)
+                            {% endif %}
+                            ;
                         // prefer staying away from walls, this helps when changing direction
                         if(isRatKing) {
                             if(CellTracker.isPassable5x5(nextLoc)) {
@@ -909,6 +896,7 @@ public class Pathfinder {
         println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");
 
+        {% if mode == "bugnav" %}
         if(!isRatKing) {
             // move in a random direction (to make way for any allies blocking us)
             var dirs = new Direction[8];
@@ -923,8 +911,11 @@ public class Pathfinder {
 
             if(dirCount > 0) return dirs[Rng.mcg() % dirCount];
         }
+        {% endif %}
+
         return Direction.CENTER;
     }
+    {% endfor %}
 
     // returns a mask of good directions according to the default order
     public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
@@ -980,5 +971,26 @@ public class Pathfinder {
         {% endif %}
         {% endfor %}
         return new int[] {0, 1000};
+    }
+
+    public static long reach0, reach1;
+    public static void computeReachable() {
+        CellTracker.computeLocalBfsMasks();
+        var localPassable0 = CellTracker.localPassable0;
+        var localPassable1 = CellTracker.localPassable1;
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+            var ally = RobotTracker.allies[i];
+            {{ writePos("ally", "localPassable", 0, True) }}
+        }
+        reach0 = 0x807000000000000l & localPassable0;
+        reach1 = 0xe01 & localPassable1;
+        {% for i in range(5) %}
+        // if(amAfter(12903, 468)) {
+        //     indicatorString = "";
+        //     CellTracker.printLocalMask(reach0, reach1);
+        //     Clock.yield();
+        // }
+        {{ bfsIteration("reach", "localPassable") }}
+        {% endfor %}
     }
 }

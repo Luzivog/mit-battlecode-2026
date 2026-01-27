@@ -12,7 +12,7 @@ import awubot.comms.GlobalArray;
 
 // IF TLE: lower these constants (especially MAX_BUG_ITERS)
 {% set MAX_BUG_ITERS = 5 %}
-{% set MAX_PATH = 14 %}
+{% set MAX_PATH = 13 %}
 
 class Config {
     static boolean dirtAllowed = false;
@@ -532,7 +532,7 @@ public class Pathfinder {
         }
         int shade = 255;
         // Profiler.begin();
-        if(!isRatKing && (lastDist < {{(MAX_PATH / 4) | int}} || RobotTracker.allySet.contains(bug.pos)) || RobotTracker.isInsideKing(bug.pos)) {
+        if(!isRatKing && (lastDist < {{(MAX_PATH / 3) | int}} || RobotTracker.allySet.contains(bug.pos)) || RobotTracker.isInsideKing(bug.pos)) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
@@ -816,8 +816,8 @@ public class Pathfinder {
                     var nextLoc = myLoc.add({{dir}});
                     boolean isDirt = false;
                     if((rc.canMove({{dir}})
-                        || (isDirt = CellTracker.isDirt(nextLoc))
-                        && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST)
+                        || (isDirt = CellTracker.isDirt(nextLoc)) && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST
+                        || isRatKing && CellTracker.isKingPassable(nextLoc))
                        && (isRatKing || !RobotTracker.isInsideKing(nextLoc))) {
                         double score = nextLoc.distanceSquaredTo(target) + nextLoc.distanceSquaredTo(bug.pos);
                         // prefer staying away from walls, this helps when changing direction

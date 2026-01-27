@@ -64,10 +64,6 @@ public class RatKing {
 
     private static void tryUnburyIfStuck() throws GameActionException {
         if(!rc.isActionReady()) return;
-        
-        // indicate("hi");
-
-        int numRats = (rc.getCurrentRatCost() - 10) * 2/5;
 
         boolean completelyStuck = true;
         for (int dx = -2; dx <= 2; dx++) {
@@ -86,13 +82,7 @@ public class RatKing {
             }
         }
 
-        
-
-        //indicate("numRats: " + numRats + ", completelyStuck: " + completelyStuck);
-        
-        
-        
-        if(numRats <= 10 && !completelyStuck) return;
+        if(!completelyStuck) return;
 
         int midVertDir = myLoc.y < mapHeight / 2 ? 1 : -1;
         int midHorzDir = myLoc.x < mapWidth / 2 ? 1 : -1;
@@ -226,5 +216,5 @@ public class RatKing {
         }
     }
 
-    
+
 }

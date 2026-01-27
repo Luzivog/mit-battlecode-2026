@@ -36,7 +36,6 @@ public class RatKing {
 
         RobotTracker.reset();
 
-        tryPickUpCheese();
         tryUnburyIfStuck();
 
         indicate("before primary strat: " + Clock.getBytecodeNum());
@@ -44,18 +43,8 @@ public class RatKing {
         primaryStrategy.runTick();
     }
 
-    public static void tryPickUpCheese() throws GameActionException {
-        for(var dir : allDirections) {
-            var loc = myLoc.add(dir);
-            if(rc.canPickUpCheese(loc)) {
-                rc.pickUpCheese(loc);
-            }
-        }
-    }
-
     public static void rawMove(Direction dir) throws GameActionException {
         _rawMove(dir);
-        tryPickUpCheese();
     }
 
     public static void turn(Direction dir) throws GameActionException {

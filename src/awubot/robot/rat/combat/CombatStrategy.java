@@ -101,11 +101,9 @@ public class CombatStrategy extends Strategy {
     }
 
     public boolean runTick() throws GameActionException {
-        Profiler.push();
         try {
             return _runTick();
         } finally {
-            Profiler.pop("combat strategy");
         }
     }
 
@@ -162,11 +160,9 @@ public class CombatStrategy extends Strategy {
             }
         }
 
-        Profiler.push();
         try {
             precomp();
         } finally {
-            Profiler.pop("precomp");
         }
 
         isLastMove = true;

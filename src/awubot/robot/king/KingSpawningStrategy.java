@@ -48,13 +48,18 @@ public class KingSpawningStrategy extends Strategy {
                 targetNeighbours = cnt;
             }
         }
-        if (target == null) target = new MapLocation(mapWidth / 2, mapHeight / 2);
-        else {
+        if (target == null) {
+            // even out spawning
+            if (GlobalArray.ratCounter % GlobalArray.countRatKings() == GlobalArray.getIndexAmongAliveRatKings()) {
+                target = new MapLocation(mapWidth / 2, mapHeight / 2);
+            }
+            
+        } else {
             indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
             thresh += 20;
         }
 
-        if (rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
+        if (target != null && rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
         }
         return true;

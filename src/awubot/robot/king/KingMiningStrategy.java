@@ -104,11 +104,52 @@ public class KingMiningStrategy extends Strategy {
         return true;
     }
 
+    // made up a better function for collecting cheese
     public boolean tryCollectCheese() throws GameActionException {
-        for (var dir : allDirections) {
-            var loc = myLoc.add(dir);
-            if (rc.canPickUpCheese(loc)) {
-                rc.pickUpCheese(loc);
+        if (!foundCheeseMine) return false;
+        indicate("trying to collect " + mineTarget);
+        MapLocation nearestCheese = null;
+        for (int x = mineTarget.x - 4; x <= mineTarget.x + 5; x++) {
+            for (int y = mineTarget.y - 4; y <= mineTarget.y + 5; y++) {
+                MapLocation checkLoc = new MapLocation(x, y);
+                if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).getCheeseAmount() > 0) {
+                    if (nearestCheese == null || myLoc.distanceSquaredTo(checkLoc) < myLoc.distanceSquaredTo(nearestCheese)) {
+                        nearestCheese = checkLoc;
+                    }
+                }
+            }
+        }
+        if (nearestCheese != null) {
+            if (!rc.canPickUpCheese(nearestCheese)) {
+                Direction dir = Pathfinder.getMove(nearestCheese);
+                indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
+                if (!rc.canMove(dir)) {
+                    digDirtInDirection(dir);
+                    return true;
+                } else {
+                    RatKing.rawMove(dir);
+                    return true;
+                }
+            } else {
+                rc.pickUpCheese(nearestCheese);
+            }
+        }
+        MapLocation resetLoc = mineTarget;
+        for (int x = mineTarget.x; x <= mineTarget.x + 1; x++) {
+            for (int y = mineTarget.y; y <= mineTarget.y + 1; y++) {
+                MapLocation checkLoc = new MapLocation(x, y);
+                if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).hasCheeseMine()) {
+                    resetLoc = checkLoc;
+                }
+            }
+        }
+        if (!myLoc.equals(resetLoc)) {
+            Direction dir = Pathfinder.getMove(resetLoc);
+            if (!rc.canMove(dir)) {
+                digDirtInDirection(dir);
+                return true;
+            } else {
+                RatKing.rawMove(dir);
                 return true;
             }
         }

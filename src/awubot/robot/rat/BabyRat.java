@@ -7,7 +7,6 @@ import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 import awubot.comms.Squeaker;
 import awubot.robot.Strategy;
-import awubot.robot.rat.CatLureStrategy2;
 import awubot.robot.rat.MinerStrategy;
 import awubot.robot.rat.combat.CombatStrategy;
 import awubot.util.Rng;
@@ -149,6 +148,30 @@ public class BabyRat {
         if (!isLastMove) {
             RobotTracker.updateRobots();
             if(Clock.getBytecodesLeft() >= 2000) CellTracker.storeVisibleCellsPostMoveForward();
+        }
+    }
+
+    public static void autoMove(Direction dir) throws GameActionException {
+        if(dir == Direction.CENTER) return;
+        if(rc.canTurn()) turn(dir);
+        var nextLoc = myLoc.add(dir);
+        if(rc.onTheMap(nextLoc) && canSense(myLoc, nextLoc, myDir) && rc.senseMapInfo(nextLoc).isDirt()) {
+            if(rc.canRemoveDirt(nextLoc)) rc.removeDirt(nextLoc);
+            else return;
+        }
+        if(dir == myDir) {
+            // bail out if we see that we will walk into a cat
+            for(int i = RobotTracker.numCats - 1; i >= 0; i--) {
+                var cat = RobotTracker.sortedCats[i];
+                if(cat.location.isWithinDistanceSquared(nextLoc, 5, cat.direction, 180, true)) {
+                    indicate("avoiding cat at " + nextLoc);
+                    return;
+                }
+            }
+            if(rc.canMoveForward()) rawMove();
+        } else {
+            // if we can't turn, then strafe
+            if(rc.canMove(dir)) rawMove(dir);
         }
     }
 

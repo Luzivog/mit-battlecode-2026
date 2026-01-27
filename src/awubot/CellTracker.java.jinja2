@@ -6,6 +6,7 @@ import awubot.util.Profiler;
 import awubot.comms.Squeaker;
 import static awubot.util.Util.*;
 import static awubot.Game.*;
+import awubot.robot.king.RatKing;
 
 public class CellTracker {
     /*
@@ -104,8 +105,7 @@ public class CellTracker {
         }
     }
 
-    public static boolean isKingPassable(MapLocation loc) {
-        // 5x5 hitbox to avoid clogging
+    public static boolean isPassable5x5(MapLocation loc) {
         if(loc.y >= mapHeight - 2 || loc.x < 2 || loc.x >= mapWidth - 2) return false;
         switch(loc.y) {
             {% for i in range(2, MAX_MAP_SIZE - 2) %}
@@ -122,6 +122,32 @@ public class CellTracker {
             default -> {
                 return false;
             }
+        }
+    }
+
+    public static boolean isPassable3x3(MapLocation loc) {
+        if(loc.y >= mapHeight - 1 || loc.x < 1 || loc.x >= mapWidth - 1) return false;
+        switch(loc.y) {
+            {% for i in range(1, MAX_MAP_SIZE - 1) %}
+            case {{i}} -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable{{i}}
+                        & passable{{i - 1}}
+                        & passable{{i + 1}}) == rowMask;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    public static boolean isKingPassable(MapLocation loc) {
+        if(RatKing.is5x5) {
+            return isPassable5x5(loc);
+        } else {
+            return isPassable3x3(loc);
         }
     }
 

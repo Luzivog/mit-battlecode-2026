@@ -73,7 +73,6 @@ public class RobotTracker {
         // kind of a hack job
         allyCount = 0;
         allySet = new FastMapLocationSet();
-        kingSet = new FastMapLocationSet();
 
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
@@ -152,7 +151,7 @@ public class RobotTracker {
 
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[120];
-    public static FastMapLocationSet allySet, kingSet;
+    public static FastMapLocationSet allySet;
     public static void addAlly(MapLocation loc) {
         if(!allySet.contains(loc)) {
             allies[allyCount++] = loc;
@@ -167,21 +166,18 @@ public class RobotTracker {
                 addAlly(robot.location);
             }
         }
+    }
+
+    public static boolean isInsideKing(MapLocation loc) throws GameActionException {
         {% for i in range(5) %}
         {
-            var kingPos = GlobalArray.getRatKing({{i}});
-            if(kingPos != null) {
-                addAlly(kingPos);
-                kingSet.add(kingPos);
-                {% for dir in directions %}
-                {
-                    var adj = kingPos.add({{dir}});
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {% endfor %}
+            var kingLoc = GlobalArray.getRatKing({{i}});
+            if(kingLoc != null) {
+                var distsq = GlobalArray.isKingExpanded({{i}}) ? 8 : 2;
+                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
             }
         }
         {% endfor %}
+        return false;
     }
 }

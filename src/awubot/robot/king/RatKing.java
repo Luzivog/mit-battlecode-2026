@@ -8,6 +8,7 @@ import static awubot.Game.mapWidth;
 import static awubot.Game.myLoc;
 import static awubot.Game.rc;
 import awubot.robot.Strategy;
+import awubot.RobotTracker;
 import static awubot.util.Util.allDirections;
 import static awubot.util.Util.directions;
 import static awubot.util.Util.indicate;
@@ -19,14 +20,21 @@ import battlecode.common.MapLocation;
 
 public class RatKing {
     public static Strategy primaryStrategy;
+    public static boolean is5x5;
+    public static boolean spawnedThisTurn;
 
     public static void init() {
         primaryStrategy = new RatKingStrategy();
+        is5x5 = false;
     }
 
     public static void run() throws GameActionException {
+        indicate("5x5: " + is5x5);
+        spawnedThisTurn = false;
         indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
         CellTracker.storeVisibleCellsKing();
+
+        RobotTracker.reset();
 
         tryPickUpCheese();
         tryUnburyIfStuck();

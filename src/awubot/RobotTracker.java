@@ -42,7 +42,6 @@ import awubot.util.Profiler;public class RobotTracker {
         // kind of a hack job
         allyCount = 0;
         allySet = new FastMapLocationSet();
-        kingSet = new FastMapLocationSet();
 
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
@@ -1407,7 +1406,6 @@ import awubot.util.Profiler;public class RobotTracker {
         // kind of a hack job
         allyCount = 0;
         allySet = new FastMapLocationSet();
-        kingSet = new FastMapLocationSet();
 
         // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
@@ -2780,7 +2778,7 @@ import awubot.util.Profiler;public class RobotTracker {
 
     public static int allyCount = 0;
     public static MapLocation[] allies = new MapLocation[120];
-    public static FastMapLocationSet allySet, kingSet;
+    public static FastMapLocationSet allySet;
     public static void addAlly(MapLocation loc) {
         if(!allySet.contains(loc)) {
             allies[allyCount++] = loc;
@@ -2795,240 +2793,44 @@ import awubot.util.Profiler;public class RobotTracker {
                 addAlly(robot.location);
             }
         }
+    }
+
+    public static boolean isInsideKing(MapLocation loc) throws GameActionException {
         {
-            var kingPos = GlobalArray.getRatKing(0);
-            if(kingPos != null) {
-                addAlly(kingPos);
-                kingSet.add(kingPos);
-                {
-                    var adj = kingPos.add(Direction.NORTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.EAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.WEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
+            var kingLoc = GlobalArray.getRatKing(0);
+            if(kingLoc != null) {
+                var distsq = GlobalArray.isKingExpanded(0) ? 8 : 2;
+                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
             }
         }
         {
-            var kingPos = GlobalArray.getRatKing(1);
-            if(kingPos != null) {
-                addAlly(kingPos);
-                kingSet.add(kingPos);
-                {
-                    var adj = kingPos.add(Direction.NORTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.EAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.WEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
+            var kingLoc = GlobalArray.getRatKing(1);
+            if(kingLoc != null) {
+                var distsq = GlobalArray.isKingExpanded(1) ? 8 : 2;
+                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
             }
         }
         {
-            var kingPos = GlobalArray.getRatKing(2);
-            if(kingPos != null) {
-                addAlly(kingPos);
-                kingSet.add(kingPos);
-                {
-                    var adj = kingPos.add(Direction.NORTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.EAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.WEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
+            var kingLoc = GlobalArray.getRatKing(2);
+            if(kingLoc != null) {
+                var distsq = GlobalArray.isKingExpanded(2) ? 8 : 2;
+                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
             }
         }
         {
-            var kingPos = GlobalArray.getRatKing(3);
-            if(kingPos != null) {
-                addAlly(kingPos);
-                kingSet.add(kingPos);
-                {
-                    var adj = kingPos.add(Direction.NORTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.EAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.WEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
+            var kingLoc = GlobalArray.getRatKing(3);
+            if(kingLoc != null) {
+                var distsq = GlobalArray.isKingExpanded(3) ? 8 : 2;
+                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
             }
         }
         {
-            var kingPos = GlobalArray.getRatKing(4);
-            if(kingPos != null) {
-                addAlly(kingPos);
-                kingSet.add(kingPos);
-                {
-                    var adj = kingPos.add(Direction.NORTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.EAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHEAST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTH);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.SOUTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.WEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
-                {
-                    var adj = kingPos.add(Direction.NORTHWEST);
-                    addAlly(adj);
-                    kingSet.add(adj);
-                }
+            var kingLoc = GlobalArray.getRatKing(4);
+            if(kingLoc != null) {
+                var distsq = GlobalArray.isKingExpanded(4) ? 8 : 2;
+                if(loc.distanceSquaredTo(kingLoc) <= distsq) return true;
             }
         }
+        return false;
     }
 }

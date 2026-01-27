@@ -58,7 +58,7 @@ public class FormationStrategy extends Strategy {
                 return true;
             }
         }
-        Pathfinder.makeMove(formationTarget);
+        BabyRat.autoMove(Pathfinder.getMove(formationTarget));
         return true;
     }
 
@@ -98,7 +98,7 @@ public class FormationStrategy extends Strategy {
         if (myLoc.equals(formationTarget)) return;
 
         if (myLoc.distanceSquaredTo(formationTarget) > 2 || shouldBecomeCentre()) {
-            Pathfinder.makeMove(formationTarget);
+            BabyRat.autoMove(Pathfinder.getMove(formationTarget));
             return;
         }
     }

@@ -279,7 +279,7 @@ public class KingCombatStrategy extends Strategy {
                 move = Direction.NORTHWEST;
             }
             indicate("evading");
-            if(move != Direction.CENTER) Pathfinder.makeMove(move);
+            if(move != Direction.CENTER) RatKing.rawMove(move);
         }
         if (RobotTracker.numCats > 0) {
             placeDefensiveDirt();

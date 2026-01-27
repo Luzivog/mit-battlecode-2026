@@ -22,7 +22,7 @@ public class TraverseStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         if(rc.getLocation().distanceSquaredTo(target) <= distSquared) return false;
         indicate("TRAVELLING TO " + target);
-        Pathfinder.makeMove(target);
+        BabyRat.autoMove(Pathfinder.getMove(target));
         if(Pathfinder.givenUp()) {
             indicate("GIVEN UP ON " + target);
             return false;

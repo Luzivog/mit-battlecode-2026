@@ -1,8 +1,6 @@
 package awubot.robot.king;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapInfo;
-import battlecode.common.MapLocation;
+import battlecode.common.*;
 import awubot.Game;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
@@ -10,15 +8,15 @@ import awubot.robot.Strategy;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
+import awubot.CellTracker;
+
 // TODO: clean up
 
 public class KingMiningStrategy extends Strategy {
-    private static final int STUCK_THRESHOLD = 3;
 
     private MapLocation mineTarget = null;
     private MapLocation centerTarget;
     private boolean foundCheeseMine = false;
-    private int stuckCounter = 0;
 
     private final int tabooMinX;
     private final int tabooMaxX;
@@ -86,6 +84,7 @@ public class KingMiningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
+        indicate("stuckTurns: " + stuckTurns);
         scanForCheeseMines();
 
         if (!foundCheeseMine) {
@@ -145,8 +144,29 @@ public class KingMiningStrategy extends Strategy {
         return false;
     }
 
+    private static int stuckTurns = 0;
+    private static boolean pending5x5 = false;
+    private void moveIfBugTargetFar(MapLocation target) throws GameActionException {
+        var dir = Pathfinder.getMove(target);
+        if(Pathfinder.getBugPos().distanceSquaredTo(myLoc) > 2) {
+            if(dir != Direction.CENTER && rc.canMove(dir)) {
+                RatKing.rawMove(dir);
+                stuckTurns = 0;
+                if(pending5x5 && CellTracker.isPassable5x5(myLoc)) {
+                    RatKing.is5x5 = true;
+                }
+            } else if(!RatKing.spawnedThisTurn) {
+                stuckTurns++;
+                if(stuckTurns == 17) {
+                    GlobalArray.expandKing();
+                    pending5x5 = true;
+                }
+            }
+        }
+    }
+
     private void moveTowardCenter() throws GameActionException {
-        Pathfinder.makeMove(centerTarget);
+        moveIfBugTargetFar(centerTarget);
     }
 
     private void moveTowardMine() throws GameActionException {
@@ -165,10 +185,10 @@ public class KingMiningStrategy extends Strategy {
                 }
             }
             if (closestLoc == null) return;
-            Pathfinder.makeMove(closestLoc);
+            moveIfBugTargetFar(closestLoc);
             return;
         }
-        Pathfinder.makeMove(mineTarget);
+        moveIfBugTargetFar(mineTarget);
     }
 
     private void selectFromKnownMines() throws GameActionException {

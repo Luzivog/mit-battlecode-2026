@@ -8,6 +8,7 @@ import awubot.util.Profiler;
 import awubot.comms.Squeaker;
 import static awubot.util.Util.*;
 import static awubot.Game.*;
+import awubot.robot.king.RatKing;
 
 public class CellTracker {
     /*
@@ -1787,8 +1788,7 @@ public class CellTracker {
         }
     }
 
-    public static boolean isKingPassable(MapLocation loc) {
-        // 5x5 hitbox to avoid clogging
+    public static boolean isPassable5x5(MapLocation loc) {
         if(loc.y >= mapHeight - 2 || loc.x < 2 || loc.x >= mapWidth - 2) return false;
         switch(loc.y) {
             case 2 -> {
@@ -2298,6 +2298,429 @@ public class CellTracker {
             default -> {
                 return false;
             }
+        }
+    }
+
+    public static boolean isPassable3x3(MapLocation loc) {
+        if(loc.y >= mapHeight - 1 || loc.x < 1 || loc.x >= mapWidth - 1) return false;
+        switch(loc.y) {
+            case 1 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable1
+                        & passable0
+                        & passable2) == rowMask;
+            }
+            case 2 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable2
+                        & passable1
+                        & passable3) == rowMask;
+            }
+            case 3 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable3
+                        & passable2
+                        & passable4) == rowMask;
+            }
+            case 4 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable4
+                        & passable3
+                        & passable5) == rowMask;
+            }
+            case 5 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable5
+                        & passable4
+                        & passable6) == rowMask;
+            }
+            case 6 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable6
+                        & passable5
+                        & passable7) == rowMask;
+            }
+            case 7 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable7
+                        & passable6
+                        & passable8) == rowMask;
+            }
+            case 8 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable8
+                        & passable7
+                        & passable9) == rowMask;
+            }
+            case 9 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable9
+                        & passable8
+                        & passable10) == rowMask;
+            }
+            case 10 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable10
+                        & passable9
+                        & passable11) == rowMask;
+            }
+            case 11 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable11
+                        & passable10
+                        & passable12) == rowMask;
+            }
+            case 12 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable12
+                        & passable11
+                        & passable13) == rowMask;
+            }
+            case 13 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable13
+                        & passable12
+                        & passable14) == rowMask;
+            }
+            case 14 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable14
+                        & passable13
+                        & passable15) == rowMask;
+            }
+            case 15 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable15
+                        & passable14
+                        & passable16) == rowMask;
+            }
+            case 16 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable16
+                        & passable15
+                        & passable17) == rowMask;
+            }
+            case 17 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable17
+                        & passable16
+                        & passable18) == rowMask;
+            }
+            case 18 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable18
+                        & passable17
+                        & passable19) == rowMask;
+            }
+            case 19 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable19
+                        & passable18
+                        & passable20) == rowMask;
+            }
+            case 20 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable20
+                        & passable19
+                        & passable21) == rowMask;
+            }
+            case 21 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable21
+                        & passable20
+                        & passable22) == rowMask;
+            }
+            case 22 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable22
+                        & passable21
+                        & passable23) == rowMask;
+            }
+            case 23 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable23
+                        & passable22
+                        & passable24) == rowMask;
+            }
+            case 24 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable24
+                        & passable23
+                        & passable25) == rowMask;
+            }
+            case 25 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable25
+                        & passable24
+                        & passable26) == rowMask;
+            }
+            case 26 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable26
+                        & passable25
+                        & passable27) == rowMask;
+            }
+            case 27 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable27
+                        & passable26
+                        & passable28) == rowMask;
+            }
+            case 28 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable28
+                        & passable27
+                        & passable29) == rowMask;
+            }
+            case 29 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable29
+                        & passable28
+                        & passable30) == rowMask;
+            }
+            case 30 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable30
+                        & passable29
+                        & passable31) == rowMask;
+            }
+            case 31 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable31
+                        & passable30
+                        & passable32) == rowMask;
+            }
+            case 32 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable32
+                        & passable31
+                        & passable33) == rowMask;
+            }
+            case 33 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable33
+                        & passable32
+                        & passable34) == rowMask;
+            }
+            case 34 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable34
+                        & passable33
+                        & passable35) == rowMask;
+            }
+            case 35 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable35
+                        & passable34
+                        & passable36) == rowMask;
+            }
+            case 36 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable36
+                        & passable35
+                        & passable37) == rowMask;
+            }
+            case 37 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable37
+                        & passable36
+                        & passable38) == rowMask;
+            }
+            case 38 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable38
+                        & passable37
+                        & passable39) == rowMask;
+            }
+            case 39 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable39
+                        & passable38
+                        & passable40) == rowMask;
+            }
+            case 40 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable40
+                        & passable39
+                        & passable41) == rowMask;
+            }
+            case 41 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable41
+                        & passable40
+                        & passable42) == rowMask;
+            }
+            case 42 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable42
+                        & passable41
+                        & passable43) == rowMask;
+            }
+            case 43 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable43
+                        & passable42
+                        & passable44) == rowMask;
+            }
+            case 44 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable44
+                        & passable43
+                        & passable45) == rowMask;
+            }
+            case 45 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable45
+                        & passable44
+                        & passable46) == rowMask;
+            }
+            case 46 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable46
+                        & passable45
+                        & passable47) == rowMask;
+            }
+            case 47 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable47
+                        & passable46
+                        & passable48) == rowMask;
+            }
+            case 48 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable48
+                        & passable47
+                        & passable49) == rowMask;
+            }
+            case 49 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable49
+                        & passable48
+                        & passable50) == rowMask;
+            }
+            case 50 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable50
+                        & passable49
+                        & passable51) == rowMask;
+            }
+            case 51 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable51
+                        & passable50
+                        & passable52) == rowMask;
+            }
+            case 52 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable52
+                        & passable51
+                        & passable53) == rowMask;
+            }
+            case 53 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable53
+                        & passable52
+                        & passable54) == rowMask;
+            }
+            case 54 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable54
+                        & passable53
+                        & passable55) == rowMask;
+            }
+            case 55 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable55
+                        & passable54
+                        & passable56) == rowMask;
+            }
+            case 56 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable56
+                        & passable55
+                        & passable57) == rowMask;
+            }
+            case 57 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable57
+                        & passable56
+                        & passable58) == rowMask;
+            }
+            case 58 -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable58
+                        & passable57
+                        & passable59) == rowMask;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    public static boolean isKingPassable(MapLocation loc) {
+        if(RatKing.is5x5) {
+            return isPassable5x5(loc);
+        } else {
+            return isPassable3x3(loc);
         }
     }
 

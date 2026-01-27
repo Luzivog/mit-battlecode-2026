@@ -44,7 +44,7 @@ public class GoHomeStrategy extends Strategy {
         }
 
         rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
-        Pathfinder.makeMove(kingLoc);
+        BabyRat.autoMove(Pathfinder.getMove(kingLoc));
 
                 if(rc.getRawCheese() != 0 && rc.canTurn()) {
             var nearestKingLoc = GlobalArray.nearestRatKing;

@@ -3,8 +3,6 @@ package awubot.robot.king;
 import battlecode.common.*;
 import awubot.robot.Strategy;
 import awubot.util.Rng;
-
-import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -79,8 +77,10 @@ public class KingSpawningStrategy extends Strategy {
         if (best != null) {
             rc.turn(best.directionTo(target));
             rc.buildRat(best);
+            RobotTracker.addAlly(best);
             GlobalArray.registerSpawnedRat(best, Rng.mcg() & ((1 << 13) - 1));
             numSpawned++;
+            RatKing.spawnedThisTurn = true;
         }
     }
 }

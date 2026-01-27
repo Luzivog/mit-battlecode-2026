@@ -75,10 +75,19 @@ public final class TryFight {
     }
 
     private static void selectMoves() throws GameActionException {
-        {% for d in allDirections %}
-        move{{ dir_short_map[d] }}();
-        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
-        {% endfor %} 
+        switch (myDir.ordinal()) {
+            {% for ord in range(8) %}
+            case {{ ord }} -> {
+                {% set facing = directions[ord] %}
+                {% set ordered_dirs = get_movements(facing) %}
+                {% for move_dir, is_wide_related in ordered_dirs %}
+                    move{{ dir_short_map[move_dir] }}();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                {% endfor %}
+            }
+            {% endfor %}
+            default -> { }
+        }
     }
 
     {% for move_dir in allDirections %}

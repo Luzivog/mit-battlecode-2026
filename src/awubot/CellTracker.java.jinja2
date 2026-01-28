@@ -158,7 +158,23 @@ public class CellTracker {
                 }
                 if((seen{{i}} & 1l << locX) == 0l) {
                     seen{{i}} |= 1l << locX;
-                    if(info.hasCheeseMine()) Squeaker.registerMine(loc);
+                    if(info.hasCheeseMine()) {
+                        Pathfinder.computeReachableIgnoreAllies();
+                        int xi = loc.x - myLocX + 5;
+                        int yi = pos.y - myLocY + 5;
+                        {
+                            int idx = yi * 11 + xi;
+                            if(idx < 61) {
+                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
+                                    Squeaker.registerMine(loc);
+                                }
+                            } else {
+                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
+                                    Squeaker.registerMine(loc);
+                                }
+                            }
+                        }
+                    }
                     if(!info.isWall()) {
                         passable{{i}} |= 1l << locX;
                     }

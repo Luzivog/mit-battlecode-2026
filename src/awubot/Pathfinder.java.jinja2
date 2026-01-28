@@ -574,8 +574,8 @@ public class Pathfinder {
     {% set op = "|=" if val else "&= ~" %}
     {
         var pos = {{pos}};
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {% if boundsCheck %}
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {% endif %}
@@ -978,6 +978,7 @@ public class Pathfinder {
 
     public static long reach0, reach1;
     public static void computeReachable() {
+        reachableCacheLoc = null;
         CellTracker.computeLocalBfsMasks();
         var localPassable0 = CellTracker.localPassable0;
         var localPassable1 = CellTracker.localPassable1;
@@ -993,6 +994,22 @@ public class Pathfinder {
         //     CellTracker.printLocalMask(reach0, reach1);
         //     Clock.yield();
         // }
+        {{ bfsIteration("reach", "localPassable") }}
+        {% endfor %}
+    }
+
+    private MapLocation reachableCacheLoc;
+    private Direction reachableCacheDir;
+    public static void computeReachableIgnoreAllies() {
+        if(myLoc == reachableCacheLoc && myDir == reachableCacheDir) {
+            return;
+        }
+        CellTracker.computeLocalBfsMasks();
+        var localPassable0 = CellTracker.localPassable0;
+        var localPassable1 = CellTracker.localPassable1;
+        reach0 = 0x807000000000000l & localPassable0;
+        reach1 = 0xe01 & localPassable1;
+        {% for i in range(6) %}
         {{ bfsIteration("reach", "localPassable") }}
         {% endfor %}
     }

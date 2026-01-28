@@ -38,7 +38,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     public KingFormationCoordinatorStrategy(KingMiningStrategy aMiningStrategy) {
-        MIN_DIST_FROM_KINGS_SQ = Math.max(300, mapWidth * mapHeight / 7);
+        MIN_DIST_FROM_KINGS_SQ = Math.max(400, mapWidth * mapHeight / 5);
         miningStrategy = aMiningStrategy;
 
         if (mapWidth < 40 && mapHeight < 40) {
@@ -195,9 +195,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
                 indicate("D");
                 if(mapWidth * mapHeight > 1200) {
-                    if (numRats < 16 * myKingCount) return;
+                    if (numRats < 20 * myKingCount) return;
                 } else {
-                    if (numRats < 16 * myKingCount - 4) return;
+                    if (numRats < 20 * myKingCount - 4) return;
                 }
             } else {
                 if (numRats < 12) return;
@@ -259,11 +259,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             }
         }
 
-        if (rc.canSenseLocation(aMine)) {
-            myScore += scoreNearbyAlliedRats(aMine, 49);
-
-            myScore += scoreNearbyEnemyRats(aMine, 49);
-        }
+        myScore -= aMine.distanceSquaredTo(new MapLocation(mapWidth / 2, mapHeight / 2));
 
         int myDistFromSelf = myLoc.distanceSquaredTo(aMine);
         if (myDistFromSelf > 400) {
@@ -271,37 +267,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
 
         return myScore;
-    }
-
-    private int scoreNearbyAlliedRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
-        int myCount = 0;
-        int allyLimit = RobotTracker.numAllies;
-        if (RobotTracker.sortedAllies != null) allyLimit = Math.min(allyLimit, RobotTracker.sortedAllies.length);
-
-        for (int i = 0; i < allyLimit; i++) {
-            RobotInfo myRobot = RobotTracker.sortedAllies[i];
-            if (myRobot == null) continue;
-            if (myRobot.getType() != UnitType.BABY_RAT) continue;
-            if (myRobot.location.distanceSquaredTo(aCenter) > aRadiusSq) continue;
-            myCount += 20;
-        }
-        return myCount;
-    }
-
-    private int scoreNearbyEnemyRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
-        int myCount = 0;
-        int enemyLimit = RobotTracker.numEnemies;
-        if (RobotTracker.sortedEnemies != null) enemyLimit = Math.min(enemyLimit, RobotTracker.sortedEnemies.length);
-
-        for (int i = 0; i < enemyLimit; i++) {
-            RobotInfo myRobot = RobotTracker.sortedEnemies[i];
-            if (myRobot == null) continue;
-            if (myRobot.getType() == UnitType.RAT_KING) myCount -= 5000;
-            if (myRobot.getType() != UnitType.BABY_RAT) continue;
-            if (myRobot.location.distanceSquaredTo(aCenter) > aRadiusSq) continue;
-            myCount -= 15;
-        }
-        return myCount;
     }
 
     private MapLocation findFormationSpotNearMine(MapLocation aMine) throws GameActionException {

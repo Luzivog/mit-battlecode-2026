@@ -10,7 +10,7 @@ import awubot.robot.Strategy;
 import awubot.robot.rat.combat.CombatStrategy;
 import awubot.robot.rat.goHome.AntColony;
 import awubot.util.Rng;
-import awubot_quals.comms.EnemyManager;
+import awubot.comms.EnemyManager;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;

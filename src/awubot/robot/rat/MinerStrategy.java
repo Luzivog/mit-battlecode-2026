@@ -52,6 +52,12 @@ public class MinerStrategy extends Strategy {
 
         if(tryStrategy(cheeseStrategy)) return true;
 
+        if (rc.getRawCheese() >= 20) {
+            goHomeStrategy = new GoHomeStrategy();
+            goHomeStrategy.runTick();
+            return true;
+        }
+
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
@@ -78,7 +84,7 @@ public class MinerStrategy extends Strategy {
         boolean nearKing = GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 49;
         var mines = new StringBuilder();
         outerLoop:
-        for(int i = Game.knownCheeseMines.set.length() - 1; i >= 0; i--) {
+        for (int i = Game.knownCheeseMines.set.length() - 1; i >= 0; i--) {
             var iloc = Game.knownCheeseMines.at(i);
             var loc = decode2x2(iloc);
             if(canSense(myLoc, loc, myDir)) continue;
@@ -89,11 +95,12 @@ public class MinerStrategy extends Strategy {
                     continue outerLoop;
                 }
             }
-            if(nearKing) {
+            int mul = GlobalArray.globalCheeseMines.contains(iloc) ? 10 : 1;
+            if (nearKing) {
                 // mines.append((char)iloc);
-                mines.repeat(iloc, (int) (Math.sqrt(GlobalArray.nearestRatKing.distanceSquaredTo(loc))));
+                mines.repeat(iloc, 1 + (int) (mul * Math.sqrt(GlobalArray.nearestRatKing.distanceSquaredTo(loc))));
             } else {
-                mines.repeat(iloc, (int) (Math.sqrt(myLoc.distanceSquaredTo(loc))));
+                mines.repeat(iloc, 1 + (int) (mul * Math.sqrt(myLoc.distanceSquaredTo(loc))));
             }
         }
         if(mines.length() == 0) {

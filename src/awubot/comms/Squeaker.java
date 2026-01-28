@@ -191,11 +191,9 @@ public class Squeaker {
                 return;
             }
             if (!isRatKing && squeakMap()) return;
+            squeakMine();
         }
         if (EnemyManager.trySqueak()) return;
-        if (!isRatKing) {
-            squeakMine(); // can add other squeaks later
-        }
     }
 
     /**

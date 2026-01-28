@@ -45,15 +45,15 @@ public class KingSpawningStrategy extends Strategy {
         } else if (smallMap) {
             if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000)) {
                 thresh = 10000;
-            } else if (rc.getAllCheese() > 500 + GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
-                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 6.7));
+            } else if (rc.getAllCheese() > 500 + 2 * GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
+                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 5));
             }
         } else {
             // big map
             if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
                 thresh = 1000;
-            } else if (rc.getAllCheese() > 500 + GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
-                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 6.7));
+            } else if (rc.getAllCheese() > 500 + 2 * GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
+                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 5));
             }
         }
 

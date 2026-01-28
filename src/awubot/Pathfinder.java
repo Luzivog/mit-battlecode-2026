@@ -1833,6 +1833,10 @@ public class Pathfinder {
     static MapLocation lastBugPos, lastLoc, secondLastBugPos, secondLastLoc;
     static int reps = 0;
 
+    public static void reset() {
+        bug = null;
+    }
+
     public static Direction getMove(MapLocation target) throws GameActionException {
         indicate("lastDist " + lastDist);
         // TODO: better handling when target changes

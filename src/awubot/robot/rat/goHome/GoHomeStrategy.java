@@ -1828,7 +1828,8 @@ public class GoHomeStrategy extends Strategy {
 
             indicate("best " + (int)best);
             if(best == '\uFFFF') {
-                BabyRat.autoMove(Pathfinder.getMove(kingLoc));
+                var traverseStrategy = new TraverseStrategy(kingLoc);
+                traverseStrategy.runTick();
             } else {
                 var bestLoc = new MapLocation(bestX, bestY);
                 BabyRat.autoMove(Pathfinder.doBfs(bestLoc));

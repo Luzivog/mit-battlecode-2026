@@ -26,6 +26,7 @@ public class TraverseStrategy extends Strategy {
         indicate("after move: " + Clock.getBytecodeNum());
         if(Pathfinder.givenUp()) {
             indicate("GIVEN UP ON " + target);
+            Pathfinder.reset();
             return false;
         }
         rc.setIndicatorLine(myLoc, target, 255, 0, 0);

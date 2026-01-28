@@ -20,12 +20,16 @@ public class Rng {
     }
 
     /**
-     * 9 bytecode
+     * Cheap xorshift* (better than LCG for low bits / modulo).
      * @return a pseudo-random integer in the range [0, 2^31 - 1]
      */
     public static int mcg() {
-        s0 = s0 * 1103515245;
-        return s0 >>> 1;
+        int x = s0;
+        x ^= x << 13;
+        x ^= x >>> 17;
+        x ^= x << 5;
+        s0 = x;
+        return (x * 0x9E3779B9) >>> 1;
     }
 
     /**

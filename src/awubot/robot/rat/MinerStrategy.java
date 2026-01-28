@@ -14,6 +14,10 @@ import static awubot.util.Util.*;
 
 public class MinerStrategy extends Strategy {
     private static final int CRITICAL_HP = 20;
+    private static final int EARLY_EXPLORE_TURNS = 20;
+    // 16 compass-ish directions (gcd=1) for cheap ray sampling.
+    private static final int[] EXPLORE_DIR_X = { 1, 1, 0, -1, -1, -1, 0, 1, 2, 1, -1, -2, -2, -1, 1, 2 };
+    private static final int[] EXPLORE_DIR_Y = { 0, 1, 1,  1,  0, -1, -1, -1, 1, 2,  2,  1, -1, -2, -2, -1 };
 
     private FormationStrategy formationStrategy;
     private GoHomeStrategy goHomeStrategy;
@@ -31,8 +35,9 @@ public class MinerStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if(GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 25) {
+        if (BabyRat.transferSwitch) {
             bannedMines = new FastIndexedIntSet();
+            BabyRat.transferSwitch = false;
         }
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
@@ -70,7 +75,7 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickSeenMine() {
-        boolean nearKing = GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 25;
+        boolean nearKing = GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 49;
         var mines = new StringBuilder();
         outerLoop:
         for(int i = Game.knownCheeseMines.set.length() - 1; i >= 0; i--) {
@@ -84,11 +89,12 @@ public class MinerStrategy extends Strategy {
                     continue outerLoop;
                 }
             }
-            // if(nearKing) {
-            //     mines.append((char)iloc);
-            // } else {
-            mines.repeat(iloc, Math.min(100, Math.max(1, (int)(1000 / myLoc.distanceSquaredTo(loc)))));
-            // }
+            if(nearKing) {
+                // mines.append((char)iloc);
+                mines.repeat(iloc, (int) (Math.sqrt(GlobalArray.nearestRatKing.distanceSquaredTo(loc))));
+            } else {
+                mines.repeat(iloc, (int) (Math.sqrt(myLoc.distanceSquaredTo(loc))));
+            }
         }
         if(mines.length() == 0) {
             return pickExplorationTarget();
@@ -99,6 +105,10 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickExplorationTarget() {
+        if (time <= EARLY_EXPLORE_TURNS && GlobalArray.nearestRatKing != null) {
+            MapLocation early = pickEarlyExplorationTarget(GlobalArray.nearestRatKing);
+            if (early != null) return early;
+        }
         MapLocation target = null;
         outerLoop:
         for(int i = 5; i >= 0; i--) { // tle guard
@@ -117,6 +127,40 @@ public class MinerStrategy extends Strategy {
             return target;
         }
         return target;
+    }
+
+    private MapLocation pickEarlyExplorationTarget(MapLocation king) {
+        int kx = king.x;
+        int ky = king.y;
+        int total = 0;
+        for (int i = 0; i < EXPLORE_DIR_X.length; i++) {
+            int dx = EXPLORE_DIR_X[i];
+            int dy = EXPLORE_DIR_Y[i];
+            int tx = (dx > 0) ? (mapWidth - 1 - kx) / dx : (dx < 0) ? kx / -dx : Integer.MAX_VALUE;
+            int ty = (dy > 0) ? (mapHeight - 1 - ky) / dy : (dy < 0) ? ky / -dy : Integer.MAX_VALUE;
+            int len = tx < ty ? tx : ty;
+            if (len > 0) total += len;
+        }
+        if (total <= 0) return null;
+        int r = Rng.mcg() % total;
+        int acc = 0;
+        for (int i = 0; i < EXPLORE_DIR_X.length; i++) {
+            int dx = EXPLORE_DIR_X[i];
+            int dy = EXPLORE_DIR_Y[i];
+            int tx = (dx > 0) ? (mapWidth - 1 - kx) / dx : (dx < 0) ? kx / -dx : Integer.MAX_VALUE;
+            int ty = (dy > 0) ? (mapHeight - 1 - ky) / dy : (dy < 0) ? ky / -dy : Integer.MAX_VALUE;
+            int len = tx < ty ? tx : ty;
+            if (len <= 0) continue;
+            acc += len;
+            if (r < acc) {
+                int minDist = (len + 1) / 2;
+                if (minDist < 1) minDist = 1;
+                int span = len - minDist + 1;
+                int dist = minDist + (span > 0 ? (Rng.mcg() % span) : 0);
+                return new MapLocation(kx + dx * dist, ky + dy * dist);
+            }
+        }
+        return null;
     }
 
     private boolean shouldGoHome() {

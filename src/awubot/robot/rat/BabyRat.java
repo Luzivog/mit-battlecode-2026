@@ -19,6 +19,8 @@ public class BabyRat {
     public static Strategy primaryStrategy;
     public static CombatStrategy combatStrategy;
 
+    public static boolean transferSwitch = false;
+
     public static void init() throws GameActionException {
         int payload = GlobalArray.loadSpawnInfo();
         println("BabyRat payload: " + payload + " id " + rc.getID() + " index " + myIndex);
@@ -115,6 +117,7 @@ public class BabyRat {
                     var loc = kingLoc.add(dir);
                     if(rc.canTransferCheese(loc, myCheese)) {
                         rc.transferCheese(loc, myCheese);
+                        transferSwitch = true;
                         return;
                     }
                     dir = dir.rotateRight();

@@ -18536,8 +18536,8 @@ public class Pathfinder {
 
     }
 
-    private MapLocation reachableCacheLoc;
-    private Direction reachableCacheDir;
+    private static MapLocation reachableCacheLoc;
+    private static Direction reachableCacheDir;
     public static void computeReachableIgnoreAllies() {
         if(myLoc == reachableCacheLoc && myDir == reachableCacheDir) {
             return;

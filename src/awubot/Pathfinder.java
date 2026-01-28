@@ -333,7 +333,9 @@ class BugnavInstance {
 
     private static boolean isPassable(MapLocation loc) throws GameActionException {
         if(isRatKing) return CellTracker.isKingPassable(loc);
-        return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc));
+        RobotInfo robot;
+        return CellTracker.isPassable(loc) && !RobotTracker.kingSet.contains(loc) && (Config.allowDirt() || !CellTracker.isDirt(loc) || CellTracker.isWallAdjacent(loc))
+            && !(canSense(myLoc, loc, myDir) && rc.getRawCheese() < 20 && (robot = rc.senseRobotAtLocation(loc)) != null && robot.team == team && robot.cheeseAmount >= 40);
     }
 
     private static boolean possiblyPassable(MapLocation loc) throws GameActionException {

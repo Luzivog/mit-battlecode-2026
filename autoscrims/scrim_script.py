@@ -14,21 +14,23 @@ TEAM_PAGE_START = int(os.getenv("BC_TEAM_PAGE_START", "1"))
 TEAM_PAGE_END = int(os.getenv("BC_TEAM_PAGE_END", "2"))
 ONLY_US_TEAMS = os.getenv("BC_ONLY_US", "false").strip().lower() in ("1", "true", "yes")
 REQUEST_SLEEP = float(os.getenv("BC_REQUEST_SLEEP", "0.1"))
-MAPS_PER_SCRIM = 10
+SCRIM_MAPS_PER_REQUEST = int(os.getenv("BC_SCRIM_MAPS_PER_REQUEST", "10"))
 
 # Fill these lists with the exact map names/team names you want to scrim.
+# Map groups can be any length; they will be split into batches of SCRIM_MAPS_PER_REQUEST.
 MAPS1 = [
-    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "DefaultMedium", "DefaultSmall", "evileye"
+    # "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "DefaultMedium", "DefaultSmall", "evileye"
+    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "averyfineline", "whereisthecheese", "tiny"
 ]
 MAPS2 = [
     "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "popthecork", "DefaultLarge", "Nofreecheese"
 ]
 SCRIM_TEAMS = [
     "Old But Gold",
-    "Sloppy Joe Pirates",
-    "The Complex Merlin",
+    # "Sloppy Joe Pirates",
+    # "The Complex Merlin",
     # "muscallonge",
-    "Blue Dragon"
+    # "Blue Dragon"
 ]
 
 # "?" = alternate
@@ -64,9 +66,13 @@ def _clean_list(items):
 
 def _validate_map_list(list_name, maps):
     if len(maps) == 0:
-        raise SystemExit(f"{list_name} is empty. Add up to {MAPS_PER_SCRIM} map names.")
-    if len(maps) > MAPS_PER_SCRIM:
-        raise SystemExit(f"{list_name} has {len(maps)} maps; max is {MAPS_PER_SCRIM}.")
+        raise SystemExit(f"{list_name} is empty. Add at least one map name.")
+    if SCRIM_MAPS_PER_REQUEST < 1:
+        raise SystemExit("SCRIM_MAPS_PER_REQUEST must be at least 1.")
+
+def _chunk_list(items, size):
+    for i in range(0, len(items), size):
+        yield items[i:i + size]
 
 def _parse_csv(value):
     return [item.strip() for item in value.split(",") if item.strip()]
@@ -158,13 +164,14 @@ if __name__ == "__main__":
     for team in selected_teams:
         for group_name, map_group in map_groups:
             for order in orders:
-                payload = {
-                    "is_ranked": False,
-                    "requested_to": team['id'],
-                    "player_order": order,
-                    "map_names": map_group,
-                }
-                print(payload)
-                response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
-                print(response.json())
-                time.sleep(REQUEST_SLEEP)
+                for map_chunk in _chunk_list(map_group, SCRIM_MAPS_PER_REQUEST):
+                    payload = {
+                        "is_ranked": False,
+                        "requested_to": team['id'],
+                        "player_order": order,
+                        "map_names": map_chunk,
+                    }
+                    print(payload)
+                    response = requests.post(srim_url, json=payload, headers={"Authorization": f"Bearer {token}"})
+                    print(response.json())
+                    time.sleep(REQUEST_SLEEP)

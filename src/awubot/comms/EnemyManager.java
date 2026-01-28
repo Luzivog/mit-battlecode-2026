@@ -122,7 +122,6 @@ public class EnemyManager {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             println("ERROR: cannot encode enemy location " + enemy.location + " from " + myLoc + " dx " + dx + " dy " + dy + " encLoc " + encLoc);
             println("tried encoding " + enemy.location + " from " + myLoc);
-            throw new RuntimeException("Cannot encode enemy location");
         }
         int encDir = enemy.direction.ordinal();
         int encHP = encodeHealth(enemy.health);

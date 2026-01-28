@@ -4,11 +4,14 @@ import battlecode.common.*;
 import awubot.CellTracker;
 import awubot.Pathfinder;
 import awubot.RobotTracker;
+import awubot.comms.CheeseTracker;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import awubot.robot.rat.combat.CombatStrategy;
 import awubot.robot.rat.goHome.AntColony;
 import awubot.util.Rng;
+import awubot_quals.comms.EnemyManager;
+
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import awubot.util.Profiler;
@@ -28,6 +31,55 @@ public class BabyRat {
         combatStrategy = new CombatStrategy();
         Pathfinder.init();
         AntColony.init();
+    }
+    
+    public static void considerPlacingCatTrap() throws GameActionException {
+        if (!rc.isActionReady()) return;
+        if (RobotTracker.numCats > 0 && rc.isCooperation() && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0) {
+            RobotInfo cat = RobotTracker.sortedCats[0];
+            int dx = cat.location.x - myLoc.x;
+            int dy = cat.location.y - myLoc.y;
+            if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
+                for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
+                    MapLocation targ = myLoc.add(off);
+                    MapLocation bruh = targ.add(targ.directionTo(cat.location));
+                    if (rc.canSenseLocation(bruh) && rc.senseRobotAtLocation(bruh).location.equals(cat.location)) {
+                        if (rc.canPlaceCatTrap(targ)) {
+                            rc.placeCatTrap(targ);
+                        }
+                    }
+                }
+                if (rc.canTurn()) {
+                    for (Direction dir : directions) {
+                        if (dir == myDir) continue;
+                        if (canSense(myLoc, cat.location, dir)) {
+                            turn(dir);
+                            break;
+                        }
+                    }
+                }
+                for (Direction _moveDir : relatedDirections(myLoc.directionTo(cat.location))) {
+                    Direction moveDir = _moveDir.opposite();
+                    if (rc.canMove(moveDir)) {
+                        rawMove(moveDir);
+                        break;
+                    }
+                }
+                dx = cat.location.x - myLoc.x;
+                dy = cat.location.y - myLoc.y;
+                if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
+                    for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
+                        MapLocation targ = myLoc.add(off);
+                        MapLocation bruh = targ.add(targ.directionTo(cat.location));
+                        if (rc.canSenseLocation(bruh) && rc.senseRobotAtLocation(bruh).location.equals(cat.location)) {
+                            if (rc.canPlaceCatTrap(targ)) {
+                                rc.placeCatTrap(targ);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static void run() throws GameActionException {
@@ -54,7 +106,8 @@ public class BabyRat {
         }
 
         // indicate("before combat strat: " + Clock.getBytecodeNum());
-        if (combatStrategy.runTick()) {
+        if (combatStrategy.runTick()) { 
+            considerPlacingCatTrap();
             return;
         }
 
@@ -64,8 +117,10 @@ public class BabyRat {
         RobotTracker.updateHistoricalCatLocs();
 
         indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
+        considerPlacingCatTrap();
         primaryStrategy.runTick();
         combatStrategy.miniTick();
+        
 
         isLastMove = true;
         executeGlance();

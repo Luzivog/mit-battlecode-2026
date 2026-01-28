@@ -190,8 +190,8 @@ public class Squeaker {
                 indicate("SQUEAKING SYMMETRY");
                 return;
             }
+            if (!isRatKing && squeakMine()) return;
             if (!isRatKing && squeakMap()) return;
-            squeakMine();
         }
         if (EnemyManager.trySqueak()) return;
     }

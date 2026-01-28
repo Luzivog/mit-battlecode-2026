@@ -18,6 +18,14 @@ public class KingSpawningStrategy extends Strategy {
         return ((x - 1) / 4) * 10 + 10;
     }
 
+    public static int gainrateToThreshBonus(double rate) {
+        if (rate < 0) return 0;
+        return 10 * (int) Math.ceil(rate);
+        // if (rate < 1) return 10;
+        // if (rate < 2) return 20;
+        // if (rate < 3) return 30;
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
@@ -46,14 +54,14 @@ public class KingSpawningStrategy extends Strategy {
             if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000)) {
                 thresh = 10000;
             } else if (rc.getAllCheese() > 500 + 2 * GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
-                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 5));
+                thresh += gainrateToThreshBonus(cheeseGainRate);
             }
         } else {
             // big map
             if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
                 thresh = 1000;
             } else if (rc.getAllCheese() > 500 + 2 * GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
-                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 5));
+                thresh += gainrateToThreshBonus(cheeseGainRate);
             }
         }
 

@@ -41,7 +41,7 @@ public class Squeaker {
     private static final int CHEESE_EMPTY = CHEESE_LOC_MASK;
     private static final int CHEESE_SLOTS = 3;
 
-    private static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
+    public static FastIndexedIntSet minesToSend = new FastIndexedIntSet();
 
     public static void registerMine(MapLocation loc) {
         int encoded = encode2x2(loc);
@@ -100,9 +100,8 @@ public class Squeaker {
                 case 0:
                     int loc = bytes & 1023;
                     int canonical = getCanonicalEncoded(loc);
-
                     if (isRatKing) {
-                        GlobalArray.globalCheeseMines.add(canonical);
+                        GlobalArray.noteCheeseMineSeen(canonical);
                     }
 
                     // Add both to local knowledge

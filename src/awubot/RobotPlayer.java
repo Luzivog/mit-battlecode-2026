@@ -9,6 +9,7 @@ import awubot.robot.king.RatKing;
 import awubot.robot.rat.BabyRat;
 
 import static awubot.Game.*;
+import static awubot.util.Util.decode2x2;
 import static awubot.util.Util.println;
 
 import awubot.util.Profiler;
@@ -43,6 +44,23 @@ public class RobotPlayer {
                 MapManager.preTick();
                 Squeaker.preTick();
 
+                // debug
+
+                if (isRatKing) {
+                    for (int i = 0; i < GlobalArray.globalCheeseMines.size(); i++) { 
+                        Util.indicate("global: " + decode2x2(GlobalArray.globalCheeseMines.at(i)));
+                    }
+                } else {
+                    for (int i = 0; i < GlobalArray.globalCheeseMines.size(); i++) { 
+                        Util.indicate("global: " + decode2x2(GlobalArray.globalCheeseMines.at(i)));
+                    }
+                    for (int i = 0; i < Squeaker.minesToSend.size(); i++) { 
+                        Util.indicate("to send: " + decode2x2(Squeaker.minesToSend.at(i)));
+                    }
+                }
+
+                // end debug
+
                 if (!hasInitialisedRobot) {
                     if(isRatKing) {
                         RatKing.init();
@@ -57,11 +75,13 @@ public class RobotPlayer {
                 } else {
                     BabyRat.run();
                 }
+                
                 if (Clock.getBytecodesLeft() > 1000) {
                     Squeaker.postTick();
                 } else {
                     Util.indicate("skipped squeaker");
                 }
+
                 GlobalArray.postTick();
                 Game.postTick();
             } catch (Exception e) {

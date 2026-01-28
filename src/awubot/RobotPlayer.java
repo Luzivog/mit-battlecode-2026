@@ -46,18 +46,18 @@ public class RobotPlayer {
 
                 // debug
 
-                if (isRatKing) {
-                    for (int i = 0; i < GlobalArray.globalCheeseMines.size(); i++) { 
-                        Util.indicate("global: " + decode2x2(GlobalArray.globalCheeseMines.at(i)));
-                    }
-                } else {
-                    for (int i = 0; i < GlobalArray.globalCheeseMines.size(); i++) { 
-                        Util.indicate("global: " + decode2x2(GlobalArray.globalCheeseMines.at(i)));
-                    }
-                    for (int i = 0; i < Squeaker.minesToSend.size(); i++) { 
-                        Util.indicate("to send: " + decode2x2(Squeaker.minesToSend.at(i)));
-                    }
-                }
+                // if (isRatKing) {
+                //     for (int i = 0; i < GlobalArray.globalCheeseMines.size(); i++) { 
+                //         Util.indicate("global: " + decode2x2(GlobalArray.globalCheeseMines.at(i)));
+                //     }
+                // } else {
+                //     for (int i = 0; i < GlobalArray.globalCheeseMines.size(); i++) { 
+                //         Util.indicate("global: " + decode2x2(GlobalArray.globalCheeseMines.at(i)));
+                //     }
+                //     for (int i = 0; i < Squeaker.minesToSend.size(); i++) { 
+                //         Util.indicate("to send: " + decode2x2(Squeaker.minesToSend.at(i)));
+                //     }
+                // }
 
                 // end debug
 

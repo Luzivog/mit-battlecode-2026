@@ -109,13 +109,12 @@ public class KingMiningStrategy extends Strategy {
         if (!foundCheeseMine) return false;
         indicate("trying to collect " + mineTarget);
         MapLocation nearestCheese = null;
-        for (int x = mineTarget.x - 4; x <= mineTarget.x + 5; x++) {
-            for (int y = mineTarget.y - 4; y <= mineTarget.y + 5; y++) {
-                MapLocation checkLoc = new MapLocation(x, y);
-                if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).getCheeseAmount() > 0) {
-                    if (nearestCheese == null || myLoc.distanceSquaredTo(checkLoc) < myLoc.distanceSquaredTo(nearestCheese)) {
-                        nearestCheese = checkLoc;
-                    }
+        for(var info : rc.senseNearbyMapInfos()) {
+            if (info.getCheeseAmount() > 0) {
+                MapLocation checkLoc = info.getMapLocation();
+                if(chebyshevDistance(checkLoc, mineTarget) > 4) continue;
+                if (nearestCheese == null || myLoc.distanceSquaredTo(checkLoc) < myLoc.distanceSquaredTo(nearestCheese)) {
+                    nearestCheese = checkLoc;
                 }
             }
         }
@@ -131,16 +130,80 @@ public class KingMiningStrategy extends Strategy {
                 }
                 return true;
             } else {
-                rc.pickUpCheese(nearestCheese);
+                {
+                    var loc = myLoc.translate(-1, -1);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(-1, 0);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(-1, 1);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(0, -1);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(0, 0);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(0, 1);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(1, -1);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(1, 0);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
+                {
+                    var loc = myLoc.translate(1, 1);
+                    if(rc.canPickUpCheese(loc)) {
+                        rc.pickUpCheese(loc);
+                    }
+                }
             }
         }
         MapLocation resetLoc = mineTarget;
-        for (int x = mineTarget.x; x <= mineTarget.x + 1; x++) {
-            for (int y = mineTarget.y; y <= mineTarget.y + 1; y++) {
-                MapLocation checkLoc = new MapLocation(x, y);
-                if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).hasCheeseMine()) {
-                    resetLoc = checkLoc;
-                }
+        // unrolled version:
+        {
+            MapLocation checkLoc = mineTarget.translate(0, 1);
+            if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).hasCheeseMine()) {
+                resetLoc = checkLoc;
+            }
+        }
+        {
+            MapLocation checkLoc = mineTarget.translate(1, 0);
+            if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).hasCheeseMine()) {
+                resetLoc = checkLoc;
+            }
+        }
+        {
+            MapLocation checkLoc = mineTarget.translate(1, 1);
+            if (rc.canSenseLocation(checkLoc) && rc.senseMapInfo(checkLoc).hasCheeseMine()) {
+                resetLoc = checkLoc;
             }
         }
         if (!myLoc.equals(resetLoc)) {

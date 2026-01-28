@@ -496,7 +496,7 @@ public class Pathfinder {
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             if(bug != null && target.isAdjacentTo(bug.target)) {
-                indicate("target changed but adjacent, keep going");
+                // indicate("target changed but adjacent, keep going");
                 bug.target = target;
             } else {
                 indicate("RETARGET");

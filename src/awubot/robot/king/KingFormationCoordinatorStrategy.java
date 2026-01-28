@@ -139,8 +139,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
         if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < 8 * myKingCount) {
-            indicate("FORMATION: aborting due to king count or rat count");
-            indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
+            // indicate("FORMATION: aborting due to king count or rat count");
+            // indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
             abortFormation();
             kingCount = myKingCount;
             return true;

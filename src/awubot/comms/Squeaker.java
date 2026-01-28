@@ -45,15 +45,8 @@ public class Squeaker {
 
     public static void registerMine(MapLocation loc) {
         int encoded = encode2x2(loc);
-        int canonical = getCanonicalEncoded(encoded);
-
-        minesToSend.add(canonical);
-
+        minesToSend.add(encoded);
         Game.knownCheeseMines.add(encoded);
-        int symEncoded = getSymmetricEncoded(encoded);
-        if (symEncoded >= 0) {
-            Game.knownCheeseMines.add(symEncoded);
-        }
     }
 
     // Squeak up to 3 mines per message (full 30-bit payload).
@@ -99,20 +92,9 @@ public class Squeaker {
             switch (1 & (bytes >>> 30)) {
                 case 0:
                     int loc = bytes & 1023;
-                    int canonical = getCanonicalEncoded(loc);
-                    if (isRatKing) {
-                        GlobalArray.noteCheeseMineSeen(canonical);
-                    }
-
-                    // Add both to local knowledge
-                    Game.knownCheeseMines.add(loc);
-                    int symLoc = getSymmetricEncoded(loc);
-                    if (symLoc >= 0) {
-                        Game.knownCheeseMines.add(symLoc);
-                    }
-
+                    GlobalArray.registerGlobalCheeseMine(loc);
                     if (!isRatKing) {
-                        minesToSend.add(canonical);
+                        minesToSend.add(loc);
                     }
                     break;
                 case 1:

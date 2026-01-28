@@ -148,25 +148,28 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || (time >= 1100 && myKingCount >= 2) || numRats < 15 * myKingCount) {
+        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < 15 * myKingCount) {
+            indicate("FORMATION: aborting due to king count or rat count");
+            indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
             abortFormation();
             kingCount = myKingCount;
             return true;
         }
 
         if (myKingCount > kingCount) {
+            indicate("FORMATION: aborting due to increased king count");
             abortFormation();
             kingCount = myKingCount;
             return true;
         }
         kingCount = myKingCount;
 
-        if (!isNormal()) {
-            if (state == FormationState.COORDINATING) {
-                abortFormation();
-            }
-            return true;
-        }
+        // if (!isNormal()) {
+        //     if (state == FormationState.COORDINATING) {
+        //         abortFormation();
+        //     }
+        //     return true;
+        // }
 
         switch (state) {
             case IDLE:
@@ -192,11 +195,21 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         if (GlobalArray.getFormationTarget() != null) return;
 
+        if (!GlobalArray.tryClaimFormationCoordinator(kingId)) return;
+
         MapLocation myBestMine = selectBestMineForFormation();
-        if (myBestMine == null) return;
+        if (myBestMine == null) {
+            GlobalArray.clearFormation();  
+            return;
+        }
 
         MapLocation myFormationSpot = findFormationSpotNearMine(myBestMine);
-        if (myFormationSpot == null) return;
+        if (myFormationSpot == null) {
+            GlobalArray.clearFormation();  
+            return;
+        }
+
+        if (GlobalArray.getFormationCoordinator() != kingId) return;
 
         formationTarget = myFormationSpot;
         targetMine = myBestMine;
@@ -263,7 +276,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private int scoreNearbyAlliedRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
         int myCount = 0;
-        for (int i = 0; i < RobotTracker.numAllies; i++) {
+        int allyLimit = RobotTracker.numAllies;
+        if (RobotTracker.sortedAllies != null) allyLimit = Math.min(allyLimit, RobotTracker.sortedAllies.length);
+
+        for (int i = 0; i < allyLimit; i++) {
             RobotInfo myRobot = RobotTracker.sortedAllies[i];
             if (myRobot == null) continue;
             if (myRobot.getType() != UnitType.BABY_RAT) continue;
@@ -275,7 +291,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private int scoreNearbyEnemyRats(MapLocation aCenter, int aRadiusSq) throws GameActionException {
         int myCount = 0;
-        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+        int enemyLimit = RobotTracker.numEnemies;
+        if (RobotTracker.sortedEnemies != null) enemyLimit = Math.min(enemyLimit, RobotTracker.sortedEnemies.length);
+
+        for (int i = 0; i < enemyLimit; i++) {
             RobotInfo myRobot = RobotTracker.sortedEnemies[i];
             if (myRobot == null) continue;
             if (myRobot.getType() == UnitType.RAT_KING) myCount -= 5000;
@@ -346,11 +365,13 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private void monitorFormation() throws GameActionException {
         if (time - coordinationStartTurn > COORDINATION_TIMEOUT) {
+            indicate("FORMATION: coordination timed out");
             abortFormation();
             return;
         }
 
         if (rc.getGlobalCheese() < UPGRADE_COST) {
+            indicate("FORMATION: insufficient cheese");
             abortFormation();
             return;
         }

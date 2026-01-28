@@ -481,6 +481,13 @@ public class GlobalArray {
         return rc.readSharedArray(FORMATION_COORDINATOR);
     }
 
+    public static boolean tryClaimFormationCoordinator(int aKingId) throws GameActionException {
+        int current = rc.readSharedArray(FORMATION_COORDINATOR);
+        if (current != 0) return false; 
+        writeSharedArray(FORMATION_COORDINATOR, aKingId);
+        return rc.readSharedArray(FORMATION_COORDINATOR) == aKingId;
+    }
+
     public static void clearFormation() throws GameActionException {
         writeSharedArray(FORMATION_COORDINATOR, 0);
         writeSharedArray(FORMATION_TARGET, 0);

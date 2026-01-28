@@ -1,6 +1,5 @@
 package awubot.robot.rat;
 
-import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
@@ -17,9 +16,9 @@ import static awubot.util.Util.indicate;
 // TODO: refactor this (AI slop)
 
 public class FormationStrategy extends Strategy {
-    private static final int FORMATION_TIMEOUT = 100;
+    private static final int FORMATION_TIMEOUT = 120;
     private static final int MIN_ALLIES_FOR_FORMATION = 7;
-    private static final int MAX_DIST_TO_JOIN = 625; 
+    private static final int MAX_DIST_TO_JOIN = 625;
 
     private MapLocation formationTarget = null;
     private int formationStartTurn = 0;
@@ -47,7 +46,10 @@ public class FormationStrategy extends Strategy {
             indicate("FORM: BECOMING KING!");
             rc.becomeRatKing();
             Game.convertKing();
-            GlobalArray.clearFormation();  
+            // Only clear formation if we're at the coordinator's target location
+            if (myLoc.equals(formationTarget)) {
+                GlobalArray.clearFormation();
+            }
             RobotPlayer.resetHasInitialisedRobot();
             return true;
         }
@@ -83,7 +85,9 @@ public class FormationStrategy extends Strategy {
 
         formationTarget = target;
 
-        if (active) return true;
+        if (active) {
+            return true;
+        }
 
         int distToMine = myLoc.distanceSquaredTo(mine);
         if (distToMine > MAX_DIST_TO_JOIN) return false;
@@ -104,17 +108,18 @@ public class FormationStrategy extends Strategy {
     }
 
     private boolean shouldBecomeCentre() throws GameActionException {
-        
-        if (rc.canSenseRobotAtLocation(formationTarget)) {
-            RobotInfo robotAtCentre = rc.senseRobotAtLocation(formationTarget);
-            if (robotAtCentre != null) return false;
-        } else {
+        if (!rc.canSenseRobotAtLocation(formationTarget)) {
+            return false;
+        }
+
+        RobotInfo robotAtCentre = rc.senseRobotAtLocation(formationTarget);
+        if (robotAtCentre != null) {
             return false;
         }
 
         for (RobotInfo robot : rc.senseNearbyRobots(2, rc.getTeam())) {
-            if(robot.getType() == UnitType.BABY_RAT && robot.getID() < rc.getID()
-               && robot.location.distanceSquaredTo(formationTarget) <= 2) {
+            if (robot.getType() == UnitType.BABY_RAT && robot.getID() < rc.getID()
+                && robot.location.distanceSquaredTo(formationTarget) <= 2) {
                 return false;
             }
         }

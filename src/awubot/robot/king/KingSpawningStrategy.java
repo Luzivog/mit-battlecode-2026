@@ -7,6 +7,7 @@ import static awubot.Game.*;
 import static awubot.util.Util.*;
 
 import awubot.RobotTracker;
+import awubot.comms.CheeseTracker;
 import awubot.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
@@ -20,16 +21,43 @@ public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         indicate("spawned " + numSpawned);
+
+        boolean gainedCheese = CheeseTracker.hasGainedCheese();
+        boolean inCombat = CheeseTracker.isInCombat();
+        boolean smallMap = mapWidth * mapHeight <= 1200;
+        double cheeseGainRate = CheeseTracker.getCheeseGainRate();
+        indicate("cheese gain rate: " + cheeseGainRate);
+
         int defaultThresh = 40;
-        if (mapWidth * mapHeight <= 900 && time < 400) {
-            defaultThresh = 30;
+        if (smallMap) defaultThresh = 30;
+
+        int decayThresh = 3000 - Math.max(0, time - 1000);
+
+        int thresh = defaultThresh;
+        if (time < 100) {
+            ; // default
+        } else if (!inCombat) {
+            if (gainedCheese) {
+                if (rc.getAllCheese() >= 2500) thresh = 1000;
+                else thresh = threshForNumRats(rc.getAllCheese() / 67);
+            }
+            thresh = Math.min(thresh, rc.getAllCheese() / 20);
+        } else if (smallMap) {
+            if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000)) {
+                thresh = 10000;
+            } else if (rc.getAllCheese() > 500 + GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
+                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 6.7));
+            }
+        } else {
+            // big map
+            if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
+                thresh = 1000;
+            } else if (rc.getAllCheese() > 500 + GlobalArray.numberOfRatsAlive * GlobalArray.numberOfRatsAlive) {
+                thresh = Math.max(thresh, (int) (CheeseTracker.getCheeseGainRate() * 6.7));
+            }
         }
-        int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
-        if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
-            thresh = 1000;
-        } else if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000) && time >= 100) {
-            thresh = threshForNumRats(32);
-        }
+
+        if (rc.getAllCheese() < 200) thresh = rc.getAllCheese() / 10;
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh += 10;
@@ -49,13 +77,14 @@ public class KingSpawningStrategy extends Strategy {
                 targetNeighbours = cnt;
             }
         }
+        boolean isEnemy = false;
         if (target == null) {
             // even out spawning
             if (GlobalArray.ratCounter % GlobalArray.countRatKings() == GlobalArray.getIndexAmongAliveRatKings()) {
                 target = new MapLocation(mapWidth / 2, mapHeight / 2);
             }
-            
         } else {
+            isEnemy = true;
             if (time - lastPanicSpawn > 4 && rc.getHealth() < lastHP) {
                 indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
                 thresh += 10;
@@ -67,19 +96,20 @@ public class KingSpawningStrategy extends Strategy {
         }
 
         if (target != null && rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
-            trySpawn(target);
+            trySpawn(target, isEnemy);
         }
         return true;
     }
 
 
-    void trySpawn(MapLocation target) throws GameActionException {
+    void trySpawn(MapLocation target, boolean isEnemy) throws GameActionException {
         MapLocation best = null;
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
                 if (Math.max(Math.abs(dx), Math.abs(dy)) == 2) {
                     MapLocation loc = myLoc.translate(dx, dy);
                     if (rc.canBuildRat(loc)) {
+                        if (isEnemy && loc.distanceSquaredTo(target) <= 2) continue;
                         if (best == null || best.distanceSquaredTo(target) > loc.distanceSquaredTo(target))
                         best = loc;
                     }

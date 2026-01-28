@@ -62,7 +62,7 @@ public class GlobalArray {
     public static FastIndexedIntSet globalCheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
-    public static int ratCounter;
+    public static int ratCounter; // note this is offset 1 turn
     public static int numberOfRatsAlive;
 
     // Map chunk queue (per-robot, used by rat kings to broadcast chunks via shared array).

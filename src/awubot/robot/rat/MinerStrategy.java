@@ -130,6 +130,9 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickEarlyExplorationTarget(MapLocation king) {
+        if (myIndex == 0) {
+            return pickCenterRayTarget(king);
+        }
         int kx = king.x;
         int ky = king.y;
         int total = 0;
@@ -161,6 +164,59 @@ public class MinerStrategy extends Strategy {
             }
         }
         return null;
+    }
+
+    private MapLocation pickCenterRayTarget(MapLocation king) {
+        int kx = king.x;
+        int ky = king.y;
+        int cx = mapWidth >> 1;
+        int cy = mapHeight >> 1;
+        int dx = cx - kx;
+        int dy = cy - ky;
+        if (dx == 0 && dy == 0) {
+            return new MapLocation(mapWidth - 1, ky);
+        }
+        int tXNum = 0, tXDen = 1;
+        int tYNum = 0, tYDen = 1;
+        boolean useX = true;
+        if (dx > 0) {
+            tXNum = mapWidth - 1 - kx;
+            tXDen = dx;
+        } else if (dx < 0) {
+            tXNum = kx;
+            tXDen = -dx;
+        } else {
+            useX = false;
+        }
+        if (dy > 0) {
+            tYNum = mapHeight - 1 - ky;
+            tYDen = dy;
+        } else if (dy < 0) {
+            tYNum = ky;
+            tYDen = -dy;
+        } else {
+            if (!useX) return new MapLocation(mapWidth - 1, ky);
+            // only horizontal
+            int x = dx > 0 ? mapWidth - 1 : 0;
+            return new MapLocation(x, ky);
+        }
+
+        if (!useX) {
+            int x = kx + (int) ((long) dx * tYNum / tYDen);
+            return new MapLocation(x, dy > 0 ? mapHeight - 1 : 0);
+        }
+
+        long lhs = (long) tXNum * (long) tYDen;
+        long rhs = (long) tYNum * (long) tXDen;
+        if (lhs <= rhs) {
+            int y = ky + (int) ((long) dy * tXNum / tXDen);
+            int x = dx > 0 ? mapWidth - 1 : 0;
+            return new MapLocation(x, y);
+        } else {
+            int x = kx + (int) ((long) dx * tYNum / tYDen);
+            int y = dy > 0 ? mapHeight - 1 : 0;
+            return new MapLocation(x, y);
+        }
     }
 
     private boolean shouldGoHome() {

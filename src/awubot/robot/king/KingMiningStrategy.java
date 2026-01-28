@@ -169,7 +169,7 @@ public class KingMiningStrategy extends Strategy {
                 }
 
                 if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
-                if (isInTabooZone(myMine)) continue;
+                // if (isInTabooZone(myMine)) continue;
 
                 int myDist = myLoc.distanceSquaredTo(myMine);
                 if (myDist < myBestDist) {

@@ -44,7 +44,7 @@ public class KingSpawningStrategy extends Strategy {
             for (RobotInfo info : rc.senseNearbyRobots(loc, 2, team == Team.A ? Team.B : Team.A)) {
                 if (info.getTeam() == team) cnt++;
             }
-            if (cnt == 1 && (target == null || cnt > targetNeighbours)) {
+            if (cnt <= 1 && (target == null || cnt > targetNeighbours)) {
                 target = loc;
                 targetNeighbours = cnt;
             }
@@ -59,6 +59,9 @@ public class KingSpawningStrategy extends Strategy {
             if (time - lastPanicSpawn > 4 && rc.getHealth() < lastHP) {
                 indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
                 thresh += 10;
+                if (rc.getHealth() <= 100) {
+                    thresh += 10;
+                }
                 lastPanicSpawn = time;
             }
         }

@@ -31,6 +31,7 @@ public class Game {
     public static Team team;
     public static int myIndex; // estimate of rat index
     public static MapLocation myPreviousLoc;
+    public static int lastHP;
     public static FastIndexedIntSet knownCheeseMines;
     public static MapLocation spawn;
     public static int carryStartTime;
@@ -75,6 +76,7 @@ public class Game {
         team = rc.getTeam();
         spawn = myLoc;
         knownCheeseMines = new FastIndexedIntSet();
+        lastHP = rc.getHealth();
         carryStartTime = -1;
 
         // StringBuilder sb = new StringBuilder();
@@ -133,6 +135,7 @@ public class Game {
 
     public static void postTick() throws GameActionException {
         myPreviousLoc = myLoc;
+        lastHP = rc.getHealth();
         if (rc.getCarrying() == null) carryStartTime = -1;
         else if (carryStartTime == -1) carryStartTime = time;
         // Profiler.begin();

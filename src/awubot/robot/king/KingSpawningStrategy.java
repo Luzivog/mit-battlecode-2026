@@ -11,6 +11,7 @@ import awubot.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;
+    private static int lastPanicSpawn = -6767;
 
     public static int threshForNumRats(int x) {
         return ((x - 1) / 4) * 10 + 10;
@@ -40,10 +41,10 @@ public class KingSpawningStrategy extends Strategy {
             RobotInfo robot = RobotTracker.sortedEnemies[i];
             MapLocation loc = robot.getLocation();
             int cnt = 0;
-            for (RobotInfo info : rc.senseNearbyRobots(loc, 4, team == Team.A ? Team.B : Team.A)) {
+            for (RobotInfo info : rc.senseNearbyRobots(loc, 2, team == Team.A ? Team.B : Team.A)) {
                 if (info.getTeam() == team) cnt++;
             }
-            if (cnt <= 1 && (target == null || cnt > targetNeighbours)) {
+            if (cnt == 1 && (target == null || cnt > targetNeighbours)) {
                 target = loc;
                 targetNeighbours = cnt;
             }
@@ -55,8 +56,11 @@ public class KingSpawningStrategy extends Strategy {
             }
             
         } else {
-            indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
-            thresh += 20;
+            if (time - lastPanicSpawn > 4 && rc.getHealth() < lastHP) {
+                indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
+                thresh += 10;
+                lastPanicSpawn = time;
+            }
         }
 
         if (target != null && rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {

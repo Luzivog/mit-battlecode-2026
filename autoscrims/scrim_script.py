@@ -28,8 +28,8 @@ MAPS2 = [
 ]
 SCRIM_TEAMS = [
     "Old But Gold",
-    "muscallonge",
-    "Mango Tango",
+    # "muscallonge",
+    # "Mango Tango",
     "Blue Dragon",
     "The Complex Merlin"
 ]

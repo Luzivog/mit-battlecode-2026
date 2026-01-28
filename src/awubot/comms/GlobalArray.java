@@ -247,21 +247,6 @@ public class GlobalArray {
         }
     }
 
-    /**
-     * Records a cheese mine as seen and pushes it to the front of the queue
-     * if it has never been seen before.
-     */
-    public static void noteCheeseMineSeen(int loc) {
-        if (globalCheeseMines.contains(loc)) return;
-        globalCheeseMines.add(loc);
-        if (!isRatKing) return;
-        cheeseQueueHead = (cheeseQueueHead - 1) & CHEESE_QUEUE_MASK;
-        cheeseQueue[cheeseQueueHead] = loc;
-        if (cheeseQueueSize < CHEESE_QUEUE_MAX) {
-            cheeseQueueSize++;
-        }
-    }
-
     private static void seedCheeseQueueFromSet() {
         cheeseQueueHead = 0;
         cheeseQueueSize = 0;

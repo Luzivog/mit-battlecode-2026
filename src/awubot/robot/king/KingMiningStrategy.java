@@ -276,7 +276,7 @@ public class KingMiningStrategy extends Strategy {
             MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
             if (myMine == null) continue;
             if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
-            if (isInTabooZone(myMine)) continue;
+            // if (isInTabooZone(myMine)) continue;
 
             int myDist = myLoc.distanceSquaredTo(myMine);
             if (myDist < myBestDist) {

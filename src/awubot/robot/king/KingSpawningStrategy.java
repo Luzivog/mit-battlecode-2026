@@ -24,7 +24,7 @@ public class KingSpawningStrategy extends Strategy {
         if (mapWidth * mapHeight <= 900 && time < 400) {
             defaultThresh = 30;
         }
-        int thresh = Math.min(rc.getGlobalCheese() / 20 + 10, defaultThresh);
+        int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
         if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
             thresh = 1000;
         } else if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000) && time >= 100) {

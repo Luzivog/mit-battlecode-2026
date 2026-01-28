@@ -190,7 +190,7 @@ public class BabyRat {
     }
 
     public static void attack(RobotInfo info) throws GameActionException {
-        attack(info, CombatStrategy.getCheeseNeeded(CombatStrategy.getBiteDamage() - 10));
+        attack(info, CombatStrategy.getBiteDamage());
     }
 
     public static void attack(RobotInfo info, int damage) throws GameActionException {

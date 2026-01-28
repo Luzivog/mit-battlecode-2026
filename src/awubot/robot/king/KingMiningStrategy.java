@@ -165,7 +165,7 @@ public class KingMiningStrategy extends Strategy {
                 MapLocation myMine = myInfo.getMapLocation();
                 int encoded = encode2x2(myMine);
                 int canonical = getCanonicalEncoded(encoded);
-                GlobalArray.globalCheeseMines.add(canonical);
+                GlobalArray.noteCheeseMineSeen(canonical);
                 Game.knownCheeseMines.add(encoded);
                 int symEncoded = getSymmetricEncoded(encoded);
                 if (symEncoded >= 0) {

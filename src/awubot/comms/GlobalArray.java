@@ -73,6 +73,14 @@ public class GlobalArray {
     private static int mapChunkQueueSize = 0;
     private static int mapChunkSeenMask = 0;
 
+    // Cheese mine queue (per-robot, used by rat kings to broadcast mines via shared array).
+    // Keep it small to limit bytecode/memory churn.
+    private static final int CHEESE_QUEUE_MAX = 50;
+    private static final int CHEESE_QUEUE_MASK = CHEESE_QUEUE_MAX - 1;
+    private static final int[] cheeseQueue = new int[CHEESE_QUEUE_MAX];
+    private static int cheeseQueueHead = 0;
+    private static int cheeseQueueSize = 0;
+
     private static MapLocation toSpawn0 = null, toSpawn1 = null;
     private static int pendingPayload0 = -1, pendingPayload1 = -1;
 
@@ -165,6 +173,7 @@ public class GlobalArray {
         kingId = findRatKingSlot();
         writeMyLoc();
         markKingAlive();
+        seedCheeseQueueFromSet();
     }
 
     public static void preTick() throws GameActionException {
@@ -235,6 +244,31 @@ public class GlobalArray {
             mapChunkQueue[mapChunkQueueHead] = chunkIndex;
             mapChunkQueueSize++;
         }
+    }
+
+    /**
+     * Records a cheese mine as seen and pushes it to the front of the queue
+     * if it has never been seen before.
+     */
+    public static void noteCheeseMineSeen(int loc) {
+        if (globalCheeseMines.contains(loc)) return;
+        globalCheeseMines.add(loc);
+        if (!isRatKing) return;
+        cheeseQueueHead = (cheeseQueueHead - 1) & CHEESE_QUEUE_MASK;
+        cheeseQueue[cheeseQueueHead] = loc;
+        if (cheeseQueueSize < CHEESE_QUEUE_MAX) {
+            cheeseQueueSize++;
+        }
+    }
+
+    private static void seedCheeseQueueFromSet() {
+        cheeseQueueHead = 0;
+        cheeseQueueSize = 0;
+        int n = Math.min(globalCheeseMines.set.length(), CHEESE_QUEUE_MAX);
+        for (int i = 0; i < n; i++) {
+            cheeseQueue[i] = globalCheeseMines.at(i);
+        }
+        cheeseQueueSize = n;
     }
 
     /**
@@ -363,7 +397,7 @@ public class GlobalArray {
             if (x == 1023) break;
 
             int canonical = getCanonicalEncoded(x);
-            globalCheeseMines.add(canonical);
+            noteCheeseMineSeen(canonical);
 
             Game.knownCheeseMines.add(x);
             int symX = getSymmetricEncoded(x);
@@ -375,15 +409,18 @@ public class GlobalArray {
     }
 
     public static void writeCheeseMines() throws GameActionException {
-        int n = globalCheeseMines.set.length();
+        int n = cheeseQueueSize;
+        int slots = N - MIN_CHEESE;
         if (n > 0) {
-            int i = (time * (N - MIN_CHEESE)) % n;
-            for (int j = 0; j < Math.min(n, N - MIN_CHEESE); j++) {
-                int k = (i + j) % n;
-                writeSharedArray(N - k - 1, globalCheeseMines.at(k));
+            int count = Math.min(n, slots);
+            int idx = cheeseQueueHead;
+            for (int j = 0; j < count; j++) {
+                writeSharedArray(N - 1 - j, cheeseQueue[idx]);
+                idx = (idx + 1) & CHEESE_QUEUE_MASK;
             }
+            cheeseQueueHead = (cheeseQueueHead + count) & CHEESE_QUEUE_MASK;
         }
-        if (n < N - MIN_CHEESE) {
+        if (n < slots) {
             writeSharedArray(N - 1 - n, 1023);
         }
     }

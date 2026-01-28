@@ -190,10 +190,13 @@ public class BabyRat {
     }
 
     public static void attack(RobotInfo info) throws GameActionException {
-        rc.attack(myLoc.add(myLoc.directionTo(info.location)));
+        attack(info, CombatStrategy.getCheeseNeeded(CombatStrategy.getBiteDamage() - 10));
     }
 
     public static void attack(RobotInfo info, int damage) throws GameActionException {
+        if (info.getType() != UnitType.BABY_RAT) {
+            damage = 10;
+        }
         rc.attack(myLoc.add(myLoc.directionTo(info.location)), CombatStrategy.getCheeseNeeded(damage - 10));
     }
 }

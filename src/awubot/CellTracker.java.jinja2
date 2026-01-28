@@ -142,6 +142,9 @@ public class CellTracker {
         }
     }
 
+    static MapLocation[] mines = new MapLocation[5];
+    static int mineCount = 0;
+
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
         var locX = loc.x;
@@ -159,21 +162,7 @@ public class CellTracker {
                 if((seen{{i}} & 1l << locX) == 0l) {
                     seen{{i}} |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable{{i}} |= 1l << locX;
@@ -207,6 +196,7 @@ public class CellTracker {
 
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
+        mineCount = 0;
         int x = myLoc.x, y = myLoc.y;
         switch(myDir.ordinal()) {
             {% for i in range(8) %}
@@ -235,6 +225,27 @@ public class CellTracker {
                 {% endfor %}
             }
             {% endfor %}
+        }
+        for(int i = mineCount - 1; i >= 0; i--) {
+            var loc = mines[i];
+            Pathfinder.computeReachableIgnoreAllies();
+            indicatorString = "";
+            CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+            Clock.yield();
+            int xi = loc.x - myLocX + 5;
+            int yi = loc.y - myLocY + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    if((Pathfinder.reach0 & (1l << idx)) != 0) {
+                        Squeaker.registerMine(loc);
+                    }
+                } else {
+                    if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
+                        Squeaker.registerMine(loc);
+                    }
+                }
+            }
         }
         Profiler.end("storeVisibleCells");
     }

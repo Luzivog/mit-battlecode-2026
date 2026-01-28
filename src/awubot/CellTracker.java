@@ -2715,6 +2715,9 @@ public class CellTracker {
         }
     }
 
+    static MapLocation[] mines = new MapLocation[5];
+    static int mineCount = 0;
+
     public static void storeCell(MapInfo info) throws GameActionException {
         var loc = info.getMapLocation();
         var locX = loc.x;
@@ -2731,21 +2734,7 @@ public class CellTracker {
                 if((seen0 & 1l << locX) == 0l) {
                     seen0 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable0 |= 1l << locX;
@@ -2763,21 +2752,7 @@ public class CellTracker {
                 if((seen1 & 1l << locX) == 0l) {
                     seen1 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable1 |= 1l << locX;
@@ -2795,21 +2770,7 @@ public class CellTracker {
                 if((seen2 & 1l << locX) == 0l) {
                     seen2 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable2 |= 1l << locX;
@@ -2827,21 +2788,7 @@ public class CellTracker {
                 if((seen3 & 1l << locX) == 0l) {
                     seen3 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable3 |= 1l << locX;
@@ -2859,21 +2806,7 @@ public class CellTracker {
                 if((seen4 & 1l << locX) == 0l) {
                     seen4 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable4 |= 1l << locX;
@@ -2891,21 +2824,7 @@ public class CellTracker {
                 if((seen5 & 1l << locX) == 0l) {
                     seen5 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable5 |= 1l << locX;
@@ -2923,21 +2842,7 @@ public class CellTracker {
                 if((seen6 & 1l << locX) == 0l) {
                     seen6 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable6 |= 1l << locX;
@@ -2955,21 +2860,7 @@ public class CellTracker {
                 if((seen7 & 1l << locX) == 0l) {
                     seen7 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable7 |= 1l << locX;
@@ -2987,21 +2878,7 @@ public class CellTracker {
                 if((seen8 & 1l << locX) == 0l) {
                     seen8 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable8 |= 1l << locX;
@@ -3019,21 +2896,7 @@ public class CellTracker {
                 if((seen9 & 1l << locX) == 0l) {
                     seen9 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable9 |= 1l << locX;
@@ -3051,21 +2914,7 @@ public class CellTracker {
                 if((seen10 & 1l << locX) == 0l) {
                     seen10 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable10 |= 1l << locX;
@@ -3083,21 +2932,7 @@ public class CellTracker {
                 if((seen11 & 1l << locX) == 0l) {
                     seen11 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable11 |= 1l << locX;
@@ -3115,21 +2950,7 @@ public class CellTracker {
                 if((seen12 & 1l << locX) == 0l) {
                     seen12 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable12 |= 1l << locX;
@@ -3147,21 +2968,7 @@ public class CellTracker {
                 if((seen13 & 1l << locX) == 0l) {
                     seen13 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable13 |= 1l << locX;
@@ -3179,21 +2986,7 @@ public class CellTracker {
                 if((seen14 & 1l << locX) == 0l) {
                     seen14 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable14 |= 1l << locX;
@@ -3211,21 +3004,7 @@ public class CellTracker {
                 if((seen15 & 1l << locX) == 0l) {
                     seen15 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable15 |= 1l << locX;
@@ -3243,21 +3022,7 @@ public class CellTracker {
                 if((seen16 & 1l << locX) == 0l) {
                     seen16 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable16 |= 1l << locX;
@@ -3275,21 +3040,7 @@ public class CellTracker {
                 if((seen17 & 1l << locX) == 0l) {
                     seen17 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable17 |= 1l << locX;
@@ -3307,21 +3058,7 @@ public class CellTracker {
                 if((seen18 & 1l << locX) == 0l) {
                     seen18 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable18 |= 1l << locX;
@@ -3339,21 +3076,7 @@ public class CellTracker {
                 if((seen19 & 1l << locX) == 0l) {
                     seen19 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable19 |= 1l << locX;
@@ -3371,21 +3094,7 @@ public class CellTracker {
                 if((seen20 & 1l << locX) == 0l) {
                     seen20 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable20 |= 1l << locX;
@@ -3403,21 +3112,7 @@ public class CellTracker {
                 if((seen21 & 1l << locX) == 0l) {
                     seen21 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable21 |= 1l << locX;
@@ -3435,21 +3130,7 @@ public class CellTracker {
                 if((seen22 & 1l << locX) == 0l) {
                     seen22 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable22 |= 1l << locX;
@@ -3467,21 +3148,7 @@ public class CellTracker {
                 if((seen23 & 1l << locX) == 0l) {
                     seen23 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable23 |= 1l << locX;
@@ -3499,21 +3166,7 @@ public class CellTracker {
                 if((seen24 & 1l << locX) == 0l) {
                     seen24 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable24 |= 1l << locX;
@@ -3531,21 +3184,7 @@ public class CellTracker {
                 if((seen25 & 1l << locX) == 0l) {
                     seen25 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable25 |= 1l << locX;
@@ -3563,21 +3202,7 @@ public class CellTracker {
                 if((seen26 & 1l << locX) == 0l) {
                     seen26 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable26 |= 1l << locX;
@@ -3595,21 +3220,7 @@ public class CellTracker {
                 if((seen27 & 1l << locX) == 0l) {
                     seen27 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable27 |= 1l << locX;
@@ -3627,21 +3238,7 @@ public class CellTracker {
                 if((seen28 & 1l << locX) == 0l) {
                     seen28 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable28 |= 1l << locX;
@@ -3659,21 +3256,7 @@ public class CellTracker {
                 if((seen29 & 1l << locX) == 0l) {
                     seen29 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable29 |= 1l << locX;
@@ -3691,21 +3274,7 @@ public class CellTracker {
                 if((seen30 & 1l << locX) == 0l) {
                     seen30 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable30 |= 1l << locX;
@@ -3723,21 +3292,7 @@ public class CellTracker {
                 if((seen31 & 1l << locX) == 0l) {
                     seen31 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable31 |= 1l << locX;
@@ -3755,21 +3310,7 @@ public class CellTracker {
                 if((seen32 & 1l << locX) == 0l) {
                     seen32 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable32 |= 1l << locX;
@@ -3787,21 +3328,7 @@ public class CellTracker {
                 if((seen33 & 1l << locX) == 0l) {
                     seen33 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable33 |= 1l << locX;
@@ -3819,21 +3346,7 @@ public class CellTracker {
                 if((seen34 & 1l << locX) == 0l) {
                     seen34 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable34 |= 1l << locX;
@@ -3851,21 +3364,7 @@ public class CellTracker {
                 if((seen35 & 1l << locX) == 0l) {
                     seen35 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable35 |= 1l << locX;
@@ -3883,21 +3382,7 @@ public class CellTracker {
                 if((seen36 & 1l << locX) == 0l) {
                     seen36 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable36 |= 1l << locX;
@@ -3915,21 +3400,7 @@ public class CellTracker {
                 if((seen37 & 1l << locX) == 0l) {
                     seen37 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable37 |= 1l << locX;
@@ -3947,21 +3418,7 @@ public class CellTracker {
                 if((seen38 & 1l << locX) == 0l) {
                     seen38 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable38 |= 1l << locX;
@@ -3979,21 +3436,7 @@ public class CellTracker {
                 if((seen39 & 1l << locX) == 0l) {
                     seen39 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable39 |= 1l << locX;
@@ -4011,21 +3454,7 @@ public class CellTracker {
                 if((seen40 & 1l << locX) == 0l) {
                     seen40 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable40 |= 1l << locX;
@@ -4043,21 +3472,7 @@ public class CellTracker {
                 if((seen41 & 1l << locX) == 0l) {
                     seen41 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable41 |= 1l << locX;
@@ -4075,21 +3490,7 @@ public class CellTracker {
                 if((seen42 & 1l << locX) == 0l) {
                     seen42 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable42 |= 1l << locX;
@@ -4107,21 +3508,7 @@ public class CellTracker {
                 if((seen43 & 1l << locX) == 0l) {
                     seen43 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable43 |= 1l << locX;
@@ -4139,21 +3526,7 @@ public class CellTracker {
                 if((seen44 & 1l << locX) == 0l) {
                     seen44 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable44 |= 1l << locX;
@@ -4171,21 +3544,7 @@ public class CellTracker {
                 if((seen45 & 1l << locX) == 0l) {
                     seen45 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable45 |= 1l << locX;
@@ -4203,21 +3562,7 @@ public class CellTracker {
                 if((seen46 & 1l << locX) == 0l) {
                     seen46 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable46 |= 1l << locX;
@@ -4235,21 +3580,7 @@ public class CellTracker {
                 if((seen47 & 1l << locX) == 0l) {
                     seen47 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable47 |= 1l << locX;
@@ -4267,21 +3598,7 @@ public class CellTracker {
                 if((seen48 & 1l << locX) == 0l) {
                     seen48 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable48 |= 1l << locX;
@@ -4299,21 +3616,7 @@ public class CellTracker {
                 if((seen49 & 1l << locX) == 0l) {
                     seen49 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable49 |= 1l << locX;
@@ -4331,21 +3634,7 @@ public class CellTracker {
                 if((seen50 & 1l << locX) == 0l) {
                     seen50 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable50 |= 1l << locX;
@@ -4363,21 +3652,7 @@ public class CellTracker {
                 if((seen51 & 1l << locX) == 0l) {
                     seen51 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable51 |= 1l << locX;
@@ -4395,21 +3670,7 @@ public class CellTracker {
                 if((seen52 & 1l << locX) == 0l) {
                     seen52 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable52 |= 1l << locX;
@@ -4427,21 +3688,7 @@ public class CellTracker {
                 if((seen53 & 1l << locX) == 0l) {
                     seen53 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable53 |= 1l << locX;
@@ -4459,21 +3706,7 @@ public class CellTracker {
                 if((seen54 & 1l << locX) == 0l) {
                     seen54 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable54 |= 1l << locX;
@@ -4491,21 +3724,7 @@ public class CellTracker {
                 if((seen55 & 1l << locX) == 0l) {
                     seen55 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable55 |= 1l << locX;
@@ -4523,21 +3742,7 @@ public class CellTracker {
                 if((seen56 & 1l << locX) == 0l) {
                     seen56 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable56 |= 1l << locX;
@@ -4555,21 +3760,7 @@ public class CellTracker {
                 if((seen57 & 1l << locX) == 0l) {
                     seen57 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable57 |= 1l << locX;
@@ -4587,21 +3778,7 @@ public class CellTracker {
                 if((seen58 & 1l << locX) == 0l) {
                     seen58 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable58 |= 1l << locX;
@@ -4619,21 +3796,7 @@ public class CellTracker {
                 if((seen59 & 1l << locX) == 0l) {
                     seen59 |= 1l << locX;
                     if(info.hasCheeseMine()) {
-                        Pathfinder.computeReachableIgnoreAllies();
-                        int xi = loc.x - myLocX + 5;
-                        int yi = loc.y - myLocY + 5;
-                        {
-                            int idx = yi * 11 + xi;
-                            if(idx < 61) {
-                                if((Pathfinder.reach0 & (1l << idx)) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            } else {
-                                if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
-                                    Squeaker.registerMine(loc);
-                                }
-                            }
-                        }
+                        mines[mineCount++] = loc;
                     }
                     if(!info.isWall()) {
                         passable59 |= 1l << locX;
@@ -5313,6 +4476,7 @@ public class CellTracker {
 
     public static void storeVisibleCells() throws GameActionException {
         Profiler.begin();
+        mineCount = 0;
         int x = myLoc.x, y = myLoc.y;
         switch(myDir.ordinal()) {
             case 0 -> {
@@ -6363,6 +5527,27 @@ public class CellTracker {
                     }
                 }
                                                                     }
+        }
+        for(int i = mineCount - 1; i >= 0; i--) {
+            var loc = mines[i];
+            Pathfinder.computeReachableIgnoreAllies();
+            indicatorString = "";
+            CellTracker.printLocalMask(CellTracker.localPassable0, CellTracker.localPassable1);
+            Clock.yield();
+            int xi = loc.x - myLocX + 5;
+            int yi = loc.y - myLocY + 5;
+            {
+                int idx = yi * 11 + xi;
+                if(idx < 61) {
+                    if((Pathfinder.reach0 & (1l << idx)) != 0) {
+                        Squeaker.registerMine(loc);
+                    }
+                } else {
+                    if((Pathfinder.reach1 & (1l << (idx - 61))) != 0) {
+                        Squeaker.registerMine(loc);
+                    }
+                }
+            }
         }
         Profiler.end("storeVisibleCells");
     }

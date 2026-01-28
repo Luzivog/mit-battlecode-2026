@@ -2332,13 +2332,19 @@ public final class TryThrow {
 
 
     private static void tryThrowNN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_0_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -2462,13 +2468,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_1_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -2592,13 +2604,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_1_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -2739,13 +2757,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -2886,13 +2910,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNS() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3050,13 +3080,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_m1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3197,13 +3233,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_m1_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3344,13 +3386,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_m1_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3474,13 +3522,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNEN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_1_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3604,13 +3658,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNENE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_2_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3734,13 +3794,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNEE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_2_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3864,13 +3930,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNESE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_2_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -3994,13 +4066,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNES() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -4158,13 +4236,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNESW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -4322,13 +4406,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNEW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_0_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -4486,13 +4576,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNENW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_0_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -4616,13 +4712,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowEN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_1_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -4763,13 +4865,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowENE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_2_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -4893,13 +5001,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowEE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_2_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5023,13 +5137,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowESE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_2_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5153,13 +5273,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowES() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_1_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5300,13 +5426,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowESW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_0_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5447,13 +5579,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowEW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5611,13 +5749,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowENW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_0_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5758,13 +5902,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSEN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -5922,13 +6072,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSENE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_2_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6052,13 +6208,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSEE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_2_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6182,13 +6344,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSESE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_2_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6312,13 +6480,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSES() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_1_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6442,13 +6616,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSESW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_0_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6572,13 +6752,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSEW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_0_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6736,13 +6922,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSENW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -6900,13 +7092,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7064,13 +7262,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7211,13 +7415,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_1_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7358,13 +7568,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_1_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7488,13 +7704,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSS() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_0_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7618,13 +7840,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_m1_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7748,13 +7976,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_m1_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -7895,13 +8129,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_m1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8042,13 +8282,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_m1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8206,13 +8452,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8370,13 +8622,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_0_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8534,13 +8792,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_0_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8664,13 +8928,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWS() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_m1_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8794,13 +9064,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_m2_m2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -8924,13 +9200,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_m2_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9054,13 +9336,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowSWNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_m2_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9184,13 +9472,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_m1_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9331,13 +9625,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_0_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9478,13 +9778,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9642,13 +9948,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_0_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9789,13 +10101,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWS() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_m1_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -9936,13 +10254,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_m2_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10066,13 +10390,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_m2_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10196,13 +10526,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowWNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_m2_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10326,13 +10662,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_m1_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10456,13 +10798,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_0_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10586,13 +10934,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_0_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10750,13 +11104,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_0_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -10914,13 +11274,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWS() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_m1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11078,13 +11444,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_m2_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11208,13 +11580,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_m2_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11338,13 +11716,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowNWNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 2);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_m2_2 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11468,13 +11852,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCN() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTH);
         if (moveCost == -1) return;
-        if (occ_0_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11615,13 +12005,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCNE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHEAST);
         if (moveCost == -1) return;
-        if (occ_1_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11762,13 +12158,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.EAST);
         if (moveCost == -1) return;
-        if (occ_1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -11909,13 +12311,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCSE() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHEAST);
         if (moveCost == -1) return;
-        if (occ_1_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -12056,13 +12464,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCS() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTH);
         if (moveCost == -1) return;
-        if (occ_0_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -12203,13 +12617,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCSW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHWEST);
         if (moveCost == -1) return;
-        if (occ_m1_m1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -12350,13 +12770,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.WEST);
         if (moveCost == -1) return;
-        if (occ_m1_0 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -12497,13 +12923,19 @@ public final class TryThrow {
         }
     }
     private static void tryThrowCNW() throws GameActionException {
-        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
-        if (!rc.canSenseLocation(throwTarget)) return;
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHWEST);
         if (moveCost == -1) return;
-        if (occ_m1_1 != null) return;
-        if (!rc.onTheMap(throwTarget)) return;
-        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
         score = 0;
         RobotInfo enemyHit = null;
         scan: {

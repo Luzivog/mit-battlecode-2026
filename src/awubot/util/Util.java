@@ -3734,8 +3734,8 @@ public class Util {
         if (!CellTracker.isSymmetryKnown()) return null;
         return switch (CellTracker.getSymmetry()) {
             case Rotational -> rot180(loc);
-            case Horizontal -> flipVer(loc); 
-            case Vertical -> flipHor(loc);  
+            case Horizontal -> flipVer(loc);  
+            case Vertical -> flipHor(loc); 
             default -> null;
         };
     }

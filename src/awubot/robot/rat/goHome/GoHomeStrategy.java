@@ -9,6 +9,7 @@ import awubot.robot.Strategy;
 import awubot.Pathfinder;
 import awubot.util.Profiler;
 import awubot.robot.rat.BabyRat;
+import awubot.robot.rat.TraverseStrategy;
 
 import static awubot.Game.*;
 import static awubot.util.Util.*;
@@ -1828,7 +1829,7 @@ public class GoHomeStrategy extends Strategy {
 
             indicate("best " + (int)best);
             if(best == '\uFFFF') {
-                var traverseStrategy = new TraverseStrategy(kingLoc);
+                var traverseStrategy = new TraverseStrategy(kingLoc, 8);
                 traverseStrategy.runTick();
             } else {
                 var bestLoc = new MapLocation(bestX, bestY);

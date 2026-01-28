@@ -121,11 +121,13 @@ public class KingMiningStrategy extends Strategy {
         }
         if (nearestCheese != null) {
             if (!rc.canPickUpCheese(nearestCheese)) {
-                Direction dir = Pathfinder.getMove(nearestCheese);
-                indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
-                digDirtInDirection(dir);
-                if (rc.canMove(dir)) {
-                    RatKing.rawMove(dir);
+                if(rc.isMovementReady()) {
+                    Direction dir = Pathfinder.getMove(nearestCheese);
+                    indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
+                    digDirtInDirection(dir);
+                    if (rc.canMove(dir)) {
+                        RatKing.rawMove(dir);
+                    }
                 }
                 return true;
             } else {
@@ -142,10 +144,12 @@ public class KingMiningStrategy extends Strategy {
             }
         }
         if (!myLoc.equals(resetLoc)) {
-            Direction dir = Pathfinder.getMove(resetLoc);
-            digDirtInDirection(dir);
-            if (rc.canMove(dir)) {
-                RatKing.rawMove(dir);
+            if(rc.isMovementReady()) {
+                Direction dir = Pathfinder.getMove(resetLoc);
+                digDirtInDirection(dir);
+                if (rc.canMove(dir)) {
+                    RatKing.rawMove(dir);
+                }
             }
             return true;
         }

@@ -57,12 +57,12 @@ public class RobotPlayer {
                 } else {
                     BabyRat.run();
                 }
+                GlobalArray.postTick();
                 if (Clock.getBytecodesLeft() > 1000) {
                     Squeaker.postTick();
                 } else {
                     Util.indicate("skipped squeaker");
                 }
-                GlobalArray.postTick();
                 Game.postTick();
             } catch (Exception e) {
                 if (!Game.DISABLE_OUTPUT) {

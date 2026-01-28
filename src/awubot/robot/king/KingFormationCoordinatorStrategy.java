@@ -1,10 +1,6 @@
 package awubot.robot.king;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapInfo;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotInfo;
-import battlecode.common.UnitType;
+import battlecode.common.*;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import awubot.RobotTracker;
@@ -192,27 +188,14 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (myGlobalCheese < getCheeseThreshold(myKingCount) + UPGRADE_COST) return;
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
         if (numRats < 15 * myKingCount) return;
+        indicate("passed formation checks");
 
         if (GlobalArray.getFormationTarget() != null) return;
 
-        if (!GlobalArray.tryClaimFormationCoordinator(kingId)) return;
+        MapLocation formationTarget = selectBestMineForFormation();
+        if (formationTarget == null) return;
 
-        MapLocation myBestMine = selectBestMineForFormation();
-        if (myBestMine == null) {
-            GlobalArray.clearFormation();  
-            return;
-        }
-
-        MapLocation myFormationSpot = findFormationSpotNearMine(myBestMine);
-        if (myFormationSpot == null) {
-            GlobalArray.clearFormation();  
-            return;
-        }
-
-        if (GlobalArray.getFormationCoordinator() != kingId) return;
-
-        formationTarget = myFormationSpot;
-        targetMine = myBestMine;
+        targetMine = formationTarget;
         coordinationStartTurn = time;
         state = FormationState.COORDINATING;
 
@@ -336,27 +319,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             MapLocation myKingLoc = GlobalArray.getRatKing(i);
             if (myKingLoc != null && aCenter.distanceSquaredTo(myKingLoc) < MIN_DIST_FROM_KINGS_SQ) {
                 return false;
-            }
-        }
-
-        if (rc.canSenseLocation(aCenter)) {
-            for (int myDx = -1; myDx <= 1; myDx++) {
-                for (int myDy = -1; myDy <= 1; myDy++) {
-                    MapLocation myTile = aCenter.translate(myDx, myDy);
-                    if (!rc.onTheMap(myTile)) return false;
-
-                    if (rc.canSenseLocation(myTile)) {
-                        MapInfo myInfo = rc.senseMapInfo(myTile);
-                        if (!myInfo.isPassable()) return false;
-
-                        RobotInfo myRobot = rc.senseRobotAtLocation(myTile);
-                        if (myRobot != null) {
-                            if (myRobot.getType() == UnitType.RAT_KING || myRobot.getType() == UnitType.CAT) {
-                                return false;
-                            }
-                        }
-                    }
-                }
             }
         }
 

@@ -10,13 +10,12 @@ import static awubot.util.Util.*;
 import awubot.Game;
 
 public class KingFormationCoordinatorStrategy extends Strategy {
-    private static final int[] CHEESE_THRESHOLDS = {800, 1000, 1200, 1800, 1000000000};
+    private static final int[] MINE_THRESHOLDS = {3, 5, 9, 15, 10000000};
     private static final int UPGRADE_COST = 50;
-    private static final int MIN_DIST_FROM_KINGS_SQ = 100;
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
     private static final int COORDINATION_TIMEOUT = 120;
-    private static final int FORMATION_COOLDOWN = 150;
-    private static final int MIN_TURN_FOR_FORMATION = 200;
+
+    private static int MIN_DIST_FROM_KINGS_SQ;
 
     private final KingMiningStrategy miningStrategy;
 
@@ -29,7 +28,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private MapLocation formationTarget = null;
     private MapLocation targetMine = null;
     private int coordinationStartTurn = 0;
-    private int lastFormationTurn = -FORMATION_COOLDOWN;
     private int kingCount = 1;
     private RobotInfo nearestCat = null;
 
@@ -40,6 +38,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     public KingFormationCoordinatorStrategy(KingMiningStrategy aMiningStrategy) {
+        MIN_DIST_FROM_KINGS_SQ = Math.max(200, mapWidth * mapHeight / 7);
         miningStrategy = aMiningStrategy;
 
         if (mapWidth < 40 && mapHeight < 40) {
@@ -63,11 +62,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private boolean isInTabooZone(MapLocation aLoc) {
         return aLoc.x >= tabooMinX && aLoc.x <= tabooMaxX
             && aLoc.y >= tabooMinY && aLoc.y <= tabooMaxY;
-    }
-
-    private int getCheeseThreshold(int aCurrentKingCount) {
-        int myIndex = Math.max(0, Math.min(aCurrentKingCount - 1, CHEESE_THRESHOLDS.length - 1));
-        return CHEESE_THRESHOLDS[myIndex];
     }
 
 
@@ -122,19 +116,19 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
 
         if (nearestEnemyRatKing != null && enemyRatKingDistSq <= 25) {
-            return false; 
+            return false;
         }
 
         int myHp = rc.getHealth();
 
         if (myHp <= CRITICAL_HP || catDistSq <= CAT_CRITICAL_DIST_SQ) {
-            return false; 
+            return false;
         } else if (catDistSq <= CAT_DANGER_DIST_SQ || (enemyRatDistSq <= 8 && myHp <= 250)) {
             return false;
         } else if (nearestCat != null || nearestEnemyRat != null) {
-            return false; 
+            return false;
         } else {
-            return true;  
+            return true;
         }
     }
 
@@ -144,7 +138,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < 15 * myKingCount) {
+        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < 8 * myKingCount) {
             indicate("FORMATION: aborting due to king count or rat count");
             indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
             abortFormation();
@@ -179,15 +173,24 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         return true;
     }
 
+    boolean danger;
     private void tryStartFormation() throws GameActionException {
-        if (time < MIN_TURN_FOR_FORMATION) return;
-        int myGlobalCheese = rc.getGlobalCheese();
-        if (time - lastFormationTurn < FORMATION_COOLDOWN) return;
-        int myKingCount = GlobalArray.countRatKings();
-        if (myKingCount == 5) return;
-        if (myGlobalCheese < getCheeseThreshold(myKingCount) + UPGRADE_COST) return;
-        int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
-        if (numRats < 15 * myKingCount) return;
+        danger = false;
+        if(rc.getHealth() < 100 && GlobalArray.countRatKings() == 1) {
+            danger = true;
+        } else {
+            indicate("A");
+            int myGlobalCheese = rc.getGlobalCheese();
+            if(myGlobalCheese < UPGRADE_COST + 100) return;
+            indicate("B");
+            int myKingCount = GlobalArray.countRatKings();
+            if (myKingCount == 5) return;
+            indicate("C");
+            if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
+            indicate("D");
+            int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
+            if (numRats < 8 * myKingCount) return;
+        }
         indicate("passed formation checks");
 
         if (GlobalArray.getFormationTarget() != null) return;
@@ -235,16 +238,15 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             if (myKingLoc != null) {
                 int myDist = aMine.distanceSquaredTo(myKingLoc);
                 if (myDist < MIN_DIST_FROM_KINGS_SQ) {
-                    myScore -= 500;
+                    myScore -= 50000;
                 }
 
-                // we want to spawn other kings pretty far away
-                myScore += myDist;
+                myScore -= myDist;
             }
         }
 
         if (rc.canSenseLocation(aMine)) {
-            myScore += scoreNearbyAlliedRats(aMine, 49);  
+            myScore += scoreNearbyAlliedRats(aMine, 49);
 
             myScore += scoreNearbyEnemyRats(aMine, 49);
         }
@@ -341,7 +343,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MapLocation myCurrentTarget = GlobalArray.getFormationTarget();
         if (myCurrentTarget == null) {
             state = FormationState.IDLE;
-            lastFormationTurn = time;
             indicate("FORMATION: completed or cleared");
             return;
         }
@@ -364,7 +365,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         state = FormationState.IDLE;
         formationTarget = null;
         targetMine = null;
-        lastFormationTurn = time;
         indicate("FORMATION: aborted");
     }
 }

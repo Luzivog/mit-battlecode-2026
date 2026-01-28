@@ -11,7 +11,7 @@ import awubot.RobotTracker;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
 import static awubot.Game.*;
-import static awubot.util.Util.indicate;
+import static awubot.util.Util.*;
 
 // TODO: refactor this (AI slop)
 
@@ -32,6 +32,21 @@ public class FormationStrategy extends Strategy {
             active = false;
             return true;
         }
+        for(int i = 0; i < 4; i++) {
+            int angle;
+            if(i == time % 4) {
+                angle = 180;
+            } else {
+                angle = 360;
+            }
+            for(int j = RobotTracker.catHistNum[i] - 1; j >= 0; j--) {
+                var cat = RobotTracker.catHist[i][j];
+                if(cat == null) continue;
+                if(cat.location.isWithinDistanceSquared(formationTarget, UnitType.CAT.visionConeRadiusSquared, cat.direction, angle, true)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -39,10 +54,18 @@ public class FormationStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         tryActivate();
         if(isComplete()) return false;
+        if(rc.getRawCheese() > 0) {
+            var distToFormation = myLoc.distanceSquaredTo(formationTarget);
+            var distToHome = myLoc.distanceSquaredTo(GlobalArray.nearestRatKing);
+            if(rc.getRawCheese() >= 40 && distToHome < distToFormation - 25) {
+                indicate("FORM: going home instead");
+                return false;
+            }
+        }
 
         indicate("FORM: active, target=" + formationTarget + " allies=" + RobotTracker.allyCount + " dist=" + myLoc.distanceSquaredTo(formationTarget));
 
-        if (rc.canBecomeRatKing()) {
+        if (myLoc.distanceSquaredTo(formationTarget) <= 8 && rc.canBecomeRatKing()) {
             indicate("FORM: BECOMING KING!");
             rc.becomeRatKing();
             Game.convertKing();

@@ -40,9 +40,9 @@ public class MinerStrategy extends Strategy {
             cheeseStrategy.cheeseTarget = null;
         }
 
-        if(tryStrategy(goHomeStrategy)) return true;
-
         if(tryStrategy(formationStrategy)) return true;
+
+        if(tryStrategy(goHomeStrategy)) return true;
 
         if(tryStrategy(cheeseStrategy)) return true;
 

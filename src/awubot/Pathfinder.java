@@ -831,12 +831,9 @@ class BugnavInstance {
                     leftTurn = true;
                     guessedLeft[pos.y] |= 1l << pos.x;
                 } else if(isRatKing) {
-                    // just guess :skull:
-                    if(Rng.mcg() >> 30 == 0) {
-                        leftTurn = true;
+                    if(leftTurn) {
                         guessedLeft[pos.y] |= 1l << pos.x;
                     } else {
-                        leftTurn = false;
                         guessedRight[pos.y] |= 1l << pos.x;
                     }
                 } else {

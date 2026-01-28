@@ -23,12 +23,13 @@ MAPS1 = [
     "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "averyfineline", "whereisthecheese", "tiny"
 ]
 MAPS2 = [
-    "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "popthecork", "DefaultLarge", "Nofreecheese"
+    # "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "popthecork", "DefaultLarge", "Nofreecheese"
+    "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "Nofreecheese", "jail", "hatefullattice"
 ]
 SCRIM_TEAMS = [
     "Old But Gold",
-    "muscallonge",
-    "Mango Tango",
+    # "muscallonge",
+    # "Mango Tango",
     "Blue Dragon",
     "The Complex Merlin"
 ]

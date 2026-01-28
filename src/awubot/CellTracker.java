@@ -2733,7 +2733,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2765,7 +2765,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2797,7 +2797,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2829,7 +2829,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2861,7 +2861,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2893,7 +2893,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2925,7 +2925,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2957,7 +2957,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -2989,7 +2989,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3021,7 +3021,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3053,7 +3053,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3085,7 +3085,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3117,7 +3117,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3149,7 +3149,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3181,7 +3181,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3213,7 +3213,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3245,7 +3245,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3277,7 +3277,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3309,7 +3309,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3341,7 +3341,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3373,7 +3373,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3405,7 +3405,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3437,7 +3437,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3469,7 +3469,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3501,7 +3501,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3533,7 +3533,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3565,7 +3565,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3597,7 +3597,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3629,7 +3629,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3661,7 +3661,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3693,7 +3693,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3725,7 +3725,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3757,7 +3757,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3789,7 +3789,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3821,7 +3821,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3853,7 +3853,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3885,7 +3885,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3917,7 +3917,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3949,7 +3949,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -3981,7 +3981,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4013,7 +4013,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4045,7 +4045,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4077,7 +4077,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4109,7 +4109,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4141,7 +4141,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4173,7 +4173,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4205,7 +4205,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4237,7 +4237,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4269,7 +4269,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4301,7 +4301,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4333,7 +4333,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4365,7 +4365,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4397,7 +4397,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4429,7 +4429,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4461,7 +4461,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4493,7 +4493,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4525,7 +4525,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4557,7 +4557,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4589,7 +4589,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {
@@ -4621,7 +4621,7 @@ public class CellTracker {
                     if(info.hasCheeseMine()) {
                         Pathfinder.computeReachableIgnoreAllies();
                         int xi = loc.x - myLocX + 5;
-                        int yi = pos.y - myLocY + 5;
+                        int yi = loc.y - myLocY + 5;
                         {
                             int idx = yi * 11 + xi;
                             if(idx < 61) {

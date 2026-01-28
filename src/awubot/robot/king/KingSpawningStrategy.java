@@ -58,6 +58,7 @@ public class KingSpawningStrategy extends Strategy {
         }
 
         if (rc.getAllCheese() < 200) thresh = rc.getAllCheese() / 10;
+        thresh = Math.max(thresh, 20);
 
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh += 10;

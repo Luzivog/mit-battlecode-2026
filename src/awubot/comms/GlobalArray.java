@@ -439,7 +439,6 @@ public class GlobalArray {
             for (int j = 0; j < count; j++) {
                 rotateCheeseQueueOnce();
             }
-            cheeseQueueHead = (cheeseQueueHead + count) & CHEESE_QUEUE_MASK;
         }
         if (n < slots) {
             writeSharedArray(N - 1 - n, 1023);

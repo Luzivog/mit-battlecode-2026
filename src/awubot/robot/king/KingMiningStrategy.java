@@ -164,13 +164,7 @@ public class KingMiningStrategy extends Strategy {
             if (myInfo.hasCheeseMine()) {
                 MapLocation myMine = myInfo.getMapLocation();
                 int encoded = encode2x2(myMine);
-                int canonical = getCanonicalEncoded(encoded);
-                GlobalArray.noteCheeseMineSeen(canonical);
-                Game.knownCheeseMines.add(encoded);
-                int symEncoded = getSymmetricEncoded(encoded);
-                if (symEncoded >= 0) {
-                    Game.knownCheeseMines.add(symEncoded);
-                }
+                GlobalArray.registerGlobalCheeseMine(encoded);
 
                 if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
                 // if (isInTabooZone(myMine)) continue;

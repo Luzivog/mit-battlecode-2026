@@ -74,8 +74,7 @@ public class GlobalArray {
     private static int mapChunkSeenMask = 0;
 
     // Cheese mine queue (per-robot, used by rat kings to broadcast mines via shared array).
-    // Keep it small to limit bytecode/memory churn.
-    private static final int CHEESE_QUEUE_MAX = 50;
+    private static final int CHEESE_QUEUE_MAX = 64; // power-of-two for cheap wrap
     private static final int CHEESE_QUEUE_MASK = CHEESE_QUEUE_MAX - 1;
     private static final int[] cheeseQueue = new int[CHEESE_QUEUE_MAX];
     private static int cheeseQueueHead = 0;
@@ -157,6 +156,8 @@ public class GlobalArray {
         mapChunkQueueHead = 0;
         mapChunkQueueSize = 0;
         mapChunkSeenMask = 0;
+        cheeseQueueHead = 0;
+        cheeseQueueSize = 0;
         if (isRatKing && time == 1) {
             kingId = findRatKingSlot();
             writeSharedArray(RAT_KING_TURN_COUNTER, 1023);
@@ -319,6 +320,18 @@ public class GlobalArray {
         mapChunkQueue[tailIndex] = front;
     }
 
+    private static int cheeseQueueAt(int offset) {
+        return cheeseQueue[(cheeseQueueHead + offset) & CHEESE_QUEUE_MASK];
+    }
+
+    private static void rotateCheeseQueueOnce() {
+        if (cheeseQueueSize <= 1) return;
+        int front = cheeseQueue[cheeseQueueHead];
+        cheeseQueueHead = (cheeseQueueHead + 1) & CHEESE_QUEUE_MASK;
+        int tailIndex = (cheeseQueueHead + cheeseQueueSize - 1) & CHEESE_QUEUE_MASK;
+        cheeseQueue[tailIndex] = front;
+    }
+
     private static int payloadForChunkIndex(int chunkIndex) {
         if (chunkIndex < 0 || MapManager.globalTracker == null) return -1;
         int chunkX = chunkIndex & 0b11;
@@ -390,20 +403,27 @@ public class GlobalArray {
         return ret;
     }
 
+    public static void registerGlobalCheeseMine(int loc) {
+        if (loc == 0) {
+            throw new RuntimeException("attempted to register invalid cheese mine at loc 0");
+        }
+        if (globalCheeseMines.contains(loc)) return;
+        globalCheeseMines.add(loc);
+        knownCheeseMines.add(loc);
+        if (!isRatKing) return;
+        cheeseQueueHead = (cheeseQueueHead - 1) & CHEESE_QUEUE_MASK;
+        cheeseQueue[cheeseQueueHead] = loc;
+        if (cheeseQueueSize < CHEESE_QUEUE_MAX) {
+            cheeseQueueSize++;
+        }
+    }
+
     public static void readCheeseMines() throws GameActionException {
         int i = N - 1;
         while (i >= MIN_CHEESE) {
             int x = rc.readSharedArray(i);
             if (x == 1023) break;
-
-            int canonical = getCanonicalEncoded(x);
-            noteCheeseMineSeen(canonical);
-
-            Game.knownCheeseMines.add(x);
-            int symX = getSymmetricEncoded(x);
-            if (symX >= 0) {
-                Game.knownCheeseMines.add(symX);
-            }
+            registerGlobalCheeseMine(x);
             i--;
         }
     }
@@ -413,15 +433,18 @@ public class GlobalArray {
         int slots = N - MIN_CHEESE;
         if (n > 0) {
             int count = Math.min(n, slots);
-            int idx = cheeseQueueHead;
             for (int j = 0; j < count; j++) {
-                writeSharedArray(N - 1 - j, cheeseQueue[idx]);
-                idx = (idx + 1) & CHEESE_QUEUE_MASK;
+                writeSharedArray(N - 1 - j, cheeseQueueAt(j));
+            }
+            for (int j = 0; j < count; j++) {
+                rotateCheeseQueueOnce();
             }
             cheeseQueueHead = (cheeseQueueHead + count) & CHEESE_QUEUE_MASK;
         }
         if (n < slots) {
             writeSharedArray(N - 1 - n, 1023);
+        } else {
+            assert(false);
         }
     }
 

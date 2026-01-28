@@ -31,14 +31,14 @@ public class RatKing {
     public static void run() throws GameActionException {
         indicate("5x5: " + is5x5);
         spawnedThisTurn = false;
-        indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
+        // indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
         CellTracker.storeVisibleCellsKing();
 
         RobotTracker.reset();
 
         tryUnburyIfStuck();
 
-        indicate("before primary strat: " + Clock.getBytecodeNum());
+        // indicate("before primary strat: " + Clock.getBytecodeNum());
 
         primaryStrategy.runTick();
     }

@@ -40,7 +40,7 @@ public class EnemyManager {
             return;
         }
         if (!rc.canSenseLocation(enemy.location) && knownEnemiesSet.add_and_ret(enemy.hashCode())) {
-            indicate("enemy recv " + enemy.location + " dir " + enemy.direction + " hp " + enemy.health);
+            // indicate("enemy recv " + enemy.location + " dir " + enemy.direction + " hp " + enemy.health);
             knownEnemies[numKnownEnemies++] = enemy;
         }
     }

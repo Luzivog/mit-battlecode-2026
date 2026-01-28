@@ -24,6 +24,7 @@ public class Squeaker {
         - Non-negative bytes: 3-bit header (bits 31..29)
             * 000: map chunk (29-bit payload, MapTracker.encodeChunk)
             * 001: symmetry (payload uses low 2 bits)
+            * 111: no-op (panic squeak)
             * others unused
     */
     public static final int HEADER_BITS = 3;
@@ -32,6 +33,7 @@ public class Squeaker {
     private static final int BODY_MASK = (1 << BODY_BITS) - 1;
     private static final int HEADER_MAP = 0;
     private static final int HEADER_SYMMETRY = 1;
+    private static final int HEADER_NOP = 7;
 
     private static final int CHEESE_LOC_BITS = 10;
     private static final int CHEESE_LOC_MASK = (1 << CHEESE_LOC_BITS) - 1; // 1023
@@ -122,6 +124,9 @@ public class Squeaker {
                     if (!isRatKing) return; // symmetry is for rat kings
                     CellTracker.setSymmetry(payload & 0b11);
                     break;
+                case HEADER_NOP:
+                    // Intentional no-op (panic squeak)
+                    break;
                 default:
                     println("recieved bad packet " + msg);
                     println("header is " + header);
@@ -176,9 +181,14 @@ public class Squeaker {
     public static void postTick() throws GameActionException {
         if (!isRatKing) {
             if (RobotTracker.catHistNum[0] > 0 || RobotTracker.catHistNum[1] > 0 || RobotTracker.catHistNum[2] > 0 || RobotTracker.catHistNum[3] > 0) {
-                // dont squeak anything if cats are around
+                if (RobotTracker.numCats > 0 && RobotTracker.sortedCats[0].getLocation().distanceSquaredTo(GlobalArray.nearestRatKing) < 25) {
+                    // panic squeak
+                    squeakPanic();
+                }
                 return;
             }
+        } else if (RobotTracker.catHistNum[0] > 0) {
+            return;
         }
         if (nearRatKing()) {
             indicate("NEAR RAT KING");
@@ -206,5 +216,13 @@ public class Squeaker {
         // Optimistically apply to our global copy to reduce repeat squeaks.
         MapManager.applyGlobalChunk(payload);
         return true;
+    }
+
+    /**
+     * Panic squeak to distract cats: send an empty payload (0).
+     * This is a no-op for receivers but still produces noise.
+     */
+    private static void squeakPanic() throws GameActionException {
+        rc.squeak(HEADER_NOP << HEADER_SHIFT);
     }
 }

@@ -38,7 +38,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     public KingFormationCoordinatorStrategy(KingMiningStrategy aMiningStrategy) {
-        MIN_DIST_FROM_KINGS_SQ = Math.max(200, mapWidth * mapHeight / 7);
+        MIN_DIST_FROM_KINGS_SQ = Math.max(300, mapWidth * mapHeight / 7);
         miningStrategy = aMiningStrategy;
 
         if (mapWidth < 40 && mapHeight < 40) {
@@ -138,7 +138,11 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         int myKingCount = GlobalArray.countRatKings();
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
-        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < 8 * myKingCount) {
+        var req = 12;
+        if(mapWidth * mapHeight <= 1200) {
+            req = 8;
+        }
+        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < req * myKingCount) {
             // indicate("FORMATION: aborting due to king count or rat count");
             // indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
             abortFormation();
@@ -186,10 +190,18 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             int myKingCount = GlobalArray.countRatKings();
             if (myKingCount == 5) return;
             indicate("C");
-            if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
-            indicate("D");
             int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
-            if (numRats < 8 * myKingCount) return;
+            if(time <= 1800) {
+                if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
+                indicate("D");
+                if(mapWidth * mapHeight > 1200) {
+                    if (numRats < 16 * myKingCount) return;
+                } else {
+                    if (numRats < 16 * myKingCount - 4) return;
+                }
+            } else {
+                if (numRats < 12) return;
+            }
         }
         indicate("passed formation checks");
 
@@ -226,7 +238,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 myBestMine = myMine;
             }
         }
-
+        if(time < 1800 && myBestScore < -40000) {
+            return null;
+        }
         return myBestMine;
     }
 

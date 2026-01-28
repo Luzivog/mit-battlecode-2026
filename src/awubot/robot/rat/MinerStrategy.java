@@ -95,11 +95,12 @@ public class MinerStrategy extends Strategy {
                     continue outerLoop;
                 }
             }
-            int mul = GlobalArray.globalCheeseMines.contains(iloc) ? 10 : 1;
+            int mul = GlobalArray.globalCheeseMines.contains(iloc) ? 1 : 10;
             if (nearKing) {
-                // mines.append((char)iloc);
-                mines.repeat(iloc, 1 + (int) (mul * Math.sqrt(GlobalArray.nearestRatKing.distanceSquaredTo(loc))));
+                mines.repeat((char)iloc, mul);
+                // mines.repeat(iloc, 1 + (int) (mul * Math.sqrt(GlobalArray.nearestRatKing.distanceSquaredTo(loc))));
             } else {
+                // mines.repeat((char)iloc, mul);
                 mines.repeat(iloc, 1 + (int) (mul * Math.sqrt(myLoc.distanceSquaredTo(loc))));
             }
         }

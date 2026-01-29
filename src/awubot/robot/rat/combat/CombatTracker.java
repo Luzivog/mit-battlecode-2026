@@ -420,6 +420,48 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
         }
     }
 
+    public static boolean hasAnyThreat(Direction moveDir) {
+        switch (moveDir.ordinal()) {
+            case 0 -> {
+                long comb = lowN + highN;
+                return (comb & moveThreatN) != 0L;
+            }
+            case 1 -> {
+                long comb = lowNE + highNE;
+                return (comb & moveThreatNE) != 0L;
+            }
+            case 2 -> {
+                long comb = lowE + highE;
+                return (comb & moveThreatE) != 0L;
+            }
+            case 3 -> {
+                long comb = lowSE + highSE;
+                return (comb & moveThreatSE) != 0L;
+            }
+            case 4 -> {
+                long comb = lowS + highS;
+                return (comb & moveThreatS) != 0L;
+            }
+            case 5 -> {
+                long comb = lowSW + highSW;
+                return (comb & moveThreatSW) != 0L;
+            }
+            case 6 -> {
+                long comb = lowW + highW;
+                return (comb & moveThreatW) != 0L;
+            }
+            case 7 -> {
+                long comb = lowNW + highNW;
+                return (comb & moveThreatNW) != 0L;
+            }
+            case 8 -> {
+                long comb = lowC + highC;
+                return (comb & moveThreatC) != 0L;
+            }
+            default -> { return false; }
+        }
+    }
+
     // TODO: account for dirt
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;

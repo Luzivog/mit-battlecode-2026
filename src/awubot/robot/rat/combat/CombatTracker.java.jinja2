@@ -165,6 +165,18 @@ public class CombatTracker {
         {% endfor %}
     }
 
+    public static boolean hasAnyThreat(Direction moveDir) {
+        switch (moveDir.ordinal()) {
+            {% for mi in range(moveShort|length) %}
+            case {{ mi }} -> {
+                long comb = low{{ moveShort[mi] }} + high{{ moveShort[mi] }};
+                return (comb & moveThreat{{ moveShort[mi] }}) != 0L;
+            }
+            {% endfor %}
+            default -> { return false; }
+        }
+    }
+
     // TODO: account for dirt
     public static void loadThreatFromMap() throws GameActionException {
         int x = myLoc.x;

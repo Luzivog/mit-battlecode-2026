@@ -87,12 +87,20 @@ public class KingMiningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        // indicate("stuckTurns: " + stuckTurns);
+        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] mineTarget=" + mineTarget + " foundCheeseMine=" + foundCheeseMine + " centerTarget=" + centerTarget + " myLoc=" + myLoc);
         scanForCheeseMines();
+        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] after scan: mineTarget=" + mineTarget);
 
         if (!foundCheeseMine) {
             selectFromKnownMines();
+            System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] after selectKnown: mineTarget=" + mineTarget);
         }
+
+        if (foundCheeseMine) {
+            tryProgressiveMineSwitch();
+        }
+
+        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] final mineTarget=" + mineTarget);
 
         if (!foundCheeseMine) {
             moveTowardCenter();
@@ -103,7 +111,6 @@ public class KingMiningStrategy extends Strategy {
 
         tryCollectCheese();
 
-        // indicate("mine target: " + mineTarget);
         return true;
     }
 
@@ -235,6 +242,11 @@ public class KingMiningStrategy extends Strategy {
                 if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
                 // if (isInTabooZone(myMine)) continue;
 
+                // Don't regress: only accept mines closer to center than current
+                if (foundCheeseMine && mineTarget != null) {
+                    if (myMine.distanceSquaredTo(centerTarget) >= mineTarget.distanceSquaredTo(centerTarget)) continue;
+                }
+
                 int myDist = myLoc.distanceSquaredTo(myMine);
                 if (myDist < myBestDist) {
                     myBestDist = myDist;
@@ -300,6 +312,47 @@ public class KingMiningStrategy extends Strategy {
             return;
         }
         moveIfBugTargetFar(mineTarget);
+    }
+
+    private void tryProgressiveMineSwitch() throws GameActionException {
+        if (mineTarget == null) return;
+        if (mineTarget.distanceSquaredTo(centerTarget) <= 8) {
+            System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] progressive: already near center, skipping");
+            return;
+        }
+
+        MapLocation bestCandidate = null;
+        int bestDist = mineTarget.distanceSquaredTo(centerTarget);
+        // Slack accounts for 2x2 encoding rounding and near-boundary mines
+        int diamSq = bestDist;
+        int slack = diamSq / 8;
+
+        int mineCount = Game.knownCheeseMines.set.length();
+        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] progressive: checking " + Math.min(mineCount, 10) + " known mines, current distToCenter=" + bestDist + " slack=" + slack);
+        for (int i = 0; i < mineCount && i < 10; i++) {
+            MapLocation candidate = decode2x2(Game.knownCheeseMines.at(i));
+            if (candidate == null) continue;
+            boolean assignedOther = GlobalArray.isMineAssignedToOtherKing(candidate, kingId);
+            int dot = (candidate.x - mineTarget.x) * (candidate.x - centerTarget.x)
+                    + (candidate.y - mineTarget.y) * (candidate.y - centerTarget.y);
+            boolean inCircle = dot <= slack;
+            int distToCenter = candidate.distanceSquaredTo(centerTarget);
+            System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "]   candidate=" + candidate + " assignedOther=" + assignedOther + " dot=" + dot + " inCircle=" + inCircle + " distToCenter=" + distToCenter);
+            if (assignedOther) continue;
+            if (!inCircle) continue;
+
+            if (distToCenter < bestDist) {
+                bestDist = distToCenter;
+                bestCandidate = candidate;
+            }
+        }
+
+        if (bestCandidate != null) {
+            System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] PROGRESSIVE SWITCH: " + mineTarget + " -> " + bestCandidate);
+            mineTarget = bestCandidate;
+        } else {
+            System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] progressive: no better mine found");
+        }
     }
 
     private void selectFromKnownMines() throws GameActionException {

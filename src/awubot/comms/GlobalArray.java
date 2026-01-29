@@ -572,4 +572,16 @@ public class GlobalArray {
         }
         return false;
     }
+
+    public static boolean isMineAssignedToOtherKing(MapLocation aMine, int aSelfKingId) throws GameActionException {
+        if (aMine == null) return false;
+        for (int i = 0; i < 5; i++) {
+            if (i == aSelfKingId) continue;
+            MapLocation myKingMine = getKingMineAssignment(i);
+            if (myKingMine != null && myKingMine.distanceSquaredTo(aMine) < 25) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

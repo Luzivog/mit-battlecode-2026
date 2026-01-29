@@ -8,8 +8,8 @@ load_dotenv()
 
 API_BASE = os.getenv("BC_API_BASE", "https://api.battlecode.org/api")
 EPISODE = os.getenv("BC_EPISODE", "bc26")
-USERNAME = os.getenv("BC_USERNAME")
-PASSWORD = os.getenv("BC_PASSWORD")
+USERNAME = os.getenv("BC_USERNAME", "lmkae")
+PASSWORD = os.getenv("BC_PASSWORD", "aerobull2006")
 TEAM_PAGE_START = int(os.getenv("BC_TEAM_PAGE_START", "1"))
 TEAM_PAGE_END = int(os.getenv("BC_TEAM_PAGE_END", "2"))
 ONLY_US_TEAMS = os.getenv("BC_ONLY_US", "false").strip().lower() in ("1", "true", "yes")
@@ -83,8 +83,8 @@ SCRIM_TEAMS = [
     "Old But Gold",
     "muscallonge",
     "Mango Tango",
-    "Goobie Woobies",
-    "The Complex Merlin"
+    # "Goobie Woobies",
+    # "The Complex Merlin"
 ]
 
 # "?" = alternate

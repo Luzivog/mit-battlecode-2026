@@ -3861,6 +3861,10 @@ public class Util {
         return max(abs(a.x - b.x), abs(a.y - b.y));
     }
 
+    public static boolean isInsideDiameterCircle(MapLocation p, MapLocation a, MapLocation b) {
+        return (p.x - a.x) * (p.x - b.x) + (p.y - a.y) * (p.y - b.y) < 0;
+    }
+
     public static boolean isOccupied(MapLocation loc) throws GameActionException {
         return rc.senseRobotAtLocation(loc) != null;
     }

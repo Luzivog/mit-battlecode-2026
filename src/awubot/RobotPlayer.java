@@ -1,6 +1,7 @@
 package awubot;
 
 import battlecode.common.*;
+import awubot.comms.CheeseTracker;
 import awubot.comms.EnemyManager;
 import awubot.comms.GlobalArray;
 import awubot.comms.MapManager;
@@ -30,6 +31,7 @@ public class RobotPlayer {
         Rng.init();
         EnemyManager.init();
         GlobalArray.init();
+        CheeseTracker.init();
         CellTracker.init();
         MapManager.init();
 
@@ -43,6 +45,7 @@ public class RobotPlayer {
                 EnemyManager.preTick();
                 MapManager.preTick();
                 Squeaker.preTick();
+                CheeseTracker.preTick();
 
                 // debug
 
@@ -83,6 +86,7 @@ public class RobotPlayer {
                 }
 
                 GlobalArray.postTick();
+                CheeseTracker.postTick();
                 Game.postTick();
             } catch (Exception e) {
                 if (!Game.DISABLE_OUTPUT) {

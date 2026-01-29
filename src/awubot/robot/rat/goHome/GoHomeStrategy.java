@@ -1835,7 +1835,7 @@ public class GoHomeStrategy extends Strategy {
                 var bestLoc = new MapLocation(bestX, bestY);
                 BabyRat.autoMove(Pathfinder.doBfs(bestLoc));
                 // indicate("bestLoc = " + bestLoc);
-                rc.setIndicatorLine(myLoc, bestLoc, 0, 0, 255);
+                // rc.setIndicatorLine(myLoc, bestLoc, 0, 0, 255);
             }
                     if(rc.getRawCheese() != 0 && rc.canTurn()) {
             var nearestKingLoc = GlobalArray.nearestRatKing;
@@ -1850,7 +1850,7 @@ public class GoHomeStrategy extends Strategy {
 
         }
 
-        rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
+        // rc.setIndicatorLine(myLoc, kingLoc, 0, 255, 0);
         return true;
     }
 }

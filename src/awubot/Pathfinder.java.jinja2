@@ -174,7 +174,7 @@ class BugnavInstance {
             {{side}}Bug.outOfSight = false;
             {{side}}Done = !{{side}}Bug.advance();
             // indicate({{side}}Bug.pos);
-            rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
+            // rc.setIndicatorDot({{side}}Bug.pos, 255, 0, 255);
             {% endmacro %}
             if(rightDone) {
                 {{ advance("left") }}
@@ -322,7 +322,7 @@ class BugnavInstance {
                 appendCurrentPosition();
                 return true;
             }
-            rc.setIndicatorDot({{where}}Loc, 0, 255, 255);
+            // rc.setIndicatorDot({{where}}Loc, 0, 255, 255);
             outOfSight = true;
             outOfSightLoc = {{where}}Loc;
             return false;
@@ -430,7 +430,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
@@ -502,12 +502,12 @@ public class Pathfinder {
                 bug = new BugnavInstance(true, target);
             }
         }
-        int shade = 255;
+        // int shade = 255;
         // // Profiler.begin();
         if(!isRatKing && (lastDist < {{(MAX_PATH / 3) | int}} || RobotTracker.allySet.contains(bug.pos)) || RobotTracker.kingSet.contains(bug.pos)) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
@@ -552,7 +552,7 @@ public class Pathfinder {
             lastBugPos = bug.pos;
             lastLoc = myLoc;
         }
-        rc.setIndicatorDot(bug.pos, 255, 0, 0);
+        // rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {

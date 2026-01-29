@@ -46,7 +46,7 @@ public class TraverseStrategy extends Strategy {
             Pathfinder.reset();
             return false;
         }
-        rc.setIndicatorLine(myLoc, target, 255, 0, 0);
+        // rc.setIndicatorLine(myLoc, target, 255, 0, 0);
         return true;
     }
 }

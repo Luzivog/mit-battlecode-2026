@@ -370,28 +370,28 @@ class BugnavInstance {
             leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
             // indicate(leftBug.pos);
-            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             } else if(leftDone) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
-            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
-            rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else {
                             // indicate("advance left");
             leftBug.outOfSight = false;
             leftDone = !leftBug.advance();
             // indicate(leftBug.pos);
-            rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
             }
         }
@@ -734,7 +734,7 @@ class BugnavInstance {
                 appendCurrentPosition();
                 return true;
             }
-            rc.setIndicatorDot(greedyLoc, 0, 255, 255);
+            // rc.setIndicatorDot(greedyLoc, 0, 255, 255);
             outOfSight = true;
             outOfSightLoc = greedyLoc;
             return false;
@@ -754,7 +754,7 @@ class BugnavInstance {
                 appendCurrentPosition();
                 return true;
             }
-            rc.setIndicatorDot(leftLoc, 0, 255, 255);
+            // rc.setIndicatorDot(leftLoc, 0, 255, 255);
             outOfSight = true;
             outOfSightLoc = leftLoc;
             return false;
@@ -770,7 +770,7 @@ class BugnavInstance {
                 appendCurrentPosition();
                 return true;
             }
-            rc.setIndicatorDot(rightLoc, 0, 255, 255);
+            // rc.setIndicatorDot(rightLoc, 0, 255, 255);
             outOfSight = true;
             outOfSightLoc = rightLoc;
             return false;
@@ -787,7 +787,7 @@ class BugnavInstance {
                 appendCurrentPosition();
                 return true;
             }
-            rc.setIndicatorDot(leftLoc, 0, 255, 255);
+            // rc.setIndicatorDot(leftLoc, 0, 255, 255);
             outOfSight = true;
             outOfSightLoc = leftLoc;
             return false;
@@ -802,7 +802,7 @@ class BugnavInstance {
                 appendCurrentPosition();
                 return true;
             }
-            rc.setIndicatorDot(rightLoc, 0, 255, 255);
+            // rc.setIndicatorDot(rightLoc, 0, 255, 255);
             outOfSight = true;
             outOfSightLoc = rightLoc;
             return false;
@@ -885,7 +885,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -2 + " " + isMaster);
@@ -940,7 +940,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -1 + " " + isMaster);
@@ -992,7 +992,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 0 + " " + isMaster);
@@ -1043,7 +1043,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 1 + " " + isMaster);
@@ -1095,7 +1095,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 2 + " " + isMaster);
@@ -1147,7 +1147,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 3 + " " + isMaster);
@@ -1199,7 +1199,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 4 + " " + isMaster);
@@ -1251,7 +1251,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 5 + " " + isMaster);
@@ -1303,7 +1303,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 6 + " " + isMaster);
@@ -1365,7 +1365,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -2 + " " + isMaster);
@@ -1420,7 +1420,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -1 + " " + isMaster);
@@ -1472,7 +1472,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 0 + " " + isMaster);
@@ -1523,7 +1523,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 1 + " " + isMaster);
@@ -1575,7 +1575,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 2 + " " + isMaster);
@@ -1627,7 +1627,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 3 + " " + isMaster);
@@ -1679,7 +1679,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 4 + " " + isMaster);
@@ -1731,7 +1731,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 5 + " " + isMaster);
@@ -1783,7 +1783,7 @@ class BugnavInstance {
             }
             var isPassable = isPassable(nextPos);
             if(isPassable && chebyshevDistance(myLoc, nextPos) > 5 || possiblyPassable(nextPos) && !isPassable) {
-                rc.setIndicatorDot(nextPos, 0, 255, 255);
+                // rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 6 + " " + isMaster);
@@ -1850,31 +1850,31 @@ public class Pathfinder {
                 bug = new BugnavInstance(true, target);
             }
         }
-        int shade = 255;
+        // int shade = 255;
         // // Profiler.begin();
         if(!isRatKing && (lastDist < 4 || RobotTracker.allySet.contains(bug.pos)) || RobotTracker.kingSet.contains(bug.pos)) {
             bugLoop: {
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
                 // // Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
                 // // Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
                 // // Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
                 // // Profiler.end("bug");
-                rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
+                // rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
                 // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
@@ -1918,7 +1918,7 @@ public class Pathfinder {
             lastBugPos = bug.pos;
             lastLoc = myLoc;
         }
-        rc.setIndicatorDot(bug.pos, 255, 0, 0);
+        // rc.setIndicatorDot(bug.pos, 255, 0, 0);
 
         // no bfs needed
         {

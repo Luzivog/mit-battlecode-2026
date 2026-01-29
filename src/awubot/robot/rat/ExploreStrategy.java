@@ -17,7 +17,7 @@ public class ExploreStrategy extends Strategy {
             target = Util.genPassiveTarget();
         }
         BabyRat.autoMove(Pathfinder.getMove(target));
-        rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
+        // rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
         return true;
     }
 }

@@ -14,6 +14,7 @@ import battlecode.common.UnitType;
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
 import awubot.robot.rat.combat.CombatTracker;
+import awubot.comms.GlobalArray;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
@@ -70,7 +71,7 @@ public final class TryTrap {
 
     public static boolean globalShouldRun() throws GameActionException {
         // global
-        if (rc.getAllCheese() > 3000 || rc.getRawCheese() >= 20) return true;
+        if (GlobalArray.numberOfRatsAlive >= 28 && rc.getAllCheese() >= 1500 || rc.getRawCheese() >= 20) return true;
         return false;
     }
 

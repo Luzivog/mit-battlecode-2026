@@ -118,7 +118,7 @@ public class CombatStrategy extends Strategy {
         // println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
         funnyTarget = null;
-        if (rc.getCarrying() == null) {
+        if (rc.getCarrying() == null || rc.getCarrying().getTeam() == team) {
             // Profiler.push();
             sourceCnt = 0;
             for (int i = 0; i < RobotTracker.numEnemies; i++) {

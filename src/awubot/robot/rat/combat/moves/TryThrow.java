@@ -130,14 +130,22 @@ public final class TryThrow {
         best = -1e9;
         resetThrowGrid();
         populateThrowGrid();
-        selectMoves();
+        if (rc.getCarrying().getTeam() == team) {
+            selectMovesAlly();
+        } else {
+            selectMoves();
+        }
         if (md == null || td == null) {
             debugThrowFail();
-            return true;
+            return false;
         }
         if (best < 0) {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
             // debugThrowFail();
+            if (rc.getCarrying().getTeam() == team) return false;
+        }
+        if (rc.getCarrying().getTeam() == team) {
+            rc.setTimelineMarker("threw ally " + myLoc, 0, 0, 255);
         }
         if (isSecondary) {
             if (td != myDir) turn(td);
@@ -459,6 +467,316 @@ public final class TryThrow {
                     moveNE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveSW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { throw new RuntimeException("unreachable"); }
+        }
+    }
+
+    private static void selectMovesAlly() throws GameActionException {
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNEN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNENW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNEN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyEN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySENE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySES();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyES();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyEE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySES();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySESE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySESW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWSE();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWS();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllySWSW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                    moveAllyC();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWNW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWN();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                                tryThrowSecondaryAllyWW();
+                                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyN();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyW();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyS();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllyNE();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                    moveAllySW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { throw new RuntimeException("unreachable"); }
@@ -1090,6 +1408,637 @@ public final class TryThrow {
                 tryThrowCN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+
+    private static void moveAllyN() throws GameActionException {
+        if (!CombatCommon.canMoveN) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllyNN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllyNNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllyNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllyNSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllyNS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllyNSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllyNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllyNNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllyNE() throws GameActionException {
+        if (!CombatCommon.canMoveNE) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllyNEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllyNENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllyNEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllyNESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllyNES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllyNESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllyNEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllyNENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllyE() throws GameActionException {
+        if (!CombatCommon.canMoveE) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllyEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllyENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllyEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllyESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllyES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllyESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllyEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllyENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllySE() throws GameActionException {
+        if (!CombatCommon.canMoveSE) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllySEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllySENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllySEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllySESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllySES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllySESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllySEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllySENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllyS() throws GameActionException {
+        if (!CombatCommon.canMoveS) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllySN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllySNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllySE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllySSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllySS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllySSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllySW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllySNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllySW() throws GameActionException {
+        if (!CombatCommon.canMoveSW) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllySWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllySWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllySWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllySWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllySWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllySWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllySWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllySWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllySWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllyW() throws GameActionException {
+        if (!CombatCommon.canMoveW) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllyWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllyWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllyWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllyWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllyWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllyWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllyWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllyWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllyNW() throws GameActionException {
+        if (!CombatCommon.canMoveNW) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllyNWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllyNWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllyNWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllyNWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllyNWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllyNWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllyNWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllyNWNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyNWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            default -> { }
+        }
+    }
+    private static void moveAllyC() throws GameActionException {
+        if (!CombatCommon.canMoveC) return;
+        switch (myDir.ordinal()) {
+            case 0 -> {
+                tryThrowAllyCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 1 -> {
+                tryThrowAllyCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 2 -> {
+                tryThrowAllyCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 3 -> {
+                tryThrowAllyCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 4 -> {
+                tryThrowAllyCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 5 -> {
+                tryThrowAllyCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 6 -> {
+                tryThrowAllyCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+            }
+            case 7 -> {
+                tryThrowAllyCNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowAllyCW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
@@ -23584,6 +24533,10306 @@ public final class TryThrow {
         }
         if (enemyHit == null) {
             score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST);
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+
+    // allies
+
+    private static void tryThrowAllyNN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_3 != null) {
+                if (occ_0_3.getTeam() == team) {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_3 != null) {
+                if (occ_2_3.getTeam() == team) {
+                    if (occ_2_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_1 != null) {
+                if (occ_2_1.getTeam() == team) {
+                    if (occ_2_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNSE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m1 != null) {
+                if (occ_2_m1.getTeam() == team) {
+                    if (occ_2_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNS() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m1 != null) {
+                if (occ_0_m1.getTeam() == team) {
+                    if (occ_0_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNSW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m1 != null) {
+                if (occ_m2_m1.getTeam() == team) {
+                    if (occ_m2_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_1 != null) {
+                if (occ_m2_1.getTeam() == team) {
+                    if (occ_m2_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_3 != null) {
+                if (occ_m2_3.getTeam() == team) {
+                    if (occ_m2_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNEN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_3 != null) {
+                if (occ_1_3.getTeam() == team) {
+                    if (occ_1_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNENE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_3 != null) {
+                if (occ_3_3.getTeam() == team) {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNEE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_1 != null) {
+                if (occ_3_1.getTeam() == team) {
+                    if (occ_3_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNESE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_m1 != null) {
+                if (occ_3_m1.getTeam() == team) {
+                    if (occ_3_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNES() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m1 != null) {
+                if (occ_1_m1.getTeam() == team) {
+                    if (occ_1_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNESW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m1 != null) {
+                if (occ_m1_m1.getTeam() == team) {
+                    if (occ_m1_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNEW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_1 != null) {
+                if (occ_m1_1.getTeam() == team) {
+                    if (occ_m1_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNENW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_3 != null) {
+                if (occ_m1_3.getTeam() == team) {
+                    if (occ_m1_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyEN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_2 != null) {
+                if (occ_1_2.getTeam() == team) {
+                    if (occ_1_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyENE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_2 != null) {
+                if (occ_3_2.getTeam() == team) {
+                    if (occ_3_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyEE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_0 != null) {
+                if (occ_3_0.getTeam() == team) {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyESE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_m2 != null) {
+                if (occ_3_m2.getTeam() == team) {
+                    if (occ_3_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyES() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m2 != null) {
+                if (occ_1_m2.getTeam() == team) {
+                    if (occ_1_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyESW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m2 != null) {
+                if (occ_m1_m2.getTeam() == team) {
+                    if (occ_m1_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyEW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_0 != null) {
+                if (occ_m1_0.getTeam() == team) {
+                    if (occ_m1_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyENW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.EAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_2 != null) {
+                if (occ_m1_2.getTeam() == team) {
+                    if (occ_m1_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySEN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_1 != null) {
+                if (occ_1_1.getTeam() == team) {
+                    if (occ_1_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySENE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_1 != null) {
+                if (occ_3_1.getTeam() == team) {
+                    if (occ_3_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySEE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_m1 != null) {
+                if (occ_3_m1.getTeam() == team) {
+                    if (occ_3_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySESE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 2, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_2_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_3_m3 != null) {
+                if (occ_3_m3.getTeam() == team) {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_3_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySES() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m3 != null) {
+                if (occ_1_m3.getTeam() == team) {
+                    if (occ_1_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySESW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m3 != null) {
+                if (occ_m1_m3.getTeam() == team) {
+                    if (occ_m1_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySEW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m1 != null) {
+                if (occ_m1_m1.getTeam() == team) {
+                    if (occ_m1_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySENW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHEAST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_1 != null) {
+                if (occ_m1_1.getTeam() == team) {
+                    if (occ_m1_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_1 != null) {
+                if (occ_0_1.getTeam() == team) {
+                    if (occ_0_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_1 != null) {
+                if (occ_2_1.getTeam() == team) {
+                    if (occ_2_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m1 != null) {
+                if (occ_2_m1.getTeam() == team) {
+                    if (occ_2_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySSE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m3 != null) {
+                if (occ_2_m3.getTeam() == team) {
+                    if (occ_2_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySS() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m3 != null) {
+                if (occ_0_m3.getTeam() == team) {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySSW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m3 != null) {
+                if (occ_m2_m3.getTeam() == team) {
+                    if (occ_m2_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m1 != null) {
+                if (occ_m2_m1.getTeam() == team) {
+                    if (occ_m2_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTH);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_1 != null) {
+                if (occ_m2_1.getTeam() == team) {
+                    if (occ_m2_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_1 != null) {
+                if (occ_m1_1.getTeam() == team) {
+                    if (occ_m1_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_1 != null) {
+                if (occ_1_1.getTeam() == team) {
+                    if (occ_1_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m1 != null) {
+                if (occ_1_m1.getTeam() == team) {
+                    if (occ_1_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWSE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m3 != null) {
+                if (occ_1_m3.getTeam() == team) {
+                    if (occ_1_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWS() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m3 != null) {
+                if (occ_m1_m3.getTeam() == team) {
+                    if (occ_m1_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWSW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_m2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY >= 3) {
+                  c = CellTracker.mapData[myLocY + -3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_m3 != null) {
+                if (occ_m3_m3.getTeam() == team) {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_m3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_m3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_m1 != null) {
+                if (occ_m3_m1.getTeam() == team) {
+                    if (occ_m3_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllySWNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.SOUTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_1 != null) {
+                if (occ_m3_1.getTeam() == team) {
+                    if (occ_m3_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_2 != null) {
+                if (occ_m1_2.getTeam() == team) {
+                    if (occ_m1_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_2 != null) {
+                if (occ_1_2.getTeam() == team) {
+                    if (occ_1_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_0 != null) {
+                if (occ_1_0.getTeam() == team) {
+                    if (occ_1_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWSE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m2 != null) {
+                if (occ_1_m2.getTeam() == team) {
+                    if (occ_1_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWS() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m2 != null) {
+                if (occ_m1_m2.getTeam() == team) {
+                    if (occ_m1_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWSW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_m2 != null) {
+                if (occ_m3_m2.getTeam() == team) {
+                    if (occ_m3_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_0 != null) {
+                if (occ_m3_0.getTeam() == team) {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyWNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.WEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_2 != null) {
+                if (occ_m3_2.getTeam() == team) {
+                    if (occ_m3_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_3 != null) {
+                if (occ_m1_3.getTeam() == team) {
+                    if (occ_m1_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_3 != null) {
+                if (occ_1_3.getTeam() == team) {
+                    if (occ_1_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_1 != null) {
+                if (occ_1_1.getTeam() == team) {
+                    if (occ_1_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWSE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 1 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + 1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_1_m1 != null) {
+                if (occ_1_m1.getTeam() == team) {
+                    if (occ_1_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_1_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_1_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 1, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWS() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 1 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -1);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m1_m1 != null) {
+                if (occ_m1_m1.getTeam() == team) {
+                    if (occ_m1_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m1_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m1_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -1, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWSW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY >= 1) {
+                  c = CellTracker.mapData[myLocY + -1].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_m1 != null) {
+                if (occ_m3_m1.getTeam() == team) {
+                    if (occ_m3_m1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_m1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_m1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + -1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY < mapHeight - 1) {
+                  c = CellTracker.mapData[myLocY + 1].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_1 != null) {
+                if (occ_m3_1.getTeam() == team) {
+                    if (occ_m3_1.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_1.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_1;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 1)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyNWNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -2, myLocY + 2);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.NORTHWEST);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m2_2 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 3 && myLocY < mapHeight - 3) {
+                  c = CellTracker.mapData[myLocY + 3].charAt(myLocX + -3);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m3_3 != null) {
+                if (occ_m3_3.getTeam() == team) {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m3_3.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m3_3;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCN() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCNE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.EAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.EAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCSE() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTHEAST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCS() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTH);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_0_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTH;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCSW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_m1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTHWEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.WEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_0 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.WEST;
+            isSecondary = false;
+        }
+    }
+    private static void tryThrowAllyCNW() throws GameActionException {
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        // can optimise statically
+        MapLocation newLoc = myLoc.add(Direction.CENTER);
+        if (myLoc.distanceSquaredTo(throwTarget) <= 2 && rc.isMovementReady()) {
+            if (!CombatCommon.canMove(myLoc.directionTo(throwTarget))) return;
+        } else {
+            if (!rc.canSenseLocation(throwTarget)) return;
+            if (occ_m1_1 != null) return;
+            if (!rc.onTheMap(throwTarget)) return;
+            if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        }
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTHWEST;
+            isSecondary = false;
+        }
+    }
+
+    private static void tryThrowSecondaryAllyNN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTH, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTH, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTH;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNEN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNENE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNEE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNESE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNES() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNESW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNEW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNENW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHEAST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHEAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHEAST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyEN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyENE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyEE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyESE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyES() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyESW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyEW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyENW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.EAST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.EAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.EAST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySEN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySENE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySEE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySESE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySES() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySESW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySEW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySENW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHEAST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHEAST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTH, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTH, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTH;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllySWNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.SOUTHWEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.SOUTHWEST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyWNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.WEST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.WEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.WEST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyNWNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.NORTHWEST, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.NORTHWEST, Direction.NORTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.NORTHWEST;
+            td = Direction.NORTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCN() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.NORTH)) return;
+        if (occ_0_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_2 != null) {
+                if (occ_0_2.getTeam() == team) {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCNE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.NORTHEAST)) return;
+        if (occ_1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_2 != null) {
+                if (occ_2_2.getTeam() == team) {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.NORTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.EAST)) return;
+        if (occ_1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_0 != null) {
+                if (occ_2_0.getTeam() == team) {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.EAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.EAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCSE() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + 1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.SOUTHEAST)) return;
+        if (occ_1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX < mapWidth - 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + 2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_2_m2 != null) {
+                if (occ_2_m2.getTeam() == team) {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHEAST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTHEAST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCS() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.SOUTH)) return;
+        if (occ_0_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_0_m2 != null) {
+                if (occ_0_m2.getTeam() == team) {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_0_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_0_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTH, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTH;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCSW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + -1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.SOUTHWEST)) return;
+        if (occ_m1_m1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY >= 2) {
+                  c = CellTracker.mapData[myLocY + -2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_m2 != null) {
+                if (occ_m2_m2.getTeam() == team) {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_m2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_m2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.SOUTHWEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.SOUTHWEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.WEST)) return;
+        if (occ_m1_0 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2) {
+                  c = CellTracker.mapData[myLocY].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_0 != null) {
+                if (occ_m2_0.getTeam() == team) {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_0.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_0;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST);
+            return;
+        } else {
+            score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.WEST, enemyHit);
+        }
+        // if (score <= 0.1) return;
+        if (score > best) {
+            best = score;
+            md = Direction.CENTER;
+            td = Direction.WEST;
+            isSecondary = true;
+        }
+    }
+    private static void tryThrowSecondaryAllyCNW() throws GameActionException {
+        MapLocation throwTarget = new MapLocation(myLocX + -1, myLocY + 1);
+        if (!rc.canSenseLocation(throwTarget)) return;
+        if (!canSecondary(Direction.CENTER, Direction.NORTHWEST)) return;
+        if (occ_m1_1 != null) return;
+        if (!rc.onTheMap(throwTarget)) return;
+        if (!rc.senseMapInfo(throwTarget).isPassable()) return;
+        score = 0;
+        RobotInfo enemyHit = null;
+        scan: {
+            if (myLocX >= 2 && myLocY < mapHeight - 2) {
+                  c = CellTracker.mapData[myLocY + 2].charAt(myLocX + -2);
+                if (c == '\0') {
+                    // break scan;
+                    return;
+                }
+                if (c == '\2') {
+                    // score += 10 + 36;
+                    // break scan;
+                    return;
+                }
+            } else {
+                // score += 10;
+                // break scan; 
+                return;
+            }
+            if (occ_m2_2 != null) {
+                if (occ_m2_2.getTeam() == team) {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        // score = -1000;
+                        // break scan;
+                        return;
+                    } else {
+                        // score -= 36;
+                        // break scan;
+                        return;
+                    }
+                } else {
+                    if (occ_m2_2.getType() == UnitType.RAT_KING) {
+                        score += 300;
+                        break scan;
+                    } else {
+                        score += 102;
+                        enemyHit = occ_m2_2;
+                        break scan;
+                    }
+                }
+            }
+            if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
+                // score += 36;
+                // break scan;
+                return;
+            }
+        }
+        if (enemyHit == null) {
+            // score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST);
+            return;
         } else {
             score += CombatStrategy.getCellScoreFor(Direction.CENTER, Direction.NORTHWEST, enemyHit);
         }

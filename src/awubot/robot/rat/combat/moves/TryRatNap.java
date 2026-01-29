@@ -12,6 +12,7 @@ import battlecode.common.UnitType;
 
 import awubot.robot.rat.combat.CombatCommon;
 import awubot.robot.rat.combat.CombatStrategy;
+import awubot.robot.rat.combat.CombatTracker;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 import static awubot.robot.rat.BabyRat.*;
@@ -59,6 +60,19 @@ public final class TryRatNap {
             weight = 30;
             selectMoves();
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
+
+            if (i == 0) {
+                for (int j = 0; j < RobotTracker.numAllies; j++) {
+                    info = RobotTracker.sortedAllies[j];
+                    t = info.location;
+                    if (chebyshevDistance(myLoc, t) > 2) continue;
+                    if (info.getHealth() > 11) continue;
+                    if (info.getType() != UnitType.BABY_RAT) continue;
+                    weight = 10;
+                    selectMoves();
+                    if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
+                }
+            }
         }
         if (bestScore < 0.5) return false;
         println("target " + t);
@@ -79,6 +93,9 @@ public final class TryRatNap {
                 attack(target);
             }
             assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
+        }
+        if (rc.getCarrying() != null && rc.getCarrying().getTeam() == team) {
+            rc.setTimelineMarker("napped ally " + myLoc, 0, 255, 0);
         }
         println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
         indicate("COMBAT STRAT: NAP");
@@ -401,6 +418,7 @@ public final class TryRatNap {
     private static void moveN() throws GameActionException {
         if (!CombatCommon.canMoveN) return;
         moveDir = Direction.NORTH;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -478,6 +496,7 @@ public final class TryRatNap {
     private static void moveNE() throws GameActionException {
         if (!CombatCommon.canMoveNE) return;
         moveDir = Direction.NORTHEAST;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -555,6 +574,7 @@ public final class TryRatNap {
     private static void moveE() throws GameActionException {
         if (!CombatCommon.canMoveE) return;
         moveDir = Direction.EAST;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -632,6 +652,7 @@ public final class TryRatNap {
     private static void moveSE() throws GameActionException {
         if (!CombatCommon.canMoveSE) return;
         moveDir = Direction.SOUTHEAST;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -709,6 +730,7 @@ public final class TryRatNap {
     private static void moveS() throws GameActionException {
         if (!CombatCommon.canMoveS) return;
         moveDir = Direction.SOUTH;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -786,6 +808,7 @@ public final class TryRatNap {
     private static void moveSW() throws GameActionException {
         if (!CombatCommon.canMoveSW) return;
         moveDir = Direction.SOUTHWEST;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -863,6 +886,7 @@ public final class TryRatNap {
     private static void moveW() throws GameActionException {
         if (!CombatCommon.canMoveW) return;
         moveDir = Direction.WEST;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -940,6 +964,7 @@ public final class TryRatNap {
     private static void moveNW() throws GameActionException {
         if (!CombatCommon.canMoveNW) return;
         moveDir = Direction.NORTHWEST;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -1017,6 +1042,7 @@ public final class TryRatNap {
     private static void moveC() throws GameActionException {
         if (!CombatCommon.canMoveC) return;
         moveDir = Direction.CENTER;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         newLoc = myLoc.add(moveDir);
         dxToTarget = t.x - newLoc.x;
         dyToTarget = t.y - newLoc.y;
@@ -1255,6 +1281,7 @@ public final class TryRatNap {
     private static void considerSecondaryMove(Direction moveDir, Direction facing) throws GameActionException {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
+        if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
         double score = weight + 5;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);

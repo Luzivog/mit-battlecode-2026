@@ -70,7 +70,7 @@ public final class TryTrap {
 
     public static boolean globalShouldRun() throws GameActionException {
         // global
-        if (rc.getAllCheese() > 3000 || rc.getRawCheese() >= 20) return true;
+        if (rc.getCurrentRatCost() >= 70 || rc.getRawCheese() >= 20) return true;
         return false;
     }
 

@@ -65,7 +65,7 @@ public class FormationStrategy extends Strategy {
 
         indicate("FORM: active, target=" + formationTarget + " allies=" + RobotTracker.allyCount + " dist=" + myLoc.distanceSquaredTo(formationTarget));
 
-        if (myLoc.distanceSquaredTo(formationTarget) <= 8 && rc.canBecomeRatKing()) {
+        if ((myLoc.distanceSquaredTo(formationTarget) <= 8 || time > 1900) && rc.canBecomeRatKing()) {
             indicate("FORM: BECOMING KING!");
             rc.becomeRatKing();
             Game.convertKing();

@@ -76,13 +76,13 @@ for x in MAPS1:
     MAPS3.remove(x)
 for x in MAPS2:
     MAPS3.remove(x)
-MAPS1 = MAPS3
+# MAPS1 = MAPS3
 
 
 SCRIM_TEAMS = [
     "Old But Gold",
-    # "muscallonge",
-    # "Mango Tango",
+    "muscallonge",
+    "Mango Tango",
     "Blue Dragon",
     "The Complex Merlin"
 ]

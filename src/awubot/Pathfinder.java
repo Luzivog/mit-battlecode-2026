@@ -861,10 +861,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -917,10 +917,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -970,10 +970,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1022,10 +1022,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1075,10 +1075,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1128,10 +1128,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1181,10 +1181,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1234,10 +1234,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1287,10 +1287,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 6);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1350,10 +1350,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1406,10 +1406,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1459,10 +1459,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1511,10 +1511,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1564,10 +1564,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1617,10 +1617,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1670,10 +1670,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1723,10 +1723,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;
@@ -1776,10 +1776,10 @@ class BugnavInstance {
             var nextPos = pos.add(tryDir);
             if(!rc.onTheMap(nextPos)
                || (nextPos.x == 0 || nextPos.y == 0 || nextPos.x == mapWidth - 1 || nextPos.y == mapHeight - 1)
-               && (isRatKing || CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
+               && (CellTracker.isSeen(nextPos) && !CellTracker.isPassable(nextPos))) {
                  if(isMaster) {
                     // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 6);
-                    if(!isRatKing && vis.contains(nextPos)) {
+                    if(vis.contains(nextPos)) {
                         // indicate("gave up at edge");
                         // System.out.println("gave up at edge");
                         givenUp = true;

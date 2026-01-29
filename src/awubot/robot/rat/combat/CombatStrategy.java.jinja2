@@ -195,6 +195,20 @@ public class CombatStrategy extends Strategy {
 
         isLastMove = true;
         if (rc.getCarrying() != null) {
+
+            if (RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies > 0 && rc.canTurn()) {
+                int nearestDist = Integer.MAX_VALUE;
+                for (int i = 0; i < EnemyManager.numKnownEnemies; i++) {
+                    MapLocation enemyLoc = EnemyManager.knownEnemies[i].location;
+                    int dist = myLoc.distanceSquaredTo(enemyLoc);
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                        funnyTarget = EnemyManager.knownEnemies[i];
+                    }
+                }
+                if (nearestDist <= 36) turn(myLoc.directionTo(funnyTarget.location));
+            }
+
             Profiler.push();
             try {
                 boolean tryThrowRes = TryThrow.run();

@@ -111,6 +111,9 @@ public class MinerStrategy extends Strategy {
     }
 
     private MapLocation pickExplorationTarget() {
+        if(time == 2) {
+            return new MapLocation(mapWidth / 2, mapHeight / 2);
+        }
         if (time <= EARLY_EXPLORE_TURNS && GlobalArray.nearestRatKing != null) {
             MapLocation early = pickEarlyExplorationTarget(GlobalArray.nearestRatKing);
             if (early != null) return early;

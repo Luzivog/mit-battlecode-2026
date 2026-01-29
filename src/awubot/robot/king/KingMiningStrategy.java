@@ -87,20 +87,20 @@ public class KingMiningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] mineTarget=" + mineTarget + " foundCheeseMine=" + foundCheeseMine + " centerTarget=" + centerTarget + " myLoc=" + myLoc);
+        //System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] mineTarget=" + mineTarget + " foundCheeseMine=" + foundCheeseMine + " centerTarget=" + centerTarget + " myLoc=" + myLoc);
         scanForCheeseMines();
-        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] after scan: mineTarget=" + mineTarget);
+        //System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] after scan: mineTarget=" + mineTarget);
 
         if (!foundCheeseMine) {
             selectFromKnownMines();
-            System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] after selectKnown: mineTarget=" + mineTarget);
+            //System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] after selectKnown: mineTarget=" + mineTarget);
         }
 
         if (foundCheeseMine) {
             tryProgressiveMineSwitch();
         }
 
-        System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] final mineTarget=" + mineTarget);
+        //System.out.println("[KING " + kingId + " @" + rc.getRoundNum() + "] final mineTarget=" + mineTarget);
 
         if (!foundCheeseMine) {
             moveTowardCenter();

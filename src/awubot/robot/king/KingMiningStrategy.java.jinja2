@@ -5,6 +5,7 @@ import awubot.Game;
 import awubot.Pathfinder;
 import awubot.comms.GlobalArray;
 import awubot.robot.Strategy;
+import static awubot.robot.king.RatKing.*;
 import static awubot.Game.*;
 import static awubot.util.Util.*;
 
@@ -218,33 +219,6 @@ public class KingMiningStrategy extends Strategy {
                 if(stuckTurns == 17) {
                     GlobalArray.expandKing();
                     pending5x5 = true;
-                }
-            }
-        }
-    }
-
-    private void digDirtInDirection(Direction dir) throws GameActionException {
-        if(!rc.isActionReady()) return;
-        indicate("dig " + dir);
-        int dx = dir.dx;
-        int dy = dir.dy;
-
-        if (dx != 0) {
-            for (int y = -1; y <= 1; y++) {
-                var loc = new MapLocation(myLocX + dx * 2, myLocY + dy + y);
-                if(rc.canRemoveDirt(loc)) {
-                    rc.removeDirt(loc);
-                    return;
-                }
-            }
-        }
-
-        if (dy != 0) {
-            for (int x = -1; x <= 1; x++) {
-                var loc = new MapLocation(myLocX + dx + x, myLocY + dy * 2);
-                if(rc.canRemoveDirt(loc)) {
-                    rc.removeDirt(loc);
-                    return;
                 }
             }
         }

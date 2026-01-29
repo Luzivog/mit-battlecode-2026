@@ -1,12 +1,7 @@
 package awubot.robot.king;
 
 import awubot.CellTracker;
-import static awubot.Game._rawMove;
-import static awubot.Game._turn;
-import static awubot.Game.mapHeight;
-import static awubot.Game.mapWidth;
-import static awubot.Game.myLoc;
-import static awubot.Game.rc;
+import static awubot.Game.*;
 import awubot.robot.Strategy;
 import awubot.RobotTracker;
 import static awubot.util.Util.allDirections;
@@ -49,6 +44,33 @@ public class RatKing {
 
     public static void turn(Direction dir) throws GameActionException {
         _turn(dir);
+    }
+
+    public static void digDirtInDirection(Direction dir) throws GameActionException {
+        if(!rc.isActionReady()) return;
+        indicate("dig " + dir);
+        int dx = dir.dx;
+        int dy = dir.dy;
+
+        if (dx != 0) {
+            for (int y = -1; y <= 1; y++) {
+                var loc = new MapLocation(myLocX + dx * 2, myLocY + dy + y);
+                if(rc.canRemoveDirt(loc)) {
+                    rc.removeDirt(loc);
+                    return;
+                }
+            }
+        }
+
+        if (dy != 0) {
+            for (int x = -1; x <= 1; x++) {
+                var loc = new MapLocation(myLocX + dx + x, myLocY + dy * 2);
+                if(rc.canRemoveDirt(loc)) {
+                    rc.removeDirt(loc);
+                    return;
+                }
+            }
+        }
     }
 
     private static void tryUnburyIfStuck() throws GameActionException {

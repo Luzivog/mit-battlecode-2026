@@ -19,9 +19,53 @@ SCRIM_MAPS_PER_REQUEST = int(os.getenv("BC_SCRIM_MAPS_PER_REQUEST", "10"))
 # Fill these lists with the exact map names/team names you want to scrim.
 # Map groups can be any length; they will be split into batches of SCRIM_MAPS_PER_REQUEST.
 MAPS1 = [
-    # "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "DefaultMedium", "DefaultSmall", "evileye"
-    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "averyfineline", "whereisthecheese", "tiny"
+    "DefaultLarge",
+    "DefaultMedium",
+    "DefaultSmall",
+    "evileye",
+    "peaceinourtime",
+    "cheesefarm",
+    "rift",
+    "ZeroDay",
+    "pipes",
+    "Nofreecheese",
+    "wallsofparadis",
+    "dirtpassageway",
+    "trapped",
+    "Meow",
+    "arrows",
+    "starvation",
+    "keepout",
+    "dirtfulcat",
+    "popthecork",
+    "sittingducks",
+    "thunderdome",
+    "5t4rv4t10n_1337",
+    "hatefullattice",
+    "mercifullattice",
+    "cheesebottles",
+    "knifefight",
+    "safelycontained",
+    "TheHeist",
+    "EscapeTheNight",
+    "closeup",
+    "averyfineline",
+    "minimaze",
+    "jail",
+    "tiny",
+    "streetsofnewyork",
+    "corridorofdoomanddespair",
+    "toomuchcheese",
+    "canyoudig",
+    "averystrangespace",
+    "whatsthecatdoin",
+    "whereisthecheese",
+    "uneruesansfin",
 ]
+
+# MAPS1 = [
+    # "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "averyfineline", "whereisthecheese", "tiny"
+# ]
 MAPS2 = [
     # "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "popthecork", "DefaultLarge", "Nofreecheese"
     "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "Nofreecheese", "jail", "hatefullattice"

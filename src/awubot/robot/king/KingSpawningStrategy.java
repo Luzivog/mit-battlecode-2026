@@ -25,9 +25,9 @@ public class KingSpawningStrategy extends Strategy {
             defaultThresh = 30;
         }
         int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
-        if (rc.getGlobalCheese() >= 3000 - Math.max(0, time - 1000)) {
+        if (rc.getGlobalCheese() >= 3000 - time * 3 / 4) {
             thresh = 1000;
-        } else if (rc.getGlobalCheese() >= 2000 - Math.max(0, time - 1000) && time >= 100) {
+        } else if (rc.getGlobalCheese() >= 2000 - time / 2 && time >= 100) {
             thresh = threshForNumRats(32);
         }
 

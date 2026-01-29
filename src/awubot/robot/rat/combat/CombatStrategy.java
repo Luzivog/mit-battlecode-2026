@@ -157,8 +157,7 @@ public class CombatStrategy extends Strategy {
             if (moveMask == 0 && shouldTroll && rc.getID() % 10 == 7 && RobotTracker.numEnemies > 0) {
                 if (trollID != -1) {
                     if (rc.canSenseRobot(trollID)) {
-                        moveMask = (1 << 9) - 1;
-                        bfsIters = 5;
+                        return true;
                     } else {
                         trollID = -1;
                         shouldTroll = false;
@@ -168,8 +167,7 @@ public class CombatStrategy extends Strategy {
                     boolean canFightYou = info.getType() == UnitType.BABY_RAT && canSense(info.location, myLoc, info.direction);
                     if (canFightYou) {
                         trollID = info.getID();
-                        moveMask = (1 << 9) - 1;
-                        bfsIters = 5;
+                        return true;
                     }
                 }
             }

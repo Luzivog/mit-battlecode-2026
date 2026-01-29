@@ -83,7 +83,7 @@ SCRIM_TEAMS = [
     "Old But Gold",
     "muscallonge",
     "Mango Tango",
-    "Blue Dragon",
+    "Goobie Woobies",
     "The Complex Merlin"
 ]
 

@@ -89,27 +89,27 @@ public class Game {
         // arr[0].repeat('\0', 100);
         // arr[1] = new StringBuilder();
         // arr[1].repeat('\0', 100);
-        // Profiler.begin();
+        // // Profiler.begin();
         // char c0 = arr[x].charAt(y); 
-        // Profiler.end_print("arr");
+        // // Profiler.end_print("arr");
 
         // StringBuilder sb = new StringBuilder();
         // sb.repeat('0', 3600);
-        // Profiler.begin();
+        // // Profiler.begin();
         // char c1 = sb.charAt(myLocX * 60 + myLocY);
-        // Profiler.end_print("indx");
+        // // Profiler.end_print("indx");
 
 
         // x = myLocX;
         // y = myLocY;
-        // Profiler.begin();
+        // // Profiler.begin();
         // boolean b0 = rc.senseMapInfo(new MapLocation(x, y)).isPassable();
-        // Profiler.end_print("sense new maploc");
+        // // Profiler.end_print("sense new maploc");
 
         // MapLocation loc = new MapLocation(x, y);
-        // Profiler.begin();
+        // // Profiler.begin();
         // boolean b1 = rc.senseMapInfo(loc).isPassable();
-        // Profiler.end_print("sense existing maploc");
+        // // Profiler.end_print("sense existing maploc");
 
         // rc.resign();
     }
@@ -125,11 +125,11 @@ public class Game {
         StringBuilder sb = new StringBuilder();
         if (rc.getCarrying() == null) carryStartTime = -1;
 
-        // Profiler.begin();   
+        // // Profiler.begin();   
         // for (int i = nearbyRobots.length - 1; i >= 0; i--) {
         //     RobotInfo ri = nearbyRobots[i];
         // }
-        // Profiler.end_print("                  index based for loop " + nearbyRobots.length);
+        // // Profiler.end_print("                  index based for loop " + nearbyRobots.length);
         // rc.resign();
     }
 
@@ -138,23 +138,23 @@ public class Game {
         lastHP = rc.getHealth();
         if (rc.getCarrying() == null) carryStartTime = -1;
         else if (carryStartTime == -1) carryStartTime = time;
-        // Profiler.begin();
+        // // Profiler.begin();
         // MapInfo info = rc.senseMapInfo(myLoc);
-        // Profiler.end_print("sense");
+        // // Profiler.end_print("sense");
 
-        // Profiler.begin();
+        // // Profiler.begin();
         // boolean asdf = rc.senseMapInfo(new MapLocation(myLocX, myLocY)).isPassable();
-        // Profiler.end_print("passable");
+        // // Profiler.end_print("passable");
 
-        // Profiler.begin();
+        // // Profiler.begin();
         // boolean fdas = CellTracker.isPassable(myLocX, myLocY);
-        // Profiler.end_print("celltracker");
+        // // Profiler.end_print("celltracker");
 
         // StringBuilder sb = new StringBuilder();
         // sb.repeat('1', 1000);
-        // Profiler.begin();
+        // // Profiler.begin();
         // int ans = sb.charAt(myLocX * 60 + myLocY);
-        // Profiler.end_print("thoery");
+        // // Profiler.end_print("thoery");
 
         // rc.resign();
 

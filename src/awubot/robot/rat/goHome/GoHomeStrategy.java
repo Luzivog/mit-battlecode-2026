@@ -50,7 +50,7 @@ public class GoHomeStrategy extends Strategy {
 
         if(rc.isMovementReady()) {
             Pathfinder.computeReachable();
-            Profiler.begin();
+            // Profiler.begin();
             var g = AntColony.mark[king];
             char best = '\uFFFF';
             int bestX = -1, bestY = -1;
@@ -1825,7 +1825,7 @@ public class GoHomeStrategy extends Strategy {
                     x += 10;
                 }
             }
-            Profiler.end("rmq");
+            // Profiler.end("rmq");
 
             indicate("best " + (int)best);
             if(best == '\uFFFF') {

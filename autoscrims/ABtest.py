@@ -34,7 +34,7 @@ if load_dotenv is not None:
 ROOT = Path(__file__).parent.parent
 DEFAULT_MAPS_DIR = ROOT / "maps"
 RESULTS_DIR = ROOT / "match_results"
-SHIT_TESTS: set[str] = set(["closeup", "troll2", "averystrangespace", "5t4rv4t10n_1337", "coop"])  # Map names (stems) to always skip.
+SHIT_TESTS: set[str] = set(["troll1", "troll2", "5t4rv4t10n_1337", "coop"])  # Map names (stems) to always skip.
 ERROR_LOG_LIMIT = 10
 ERROR_LOG_LINES = 12
 COMPILE_RETRY_DELAY = 10

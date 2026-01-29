@@ -33,7 +33,7 @@ public final class TryPosition {
         if (!rc.isMovementReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, Clock.getBytecodesLeft() - 1000);
-        // Profiler.push();
+        // // Profiler.push();
         bestMove = null;
         bestFacing = null;
         bestScore = -1e9;

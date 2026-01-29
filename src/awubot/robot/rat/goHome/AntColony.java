@@ -16,7 +16,7 @@ public class AntColony {
     private static MapLocation[] lastKingLocs = new MapLocation[5];
     public static boolean shouldMark;
     private static void resetMarks(int i) {
-        Profiler.begin();
+        // Profiler.begin();
         base[i] = (char)(65536 - 3600);
         StringBuilder row = new StringBuilder();
         row.repeat('\uFFFF', mapWidth);
@@ -81,7 +81,7 @@ public class AntColony {
         rows[57] = new StringBuilder(row);
         rows[58] = new StringBuilder(row);
         rows[59] = new StringBuilder(row);
-        Profiler.end("ant colony init");
+        // Profiler.end("ant colony init");
     }
     public static void init() {
         mark = new StringBuilder[5][60];

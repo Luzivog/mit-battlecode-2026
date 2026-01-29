@@ -355,7 +355,7 @@ class BugnavInstance {
         }
         // rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
         // rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
-        // Profiler.begin();
+        // // Profiler.begin();
         if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
             lastLoc = myLoc;
@@ -395,7 +395,7 @@ class BugnavInstance {
 
             }
         }
-        // Profiler.end("lookahead");
+        // // Profiler.end("lookahead");
 
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
@@ -879,7 +879,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // // Profiler.end("bugnav " + -2 + " " + isMaster);
                 indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
@@ -888,7 +888,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // // Profiler.end("bugnav " + -2 + " " + isMaster);
                 indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
@@ -902,7 +902,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // // Profiler.end("bugnav " + -2 + " " + isMaster);
                 // indicate("bugnav " + -2 + " " + isMaster);
                 return true;
             }
@@ -934,7 +934,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // // Profiler.end("bugnav " + -1 + " " + isMaster);
                 indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
@@ -943,7 +943,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // // Profiler.end("bugnav " + -1 + " " + isMaster);
                 indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
@@ -957,7 +957,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // // Profiler.end("bugnav " + -1 + " " + isMaster);
                 // indicate("bugnav " + -1 + " " + isMaster);
                 return true;
             }
@@ -986,7 +986,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // // Profiler.end("bugnav " + 0 + " " + isMaster);
                 indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
@@ -995,7 +995,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // // Profiler.end("bugnav " + 0 + " " + isMaster);
                 indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
@@ -1008,7 +1008,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // // Profiler.end("bugnav " + 0 + " " + isMaster);
                 // indicate("bugnav " + 0 + " " + isMaster);
                 return true;
             }
@@ -1037,7 +1037,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // // Profiler.end("bugnav " + 1 + " " + isMaster);
                 indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
@@ -1046,7 +1046,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // // Profiler.end("bugnav " + 1 + " " + isMaster);
                 indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
@@ -1060,7 +1060,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // // Profiler.end("bugnav " + 1 + " " + isMaster);
                 // indicate("bugnav " + 1 + " " + isMaster);
                 return true;
             }
@@ -1089,7 +1089,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // // Profiler.end("bugnav " + 2 + " " + isMaster);
                 indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
@@ -1098,7 +1098,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // // Profiler.end("bugnav " + 2 + " " + isMaster);
                 indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
@@ -1112,7 +1112,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // // Profiler.end("bugnav " + 2 + " " + isMaster);
                 // indicate("bugnav " + 2 + " " + isMaster);
                 return true;
             }
@@ -1141,7 +1141,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // // Profiler.end("bugnav " + 3 + " " + isMaster);
                 indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
@@ -1150,7 +1150,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // // Profiler.end("bugnav " + 3 + " " + isMaster);
                 indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
@@ -1164,7 +1164,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // // Profiler.end("bugnav " + 3 + " " + isMaster);
                 // indicate("bugnav " + 3 + " " + isMaster);
                 return true;
             }
@@ -1193,7 +1193,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // // Profiler.end("bugnav " + 4 + " " + isMaster);
                 indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
@@ -1202,7 +1202,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // // Profiler.end("bugnav " + 4 + " " + isMaster);
                 indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
@@ -1216,7 +1216,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // // Profiler.end("bugnav " + 4 + " " + isMaster);
                 // indicate("bugnav " + 4 + " " + isMaster);
                 return true;
             }
@@ -1245,7 +1245,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // // Profiler.end("bugnav " + 5 + " " + isMaster);
                 indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
@@ -1254,7 +1254,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // // Profiler.end("bugnav " + 5 + " " + isMaster);
                 indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
@@ -1268,7 +1268,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // // Profiler.end("bugnav " + 5 + " " + isMaster);
                 // indicate("bugnav " + 5 + " " + isMaster);
                 return true;
             }
@@ -1297,7 +1297,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 6 + " " + isMaster);
+                // // Profiler.end("bugnav " + 6 + " " + isMaster);
                 indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
@@ -1306,7 +1306,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 6 + " " + isMaster);
+                // // Profiler.end("bugnav " + 6 + " " + isMaster);
                 indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
@@ -1320,7 +1320,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 6 + " " + isMaster);
+                // // Profiler.end("bugnav " + 6 + " " + isMaster);
                 // indicate("bugnav " + 6 + " " + isMaster);
                 return true;
             }
@@ -1359,7 +1359,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // // Profiler.end("bugnav " + -2 + " " + isMaster);
                 indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
@@ -1368,7 +1368,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // // Profiler.end("bugnav " + -2 + " " + isMaster);
                 indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
@@ -1382,7 +1382,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + -2 + " " + isMaster);
+                // // Profiler.end("bugnav " + -2 + " " + isMaster);
                 // indicate("bugnav " + -2 + " " + isMaster);
                 return true;
             }
@@ -1414,7 +1414,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // // Profiler.end("bugnav " + -1 + " " + isMaster);
                 indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
@@ -1423,7 +1423,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // // Profiler.end("bugnav " + -1 + " " + isMaster);
                 indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
@@ -1437,7 +1437,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + -1 + " " + isMaster);
+                // // Profiler.end("bugnav " + -1 + " " + isMaster);
                 // indicate("bugnav " + -1 + " " + isMaster);
                 return true;
             }
@@ -1466,7 +1466,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // // Profiler.end("bugnav " + 0 + " " + isMaster);
                 indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
@@ -1475,7 +1475,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // // Profiler.end("bugnav " + 0 + " " + isMaster);
                 indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
@@ -1488,7 +1488,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 0 + " " + isMaster);
+                // // Profiler.end("bugnav " + 0 + " " + isMaster);
                 // indicate("bugnav " + 0 + " " + isMaster);
                 return true;
             }
@@ -1517,7 +1517,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // // Profiler.end("bugnav " + 1 + " " + isMaster);
                 indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
@@ -1526,7 +1526,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // // Profiler.end("bugnav " + 1 + " " + isMaster);
                 indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
@@ -1540,7 +1540,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 1 + " " + isMaster);
+                // // Profiler.end("bugnav " + 1 + " " + isMaster);
                 // indicate("bugnav " + 1 + " " + isMaster);
                 return true;
             }
@@ -1569,7 +1569,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // // Profiler.end("bugnav " + 2 + " " + isMaster);
                 indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
@@ -1578,7 +1578,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // // Profiler.end("bugnav " + 2 + " " + isMaster);
                 indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
@@ -1592,7 +1592,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 2 + " " + isMaster);
+                // // Profiler.end("bugnav " + 2 + " " + isMaster);
                 // indicate("bugnav " + 2 + " " + isMaster);
                 return true;
             }
@@ -1621,7 +1621,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // // Profiler.end("bugnav " + 3 + " " + isMaster);
                 indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
@@ -1630,7 +1630,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // // Profiler.end("bugnav " + 3 + " " + isMaster);
                 indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
@@ -1644,7 +1644,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 3 + " " + isMaster);
+                // // Profiler.end("bugnav " + 3 + " " + isMaster);
                 // indicate("bugnav " + 3 + " " + isMaster);
                 return true;
             }
@@ -1673,7 +1673,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // // Profiler.end("bugnav " + 4 + " " + isMaster);
                 indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
@@ -1682,7 +1682,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // // Profiler.end("bugnav " + 4 + " " + isMaster);
                 indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
@@ -1696,7 +1696,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 4 + " " + isMaster);
+                // // Profiler.end("bugnav " + 4 + " " + isMaster);
                 // indicate("bugnav " + 4 + " " + isMaster);
                 return true;
             }
@@ -1725,7 +1725,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // // Profiler.end("bugnav " + 5 + " " + isMaster);
                 indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
@@ -1734,7 +1734,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // // Profiler.end("bugnav " + 5 + " " + isMaster);
                 indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
@@ -1748,7 +1748,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 5 + " " + isMaster);
+                // // Profiler.end("bugnav " + 5 + " " + isMaster);
                 // indicate("bugnav " + 5 + " " + isMaster);
                 return true;
             }
@@ -1777,7 +1777,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + 6 + " " + isMaster);
+                // // Profiler.end("bugnav " + 6 + " " + isMaster);
                 indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
@@ -1786,7 +1786,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + 6 + " " + isMaster);
+                // // Profiler.end("bugnav " + 6 + " " + isMaster);
                 indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
@@ -1800,7 +1800,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + 6 + " " + isMaster);
+                // // Profiler.end("bugnav " + 6 + " " + isMaster);
                 // indicate("bugnav " + 6 + " " + isMaster);
                 return true;
             }
@@ -1851,37 +1851,37 @@ public class Pathfinder {
             }
         }
         int shade = 255;
-        // Profiler.begin();
+        // // Profiler.begin();
         if(!isRatKing && (lastDist < 4 || RobotTracker.allySet.contains(bug.pos)) || RobotTracker.kingSet.contains(bug.pos)) {
             bugLoop: {
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                // Profiler.begin();
+                // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
-                // Profiler.end("bug");
+                // // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                // Profiler.begin();
+                // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
-                // Profiler.end("bug");
+                // // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                // Profiler.begin();
+                // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
-                // Profiler.end("bug");
+                // // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                // Profiler.begin();
+                // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
-                // Profiler.end("bug");
+                // // Profiler.end("bug");
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                // Profiler.begin();
+                // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
-                // Profiler.end("bug");
+                // // Profiler.end("bug");
             }
         }
-        // Profiler.end("bug");
+        // // Profiler.end("bug");
 
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos)) {
@@ -1964,7 +1964,7 @@ public class Pathfinder {
     private static long localPassableExceptAllies0, localPassableExceptAllies1;
     private static long nearCat0, nearCat1;
     private static void prepareBfsMasksBugnav() throws GameActionException {
-        Profiler.begin();
+        // Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         localPassableExceptAllies0 = CellTracker.localPassable0;
         localPassableExceptAllies1 = CellTracker.localPassable1;
@@ -3814,7 +3814,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
@@ -3837,7 +3837,7 @@ public class Pathfinder {
             d01 &= ~CellTracker.localDirt1;
             d10 |= d00;
             d11 |= d01;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
@@ -3850,7 +3850,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4312,9 +4312,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 1;
                     indicate("bfs iters: " + 1);
@@ -4322,7 +4322,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
@@ -4345,7 +4345,7 @@ public class Pathfinder {
             d11 &= ~CellTracker.localDirt1;
             d20 |= d10;
             d21 |= d11;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             {
                 var bugPos = bug.getRecentPos(2 / 2);
@@ -4384,7 +4384,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -4846,9 +4846,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 2;
                     indicate("bfs iters: " + 2);
@@ -4856,7 +4856,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
@@ -4879,7 +4879,7 @@ public class Pathfinder {
             d21 &= ~CellTracker.localDirt1;
             d30 |= d20;
             d31 |= d21;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
@@ -4892,7 +4892,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5354,9 +5354,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 3;
                     indicate("bfs iters: " + 3);
@@ -5364,7 +5364,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
@@ -5387,7 +5387,7 @@ public class Pathfinder {
             d31 &= ~CellTracker.localDirt1;
             d40 |= d30;
             d41 |= d31;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             {
                 var bugPos = bug.getRecentPos(4 / 2);
@@ -5426,7 +5426,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -5888,9 +5888,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 4;
                     indicate("bfs iters: " + 4);
@@ -5898,7 +5898,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
@@ -5921,7 +5921,7 @@ public class Pathfinder {
             d41 &= ~CellTracker.localDirt1;
             d50 |= d40;
             d51 |= d41;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
@@ -5934,7 +5934,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -6396,9 +6396,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 5;
                     indicate("bfs iters: " + 5);
@@ -6406,7 +6406,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
@@ -6429,7 +6429,7 @@ public class Pathfinder {
             d51 &= ~CellTracker.localDirt1;
             d60 |= d50;
             d61 |= d51;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             {
                 var bugPos = bug.getRecentPos(6 / 2);
@@ -6468,7 +6468,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -6930,9 +6930,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 6;
                     indicate("bfs iters: " + 6);
@@ -6940,7 +6940,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
@@ -6963,7 +6963,7 @@ public class Pathfinder {
             d61 &= ~CellTracker.localDirt1;
             d70 |= d60;
             d71 |= d61;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
@@ -6976,7 +6976,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -7438,9 +7438,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 7;
                     indicate("bfs iters: " + 7);
@@ -7448,7 +7448,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
@@ -7471,7 +7471,7 @@ public class Pathfinder {
             d71 &= ~CellTracker.localDirt1;
             d80 |= d70;
             d81 |= d71;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             {
                 var bugPos = bug.getRecentPos(8 / 2);
@@ -7510,7 +7510,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -7972,9 +7972,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 8;
                     indicate("bfs iters: " + 8);
@@ -7982,7 +7982,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
@@ -8005,7 +8005,7 @@ public class Pathfinder {
             d81 &= ~CellTracker.localDirt1;
             d90 |= d80;
             d91 |= d81;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
@@ -8018,7 +8018,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -8480,9 +8480,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 9;
                     indicate("bfs iters: " + 9);
@@ -8490,7 +8490,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
@@ -8513,7 +8513,7 @@ public class Pathfinder {
             d91 &= ~CellTracker.localDirt1;
             d100 |= d90;
             d101 |= d91;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             {
                 var bugPos = bug.getRecentPos(10 / 2);
@@ -8552,7 +8552,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -9014,9 +9014,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 10;
                     indicate("bfs iters: " + 10);
@@ -9024,7 +9024,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
@@ -9047,7 +9047,7 @@ public class Pathfinder {
             d101 &= ~CellTracker.localDirt1;
             d110 |= d100;
             d111 |= d101;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
@@ -9060,7 +9060,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -9522,9 +9522,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 11;
                     indicate("bfs iters: " + 11);
@@ -9532,7 +9532,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
@@ -9555,7 +9555,7 @@ public class Pathfinder {
             d111 &= ~CellTracker.localDirt1;
             d120 |= d110;
             d121 |= d111;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             if(lastIteration) break bfsLoop;
             {
                 var bugPos = bug.getRecentPos(12 / 2);
@@ -9594,7 +9594,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -10056,9 +10056,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 12;
                     indicate("bfs iters: " + 12);
@@ -10066,7 +10066,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
@@ -10089,9 +10089,9 @@ public class Pathfinder {
             d121 &= ~CellTracker.localDirt1;
             d130 |= d120;
             d131 |= d121;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
         }
-        Profiler.end("bfs");
+        // Profiler.end("bfs");
 
         println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");
@@ -10119,7 +10119,7 @@ public class Pathfinder {
         return Direction.CENTER;
     }
     private static void prepareBfsMasksSource() throws GameActionException {
-        Profiler.begin();
+        // Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         localPassableExceptAllies0 = CellTracker.localPassable0;
         localPassableExceptAllies1 = CellTracker.localPassable1;
@@ -11817,7 +11817,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
@@ -11840,7 +11840,7 @@ public class Pathfinder {
             d01 &= ~CellTracker.localDirt1;
             d10 |= d00;
             d11 |= d01;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d10, d11);
@@ -11852,7 +11852,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d10 & 0x807000000000000l) != 0 || (d11 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -12306,9 +12306,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 1;
                     indicate("bfs iters: " + 1);
@@ -12316,7 +12316,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
@@ -12339,7 +12339,7 @@ public class Pathfinder {
             d11 &= ~CellTracker.localDirt1;
             d20 |= d10;
             d21 |= d11;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d20, d21);
@@ -12351,7 +12351,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d20 & 0x807000000000000l) != 0 || (d21 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -12805,9 +12805,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 2;
                     indicate("bfs iters: " + 2);
@@ -12815,7 +12815,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
@@ -12838,7 +12838,7 @@ public class Pathfinder {
             d21 &= ~CellTracker.localDirt1;
             d30 |= d20;
             d31 |= d21;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d30, d31);
@@ -12850,7 +12850,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d30 & 0x807000000000000l) != 0 || (d31 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -13304,9 +13304,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 3;
                     indicate("bfs iters: " + 3);
@@ -13314,7 +13314,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
@@ -13337,7 +13337,7 @@ public class Pathfinder {
             d31 &= ~CellTracker.localDirt1;
             d40 |= d30;
             d41 |= d31;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d40, d41);
@@ -13349,7 +13349,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d40 & 0x807000000000000l) != 0 || (d41 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -13803,9 +13803,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 4;
                     indicate("bfs iters: " + 4);
@@ -13813,7 +13813,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
@@ -13836,7 +13836,7 @@ public class Pathfinder {
             d41 &= ~CellTracker.localDirt1;
             d50 |= d40;
             d51 |= d41;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d50, d51);
@@ -13848,7 +13848,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d50 & 0x807000000000000l) != 0 || (d51 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -14302,9 +14302,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 5;
                     indicate("bfs iters: " + 5);
@@ -14312,7 +14312,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
@@ -14335,7 +14335,7 @@ public class Pathfinder {
             d51 &= ~CellTracker.localDirt1;
             d60 |= d50;
             d61 |= d51;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d60, d61);
@@ -14347,7 +14347,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d60 & 0x807000000000000l) != 0 || (d61 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -14801,9 +14801,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 6;
                     indicate("bfs iters: " + 6);
@@ -14811,7 +14811,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
@@ -14834,7 +14834,7 @@ public class Pathfinder {
             d61 &= ~CellTracker.localDirt1;
             d70 |= d60;
             d71 |= d61;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d70, d71);
@@ -14846,7 +14846,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d70 & 0x807000000000000l) != 0 || (d71 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -15300,9 +15300,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 7;
                     indicate("bfs iters: " + 7);
@@ -15310,7 +15310,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
@@ -15333,7 +15333,7 @@ public class Pathfinder {
             d71 &= ~CellTracker.localDirt1;
             d80 |= d70;
             d81 |= d71;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d80, d81);
@@ -15345,7 +15345,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d80 & 0x807000000000000l) != 0 || (d81 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -15799,9 +15799,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 8;
                     indicate("bfs iters: " + 8);
@@ -15809,7 +15809,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
@@ -15832,7 +15832,7 @@ public class Pathfinder {
             d81 &= ~CellTracker.localDirt1;
             d90 |= d80;
             d91 |= d81;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d90, d91);
@@ -15844,7 +15844,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d90 & 0x807000000000000l) != 0 || (d91 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -16298,9 +16298,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 9;
                     indicate("bfs iters: " + 9);
@@ -16308,7 +16308,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
@@ -16331,7 +16331,7 @@ public class Pathfinder {
             d91 &= ~CellTracker.localDirt1;
             d100 |= d90;
             d101 |= d91;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d100, d101);
@@ -16343,7 +16343,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d100 & 0x807000000000000l) != 0 || (d101 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -16797,9 +16797,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 10;
                     indicate("bfs iters: " + 10);
@@ -16807,7 +16807,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
@@ -16830,7 +16830,7 @@ public class Pathfinder {
             d101 &= ~CellTracker.localDirt1;
             d110 |= d100;
             d111 |= d101;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d110, d111);
@@ -16842,7 +16842,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d110 & 0x807000000000000l) != 0 || (d111 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -17296,9 +17296,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 11;
                     indicate("bfs iters: " + 11);
@@ -17306,7 +17306,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
@@ -17329,7 +17329,7 @@ public class Pathfinder {
             d111 &= ~CellTracker.localDirt1;
             d120 |= d110;
             d121 |= d111;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             // if(amAfter(12556, 84)) {
             //     indicatorString = "";
             //     CellTracker.printLocalMask(d120, d121);
@@ -17341,7 +17341,7 @@ public class Pathfinder {
             //     // Clock.yield();
             // }
             if((d120 & 0x807000000000000l) != 0 || (d121 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -17795,9 +17795,9 @@ public class Pathfinder {
                         }
                     }
                 }
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 12;
                     indicate("bfs iters: " + 12);
@@ -17805,7 +17805,7 @@ public class Pathfinder {
                 }
             }
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
                 // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
@@ -17828,9 +17828,9 @@ public class Pathfinder {
             d121 &= ~CellTracker.localDirt1;
             d130 |= d120;
             d131 |= d121;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
         }
-        Profiler.end("bfs");
+        // Profiler.end("bfs");
 
         println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");

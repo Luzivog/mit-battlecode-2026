@@ -180,17 +180,17 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
     }
 
     public static void tick() throws GameActionException {
-        // Profiler.push();
+        // // Profiler.push();
         loadThreatFromMap();
-        // Profiler.pop("CombatTracker: loading threats");
+        // // Profiler.pop("CombatTracker: loading threats");
 
-        // Profiler.push();
+        // // Profiler.push();
         recomputeThreatMasks();
-        // Profiler.pop("CombatTracker: recomputing threat masks");
+        // // Profiler.pop("CombatTracker: recomputing threat masks");
 
         resetEnemyCounts();
         
-        // Profiler.push();
+        // // Profiler.push();
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -201,11 +201,11 @@ private static final long hiddenNW = 0x0000ffffffffff00L;
             Enemy enemy = EnemyManager.knownEnemies[i];
             registerEnemy(enemy);
         }
-        // Profiler.pop("CombatTracker: registering enemies");
+        // // Profiler.pop("CombatTracker: registering enemies");
 
-        // Profiler.push();
+        // // Profiler.push();
         precomputeThreatCombos();
-        // Profiler.pop("CombatTracker: precomputing threat combos");
+        // // Profiler.pop("CombatTracker: precomputing threat combos");
     }
 
     public static void resetEnemyCounts() {

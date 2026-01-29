@@ -44,7 +44,7 @@ import awubot.util.Profiler;public class RobotTracker {
         allySet = new FastMapLocationSet();
         kingSet = new FastMapLocationSet();
 
-        // Profiler.begin();
+        // // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
         numRobots = nearbyRobots.length;
@@ -1401,7 +1401,7 @@ import awubot.util.Profiler;public class RobotTracker {
                 assert(false);
                 break;
         }
-        // Profiler.end_print("updateRobots");
+        // // Profiler.end_print("updateRobots");
     }
     public static void updateRobotsB() {
         // kind of a hack job
@@ -1409,7 +1409,7 @@ import awubot.util.Profiler;public class RobotTracker {
         allySet = new FastMapLocationSet();
         kingSet = new FastMapLocationSet();
 
-        // Profiler.begin();
+        // // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
         numRobots = nearbyRobots.length;
@@ -2766,7 +2766,7 @@ import awubot.util.Profiler;public class RobotTracker {
                 assert(false);
                 break;
         }
-        // Profiler.end_print("updateRobots");
+        // // Profiler.end_print("updateRobots");
     }
 
     public static RobotInfo[][] catHist = new RobotInfo[4][10];

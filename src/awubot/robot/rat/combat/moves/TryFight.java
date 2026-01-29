@@ -36,7 +36,7 @@ public final class TryFight {
     static int curCatDist;
 
     public static boolean run() throws GameActionException {
-        // Profiler.push();
+        // // Profiler.push();
         md = null;
         fd = null;
         isCat = false;
@@ -66,7 +66,7 @@ public final class TryFight {
                 return false;
             }
         }
-        // Profiler.pop("try fight");
+        // // Profiler.pop("try fight");
         // force this strategy
         // if (md == null) return false;
         CombatStrategy.performMoves(md, fd);

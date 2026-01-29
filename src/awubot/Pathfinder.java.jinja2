@@ -159,7 +159,7 @@ class BugnavInstance {
         }
         // rc.setIndicatorDot(leftBug.pos, 255, 255, 0);
         // rc.setIndicatorDot(rightBug.pos, 255, 255, 0);
-        // Profiler.begin();
+        // // Profiler.begin();
         if(!myLoc.equals(lastLoc) || !myDir.equals(lastDir)) {
             // we moved, so we might be able to advance previously stuck stuff further
             lastLoc = myLoc;
@@ -186,7 +186,7 @@ class BugnavInstance {
                 {{ advance("left") }}
             }
         }
-        // Profiler.end("lookahead");
+        // // Profiler.end("lookahead");
 
         boolean leftReady = leftBug.nextPathIndex >= 5 || leftBug.hitEdge || leftBug.outOfSight || leftBug.arrived;
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
@@ -424,7 +424,7 @@ class BugnavInstance {
                 } else {
                     hitEdge = true;
                 }
-                // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                // // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
                 indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
@@ -433,7 +433,7 @@ class BugnavInstance {
                 rc.setIndicatorDot(nextPos, 0, 255, 255);
                 outOfSight = true;
                 outOfSightLoc = nextPos;
-                // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                // // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
                 indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
@@ -449,7 +449,7 @@ class BugnavInstance {
                     emptyStackTurns = 0;
                 }
                 appendCurrentPosition();
-                // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
+                // // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
                 // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return true;
             }
@@ -503,19 +503,19 @@ public class Pathfinder {
             }
         }
         int shade = 255;
-        // Profiler.begin();
+        // // Profiler.begin();
         if(!isRatKing && (lastDist < {{(MAX_PATH / 3) | int}} || RobotTracker.allySet.contains(bug.pos)) || RobotTracker.kingSet.contains(bug.pos)) {
             bugLoop: {
                 {% for i in range(MAX_BUG_ITERS) %}
                 rc.setIndicatorDot(bug.pos, 0, Math.max(0, shade -= 30), 0);
-                // Profiler.begin();
+                // // Profiler.begin();
                 if(!bug.advance() || isRatKing || Clock.getBytecodesLeft() < 6500) break bugLoop;
                 lastDist++;
-                // Profiler.end("bug");
+                // // Profiler.end("bug");
                 {% endfor %}
             }
         }
-        // Profiler.end("bug");
+        // // Profiler.end("bug");
 
         // deal with the edge case of moving immediately out of sight
         if(myLoc.equals(bug.pos)) {
@@ -632,7 +632,7 @@ public class Pathfinder {
     private static long nearCat0, nearCat1;
     {% for mode in ["bugnav", "source"] %}
     private static void prepareBfsMasks{{capitalise(mode)}}() throws GameActionException {
-        Profiler.begin();
+        // Profiler.begin();
         CellTracker.computeLocalBfsMasks();
         localPassableExceptAllies0 = CellTracker.localPassable0;
         localPassableExceptAllies1 = CellTracker.localPassable1;
@@ -774,7 +774,7 @@ public class Pathfinder {
             // }
             {% if i %}
             if((d{{i}}0 & 0x807000000000000l) != 0 || (d{{i}}1 & 0xe01) != 0) {
-                // Profiler.begin();
+                // // Profiler.begin();
                 // this is sloppy since we only care about tiles <= 2 chebyshev distance away
                 long notWallAdjacent0 = CellTracker.localPassable0, notWallAdjacent1 = CellTracker.localPassable1;
                 notWallAdjacent1 &= (notWallAdjacent1 << 1) | (notWallAdjacent0 >> 60);
@@ -869,9 +869,9 @@ public class Pathfinder {
                     }
                 }
                 {% endfor %}
-                // Profiler.end("bfs best move");
+                // // Profiler.end("bfs best move");
                 if(bestMove != null) {
-                    Profiler.end("bfs");
+                    // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = {{i}};
                     indicate("bfs iters: " + {{i}});
@@ -880,7 +880,7 @@ public class Pathfinder {
             }
             {% endif %}
 
-            // Profiler.begin();
+            // // Profiler.begin();
 
             {{ bfsIteration("d%s" % i, "localPassableExceptAllies") }}
             long d{{i + 2}}0 = 0l;
@@ -891,10 +891,10 @@ public class Pathfinder {
             d{{i}}1 &= ~CellTracker.localDirt1;
             d{{i + 1}}0 |= d{{i}}0;
             d{{i + 1}}1 |= d{{i}}1;
-            // Profiler.end("bfs iteration");
+            // // Profiler.end("bfs iteration");
             {% endfor %}
         }
-        Profiler.end("bfs");
+        // Profiler.end("bfs");
 
         println("fallback when bfs can't find path");
         indicate("fallback when bfs can't find path");

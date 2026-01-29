@@ -75,7 +75,7 @@ public class RobotTracker {
         allySet = new FastMapLocationSet();
         kingSet = new FastMapLocationSet();
 
-        // Profiler.begin();
+        // // Profiler.begin();
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
         numRobots = nearbyRobots.length;
@@ -137,7 +137,7 @@ public class RobotTracker {
                 assert(false);
                 break;
         }
-        // Profiler.end_print("updateRobots");
+        // // Profiler.end_print("updateRobots");
     }
     {% endfor %}
 

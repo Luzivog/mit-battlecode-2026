@@ -4352,7 +4352,7 @@ public class CellTracker {
     }
 
     public static void storeVisibleCells() throws GameActionException {
-        Profiler.begin();
+        // Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
         switch(myDir.ordinal()) {
             case 0 -> {
@@ -5404,11 +5404,11 @@ public class CellTracker {
                 }
                                                                     }
         }
-        Profiler.end("storeVisibleCells");
+        // Profiler.end("storeVisibleCells");
     }
 
     public static void storeVisibleCellsPostMoveForward() throws GameActionException {
-        Profiler.begin();
+        // Profiler.begin();
         int x = myLoc.x, y = myLoc.y;
         switch(myDir.ordinal()) {
             case 0 -> {
@@ -5812,16 +5812,16 @@ public class CellTracker {
                 }
                                                                     }
         }
-        Profiler.end("storeVisibleCellsPostMove");
+        // Profiler.end("storeVisibleCellsPostMove");
     }
 
     public static void storeVisibleCellsKing() throws GameActionException {
         // IF TLE: tone this down
-        Profiler.begin();
+        // Profiler.begin();
         for(var info : rc.senseNearbyMapInfos()) {
             CellTracker.storeCellKing(info);
         }
-        Profiler.end("storeVisibleCellsKing");
+        // Profiler.end("storeVisibleCellsKing");
     }
 
     public static long localPassable0, localPassable1;
@@ -436509,27 +436509,27 @@ public class CellTracker {
     public static void checkSymmetry() {
         switch(getSymmetry().ordinal()) {
             case 0 -> {
-                Profiler.begin();
+                // Profiler.begin();
                 // IF TLE: check one per turn instead of all 3
                 if(hsym != 0) checkHor();
                 if(vsym != 0) checkVer();
                 if(rsym != 0) checkRot();
-                Profiler.end("checkSymmetry");
+                // Profiler.end("checkSymmetry");
             }
             case 1 -> {
-                Profiler.begin();
+                // Profiler.begin();
                 applyRot();
-                Profiler.end("applyRot");
+                // Profiler.end("applyRot");
             }
             case 2 -> {
-                Profiler.begin();
+                // Profiler.begin();
                 applyHor();
-                Profiler.end("applyHor");
+                // Profiler.end("applyHor");
             }
             case 3 -> {
-                Profiler.begin();
+                // Profiler.begin();
                 applyVer();
-                Profiler.end("applyVer");
+                // Profiler.end("applyVer");
             }
         }
     }

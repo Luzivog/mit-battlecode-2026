@@ -38,7 +38,7 @@ public final class TryAttack {
 
     public static boolean run() throws GameActionException {
         if (!rc.isActionReady()) return false;
-        // Profiler.push();
+        // // Profiler.push();
         target = null;
         bestMove = null;
         bestFacing = null;
@@ -60,7 +60,7 @@ public final class TryAttack {
                 considerEnemy();
             }
         }
-        // Profiler.pop("try attack");
+        // // Profiler.pop("try attack");
         if (bestScore < 0.5) {
             indicate("didnt find good attack");
             return false;

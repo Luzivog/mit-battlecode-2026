@@ -18,7 +18,7 @@ SCRIM_MAPS_PER_REQUEST = int(os.getenv("BC_SCRIM_MAPS_PER_REQUEST", "10"))
 
 # Fill these lists with the exact map names/team names you want to scrim.
 # Map groups can be any length; they will be split into batches of SCRIM_MAPS_PER_REQUEST.
-MAPS1 = [
+MAPS3 = [
     "DefaultLarge",
     "DefaultMedium",
     "DefaultSmall",
@@ -63,13 +63,22 @@ MAPS1 = [
     "uneruesansfin",
 ]
 
-# MAPS1 = [
-    # "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "averyfineline", "whereisthecheese", "tiny"
-# ]
+MAPS1 = [
+    "dirtfulcat", "arrows", "dirtpassageway", "Meow", "starvation", "thunderdome", "trapped", "averyfineline", "whereisthecheese", "tiny"
+]
 MAPS2 = [
     # "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "popthecork", "DefaultLarge", "Nofreecheese"
     "cheesefarm", "keepout", "pipes", "rift", "wallsofparadis", "ZeroDay", "sittingducks", "Nofreecheese", "jail", "hatefullattice"
 ]
+
+# hack
+for x in MAPS1:
+    MAPS3.remove(x)
+for x in MAPS2:
+    MAPS3.remove(x)
+MAPS1 = MAPS3
+
+
 SCRIM_TEAMS = [
     "Old But Gold",
     # "muscallonge",

@@ -52,6 +52,12 @@ public class MinerStrategy extends Strategy {
 
         if(tryStrategy(cheeseStrategy)) return true;
 
+        if (rc.getRawCheese() > 50) {
+            goHomeStrategy = new GoHomeStrategy();
+            goHomeStrategy.runTick();
+            return true;
+        }
+
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 

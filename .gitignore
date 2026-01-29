@@ -203,5 +203,6 @@ gradle-app.setting
 .classpath
 
 .env
-/match_results/
 src/awubot/nul
+/match_results/
+src/awubot_nothrow

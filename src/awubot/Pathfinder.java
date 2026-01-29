@@ -1995,8 +1995,8 @@ public class Pathfinder {
             }
                 {
         var pos = RobotTracker.allies[i];
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2015,8 +2015,8 @@ public class Pathfinder {
             if(kingLoc == null || kingLoc.equals(myLoc)) continue;
                 {
         var pos = kingLoc.add(Direction.NORTH);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2030,8 +2030,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.NORTHEAST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2045,8 +2045,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.EAST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2060,8 +2060,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.SOUTHEAST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2075,8 +2075,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.SOUTH);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2090,8 +2090,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.SOUTHWEST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2105,8 +2105,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.WEST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2120,8 +2120,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.NORTHWEST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2135,8 +2135,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.CENTER);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2164,8 +2164,8 @@ public class Pathfinder {
                             if(robot != null && robot.location.equals(catLoc) && robot.getType() == UnitType.CAT) {
                                     {
         var pos = catLoc.translate(0, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -2178,8 +2178,8 @@ public class Pathfinder {
 
                                     {
         var pos = catLoc.translate(0, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -2192,8 +2192,8 @@ public class Pathfinder {
 
                                     {
         var pos = catLoc.translate(1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -2206,8 +2206,8 @@ public class Pathfinder {
 
                                     {
         var pos = catLoc.translate(1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -2222,8 +2222,8 @@ public class Pathfinder {
                                     case 0 -> {
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2238,8 +2238,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2254,8 +2254,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2270,8 +2270,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2286,8 +2286,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2302,8 +2302,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2318,8 +2318,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2334,8 +2334,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2352,8 +2352,8 @@ public class Pathfinder {
                                     case 1 -> {
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2368,8 +2368,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2384,8 +2384,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2400,8 +2400,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2416,8 +2416,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2432,8 +2432,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2448,8 +2448,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2464,8 +2464,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2480,8 +2480,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2498,8 +2498,8 @@ public class Pathfinder {
                                     case 2 -> {
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2514,8 +2514,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2530,8 +2530,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2546,8 +2546,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2562,8 +2562,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2578,8 +2578,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2594,8 +2594,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2610,8 +2610,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2628,8 +2628,8 @@ public class Pathfinder {
                                     case 3 -> {
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2644,8 +2644,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2660,8 +2660,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2676,8 +2676,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2692,8 +2692,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2708,8 +2708,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2724,8 +2724,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2740,8 +2740,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2756,8 +2756,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2774,8 +2774,8 @@ public class Pathfinder {
                                     case 4 -> {
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2790,8 +2790,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2806,8 +2806,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2822,8 +2822,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2838,8 +2838,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2854,8 +2854,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2870,8 +2870,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2886,8 +2886,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2904,8 +2904,8 @@ public class Pathfinder {
                                     case 5 -> {
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2920,8 +2920,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2936,8 +2936,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2952,8 +2952,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2968,8 +2968,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -2984,8 +2984,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3000,8 +3000,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3016,8 +3016,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3032,8 +3032,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3050,8 +3050,8 @@ public class Pathfinder {
                                     case 6 -> {
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3066,8 +3066,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3082,8 +3082,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3098,8 +3098,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3114,8 +3114,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3130,8 +3130,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3146,8 +3146,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3162,8 +3162,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3180,8 +3180,8 @@ public class Pathfinder {
                                     case 7 -> {
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3196,8 +3196,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3212,8 +3212,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3228,8 +3228,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3244,8 +3244,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3260,8 +3260,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3276,8 +3276,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3292,8 +3292,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3308,8 +3308,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3335,8 +3335,8 @@ public class Pathfinder {
                 // we can't sense this cat, use historical info only
                     {
         var pos = catLoc.translate(0, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -3349,8 +3349,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -3363,8 +3363,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -3377,8 +3377,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -3391,8 +3391,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3406,8 +3406,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3421,8 +3421,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3436,8 +3436,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3451,8 +3451,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3466,8 +3466,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3481,8 +3481,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3496,8 +3496,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3511,8 +3511,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3526,8 +3526,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3541,8 +3541,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3556,8 +3556,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3571,8 +3571,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3586,8 +3586,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3601,8 +3601,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3616,8 +3616,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3631,8 +3631,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3646,8 +3646,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3661,8 +3661,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3676,8 +3676,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3691,8 +3691,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3706,8 +3706,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3721,8 +3721,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3736,8 +3736,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -3785,8 +3785,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -4355,8 +4355,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -5397,8 +5397,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -6439,8 +6439,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -7481,8 +7481,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -8523,8 +8523,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -9565,8 +9565,8 @@ public class Pathfinder {
                 } else {
                         {
         var pos = bugPos;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10150,8 +10150,8 @@ public class Pathfinder {
             }
                 {
         var pos = RobotTracker.allies[i];
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10179,8 +10179,8 @@ public class Pathfinder {
                             if(robot != null && robot.location.equals(catLoc) && robot.getType() == UnitType.CAT) {
                                     {
         var pos = catLoc.translate(0, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -10193,8 +10193,8 @@ public class Pathfinder {
 
                                     {
         var pos = catLoc.translate(0, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -10207,8 +10207,8 @@ public class Pathfinder {
 
                                     {
         var pos = catLoc.translate(1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -10221,8 +10221,8 @@ public class Pathfinder {
 
                                     {
         var pos = catLoc.translate(1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -10237,8 +10237,8 @@ public class Pathfinder {
                                     case 0 -> {
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10253,8 +10253,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10269,8 +10269,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10285,8 +10285,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10301,8 +10301,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10317,8 +10317,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10333,8 +10333,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10349,8 +10349,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10367,8 +10367,8 @@ public class Pathfinder {
                                     case 1 -> {
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10383,8 +10383,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10399,8 +10399,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10415,8 +10415,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10431,8 +10431,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10447,8 +10447,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10463,8 +10463,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10479,8 +10479,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10495,8 +10495,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10513,8 +10513,8 @@ public class Pathfinder {
                                     case 2 -> {
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10529,8 +10529,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10545,8 +10545,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10561,8 +10561,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10577,8 +10577,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10593,8 +10593,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10609,8 +10609,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10625,8 +10625,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10643,8 +10643,8 @@ public class Pathfinder {
                                     case 3 -> {
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10659,8 +10659,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10675,8 +10675,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10691,8 +10691,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10707,8 +10707,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10723,8 +10723,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10739,8 +10739,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10755,8 +10755,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10771,8 +10771,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10789,8 +10789,8 @@ public class Pathfinder {
                                     case 4 -> {
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10805,8 +10805,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 1))) rc.setIndicatorDot(catLoc.translate(2, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10821,8 +10821,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10837,8 +10837,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10853,8 +10853,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10869,8 +10869,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10885,8 +10885,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10901,8 +10901,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10919,8 +10919,8 @@ public class Pathfinder {
                                     case 5 -> {
                                             {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10935,8 +10935,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 0))) rc.setIndicatorDot(catLoc.translate(2, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10951,8 +10951,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, -1))) rc.setIndicatorDot(catLoc.translate(2, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10967,8 +10967,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10983,8 +10983,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -10999,8 +10999,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11015,8 +11015,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11031,8 +11031,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11047,8 +11047,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11065,8 +11065,8 @@ public class Pathfinder {
                                     case 6 -> {
                                             {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11081,8 +11081,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, -1))) rc.setIndicatorDot(catLoc.translate(1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11097,8 +11097,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11113,8 +11113,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11129,8 +11129,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11145,8 +11145,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11161,8 +11161,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11177,8 +11177,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11195,8 +11195,8 @@ public class Pathfinder {
                                     case 7 -> {
                                             {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11211,8 +11211,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, -1))) rc.setIndicatorDot(catLoc.translate(0, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11227,8 +11227,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, -1))) rc.setIndicatorDot(catLoc.translate(-1, -1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11243,8 +11243,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 0))) rc.setIndicatorDot(catLoc.translate(-1, 0), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11259,8 +11259,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 1))) rc.setIndicatorDot(catLoc.translate(-1, 1), 100, 0, 255);
                                             {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11275,8 +11275,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(-1, 2))) rc.setIndicatorDot(catLoc.translate(-1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11291,8 +11291,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(0, 2))) rc.setIndicatorDot(catLoc.translate(0, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11307,8 +11307,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(1, 2))) rc.setIndicatorDot(catLoc.translate(1, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11323,8 +11323,8 @@ public class Pathfinder {
                                         // if(rc.onTheMap(catLoc.translate(2, 2))) rc.setIndicatorDot(catLoc.translate(2, 2), 100, 0, 255);
                                             {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11350,8 +11350,8 @@ public class Pathfinder {
                 // we can't sense this cat, use historical info only
                     {
         var pos = catLoc.translate(0, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -11364,8 +11364,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -11378,8 +11378,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -11392,8 +11392,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         {
             int idx = yi * 11 + xi;
             if(idx < 61) {
@@ -11406,8 +11406,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11421,8 +11421,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11436,8 +11436,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11451,8 +11451,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11466,8 +11466,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11481,8 +11481,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11496,8 +11496,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11511,8 +11511,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11526,8 +11526,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11541,8 +11541,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11556,8 +11556,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11571,8 +11571,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11586,8 +11586,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11601,8 +11601,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11616,8 +11616,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11631,8 +11631,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11646,8 +11646,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11661,8 +11661,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 2);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11676,8 +11676,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11691,8 +11691,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, 0);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11706,8 +11706,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(2, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11721,8 +11721,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11736,8 +11736,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(0, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11751,8 +11751,8 @@ public class Pathfinder {
 
                     {
         var pos = catLoc.translate(-1, -1);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -11791,8 +11791,8 @@ public class Pathfinder {
 
             {
         var pos = target;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17850,8 +17850,8 @@ public class Pathfinder {
         for (int i = 0; i < sourceCnt; i++) {
                 {
         var pos = sources[i];
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17869,8 +17869,8 @@ public class Pathfinder {
         for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
                 {
         var pos = RobotTracker.allies[i];
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17888,8 +17888,8 @@ public class Pathfinder {
             if(kingLoc == null) continue;
                 {
         var pos = kingLoc.add(Direction.NORTH);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17903,8 +17903,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.NORTHEAST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17918,8 +17918,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.EAST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17933,8 +17933,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.SOUTHEAST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17948,8 +17948,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.SOUTH);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17963,8 +17963,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.SOUTHWEST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17978,8 +17978,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.WEST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -17993,8 +17993,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.NORTHWEST);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -18008,8 +18008,8 @@ public class Pathfinder {
 
                 {
         var pos = kingLoc.add(Direction.CENTER);
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;
@@ -18427,8 +18427,8 @@ public class Pathfinder {
             var ally = RobotTracker.allies[i];
                 {
         var pos = ally;
-        int xi = pos.x - myLoc.x + 5;
-        int yi = pos.y - myLoc.y + 5;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
         if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
         {
             int idx = yi * 11 + xi;

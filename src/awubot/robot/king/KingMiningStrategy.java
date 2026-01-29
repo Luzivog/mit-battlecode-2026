@@ -87,7 +87,7 @@ public class KingMiningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        indicate("stuckTurns: " + stuckTurns);
+        // indicate("stuckTurns: " + stuckTurns);
         scanForCheeseMines();
 
         if (!foundCheeseMine) {
@@ -103,14 +103,14 @@ public class KingMiningStrategy extends Strategy {
 
         tryCollectCheese();
 
-        indicate("mine target: " + mineTarget);
+        // indicate("mine target: " + mineTarget);
         return true;
     }
 
     // made up a better function for collecting cheese
     public boolean tryCollectCheese() throws GameActionException {
         if (!foundCheeseMine) return false;
-        indicate("trying to collect " + mineTarget);
+        // indicate("trying to collect " + mineTarget);
         MapLocation nearestCheese = null;
         for(var info : rc.senseNearbyMapInfos()) {
             if (info.getCheeseAmount() > 0) {
@@ -125,7 +125,7 @@ public class KingMiningStrategy extends Strategy {
             if (!rc.canPickUpCheese(nearestCheese)) {
                 if(rc.isMovementReady()) {
                     Direction dir = Pathfinder.getMove(nearestCheese);
-                    indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
+                    // indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
                     digDirtInDirection(dir);
                     if (rc.canMove(dir)) {
                         RatKing.rawMove(dir);

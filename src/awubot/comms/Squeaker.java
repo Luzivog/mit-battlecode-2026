@@ -121,18 +121,15 @@ public class Squeaker {
                     // Intentional no-op (panic squeak)
                     break;
                 default:
-                    println("recieved bad packet " + msg);
-                    println("header is " + header);
+                    // println("recieved bad packet " + msg);
+                    // println("header is " + header);
                     break;
             }
         }
     }
 
     public static void squeakEnemy(int data) {
-        rc.squeak((0b11 << 30) | data);
-        if (isRatKing) {
-            indicate("SQUEAKED ENEMY");
-        }
+        rc.squeak((0b11 << 30) | data);// indicate
     }
 
     public static void squeakLureSignal(MapLocation myCatLoc, MapLocation myEnemyKingLoc) {
@@ -184,10 +181,10 @@ public class Squeaker {
             return;
         }
         if (nearRatKing()) {
-            indicate("NEAR RAT KING");
+            // indicate("NEAR RAT KING");
             if (GlobalArray.peepSymmetry() == CellTracker.Symmetry.Unknown && CellTracker.isSymmetryKnown()) {
                 rc.squeak((HEADER_SYMMETRY << HEADER_SHIFT) | CellTracker.getSymmetry().ordinal());
-                indicate("SQUEAKING SYMMETRY");
+                // indicate("SQUEAKING SYMMETRY");
                 return;
             }
             if (!isRatKing && squeakMap()) return;

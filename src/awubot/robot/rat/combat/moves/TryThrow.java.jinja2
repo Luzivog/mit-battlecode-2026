@@ -82,12 +82,7 @@ public final class TryThrow {
         populateThrowGrid();
         selectMoves();
         if (md == null || td == null) {
-            debugThrowFail();
             return true;
-        }
-        if (best < 0) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
-            // debugThrowFail();
         }
         if (isSecondary) {
             if (td != myDir) turn(td);
@@ -99,9 +94,6 @@ public final class TryThrow {
             assert(rc.canThrowRat());
             rc.throwRat();
         }
-        println("threw a rat! come look ! <--------------------------------------------------------------------------------");
-        println("movedir " + md + " throwdir " + td + " score " + best);
-        indicate("COMBAT STRAT: THROW");
         return true;
     }
 
@@ -247,55 +239,6 @@ public final class TryThrow {
         }
     }
 
-    private static void debugThrowFail() throws GameActionException {
-        println("TryThrow failed: md=" + md + " td=" + td + " best=" + best);
-        println("state: loc=" + myLoc + " dir=" + myDir + " actionReady=" + rc.isActionReady()
-                + " moveReady=" + rc.isMovementReady() + " turnReady=" + rc.canTurn());
-        println("cooldowns: action=" + rc.getActionCooldownTurns() + " move=" + rc.getMovementCooldownTurns()
-                + " turn=" + rc.getTurningCooldownTurns());
-        println("bytecodesLeft=" + (Clock.getBytecodeNum() - bytecodeStart) + " budget=" + bytecodeBudget);
-        println("robots: enemies=" + RobotTracker.numEnemies + " allies=" + RobotTracker.numAllies
-                + " cats=" + RobotTracker.numCats + " nearestKing=" + GlobalArray.nearestRatKing);
-        {# StringBuilder sb = new StringBuilder();
-        StringBuilder mapSb = new StringBuilder();
-        for (int dy = {{ grid_radius }}; dy >= -{{ grid_radius }}; dy--) {
-            for (int dx = -{{ grid_radius }}; dx <= {{ grid_radius }}; dx++) {
-                int x = myLocX + dx;
-                int y = myLocY + dy;
-                char ch;
-                char mapCh;
-                if (x < 0 || x >= mapWidth || y < 0 || y >= mapHeight) {
-                    ch = 'X';
-                    mapCh = 'X';
-                } else {
-                    char c = CellTracker.mapData[y].charAt(x);
-                    if (c == '\0') ch = '?';
-                    else if (c == '\2') ch = '#';
-                    else if (CellTracker.isDirt(x, y)) ch = 'd';
-                    else ch = '.';
-                    if (c == '\0') mapCh = '0';
-                    else if (c == '\1') mapCh = '1';
-                    else if (c == '\2') mapCh = '2';
-                    else mapCh = '?';
-                    RobotInfo occ = getOccAt(dx, dy);
-                    if (occ != null) {
-                        if (occ.getTeam() == team) {
-                            ch = (occ.getType() == UnitType.RAT_KING) ? 'K' : 'A';
-                        } else {
-                            ch = (occ.getType() == UnitType.RAT_KING) ? 'k' : 'E';
-                        }
-                    }
-                }
-                sb.append(ch);
-                mapSb.append(mapCh);
-            }
-            sb.append('\n');
-            mapSb.append('\n');
-        }
-        println("throw grid:\n" + sb.toString());
-        println("mapData grid:\n" + mapSb.toString()); #}
-    }
-
     {% set debug = false %}
 
     {% for move_dir in allDirections %}
@@ -303,7 +246,7 @@ public final class TryThrow {
     private static void tryThrow{{ dir_short_map[move_dir] }}{{ dir_short_map[throw_dir] }}() throws GameActionException {
         {% set base_dx = dir_dx[move_dir] + dir_dx[throw_dir] %}
         {% set base_dy = dir_dy[move_dir] + dir_dy[throw_dir] %}
-        {% if debug %} println("considered throwing {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
+        {% if debug %} // println("considered throwing {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
         int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ throw_dir }});
         if (moveCost == -1) return;
         MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
@@ -317,7 +260,7 @@ public final class TryThrow {
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
-        {% if debug %} println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
+        {% if debug %} // println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -326,11 +269,11 @@ public final class TryThrow {
             {% set dx = dir_dx[move_dir] + step * dir_dx[throw_dir] %}
             {% set dy = dir_dy[move_dir] + step * dir_dy[throw_dir] %}
             {% set in_grid = (dx >= -grid_radius and dx <= grid_radius and dy >= -grid_radius and dy <= grid_radius) %}
-            {% if debug %} println("scanning cell at dx=" + {{ dx }} + " dy=" + {{ dy }}); {% endif %}
+            {% if debug %} // println("scanning cell at dx=" + {{ dx }} + " dy=" + {{ dy }}); {% endif %}
             if ({{ in_bounds_expr(dx, dy) }}) {
                   c = CellTracker.mapData[{{ coord_y(dy) }}].charAt({{ coord_x(dx) }});
                 if (c == '\0') {
-                    {% if debug %} println("havent seen this cell chief"); {% endif %}
+                    {% if debug %} // println("havent seen this cell chief"); {% endif %}
                     break scan;
                 }
                 if (c == '\2') {
@@ -341,10 +284,10 @@ public final class TryThrow {
                 score += 10;
                 break scan; 
             }
-            {% if debug %} println("cell is passable"); {% endif %}
+            {% if debug %} // println("cell is passable"); {% endif %}
             {% if in_grid %}
             if ({{ occ_var(dx, dy) }} != null) {
-                {% if debug %} println("occupied by " + {{ occ_var(dx, dy) }}); {% endif %}
+                {% if debug %} // println("occupied by " + {{ occ_var(dx, dy) }}); {% endif %}
                 if ({{ occ_var(dx, dy) }}.getTeam() == team) {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
                         score = -1000;
@@ -374,7 +317,7 @@ public final class TryThrow {
             }
             {% endif %}
             if (CellTracker.isDirt({{ coord_x(dx) }}, {{ coord_y(dy) }})) {
-                {% if debug %} println("cell is dirt"); {% endif %}
+                {% if debug %} // println("cell is dirt"); {% endif %}
                 score += {{ rem * 4 }};
                 break scan;
             }
@@ -385,11 +328,11 @@ public final class TryThrow {
         } else {
             score += CombatStrategy.getCellScoreFor({{ move_dir }}, {{ throw_dir }}, enemyHit);
         }
-        {% if debug %} println("score for {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}: " + score); {% endif %}
-        {% if debug %} println("enemy hit : " + enemyHit); {% endif %}
+        {% if debug %} // println("score for {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}: " + score); {% endif %}
+        {% if debug %} // println("enemy hit : " + enemyHit); {% endif %}
         // if (score <= 0.1) return;
         if (score > best) {
-            {% if debug %} println("accepted throw {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }} with score " + score); {% endif %}
+            {% if debug %} // println("accepted throw {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }} with score " + score); {% endif %}
             best = score;
             md = {{ move_dir }};
             td = {{ throw_dir }};
@@ -411,14 +354,14 @@ public final class TryThrow {
     private static void tryThrowSecondary{{ dir_short_map[move_dir] }}{{ dir_short_map[throw_dir] }}() throws GameActionException {
         {% set base_dx = dir_dx[throw_dir] %}
         {% set base_dy = dir_dy[throw_dir] %}
-        {% if debug %} println("considered throwing {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
+        {% if debug %} // println("considered throwing {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
         MapLocation throwTarget = new MapLocation({{ coord_x(base_dx) }}, {{ coord_y(base_dy) }});
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary({{ move_dir }}, {{ throw_dir }})) return;
         if ({{ occ_var(base_dx, base_dy) }} != null) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
-        {% if debug %} println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
+        {% if debug %} // println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
         score = 0;
         RobotInfo enemyHit = null;
         scan: {
@@ -427,11 +370,11 @@ public final class TryThrow {
             {% set dx = step * dir_dx[throw_dir] %}
             {% set dy = step * dir_dy[throw_dir] %}
             {% set in_grid = (dx >= -grid_radius and dx <= grid_radius and dy >= -grid_radius and dy <= grid_radius) %}
-            {% if debug %} println("scanning cell at dx=" + {{ dx }} + " dy=" + {{ dy }}); {% endif %}
+            {% if debug %} // println("scanning cell at dx=" + {{ dx }} + " dy=" + {{ dy }}); {% endif %}
             if ({{ in_bounds_expr(dx, dy) }}) {
                   c = CellTracker.mapData[{{ coord_y(dy) }}].charAt({{ coord_x(dx) }});
                 if (c == '\0') {
-                    {% if debug %} println("havent seen this cell chief"); {% endif %}
+                    {% if debug %} // println("havent seen this cell chief"); {% endif %}
                     break scan;
                 }
                 if (c == '\2') {
@@ -442,10 +385,10 @@ public final class TryThrow {
                 score += 10;
                 break scan; 
             }
-            {% if debug %} println("cell is passable"); {% endif %}
+            {% if debug %} // println("cell is passable"); {% endif %}
             {% if in_grid %}
             if ({{ occ_var(dx, dy) }} != null) {
-                {% if debug %} println("occupied by " + {{ occ_var(dx, dy) }}); {% endif %}
+                {% if debug %} // println("occupied by " + {{ occ_var(dx, dy) }}); {% endif %}
                 if ({{ occ_var(dx, dy) }}.getTeam() == team) {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
                         score = -1000;
@@ -475,7 +418,7 @@ public final class TryThrow {
             }
             {% endif %}
             if (CellTracker.isDirt({{ coord_x(dx) }}, {{ coord_y(dy) }})) {
-                {% if debug %} println("cell is dirt"); {% endif %}
+                {% if debug %} // println("cell is dirt"); {% endif %}
                 score += {{ rem * 4 }};
                 break scan;
             }
@@ -486,11 +429,11 @@ public final class TryThrow {
         } else {
             score += CombatStrategy.getCellScoreFor({{ move_dir }}, {{ throw_dir }}, enemyHit);
         }
-        {% if debug %} println("score for {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}: " + score); {% endif %}
-        {% if debug %} println("enemy hit : " + enemyHit); {% endif %}
+        {% if debug %} // println("score for {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}: " + score); {% endif %}
+        {% if debug %} // println("enemy hit : " + enemyHit); {% endif %}
         // if (score <= 0.1) return;
         if (score > best) {
-            {% if debug %} println("accepted throw {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }} with score " + score); {% endif %}
+            {% if debug %} // println("accepted throw {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }} with score " + score); {% endif %}
             best = score;
             md = {{ move_dir }};
             td = {{ throw_dir }};

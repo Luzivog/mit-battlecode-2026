@@ -59,10 +59,10 @@ public final class TryRatNap {
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
         }
         if (bestScore < 0.5) return false;
-        println("target " + t);
+        // println("target " + t);
         if (bestMove != null) {
             if (!CombatStrategy.performMoves(bestMove, bestFacing)) {
-                println(bestMove + " " + bestFacing);
+                // println(bestMove + " " + bestFacing);
                 assert(false);
             }
             if (rc.canCarryRat(target.location)) {
@@ -78,8 +78,8 @@ public final class TryRatNap {
             }
             assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
         }
-        println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
-        indicate("COMBAT STRAT: NAP");
+        // println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
+        // indicate("COMBAT STRAT: NAP");
         return true;
     }
 
@@ -189,7 +189,7 @@ public final class TryRatNap {
             if (canSense(dx, dy, info.direction)) {
                 if (rc.canCarryRat(info.location)) {
                     rc.carryRat(info.location);
-                    println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
+                    // println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
                     return true;
                 }
             }
@@ -202,8 +202,8 @@ public final class TryRatNap {
             if (info.getType() != UnitType.BABY_RAT) continue;
             if (rc.canCarryRat(info.location)) {
                 rc.carryRat(info.location);
-                println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
-                indicate("COMBAT STRAT: MINI NAP");
+                // println("!!!!!!!!!!!!!!!!!!!!!!! mini napped rat");
+                // indicate("COMBAT STRAT: MINI NAP");
                 return true;
             }
         }

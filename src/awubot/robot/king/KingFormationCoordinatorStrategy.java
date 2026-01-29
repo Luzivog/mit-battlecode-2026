@@ -151,7 +151,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
 
         if (myKingCount > kingCount) {
-            indicate("FORMATION: aborting due to increased king count");
+            // indicate("FORMATION: aborting due to increased king count");
             abortFormation();
             kingCount = myKingCount;
             return true;
@@ -183,17 +183,17 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if(rc.getHealth() < 100 && GlobalArray.countRatKings() == 1) {
             danger = true;
         } else {
-            indicate("A");
+            // indicate("A");
             int myGlobalCheese = rc.getGlobalCheese();
             if(myGlobalCheese < UPGRADE_COST + 100) return;
-            indicate("B");
+            // indicate("B");
             int myKingCount = GlobalArray.countRatKings();
             if (myKingCount == 5) return;
-            indicate("C");
+            // indicate("C");
             int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
             if(time <= 1800) {
                 if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
-                indicate("D");
+                // indicate("D");
                 if(mapWidth * mapHeight > 1200) {
                     if (numRats < 20 * myKingCount) return;
                 } else {
@@ -203,7 +203,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 if (numRats < 12) return;
             }
         }
-        indicate("passed formation checks");
+        // indicate("passed formation checks");
 
         if (GlobalArray.getFormationTarget() != null) return;
 
@@ -217,7 +217,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
         GlobalArray.writeKingMineAssignment(kingId + 1, miningStrategy.getMineTarget());
 
-        indicate("FORMATION: coordinating at " + formationTarget);
+        // indicate("FORMATION: coordinating at " + formationTarget);
     }
 
     private MapLocation selectBestMineForFormation() throws GameActionException {
@@ -308,13 +308,13 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private void monitorFormation() throws GameActionException {
         if (time - coordinationStartTurn > COORDINATION_TIMEOUT) {
-            indicate("FORMATION: coordination timed out");
+            // indicate("FORMATION: coordination timed out");
             abortFormation();
             return;
         }
 
         if (rc.getGlobalCheese() < UPGRADE_COST) {
-            indicate("FORMATION: insufficient cheese");
+            // indicate("FORMATION: insufficient cheese");
             abortFormation();
             return;
         }
@@ -322,7 +322,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MapLocation myCurrentTarget = GlobalArray.getFormationTarget();
         if (myCurrentTarget == null) {
             state = FormationState.IDLE;
-            indicate("FORMATION: completed or cleared");
+            // indicate("FORMATION: completed or cleared");
             return;
         }
 
@@ -333,7 +333,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             return;
         }
 
-        indicate("FORMATION: monitoring " + formationTarget);
+        // indicate("FORMATION: monitoring " + formationTarget);
     }
 
     private void abortFormation() throws GameActionException {
@@ -344,6 +344,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         state = FormationState.IDLE;
         formationTarget = null;
         targetMine = null;
-        indicate("FORMATION: aborted");
+        // indicate("FORMATION: aborted");
     }
 }

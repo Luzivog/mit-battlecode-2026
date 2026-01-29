@@ -167,17 +167,7 @@ private static final long hiddenS = 0xffff000000ffffffL;
 private static final long hiddenSW = 0xff000000ffffffffL;
 private static final long hiddenW = 0x000000ffffffffffL;
 private static final long hiddenNW = 0x0000ffffffffff00L;
-
-    public static void debug() {
-        StringBuilder sb = new StringBuilder();
-        for (int y = GRID_RADIUS; y >= -GRID_RADIUS; y--) {
-            for (int x = -GRID_RADIUS; x <= GRID_RADIUS; x++) {
-                sb.append(isThreatAt(x, y) ? "X " : ". ");
-            }
-            sb.append('\n');
-        }
-        indicate(sb.toString());
-    }
+// indicate
 
     public static void tick() throws GameActionException {
         // // Profiler.push();

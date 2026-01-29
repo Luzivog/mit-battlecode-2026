@@ -120,8 +120,8 @@ class BugnavInstance {
             case 0 -> {
                 if (!path12.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -132,8 +132,8 @@ class BugnavInstance {
             case 1 -> {
                 if (!path0.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -144,8 +144,8 @@ class BugnavInstance {
             case 2 -> {
                 if (!path1.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -156,8 +156,8 @@ class BugnavInstance {
             case 3 -> {
                 if (!path2.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -168,8 +168,8 @@ class BugnavInstance {
             case 4 -> {
                 if (!path3.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -180,8 +180,8 @@ class BugnavInstance {
             case 5 -> {
                 if (!path4.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -192,8 +192,8 @@ class BugnavInstance {
             case 6 -> {
                 if (!path5.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -204,8 +204,8 @@ class BugnavInstance {
             case 7 -> {
                 if (!path6.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -216,8 +216,8 @@ class BugnavInstance {
             case 8 -> {
                 if (!path7.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -228,8 +228,8 @@ class BugnavInstance {
             case 9 -> {
                 if (!path8.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -240,8 +240,8 @@ class BugnavInstance {
             case 10 -> {
                 if (!path9.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -252,8 +252,8 @@ class BugnavInstance {
             case 11 -> {
                 if (!path10.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -264,8 +264,8 @@ class BugnavInstance {
             case 12 -> {
                 if (!path11.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -401,11 +401,11 @@ class BugnavInstance {
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         // indicate("ready " + leftReady + " " + rightReady);
         if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
-        indicate("going ahead");
+        // indicate("going ahead");
 
         var leftScore =  Math.sqrt(leftBug.pos.distanceSquaredTo(target)) + leftBug.nextPathIndex * 0.7 ;
         var rightScore =  Math.sqrt(rightBug.pos.distanceSquaredTo(target)) + rightBug.nextPathIndex * 0.7 ;
-        indicate("lookahead" + pos);
+        // indicate("lookahead" + pos);
         // indicate(leftBug.pos);
         // indicate(leftScore);
         // indicate(rightBug.pos);
@@ -548,7 +548,7 @@ class BugnavInstance {
             var better = leftScore < rightScore ? leftBug : rightBug;
             var worse = leftScore < rightScore ? rightBug : leftBug;
             if(!better.outOfSight && worse.outOfSight) {
-                indicate("clear winner");
+                // indicate("clear winner");
                         var bug = better;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
@@ -593,14 +593,14 @@ class BugnavInstance {
         rightBug = null;
 
             } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
-                indicate("unclear, guessing");
+                // indicate("unclear, guessing");
                 leftScore = Math.pow(leftScore, 15);
                 rightScore = Math.pow(rightScore, 15);
                 var total = leftScore + rightScore;
                 leftScore /= total;
                 rightScore /= total;
-                indicate(leftScore);
-                indicate(rightScore);
+                // indicate(leftScore);
+                // indicate(rightScore);
                         var bug = Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
@@ -685,7 +685,7 @@ class BugnavInstance {
                     stackSize++;
                 } else {
                     if(dirToTarget != bottomDir.rotateLeft()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        // System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
                         clearPath();
                     } else {
                         bottomDir = dirToTarget;
@@ -703,7 +703,7 @@ class BugnavInstance {
                     stackSize++;
                 } else {
                     if(dirToTarget != bottomDir.rotateRight()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        // System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
                         clearPath();
                     } else {
                         bottomDir = dirToTarget;
@@ -817,17 +817,17 @@ class BugnavInstance {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
                 if(pastLeft && pastRight) {
-                    indicate("idk which way");
+                    // indicate("idk which way");
                     // just pick randomly, we have no idea what's going on
                     // leftTurn = Rng.mcg() >> 30 == 0;
                     // keep going the same way, we'll get there eventually
                 } else if(pastLeft) {
-                    indicate("past left");
+                    // indicate("past left");
                     // try the other way
                     leftTurn = false;
                     guessedRight[pos.y] |= 1l << pos.x;
                 } else if(pastRight) {
-                    indicate("past right");
+                    // indicate("past right");
                     leftTurn = true;
                     guessedLeft[pos.y] |= 1l << pos.x;
                 } else if(isRatKing) {
@@ -837,7 +837,7 @@ class BugnavInstance {
                         guessedRight[pos.y] |= 1l << pos.x;
                     }
                 } else {
-                    indicate("looking ahead");
+                    // indicate("looking ahead");
                     return doLookahead();
                 }
             } else if(emptyStackTurns < 0) {
@@ -862,10 +862,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -880,7 +880,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -889,7 +889,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -917,10 +917,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -935,7 +935,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -944,7 +944,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -969,10 +969,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -987,7 +987,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -996,7 +996,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1020,10 +1020,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1038,7 +1038,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1047,7 +1047,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1072,10 +1072,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1090,7 +1090,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1099,7 +1099,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1124,10 +1124,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1142,7 +1142,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1151,7 +1151,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1176,10 +1176,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1194,7 +1194,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1203,7 +1203,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1228,10 +1228,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1246,7 +1246,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1255,7 +1255,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1280,10 +1280,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 6);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 6);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1298,7 +1298,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 6 + " " + isMaster);
-                indicate("bugnav " + 6 + " " + isMaster);
+                // indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1307,7 +1307,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 6 + " " + isMaster);
-                indicate("bugnav " + 6 + " " + isMaster);
+                // indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1326,7 +1326,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateLeft();
-        println("no valid move found from " + pos);
+        // println("no valid move found from " + pos);
         return false;
     }
 
@@ -1342,10 +1342,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -2);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1360,7 +1360,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1369,7 +1369,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -2 + " " + isMaster);
-                indicate("bugnav " + -2 + " " + isMaster);
+                // indicate("bugnav " + -2 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1397,10 +1397,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + -1);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1415,7 +1415,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1424,7 +1424,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + -1 + " " + isMaster);
-                indicate("bugnav " + -1 + " " + isMaster);
+                // indicate("bugnav " + -1 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1449,10 +1449,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 0);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1467,7 +1467,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1476,7 +1476,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 0 + " " + isMaster);
-                indicate("bugnav " + 0 + " " + isMaster);
+                // indicate("bugnav " + 0 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1500,10 +1500,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 1);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1518,7 +1518,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1527,7 +1527,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 1 + " " + isMaster);
-                indicate("bugnav " + 1 + " " + isMaster);
+                // indicate("bugnav " + 1 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1552,10 +1552,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 2);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1570,7 +1570,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1579,7 +1579,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 2 + " " + isMaster);
-                indicate("bugnav " + 2 + " " + isMaster);
+                // indicate("bugnav " + 2 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1604,10 +1604,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 3);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1622,7 +1622,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1631,7 +1631,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 3 + " " + isMaster);
-                indicate("bugnav " + 3 + " " + isMaster);
+                // indicate("bugnav " + 3 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1656,10 +1656,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 4);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1674,7 +1674,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1683,7 +1683,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 4 + " " + isMaster);
-                indicate("bugnav " + 4 + " " + isMaster);
+                // indicate("bugnav " + 4 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1708,10 +1708,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 5);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1726,7 +1726,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1735,7 +1735,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 5 + " " + isMaster);
-                indicate("bugnav " + 5 + " " + isMaster);
+                // indicate("bugnav " + 5 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1760,10 +1760,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 6);
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + 6);
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -1778,7 +1778,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + 6 + " " + isMaster);
-                indicate("bugnav " + 6 + " " + isMaster);
+                // indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -1787,7 +1787,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + 6 + " " + isMaster);
-                indicate("bugnav " + 6 + " " + isMaster);
+                // indicate("bugnav " + 6 + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -1806,7 +1806,7 @@ class BugnavInstance {
             }
         }
         tryDir = tryDir.rotateRight();
-        println("no valid move found from " + pos);
+        // println("no valid move found from " + pos);
         return false;
     }
 
@@ -1837,14 +1837,14 @@ public class Pathfinder {
     }
 
     public static Direction getMove(MapLocation target) throws GameActionException {
-        indicate("lastDist " + lastDist);
+        // indicate("lastDist " + lastDist);
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             if(bug != null && target.isAdjacentTo(bug.target)) {
                 // indicate("target changed but adjacent, keep going");
                 bug.target = target;
             } else {
-                indicate("RETARGET");
+                // indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
                 lastDist = 0;
                 bug = new BugnavInstance(true, target);
@@ -1901,8 +1901,8 @@ public class Pathfinder {
         if(bug.pos == secondLastBugPos && myLoc.equals(secondLastLoc)) {
             reps++;
             if(reps >= 5) {
-                indicate("stuck, resetting bug");
-                println("stuck, resetting bug");
+                // indicate("stuck, resetting bug");
+                // println("stuck, resetting bug");
                 bug.clearPath();
                 bug.advance();
                 lastBugPos = lastLoc = new MapLocation(-1, -1);
@@ -1925,7 +1925,7 @@ public class Pathfinder {
             var dir = myLoc.directionTo(bug.pos);
             if(myLoc.add(dir).equals(bug.pos)) {
                 if(dir != Direction.CENTER) {
-                    indicate("adjacent");
+                    // indicate("adjacent");
                     return dir;
                 }
                 lastDist = 0;
@@ -4317,7 +4317,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 1;
-                    indicate("bfs iters: " + 1);
+                    // indicate("bfs iters: " + 1);
                     return bestMove;
                 }
             }
@@ -4851,7 +4851,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 2;
-                    indicate("bfs iters: " + 2);
+                    // indicate("bfs iters: " + 2);
                     return bestMove;
                 }
             }
@@ -5359,7 +5359,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 3;
-                    indicate("bfs iters: " + 3);
+                    // indicate("bfs iters: " + 3);
                     return bestMove;
                 }
             }
@@ -5893,7 +5893,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 4;
-                    indicate("bfs iters: " + 4);
+                    // indicate("bfs iters: " + 4);
                     return bestMove;
                 }
             }
@@ -6401,7 +6401,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 5;
-                    indicate("bfs iters: " + 5);
+                    // indicate("bfs iters: " + 5);
                     return bestMove;
                 }
             }
@@ -6935,7 +6935,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 6;
-                    indicate("bfs iters: " + 6);
+                    // indicate("bfs iters: " + 6);
                     return bestMove;
                 }
             }
@@ -7443,7 +7443,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 7;
-                    indicate("bfs iters: " + 7);
+                    // indicate("bfs iters: " + 7);
                     return bestMove;
                 }
             }
@@ -7977,7 +7977,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 8;
-                    indicate("bfs iters: " + 8);
+                    // indicate("bfs iters: " + 8);
                     return bestMove;
                 }
             }
@@ -8485,7 +8485,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 9;
-                    indicate("bfs iters: " + 9);
+                    // indicate("bfs iters: " + 9);
                     return bestMove;
                 }
             }
@@ -9019,7 +9019,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 10;
-                    indicate("bfs iters: " + 10);
+                    // indicate("bfs iters: " + 10);
                     return bestMove;
                 }
             }
@@ -9527,7 +9527,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 11;
-                    indicate("bfs iters: " + 11);
+                    // indicate("bfs iters: " + 11);
                     return bestMove;
                 }
             }
@@ -10061,7 +10061,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 12;
-                    indicate("bfs iters: " + 12);
+                    // indicate("bfs iters: " + 12);
                     return bestMove;
                 }
             }
@@ -10093,8 +10093,8 @@ public class Pathfinder {
         }
         // Profiler.end("bfs");
 
-        println("fallback when bfs can't find path");
-        indicate("fallback when bfs can't find path");
+        // println("fallback when bfs can't find path");
+        // indicate("fallback when bfs can't find path");
 
         if(!isRatKing) {
             // move in a random direction (to make way for any allies blocking us)
@@ -12311,7 +12311,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 1;
-                    indicate("bfs iters: " + 1);
+                    // indicate("bfs iters: " + 1);
                     return bestMove;
                 }
             }
@@ -12810,7 +12810,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 2;
-                    indicate("bfs iters: " + 2);
+                    // indicate("bfs iters: " + 2);
                     return bestMove;
                 }
             }
@@ -13309,7 +13309,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 3;
-                    indicate("bfs iters: " + 3);
+                    // indicate("bfs iters: " + 3);
                     return bestMove;
                 }
             }
@@ -13808,7 +13808,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 4;
-                    indicate("bfs iters: " + 4);
+                    // indicate("bfs iters: " + 4);
                     return bestMove;
                 }
             }
@@ -14307,7 +14307,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 5;
-                    indicate("bfs iters: " + 5);
+                    // indicate("bfs iters: " + 5);
                     return bestMove;
                 }
             }
@@ -14806,7 +14806,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 6;
-                    indicate("bfs iters: " + 6);
+                    // indicate("bfs iters: " + 6);
                     return bestMove;
                 }
             }
@@ -15305,7 +15305,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 7;
-                    indicate("bfs iters: " + 7);
+                    // indicate("bfs iters: " + 7);
                     return bestMove;
                 }
             }
@@ -15804,7 +15804,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 8;
-                    indicate("bfs iters: " + 8);
+                    // indicate("bfs iters: " + 8);
                     return bestMove;
                 }
             }
@@ -16303,7 +16303,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 9;
-                    indicate("bfs iters: " + 9);
+                    // indicate("bfs iters: " + 9);
                     return bestMove;
                 }
             }
@@ -16802,7 +16802,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 10;
-                    indicate("bfs iters: " + 10);
+                    // indicate("bfs iters: " + 10);
                     return bestMove;
                 }
             }
@@ -17301,7 +17301,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 11;
-                    indicate("bfs iters: " + 11);
+                    // indicate("bfs iters: " + 11);
                     return bestMove;
                 }
             }
@@ -17800,7 +17800,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = 12;
-                    indicate("bfs iters: " + 12);
+                    // indicate("bfs iters: " + 12);
                     return bestMove;
                 }
             }
@@ -17832,8 +17832,8 @@ public class Pathfinder {
         }
         // Profiler.end("bfs");
 
-        println("fallback when bfs can't find path");
-        indicate("fallback when bfs can't find path");
+        // println("fallback when bfs can't find path");
+        // indicate("fallback when bfs can't find path");
 
 
         return Direction.CENTER;
@@ -17842,7 +17842,7 @@ public class Pathfinder {
     // returns a mask of good directions according to the default order
     public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
         if (sourceCnt == 0) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MULTISOURCE BFS NO SOURCES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MULTISOURCE BFS NO SOURCES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             return new int[] {0, 1000};
         }
         CellTracker.computeLocalBfsMasks();
@@ -18023,7 +18023,7 @@ public class Pathfinder {
 
         }
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 0");
+            // indicate("loop 0");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -18081,7 +18081,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 1");
+            // indicate("loop 1");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -18139,7 +18139,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 2");
+            // indicate("loop 2");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -18197,7 +18197,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 3");
+            // indicate("loop 3");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -18255,7 +18255,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 4");
+            // indicate("loop 4");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -18313,7 +18313,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 5");
+            // indicate("loop 5");
             int res = 0;
             if(
                (reach1 & (1l << 10))
@@ -18371,7 +18371,7 @@ public class Pathfinder {
     reach1 &= localPassable1;
 
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop 6");
+            // indicate("loop 6");
             int res = 0;
             if(
                (reach1 & (1l << 10))

@@ -471,7 +471,7 @@ public class KingCombatStrategy extends Strategy {
             best = score7;
             move = Direction.NORTHWEST;
         }
-        indicate("evading " + move);
+        // indicate("evading " + move);
         digDirtInDirection(move);
         if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         if (RobotTracker.numCats > 0) {

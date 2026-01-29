@@ -94,14 +94,14 @@ public class AntColony {
         curKing = GlobalArray.nearestRatKingId;
         shouldMark = true;
         curMark = (char)(base[curKing] + 5);
-        indicate("reached home " + GlobalArray.nearestRatKing);
+        // indicate("reached home " + GlobalArray.nearestRatKing);
     }
     public static void markCurrent() {
         if(!shouldMark) {
-            indicate("don't mark");
+            // indicate("don't mark");
             return;
         }
-        indicate("mark " + (int)curMark);
+        // indicate("mark " + (int)curMark);
         var row = mark[curKing][myLocY];
         row.setCharAt(myLocX, (char)Math.min(curMark, row.charAt(myLocX)));
         curMark++;
@@ -115,7 +115,7 @@ public class AntColony {
                     resetMarks(i);
                 } else if(!kingLoc.equals(lastKingLocs[i])) {
                     // king moved, decrease base mark (equivalent to incrementing all existing marks)
-                    indicate("king " + i + " moved");
+                    // indicate("king " + i + " moved");
                     mark[i][lastKingLocs[i].y + -1].setCharAt(lastKingLocs[i].x + -1, base[i]);
                     mark[i][lastKingLocs[i].y + 1].setCharAt(lastKingLocs[i].x + -1, base[i]);
                     mark[i][lastKingLocs[i].y + -1].setCharAt(lastKingLocs[i].x + 1, base[i]);

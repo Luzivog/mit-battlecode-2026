@@ -76,7 +76,7 @@ public final class TryTrap {
 
     public static boolean shouldTrap(RobotInfo info) throws GameActionException {
         if (info.getHealth() >= 80 && info.getHealth() >= rc.getHealth() + CombatStrategy.getBiteDamage() || info.getHealth() == 100) {
-            println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
+            // println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
             return true;
         }
         return false;
@@ -109,8 +109,8 @@ public final class TryTrap {
             rc.placeRatTrap(bestPlaceLoc);
             assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
         }
-        println("!!!!!!!!!! placed rat trap");
-        indicate("COMBAT STRAT: TRAP");
+        // println("!!!!!!!!!! placed rat trap");
+        // indicate("COMBAT STRAT: TRAP");
         return true;
     }
 
@@ -4836,8 +4836,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 1 -> {
@@ -4887,8 +4887,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 2 -> {
@@ -4938,8 +4938,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 3 -> {
@@ -4989,8 +4989,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 4 -> {
@@ -5040,8 +5040,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 5 -> {
@@ -5091,8 +5091,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 6 -> {
@@ -5142,8 +5142,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
             case 7 -> {
@@ -5193,8 +5193,8 @@ private static void placeSWWNW() {
                 }
                 if (bestScore <= 0) return false;
                 rc.placeRatTrap(bestLoc);
-                println("!!!!!!!!!! placed rat trap MINI");
-                indicate("COMBAT STRAT: MINI TRAP");
+                // println("!!!!!!!!!! placed rat trap MINI");
+                // indicate("COMBAT STRAT: MINI TRAP");
                 return true;
             }
     

@@ -84,7 +84,7 @@ public class GlobalArray {
     private static int pendingPayload0 = -1, pendingPayload1 = -1;
 
     public static void registerSpawnedRat(MapLocation loc, int payload) throws GameActionException {
-        println("prepared rat to spawn at " + loc + " with payload " + payload);
+        // println("prepared rat to spawn at " + loc + " with payload " + payload);
         toSpawn1 = loc;
         pendingPayload1 = payload;
     }
@@ -144,7 +144,7 @@ public class GlobalArray {
             myIndex = (ratCounter - 1 - indexInList + 1024) % 1024;
             return (hi << 10) | lo;
         }
-        println("FAILED TO FIND MY SPAWN INFO");
+        // println("FAILED TO FIND MY SPAWN INFO");
         return -1;
     }
 
@@ -178,7 +178,7 @@ public class GlobalArray {
     }
 
     public static void preTick() throws GameActionException {
-        indicate("my id " + kingId);
+        // indicate("my id " + kingId);
         ratCounter = rc.readSharedArray(COUNTER);
         numberOfRatsAlive = rc.readSharedArray(ALIVE_RAT_COUNT);
         readMapChunks();
@@ -346,7 +346,7 @@ public class GlobalArray {
                     rc.setTimelineMarker("RAT KING THOUGHT THEY DIED", 255, 0, 0);
                 }
                 // rc.setTimelineMarker("RAT KING " + j + " DIED", 255, 0, 0);
-                println("RAT KING " + j + " DIED");
+                // println("RAT KING " + j + " DIED");
                 writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
                 writeSharedArray(RAT_KING_LOC + j, 1023);
             }
@@ -362,10 +362,7 @@ public class GlobalArray {
                 nearestRatKing = king;
                 nearestRatKingId = i;
             }
-        }
-        if (nearestRatKing == null) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DIDNT FIND ANY RAT KING!!");
-        }
+        }// println
     }
 
     public static int countRatKings() {
@@ -474,7 +471,7 @@ public class GlobalArray {
     }
 
     public static void writeMyLoc() throws GameActionException {
-        println("wrote my loc as rat king: " + myLoc);
+        // println("wrote my loc as rat king: " + myLoc);
         writeSharedArray(kingId + RAT_KING_LOC, encode2x2());
         // write LSBs for exact position
         int lsbs = rc.readSharedArray(RAT_KING_LSBS);

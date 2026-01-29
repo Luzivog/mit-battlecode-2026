@@ -101,8 +101,8 @@ class BugnavInstance {
             case {{i}} -> {
                 if (!path{{(i - 1 + MAX_PATH) % MAX_PATH}}.equals(loc)) {
                     if(vis.contains(loc) && (stackSize >= 8 || Math.abs(windingNumber) >= 8)) {
-                        indicate("loop detected");
-                        println("loop detected");
+                        // indicate("loop detected");
+                        // println("loop detected");
                         givenUp = true;
                     }
                     vis.add(loc);
@@ -192,12 +192,12 @@ class BugnavInstance {
         boolean rightReady = rightBug.nextPathIndex >= 5 || rightBug.hitEdge || rightBug.outOfSight || rightBug.arrived;
         // indicate("ready " + leftReady + " " + rightReady);
         if(!myLoc.equals(pos) && (!leftReady || !rightReady)) return !(leftDone && rightDone);
-        indicate("going ahead");
+        // indicate("going ahead");
 
         {% macro score(bug) %} Math.sqrt({{bug}}.pos.distanceSquaredTo(target)) + {{bug}}.nextPathIndex * 0.7 {% endmacro %}
         var leftScore = {{ score("leftBug") }};
         var rightScore = {{ score("rightBug") }};
-        indicate("lookahead" + pos);
+        // indicate("lookahead" + pos);
         // indicate(leftBug.pos);
         // indicate(leftScore);
         // indicate(rightBug.pos);
@@ -235,17 +235,17 @@ class BugnavInstance {
             var better = leftScore < rightScore ? leftBug : rightBug;
             var worse = leftScore < rightScore ? rightBug : leftBug;
             if(!better.outOfSight && worse.outOfSight) {
-                indicate("clear winner");
+                // indicate("clear winner");
                 {{ chooseBug("better") }}
             } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
-                indicate("unclear, guessing");
+                // indicate("unclear, guessing");
                 leftScore = Math.pow(leftScore, 15);
                 rightScore = Math.pow(rightScore, 15);
                 var total = leftScore + rightScore;
                 leftScore /= total;
                 rightScore /= total;
-                indicate(leftScore);
-                indicate(rightScore);
+                // indicate(leftScore);
+                // indicate(rightScore);
                 {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
             }
         }
@@ -288,7 +288,7 @@ class BugnavInstance {
                     stackSize++;
                 } else {
                     if(dirToTarget != bottomDir.rotate{{turnDir}}()) {
-                        System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
+                        // System.out.println("unexpected direction change from " + bottomDir + " to " + dirToTarget);
                         clearPath();
                     } else {
                         bottomDir = dirToTarget;
@@ -356,17 +356,17 @@ class BugnavInstance {
                 boolean pastLeft = ((guessedLeft[pos.y] >> pos.x) & 1l) != 0;
                 boolean pastRight = ((guessedRight[pos.y] >> pos.x) & 1l) != 0;
                 if(pastLeft && pastRight) {
-                    indicate("idk which way");
+                    // indicate("idk which way");
                     // just pick randomly, we have no idea what's going on
                     // leftTurn = Rng.mcg() >> 30 == 0;
                     // keep going the same way, we'll get there eventually
                 } else if(pastLeft) {
-                    indicate("past left");
+                    // indicate("past left");
                     // try the other way
                     leftTurn = false;
                     guessedRight[pos.y] |= 1l << pos.x;
                 } else if(pastRight) {
-                    indicate("past right");
+                    // indicate("past right");
                     leftTurn = true;
                     guessedLeft[pos.y] |= 1l << pos.x;
                 } else if(isRatKing) {
@@ -376,7 +376,7 @@ class BugnavInstance {
                         guessedRight[pos.y] |= 1l << pos.x;
                     }
                 } else {
-                    indicate("looking ahead");
+                    // indicate("looking ahead");
                     return doLookahead();
                 }
             } else if(emptyStackTurns < 0) {
@@ -407,10 +407,10 @@ class BugnavInstance {
             if(!rc.onTheMap(nextPos)) {
                  if(isMaster) {
                     // avoid following the edge of the map (TODO: 1-thick borders)
-                    indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + {{turns}});
+                    // indicate("bugnav edge: leftTurn = " + leftTurn + " bottomDir = " + bottomDir + " tryDir = " + tryDir + " turns = " + {{turns}});
                     if(vis.contains(nextPos)) {
-                        indicate("gave up at edge");
-                        System.out.println("gave up at edge");
+                        // indicate("gave up at edge");
+                        // System.out.println("gave up at edge");
                         givenUp = true;
                         return false;
                     }
@@ -425,7 +425,7 @@ class BugnavInstance {
                     hitEdge = true;
                 }
                 // // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                indicate("bugnav " + {{turns}} + " " + isMaster);
+                // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
             var isPassable = isPassable(nextPos);
@@ -434,7 +434,7 @@ class BugnavInstance {
                 outOfSight = true;
                 outOfSightLoc = nextPos;
                 // // Profiler.end("bugnav " + {{turns}} + " " + isMaster);
-                indicate("bugnav " + {{turns}} + " " + isMaster);
+                // indicate("bugnav " + {{turns}} + " " + isMaster);
                 return false;
             }
             if(isPassable) {
@@ -456,7 +456,7 @@ class BugnavInstance {
         }
         tryDir = tryDir.rotate{{turnDir}}();
         {% endfor %}
-        println("no valid move found from " + pos);
+        // println("no valid move found from " + pos);
         return false;
     }
     {% endmacro %}
@@ -489,14 +489,14 @@ public class Pathfinder {
     }
 
     public static Direction getMove(MapLocation target) throws GameActionException {
-        indicate("lastDist " + lastDist);
+        // indicate("lastDist " + lastDist);
         // TODO: better handling when target changes
         if(bug == null || !target.equals(bug.target)) {
             if(bug != null && target.isAdjacentTo(bug.target)) {
                 // indicate("target changed but adjacent, keep going");
                 bug.target = target;
             } else {
-                indicate("RETARGET");
+                // indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
                 lastDist = 0;
                 bug = new BugnavInstance(true, target);
@@ -535,8 +535,8 @@ public class Pathfinder {
         if(bug.pos == secondLastBugPos && myLoc.equals(secondLastLoc)) {
             reps++;
             if(reps >= 5) {
-                indicate("stuck, resetting bug");
-                println("stuck, resetting bug");
+                // indicate("stuck, resetting bug");
+                // println("stuck, resetting bug");
                 bug.clearPath();
                 bug.advance();
                 lastBugPos = lastLoc = new MapLocation(-1, -1);
@@ -559,7 +559,7 @@ public class Pathfinder {
             var dir = myLoc.directionTo(bug.pos);
             if(myLoc.add(dir).equals(bug.pos)) {
                 if(dir != Direction.CENTER) {
-                    indicate("adjacent");
+                    // indicate("adjacent");
                     return dir;
                 }
                 lastDist = 0;
@@ -874,7 +874,7 @@ public class Pathfinder {
                     // Profiler.end("bfs");
                     // indicate("bestMove: " + bestMove);
                     lastDist = {{i}};
-                    indicate("bfs iters: " + {{i}});
+                    // indicate("bfs iters: " + {{i}});
                     return bestMove;
                 }
             }
@@ -896,8 +896,8 @@ public class Pathfinder {
         }
         // Profiler.end("bfs");
 
-        println("fallback when bfs can't find path");
-        indicate("fallback when bfs can't find path");
+        // println("fallback when bfs can't find path");
+        // indicate("fallback when bfs can't find path");
 
         {% if mode == "bugnav" %}
         if(!isRatKing) {
@@ -923,7 +923,7 @@ public class Pathfinder {
     // returns a mask of good directions according to the default order
     public static int[] multisourceBfs(MapLocation[] sources, int sourceCnt) throws GameActionException {
         if (sourceCnt == 0) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MULTISOURCE BFS NO SOURCES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MULTISOURCE BFS NO SOURCES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             return new int[] {0, 1000};
         }
         CellTracker.computeLocalBfsMasks();
@@ -945,7 +945,7 @@ public class Pathfinder {
         }
         {% for i in range(7) %}
         if((reach0 & 0x807000000000000l) != 0 || (reach1 & 0xe01) != 0) {
-            indicate("loop {{i}}");
+            // indicate("loop {{i}}");
             int res = 0;
             {% for b, dir, off in [
                                    (1, "Direction.NORTH", 71),

@@ -62,7 +62,7 @@ public final class TryAttack {
         }
         // // Profiler.pop("try attack");
         if (bestScore < 0.5) {
-            indicate("didnt find good attack");
+            // indicate("didnt find good attack");
             return false;
         }
         if (bestMove != null) {
@@ -72,8 +72,8 @@ public final class TryAttack {
             attack(target, bestDamage);
             assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
         }
-        println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
-        indicate("COMBAT STRAT: ATTACK");
+        // println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
+        // indicate("COMBAT STRAT: ATTACK");
         return true;
     }
 
@@ -1336,11 +1336,11 @@ public final class TryAttack {
             RobotInfo ri = RobotTracker.sortedEnemies[i];
             if (chebyshevDistance(myLoc, ri) > 1) break;
             attack(ri, CombatStrategy.getBiteDamage());
-            println("!!!!!!!!!!!!!!mini attacked!!");
-            indicate("accepted mini attack");
+            // println("!!!!!!!!!!!!!!mini attacked!!");
+            // indicate("accepted mini attack");
             return true;
         }
-        indicate("rejected mini attac");
+        // indicate("rejected mini attac");
         return false;
     }
 }

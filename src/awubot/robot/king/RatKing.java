@@ -6,7 +6,6 @@ import awubot.robot.Strategy;
 import awubot.RobotTracker;
 import static awubot.util.Util.allDirections;
 import static awubot.util.Util.directions;
-import static awubot.util.Util.indicate;
 import battlecode.common.Clock;
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -24,7 +23,7 @@ public class RatKing {
     }
 
     public static void run() throws GameActionException {
-        indicate("5x5: " + is5x5);
+        // indicate("5x5: " + is5x5);
         spawnedThisTurn = false;
         // indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
         CellTracker.storeVisibleCellsKing();
@@ -48,7 +47,7 @@ public class RatKing {
 
     public static void digDirtInDirection(Direction dir) throws GameActionException {
         if(!rc.isActionReady()) return;
-        indicate("dig " + dir);
+        // indicate("dig " + dir);
         int dx = dir.dx;
         int dy = dir.dy;
 

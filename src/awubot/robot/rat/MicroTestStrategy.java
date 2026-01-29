@@ -27,7 +27,7 @@ public class MicroTestStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         if (combatStrategy.runTick()) {
-            indicate("FIGHTING!!!!!");
+            // indicate("FIGHTING!!!!!");
         }
         exploreStrategy.runTick();
         return true;
@@ -46,7 +46,7 @@ public class MicroTestStrategy extends Strategy {
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
-                                println("ATTEMPTING ATTACK");
+                                // println("ATTEMPTING ATTACK");
                                 rawMove(dir);
                                 turn(newLoc.directionTo(target));
                                 rc.attack(target);
@@ -74,7 +74,7 @@ public class MicroTestStrategy extends Strategy {
                     if (newLoc.distanceSquaredTo(target) <= 2) {
                         return () -> {
                             try {
-                                println("ATTEMPTING RATNAP");
+                                // println("ATTEMPTING RATNAP");
                                 rawMove(dir);
                                 turn(newLoc.directionTo(target));
                                 rc.carryRat(target);
@@ -116,7 +116,7 @@ public class MicroTestStrategy extends Strategy {
         final Direction _best = best;
         return () -> {
             try {
-                println("THROWING RAT " + _best);
+                // println("THROWING RAT " + _best);
                 {
                     MapLocation pos = myLoc;
                     for (int i = 0; i < 8; i++) {
@@ -128,14 +128,14 @@ public class MicroTestStrategy extends Strategy {
                 }
                 turn(_best);
                 id = rc.getCarrying().ID;
-                println("carrying " + id + " at " + rc.getCarrying().location);
+                // println("carrying " + id + " at " + rc.getCarrying().location);
                 rc.throwRat();
-                println("threw guy with id " + id);
-                println("now carrying " + rc.getCarrying());
+                // println("threw guy with id " + id);
+                // println("now carrying " + rc.getCarrying());
                 for (RobotInfo ri : rc.senseNearbyRobots()) {
-                    println("neighbour at " + ri.location);
+                    // println("neighbour at " + ri.location);
                     if (ri.ID == id) {
-                        println("found thrown guy at " + myLoc.distanceSquaredTo(ri.location));
+                        // println("found thrown guy at " + myLoc.distanceSquaredTo(ri.location));
                     }
                 }
 

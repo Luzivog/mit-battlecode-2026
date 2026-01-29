@@ -36,11 +36,7 @@ public final class TryPosition {
         bestFacing = null;
         bestScore = -1e9;
         selectMoves();
-        if (bestScore < 0) {
-            println("POSITION IS COOKED UHJH OHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-        }
-        assert(CombatStrategy.performMoves(bestMove, bestFacing));
-        indicate("COMBAT STRAT: POSITION move " + bestMove + " face " + bestFacing + " score " + bestScore);
+        assert(CombatStrategy.performMoves(bestMove, bestFacing));// indicate
         return true;
     }
 
@@ -89,9 +85,6 @@ public final class TryPosition {
         score += CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
         if ({{ face_dir }} != myDir) {
             score += 2;
-        }
-        if (am(11908, 24)) {
-            println("considered pos move " + moveDir + " face " + {{ face_dir }} + " score " + score);
         }
         if (score > bestScore) {
             bestScore = score;

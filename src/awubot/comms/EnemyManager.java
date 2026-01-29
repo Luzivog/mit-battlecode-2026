@@ -119,9 +119,9 @@ public class EnemyManager {
         while (dy > 2 * VIEW_RADIUS) dy--;
         int encLoc = dx * (2 * VIEW_RADIUS + 1) + dy;
         if (!(encLoc >= 0 && encLoc < (1 << LOCATION))) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            println("ERROR: cannot encode enemy location " + enemy.location + " from " + myLoc + " dx " + dx + " dy " + dy + " encLoc " + encLoc);
-            println("tried encoding " + enemy.location + " from " + myLoc);
+            // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            // println("ERROR: cannot encode enemy location " + enemy.location + " from " + myLoc + " dx " + dx + " dy " + dy + " encLoc " + encLoc);
+            // println("tried encoding " + enemy.location + " from " + myLoc);
         }
         int encDir = enemy.direction.ordinal();
         int encHP = encodeHealth(enemy.health);

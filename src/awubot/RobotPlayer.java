@@ -10,7 +10,6 @@ import awubot.robot.rat.BabyRat;
 
 import static awubot.Game.*;
 import static awubot.util.Util.decode2x2;
-import static awubot.util.Util.println;
 
 import awubot.util.Profiler;
 import awubot.util.Rng;
@@ -78,28 +77,12 @@ public class RobotPlayer {
                 
                 if (Clock.getBytecodesLeft() > 1000) {
                     Squeaker.postTick();
-                } else {
-                    Util.indicate("skipped squeaker");
                 }
 
                 GlobalArray.postTick();
                 Game.postTick();
             } catch (Exception e) {
-                if (!Game.DISABLE_OUTPUT) {
-                    e.printStackTrace();
-                    rc.setTimelineMarker("RE " + rc.getID() + " " + rc.getLocation(), 255, 0, 0);
-                    // if (isRatKing) rc.resign();
-                }
-                // rc.resign();
-            } finally {
-                if (time != rc.getRoundNum()) {
-                    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BYTECODE EXCEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    if (!Game.DISABLE_OUTPUT) {
-                        rc.setTimelineMarker("TLE " + rc.getID() + " " + rc.getLocation(), 0, 0, 255);
-                    }
-                    // rc.resign();
-                }
-                rc.setIndicatorString(Util.indicatorString);
+            } finally {// println
                 Clock.yield();
             }
         }

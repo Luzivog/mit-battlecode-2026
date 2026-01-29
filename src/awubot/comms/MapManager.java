@@ -87,41 +87,7 @@ public class MapManager {
     public static int getLocalDiffChunk() {
         if (globalTracker == null || localTracker == null) return -1;
         return MapTracker.findDiffChunk(localTracker, globalTracker);
-    }
-
-    /**
-     * Prints the local seen-unit grid (units, not cells) to stdout.
-     * X = seen unit, . = unseen unit.
-     */
-    private static void printLocalSeenUnits() {
-        if (localTracker == null) return;
-        StringBuilder sb = new StringBuilder();
-        sb.append("Local seen units @ round ").append(time).append('\n');
-        for (int y = maxUnitY; y >= 0; y--) {
-            for (int x = 0; x <= maxUnitX; x++) {
-                sb.append(localTracker.isUnitSeen(x, y) ? 'X' : '.');
-            }
-            sb.append('\n');
-        }
-        println(sb.toString());
-    }
-
-    /**
-     * Prints the global seen-unit grid (units, not cells) to stdout.
-     * X = seen unit, . = unseen unit.
-     */
-    private static void printGlobalSeenUnits() {
-        if (globalTracker == null) return;
-        StringBuilder sb = new StringBuilder();
-        sb.append("Global seen units @ round ").append(time).append('\n');
-        for (int y = maxUnitY; y >= 0; y--) {
-            for (int x = 0; x <= maxUnitX; x++) {
-                sb.append(globalTracker.isUnitSeen(x, y) ? 'X' : '.');
-            }
-            sb.append('\n');
-        }
-        println(sb.toString());
-    }
+    }// println
 
     /**
      * Pushes all seen chunk indices into the global queue (idempotent).

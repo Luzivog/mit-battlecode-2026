@@ -153,7 +153,7 @@ public class CombatStrategy extends Strategy {
             int bfsIters = bfsResult[1];
             // println("BFS iters: " + bfsIters);
             // // Profiler.pop("combat bfs");
-            indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
+            // indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
             if (moveMask == 0 && shouldTroll && rc.getID() % 10 == 7 && RobotTracker.numEnemies > 0) {
                 if (trollID != -1) {
                     if (rc.canSenseRobot(trollID)) {
@@ -175,8 +175,8 @@ public class CombatStrategy extends Strategy {
             }
             if (moveMask == 0) return false; // no enemies nearby
             if (funnyTarget != null && bfsIters <= 5) {
-                println("AGGROED ON FUNNY TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + funnyTarget.location);
-                indicate("funny pos: " + funnyTarget.location);
+                // println("AGGROED ON FUNNY TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + funnyTarget.location);
+                // indicate("funny pos: " + funnyTarget.location);
                 turn(myLoc.directionTo(funnyTarget.location));
             }
         }
@@ -244,11 +244,7 @@ public class CombatStrategy extends Strategy {
                 // Profiler.pop("mini tick", 500);
             }
             return true;
-        }
-        indicate("COMBAT STRAT: NONE");
-        if (RobotTracker.numEnemies > 0) {
-            println("ROBOT DIDNT MAKE A MOVE");
-        }
+        }// println
         // TODO: deal with cats (maybe naman's job?)
         // return false;
         return false;
@@ -358,16 +354,7 @@ public class CombatStrategy extends Strategy {
             if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
             cellScore[8] += getCellScoreForEnemy(info, Direction.CENTER);
             if (Clock.getBytecodeNum() - precompStart > precompBudget) break;
-        }
-
-        StringBuilder indicateSb = new StringBuilder("Cell scores:\n");
-        for (int dy = 1; dy >= -1; dy--) {
-            for (int dx = -1; dx <= 1; dx++) {
-                indicateSb.append(String.format("%5.2f ", cellScore[Util.dirFromDelta(dx, dy).ordinal()]));
-            }
-            indicateSb.append("\n");
-        }
-        indicate(indicateSb.toString());
+        }// indicate
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target, int damage) throws GameActionException {

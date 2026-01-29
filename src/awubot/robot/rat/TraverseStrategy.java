@@ -4,8 +4,7 @@ import battlecode.common.*;
 import awubot.Pathfinder;
 import awubot.robot.Strategy;
 
-import static awubot.Game.*;
-import static awubot.util.Util.indicate;
+import static awubot.Game.*;// indicate
 
 // *just* in case we optimise this in the future
 public class TraverseStrategy extends Strategy {
@@ -26,10 +25,10 @@ public class TraverseStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         if(rc.getLocation().distanceSquaredTo(target) <= distSquared) return false;
-        indicate("TRAVELLING TO " + target);
-        indicate("before move: " + Clock.getBytecodeNum());
+        // indicate("TRAVELLING TO " + target);
+        // indicate("before move: " + Clock.getBytecodeNum());
         BabyRat.autoMove(Pathfinder.getMove(target));
-        indicate("after move: " + Clock.getBytecodeNum());
+        // indicate("after move: " + Clock.getBytecodeNum());
         timer--;
         if(timer == 0) {
             if(myLoc.distanceSquaredTo(lastLoc) <= 8) {
@@ -43,7 +42,7 @@ public class TraverseStrategy extends Strategy {
             timer = 25;
         }
         if(Pathfinder.givenUp() || rc.getRawCheese() < 20 && stuck && time % 25 == 0) {
-            indicate("GIVEN UP ON " + target);
+            // indicate("GIVEN UP ON " + target);
             Pathfinder.reset();
             return false;
         }

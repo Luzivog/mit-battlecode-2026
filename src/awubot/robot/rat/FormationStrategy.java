@@ -58,15 +58,15 @@ public class FormationStrategy extends Strategy {
             var distToFormation = myLoc.distanceSquaredTo(formationTarget);
             var distToHome = myLoc.distanceSquaredTo(GlobalArray.nearestRatKing);
             if(rc.getRawCheese() >= 40 && distToHome < distToFormation - 25) {
-                indicate("FORM: going home instead");
+                // indicate("FORM: going home instead");
                 return false;
             }
         }
 
-        indicate("FORM: active, target=" + formationTarget + " allies=" + RobotTracker.allyCount + " dist=" + myLoc.distanceSquaredTo(formationTarget));
+        // indicate("FORM: active, target=" + formationTarget + " allies=" + RobotTracker.allyCount + " dist=" + myLoc.distanceSquaredTo(formationTarget));
 
         if ((myLoc.distanceSquaredTo(formationTarget) <= 8 || time > 1900) && rc.canBecomeRatKing()) {
-            indicate("FORM: BECOMING KING!");
+            // indicate("FORM: BECOMING KING!");
             rc.becomeRatKing();
             Game.convertKing();
             // Only clear formation if we're at the coordinator's target location
@@ -78,7 +78,7 @@ public class FormationStrategy extends Strategy {
         }
         if (RobotTracker.allyCount >= MIN_ALLIES_FOR_FORMATION) {
             if (myLoc.distanceSquaredTo(formationTarget) <= 2) {
-                indicate("FORM: trying to move to centre");
+                // indicate("FORM: trying to move to centre");
                 tryMoveToCentre();
                 return true;
             }

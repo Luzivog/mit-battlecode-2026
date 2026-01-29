@@ -110,18 +110,7 @@ public class CombatTracker {
     {%- endif -%}
     {%- endfor -%}
     private static final long hidden{{ shortDirections[loop.index0] }} = {{ long_hex(ns.mask) }};
-    {% endfor %}
-
-    public static void debug() {
-        StringBuilder sb = new StringBuilder();
-        for (int y = GRID_RADIUS; y >= -GRID_RADIUS; y--) {
-            for (int x = -GRID_RADIUS; x <= GRID_RADIUS; x++) {
-                sb.append(isThreatAt(x, y) ? "X " : ". ");
-            }
-            sb.append('\n');
-        }
-        indicate(sb.toString());
-    }
+    {% endfor %}// indicate
 
     public static void tick() throws GameActionException {
         // // Profiler.push();

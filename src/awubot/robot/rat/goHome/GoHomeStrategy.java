@@ -25,7 +25,7 @@ public class GoHomeStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         if(rc.getRawCheese() == 0) return false;
-        indicate("going home");
+        // indicate("going home");
 
                 if(rc.getRawCheese() != 0 && rc.canTurn()) {
             var nearestKingLoc = GlobalArray.nearestRatKing;
@@ -56,7 +56,7 @@ public class GoHomeStrategy extends Strategy {
             int bestX = -1, bestY = -1;
             var x = myLocX - 5;
             var y = myLocY - 5;
-            System.out.println("start " + x + " " + y);
+            // System.out.println("start " + x + " " + y);
             {
                 if(y >= 0 && y < mapHeight) {
                     var row = g[y];
@@ -1827,14 +1827,14 @@ public class GoHomeStrategy extends Strategy {
             }
             // Profiler.end("rmq");
 
-            indicate("best " + (int)best);
+            // indicate("best " + (int)best);
             if(best == '\uFFFF') {
                 var traverseStrategy = new TraverseStrategy(kingLoc, 8);
                 traverseStrategy.runTick();
             } else {
                 var bestLoc = new MapLocation(bestX, bestY);
                 BabyRat.autoMove(Pathfinder.doBfs(bestLoc));
-                indicate("bestLoc = " + bestLoc);
+                // indicate("bestLoc = " + bestLoc);
                 rc.setIndicatorLine(myLoc, bestLoc, 0, 0, 255);
             }
                     if(rc.getRawCheese() != 0 && rc.canTurn()) {

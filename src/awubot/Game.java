@@ -121,8 +121,8 @@ public class Game {
         myLocY = myLoc.y;
         myDir = rc.getDirection();
         // Clear indicator string at the start of each turn
-        indicatorString = "";
-        StringBuilder sb = new StringBuilder();
+        // indicatorString = "";
+        // StringBuilder sb = new StringBuilder();
         if (rc.getCarrying() == null) carryStartTime = -1;
 
         // // Profiler.begin();   

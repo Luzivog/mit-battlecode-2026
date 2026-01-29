@@ -309,21 +309,7 @@ public class CellTracker {
         {% for mask in ["dirt", "passable"] %}
         computeLocal{{capitalise(mask)}}();
         {% endfor %}
-    }
-
-    public static void printLocalMask(long m1, long m2) {
-        for(int i = 10; i >= 0; i--) {
-            long row;
-            if(i < 5) row = (m1 >> (i * 11)) & 0x7ff;
-            else if(i == 5) row = (m1 >> 55) | ((m2 & 0x3f) << 6);
-            else row = (m2 >> ((i - 6) * 11 + 5)) & 0x7ff;
-            String s = "";
-            for(int j = 0; j < 11; j++) {
-                s += ((row & (1 << j)) != 0 ? "X " : ". ");
-            }
-            indicate(s);
-        }
-    }
+    }// indicate
 
     // symmetry checker
     public enum Symmetry {

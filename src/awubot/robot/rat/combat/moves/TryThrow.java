@@ -132,12 +132,7 @@ public final class TryThrow {
         populateThrowGrid();
         selectMoves();
         if (md == null || td == null) {
-            debugThrowFail();
             return true;
-        }
-        if (best < 0) {
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")");
-            // debugThrowFail();
         }
         if (isSecondary) {
             if (td != myDir) turn(td);
@@ -149,9 +144,6 @@ public final class TryThrow {
             assert(rc.canThrowRat());
             rc.throwRat();
         }
-        println("threw a rat! come look ! <--------------------------------------------------------------------------------");
-        println("movedir " + md + " throwdir " + td + " score " + best);
-        indicate("COMBAT STRAT: THROW");
         return true;
     }
 
@@ -2317,17 +2309,6 @@ public final class TryThrow {
                 }
             }
         }
-    }
-
-    private static void debugThrowFail() throws GameActionException {
-        println("TryThrow failed: md=" + md + " td=" + td + " best=" + best);
-        println("state: loc=" + myLoc + " dir=" + myDir + " actionReady=" + rc.isActionReady()
-                + " moveReady=" + rc.isMovementReady() + " turnReady=" + rc.canTurn());
-        println("cooldowns: action=" + rc.getActionCooldownTurns() + " move=" + rc.getMovementCooldownTurns()
-                + " turn=" + rc.getTurningCooldownTurns());
-        println("bytecodesLeft=" + (Clock.getBytecodeNum() - bytecodeStart) + " budget=" + bytecodeBudget);
-        println("robots: enemies=" + RobotTracker.numEnemies + " allies=" + RobotTracker.numAllies
-                + " cats=" + RobotTracker.numCats + " nearestKing=" + GlobalArray.nearestRatKing);
     }
 
 

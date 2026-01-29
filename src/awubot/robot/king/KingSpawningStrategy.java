@@ -19,7 +19,7 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        indicate("spawned " + numSpawned);
+        // indicate("spawned " + numSpawned);
         int defaultThresh = 40;
         if (mapWidth * mapHeight <= 900 && time < 400) {
             defaultThresh = 30;
@@ -57,7 +57,7 @@ public class KingSpawningStrategy extends Strategy {
             
         } else {
             if (time - lastPanicSpawn > 4 && rc.getHealth() < lastHP) {
-                indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
+                // indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
                 thresh += 10;
                 if (rc.getHealth() <= 100) {
                     thresh += 10;

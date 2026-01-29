@@ -24,7 +24,7 @@ public class BabyRat {
 
     public static void init() throws GameActionException {
         int payload = GlobalArray.loadSpawnInfo();
-        println("BabyRat payload: " + payload + " id " + rc.getID() + " index " + myIndex);
+        // println("BabyRat payload: " + payload + " id " + rc.getID() + " index " + myIndex);
         primaryStrategy = new MinerStrategy();
         combatStrategy = new CombatStrategy();
         Pathfinder.init();
@@ -110,7 +110,7 @@ public class BabyRat {
         CellTracker.checkSymmetry();
         RobotTracker.updateHistoricalCatLocs();
 
-        indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
+        // indicate("sym " + CellTracker.hsym + " " + CellTracker.vsym + " " + CellTracker.rsym);
 
         considerPlacingCatTrap();
         primaryStrategy.runTick();
@@ -123,7 +123,7 @@ public class BabyRat {
     private static void executeGlance() throws GameActionException {
         if (!rc.canTurn() || !shouldGlance) return;
 
-        indicate("glancing");
+        // indicate("glancing");
         Direction myLeftDir = myDir.rotateLeft().rotateLeft();
         Direction myRightDir = myDir.rotateRight().rotateRight();
 
@@ -227,7 +227,7 @@ public class BabyRat {
             for(int i = RobotTracker.numCats - 1; i >= 0; i--) {
                 var cat = RobotTracker.sortedCats[i];
                 if(cat.location.isWithinDistanceSquared(nextLoc, 5, cat.direction, 180, true)) {
-                    indicate("avoiding cat at " + nextLoc);
+                    // indicate("avoiding cat at " + nextLoc);
                     return;
                 }
             }

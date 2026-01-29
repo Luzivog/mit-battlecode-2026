@@ -42,16 +42,6 @@ public class Util {
         Direction.WEST
     };
 
-    public static void println(Object... os) {
-        if (Game.DISABLE_OUTPUT) return;
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : os) {
-            sb.append(obj.toString());
-            sb.append(' ');
-        }
-        System.out.println(sb.toString());
-    }
-
     public static int dist(RobotInfo info) {
         switch (info.getType().ordinal()) {
             case 0:
@@ -131,7 +121,7 @@ public class Util {
     }
 
     public static void preTick() {
-        indicatorString = "";
+        // indicatorString = ""; 
     }
 
     public static boolean canSense(int dx, int dy, Direction dir) {
@@ -3755,13 +3745,6 @@ public class Util {
         MapLocation symLoc = getSymmetricLocation(loc);
         if (symLoc == null) return -1;
         return encode2x2(symLoc);
-    }
-
-    // for debugging purposes
-    public static String indicatorString = "";
-    public static void indicate(Object o) {
-        indicatorString += o + "\n";
-        rc.setIndicatorString(indicatorString);
     }
 
     public static boolean am(int id, int t) {

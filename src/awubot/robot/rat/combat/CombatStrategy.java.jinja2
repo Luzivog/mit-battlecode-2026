@@ -138,6 +138,8 @@ public class CombatStrategy extends Strategy {
     public static Enemy funnyTarget;
 
     // idek why this is returning. check if can move anyways after to squeeze out some juice
+    private static int trollID = -1;
+    private static boolean shouldTroll = true;
     private boolean _runTick() throws GameActionException {
         if (rc.isBeingCarried() || rc.isBeingThrown()) return false;
         // if (rc.getRawCheese() >= 50 && myLoc.distanceSquaredto(GlobalArray.nearestRatKing) <= 36) return false;
@@ -178,6 +180,25 @@ public class CombatStrategy extends Strategy {
             // println("BFS iters: " + bfsIters);
             // Profiler.pop("combat bfs");
             indicate("MOVEMASK: " + Integer.toBinaryString(moveMask));
+            if (moveMask == 0 && shouldTroll && rc.getID() % 10 == 7 && RobotTracker.numEnemies > 0) {
+                if (trollID != -1) {
+                    if (rc.canSenseRobot(trollID)) {
+                        moveMask = (1 << 9) - 1;
+                        bfsIters = 5;
+                    } else {
+                        trollID = -1;
+                        shouldTroll = false;
+                    }
+                } else {
+                    RobotInfo info = RobotTracker.sortedEnemies[0];
+                    boolean canFightYou = info.getType() == UnitType.BABY_RAT && canSense(info.location, myLoc, info.direction);
+                    if (canFightYou) {
+                        trollID = info.getID();
+                        moveMask = (1 << 9) - 1;
+                        bfsIters = 5;
+                    }
+                }
+            }
             if (moveMask == 0) return false; // no enemies nearby
             if (funnyTarget != null && bfsIters <= 5) {
                 println("AGGROED ON FUNNY TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + funnyTarget.location);

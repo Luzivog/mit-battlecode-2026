@@ -69,5 +69,6 @@ tools/run --kit -- CMD                                      # one command on a w
 tools/compute wait ID --json                                # run in the background: its exit wakes you
 ```
 
-Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot` prints an ID; run `tools/games wait ID` in
-the background (its exit code is the verdict), then `tools/games show ID` and `tools/games diff OLD NEW`.
+Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot --pool POOL` (gain test: the branch against
+main, both playing awubot on the same cells) prints an ID; run `tools/games wait ID` in the background (exit 0 =
+passed), then `tools/games show ID` and `tools/games diff OLD NEW`. Add `--remote` to play on Imperial.

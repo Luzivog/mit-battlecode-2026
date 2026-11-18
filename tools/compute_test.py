@@ -4,6 +4,7 @@ guard, one partition a job). Nothing here logs in anywhere."""
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 from pathlib import Path
 
@@ -170,3 +171,74 @@ def test_the_submit_host_answer_is_taken_at_once() -> None:
     answers = [ok(255, b"Connection timed out during banner exchange"), ok(0)]
     p = remote.ssh_submit("true", sleep=lambda s: None, run=lambda argv: answers.pop(0))
     assert p.returncode == 0 and not answers
+
+
+# cpucluster1 as its login node read it on 18 Nov 2026 21:40, its controller's StateSaveLocation full (0 KB free), and
+# the same read with 5 GB free there: the only difference between a cluster that takes jobs and one that can't
+FULL = (FIX / "cpucluster1_read_full.txt").read_text()
+WELL = FULL.replace("/var/spool/slurm/shared 0\n", "/var/spool/slurm/shared 5242880\n")
+
+
+def test_cpucluster1_takes_jobs_while_its_controller_has_room() -> None:
+    assert WELL != FULL
+    assert not B.parse_cpucluster(FULL).takes_jobs
+    assert B.parse_cpucluster(WELL).takes_jobs
+    elsewhere = FULL.replace("cloud-vm-45-10 cloud-vm-45-10 ", "cloud-vm-45-10 vm-slurmctld01 ")
+    assert B.parse_cpucluster(elsewhere).takes_jobs  # a controller on another host: sbatch decides
+    assert B.parse_cpucluster((FIX / "cpucluster1_read.txt").read_text()).takes_jobs  # no statesave line: the same
+    assert B.CPU_READ.startswith(B.SLURM_READ.removesuffix("echo ==end")) and "==statesave" in B.CPU_READ
+
+
+def fake_doc(monkeypatch: pytest.MonkeyPatch, cpucluster1: str | None) -> None:
+    """Every read answered from the fixtures (cpucluster1's with CPUCLUSTER1; None: its login node unreachable), and
+    no Slurm slot granted."""
+    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = remote.SLURM_HOSTS,
+              stream: int = 0) -> str:
+        if hosts == (remote.CPU_HOST,):
+            if cpucluster1 is None:
+                raise remote.Unreachable("on cpucluster1.doc.ic.ac.uk: exit 255")
+            return cpucluster1
+        if cmd == "bash -s":
+            return ""
+        return (FIX / ("condor_read.txt" if "condor_status" in cmd else "slurm_read.txt")).read_text()
+    monkeypatch.setattr(B, "login", login)
+
+
+@pytest.mark.parametrize("read", [FULL, None])
+def test_a_cpucluster1_that_cant_take_jobs_is_left_out_silently(monkeypatch: pytest.MonkeyPatch,
+                                                                capsys: pytest.CaptureFixture[str],
+                                                                read: str | None) -> None:
+    from tools import compute, runs
+    fake_doc(monkeypatch, read)
+    compute.status(False)
+    text = capsys.readouterr().out
+    assert "Condor:" in text and "cpucluster1" not in text
+    compute.status(True)
+    got = json.loads(capsys.readouterr().out)
+    assert "cpucluster1" not in got and got["task_slots_now"]["cpucluster1"] == 0
+    notes: list[str] = []
+    found = runs.offers(B.WHERES, 1, 1700, 600, notes, 48)
+    assert found and not notes and all(o.where != "cpucluster1" for o in found)
+
+
+def test_a_cpucluster1_that_takes_jobs_is_offered(monkeypatch: pytest.MonkeyPatch,
+                                                  capsys: pytest.CaptureFixture[str]) -> None:
+    from tools import compute, runs
+    fake_doc(monkeypatch, WELL)
+    compute.status(True)
+    got = json.loads(capsys.readouterr().out)
+    assert got["task_slots_now"]["cpucluster1"] > 0 and "partitions" in got["cpucluster1"]
+    compute.status(False)
+    assert "cpucluster1: " in capsys.readouterr().out
+    assert any(o.where == "cpucluster1" for o in runs.offers(B.WHERES, 1, 1700, 600, [], 48))
+
+
+def test_cpucluster1_asked_by_name_is_offered_as_read(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Asked for alone, by name, it goes to sbatch, whose own refusal the agent then reads."""
+    from tools import runs
+    fake_doc(monkeypatch, FULL)
+    assert runs.offers(("cpucluster1",), 1, 1700, 600, [], 6, named=True)
+    fake_doc(monkeypatch, None)
+    notes: list[str] = []
+    runs.offers(("cpucluster1",), 1, 1700, 600, notes, 6, named=True)
+    assert notes and "exit 255" in notes[0]

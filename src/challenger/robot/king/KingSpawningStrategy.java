@@ -19,9 +19,10 @@ public class KingSpawningStrategy extends Strategy {
         return ((x - 1) / 4) * 10 + 10;
     }
 
-    // The map holds at least RICH_MINES mines: the known ones plus their unknown mirrors. Income is about 1.1 per
-    // mine per side (docs/theory/t1-economy.md §2.1), so below it the army the income sustains is under 16 rats
-    // (§2.5). Latched: mines are never forgotten.
+    // The map holds at least RICH_MINES mines. Income is about 1.1 per mine per side (docs/theory/t1-economy.md §2.1),
+    // so below it the army the income sustains is under 16 rats (§2.5). Every mine's mirror is a mine, so the count is
+    // at least the known mines plus their unknown mirrors under the symmetry, and at least the smallest such count
+    // over the symmetries still possible. Latched: mines are never forgotten.
     private static final int RICH_MINES = 8;
     private static boolean rich = false;
     private static int richKey = -1;
@@ -30,27 +31,37 @@ public class KingSpawningStrategy extends Strategy {
         if (rich) return true;
         FastIndexedIntSet mines = GlobalArray.globalCheeseMines;
         int n = mines.size();
-        boolean sym = CellTracker.isSymmetryKnown();
-        int key = sym ? n + 1024 : n;
-        if (key == richKey) return false;
+        int key = n | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8;
+        if (key == richKey || 2 * n < RICH_MINES || Clock.getBytecodesLeft() < 4000) return false;
         richKey = key;
         int est = n;
-        if (sym) {
-            // encode2x2 halves coordinates, so on an odd dimension the mirror of an odd coordinate lands one cell high
-            int sym3 = CellTracker.getSymmetry().ordinal();
-            boolean oddX = sym3 != 3 && (mapWidth & 1) == 1;
-            boolean oddY = sym3 != 2 && (mapHeight & 1) == 1;
-            for (int i = 0; i < n && est < RICH_MINES; i++) {
-                int s = getSymmetricEncoded(mines.at(i));
-                if (mines.contains(s)) continue;
-                if (oddX && mines.contains(s - 1)) continue;
-                if (oddY && mines.contains(s - 32)) continue;
-                if (oddX && oddY && mines.contains(s - 33)) continue;
-                est++;
-            }
+        if (CellTracker.rsym + CellTracker.hsym + CellTracker.vsym > 0) {
+            est = RICH_MINES;
+            if (CellTracker.rsym == 1) est = Math.min(est, withMirrors(mines, n, true, true));
+            if (CellTracker.hsym == 1) est = Math.min(est, withMirrors(mines, n, true, false));
+            if (CellTracker.vsym == 1) est = Math.min(est, withMirrors(mines, n, false, true));
         }
         rich = est >= RICH_MINES;
         return rich;
+    }
+
+    // Known mines plus their unknown mirrors, counted up to RICH_MINES. encode2x2 halves coordinates, so on an odd
+    // dimension the mirror of an odd coordinate lands one cell high: the cell below counts as the same mine.
+    static int withMirrors(FastIndexedIntSet mines, int n, boolean fx, boolean fy) {
+        boolean oddX = fx && (mapWidth & 1) == 1;
+        boolean oddY = fy && (mapHeight & 1) == 1;
+        int est = n;
+        for (int i = 0; i < n && est < RICH_MINES; i++) {
+            int e = mines.at(i);
+            int x = (e & 31) << 1, y = (e >>> 5) << 1;
+            int s = encode2x2(fx ? mapWidth - 1 - x : x, fy ? mapHeight - 1 - y : y);
+            if (mines.contains(s)) continue;
+            if (oddX && mines.contains(s - 1)) continue;
+            if (oddY && mines.contains(s - 32)) continue;
+            if (oddX && oddY && mines.contains(s - 33)) continue;
+            est++;
+        }
+        return est;
     }
 
     @Override

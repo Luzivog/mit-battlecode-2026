@@ -4,3 +4,5 @@ python-dotenv
 rich
 requests
 psutil
+pytest
+mypy

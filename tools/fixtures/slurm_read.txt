@@ -1,0 +1,53 @@
+==partitions
+PartitionName=a40 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=3-00:00:00 MinNodes=0 LLN=YES MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=gpuvm[33-35] PriorityJobFactor=1 PriorityTier=20 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=120 TotalNodes=3 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=5000 MaxMemPerNode=UNLIMITED TRES=cpu=120,mem=375G,node=3,billing=14,gres/gpu=7 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+PartitionName=a30 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=3-00:00:00 MinNodes=0 LLN=YES MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=clapper,dipper,hopper PriorityJobFactor=1 PriorityTier=62 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=384 TotalNodes=3 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=5000 MaxMemPerNode=UNLIMITED TRES=cpu=384,mem=1545000M,node=3,billing=44,gres/gpu=20 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+PartitionName=t4 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=3-00:00:00 MinNodes=0 LLN=YES MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=dove[01-04] PriorityJobFactor=1 PriorityTier=60 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=192 TotalNodes=4 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=4000 MaxMemPerNode=UNLIMITED TRES=cpu=192,mem=788000M,node=4,billing=44,gres/gpu=32 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+PartitionName=a16 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=YES QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=3-00:00:00 MinNodes=0 LLN=YES MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=gpuvm36,parrot PriorityJobFactor=1 PriorityTier=66 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=192 TotalNodes=2 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=5000 MaxMemPerNode=UNLIMITED TRES=cpu=192,mem=719000M,node=2,billing=36,gres/gpu=24,gres/shard=16 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+PartitionName=a100 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=3-00:00:00 MinNodes=0 LLN=YES MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=linnet,merlin,vm-he-a100 PriorityJobFactor=1 PriorityTier=11 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=480 TotalNodes=3 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=12000 MaxMemPerNode=196608 TRES=cpu=480,mem=1991000M,node=3,billing=42,gres/gpu=12 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+PartitionName=long AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=tempgpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=30-00:00:00 MinNodes=0 LLN=YES MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=dove[03-04] PriorityJobFactor=1 PriorityTier=10 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=96 TotalNodes=2 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=4000 MaxMemPerNode=UNLIMITED TRES=cpu=96,mem=394000M,node=2,billing=22,gres/gpu=16 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+PartitionName=training AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=tempgpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=3-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=dove[01-04] PriorityJobFactor=1 PriorityTier=62 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=192 TotalNodes=4 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=4000 MaxMemPerNode=UNLIMITED TRES=cpu=192,mem=788000M,node=4,billing=44,gres/gpu=32 TRESBillingWeights=CPU=0.0625,GRES/gpu=1.0 ResumeTimeout=GLOBAL SuspendTimeout=GLOBAL SuspendTime=GLOBAL PowerDownOnIdle=NO
+==nodes
+clapper|a30|mixed|46/82/0/128|515000|233472|gpu:nvidia_a30:8(S:0)|gpu:nvidia_a30:3(IDX:0-1,4)|2
+dipper|a30|mixed|44/84/0/128|515000|216976|gpu:nvidia_a30:8(S:0)|gpu:nvidia_a30:6(IDX:0-5)|2
+dove01|training|mixed|10/38/0/48|197000|40960|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:1(IDX:0)|1
+dove01|t4|mixed|10/38/0/48|197000|40960|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:1(IDX:0)|1
+dove02|training|idle|0/48/0/48|197000|0|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:0(IDX:N/A)|1
+dove02|t4|idle|0/48/0/48|197000|0|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:0(IDX:N/A)|1
+dove03|long|mixed+planned|36/12/0/48|197000|196608|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:3(IDX:0-2)|1
+dove03|training|mixed+planned|36/12/0/48|197000|196608|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:3(IDX:0-2)|1
+dove03|t4|mixed+planned|36/12/0/48|197000|196608|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:3(IDX:0-2)|1
+dove04|long|mixed+planned|40/8/0/48|197000|180224|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:3(IDX:0-1,3)|1
+dove04|training|mixed+planned|40/8/0/48|197000|180224|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:3(IDX:0-1,3)|1
+dove04|t4|mixed+planned|40/8/0/48|197000|180224|gpu:tesla_t4:8(S:0-1)|gpu:tesla_t4:3(IDX:0-1,3)|1
+gpuvm33|a40|mixed|18/34/0/52|160000|114688|gpu:nvidia_a40:3(S:0)|gpu:nvidia_a40:2(IDX:0-1)|1
+gpuvm34|a40|mixed|8/8/0/16|64000|61440|gpu:nvidia_a40:1(S:0)|gpu:nvidia_a40:1(IDX:0)|1
+gpuvm35|a40|down+drain+invalid_reg|0/0/52/52|160000|0|gpu:nvidia_a40:1(S:0)|gpu:nvidia_a40:0(IDX:N/A)|1
+gpuvm36|a16*|mixed|20/44/0/64|208000|114688|gpu:nvidia_a16:8(S:0),shard:nvidia_a16:16(S:0)|gpu:nvidia_a16:2(IDX:0,3),shard:nvidia_a16:0(0/2,0/2,0/2,0/2,0/2,0/2,0/2,0/2)|1
+hopper|a30|mixed|32/96/0/128|515000|131072|gpu:nvidia_a30:4(S:0)|gpu:nvidia_a30:3(IDX:0-1,3)|2
+linnet|a100|mixed+planned|30/162/0/192|770000|314304|gpu:nvidia_a100_80gb_pcie:4(S:0)|gpu:nvidia_a100_80gb_pcie:4(IDX:0-3)|2
+merlin|a100|mixed|32/160/0/192|770000|188416|gpu:nvidia_a100_80gb_pcie:4(S:0)|gpu:nvidia_a100_80gb_pcie:4(IDX:0-3)|2
+parrot|a16*|mixed|44/84/0/128|511000|262144|gpu:nvidia_a16:16(S:0)|gpu:nvidia_a16:6(IDX:0-5)|2
+vm-he-a100|a100|mixed|44/52/0/96|451000|344064|gpu:nvidia_a100_80gb_pcie:4(S:0-1)|gpu:nvidia_a100_80gb_pcie:4(IDX:0-3)|1
+==qos
+QOS=normal(1)
+    MaxTRESPN=
+      user(10000)
+        MaxJobsPU=N(0) MaxJobsAccruePU=N(0) MaxSubmitJobsPU=N(0)
+        MaxTRESPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0),gres/shard=N(0)
+        MaxTRESRunMinsPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0),gres/shard=N(0)
+QOS=multigpu(6)
+    MaxTRESPN=cpu=32,mem=129000
+      user(10000)
+        MaxJobsPU=8(0) MaxJobsAccruePU=N(0) MaxSubmitJobsPU=8(0)
+        MaxTRESPU=cpu=48(0),mem=396100(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=3(0),gres/gpumem=N(0),gres/gpuutil=N(0),gres/shard=N(0)
+        MaxTRESRunMinsPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0),gres/shard=N(0)
+QOS=multigpures(7)
+    MaxTRESPN=cpu=32,mem=129000
+QOS=tempgpu(10)
+    MaxTRESPN=
+      user(10000)
+        MaxJobsPU=12(0) MaxJobsAccruePU=N(0) MaxSubmitJobsPU=12(0)
+        MaxTRESPU=cpu=64(0),mem=300100(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=4(0),gres/gpumem=N(0),gres/gpuutil=N(0),gres/shard=12(0)
+        MaxTRESRunMinsPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0),gres/shard=N(0)
+==jobs
+==end

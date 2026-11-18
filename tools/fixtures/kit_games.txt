@@ -1,0 +1,6 @@
+challenger awubot DefaultSmall 158
+awubot challenger DefaultSmall 158
+challenger awubot evileye 886
+awubot challenger evileye 886
+challenger awubot tiny 36
+awubot challenger tiny 36

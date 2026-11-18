@@ -1,0 +1,378 @@
+package bcx.tr;
+
+import bcx.tr.Cls.Fld;
+import bcx.tr.Cls.Mth;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.MethodInsnNode;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+/** Writes the whole program: types.h (layouts, statics, prototypes), klasses.cpp (type info, init) and the methods. */
+final class Emit implements Opcodes {
+    final Pool pool;
+    final Rta rta;
+    final Layout layout;
+    final Natives natives;
+    final Map<String, Integer> strings = new LinkedHashMap<>();
+    final Map<String, String[]> arrays = new TreeMap<>();   // symbol -> {dims, elem symbol or prim desc, internal name}
+    final List<Mth> emitted = new ArrayList<>();
+    final Map<Pool.Module, List<Cls>> initOrder = new LinkedHashMap<>();
+    final List<Mth> entries = new ArrayList<>();
+
+    Emit(Pool pool, Rta rta, Layout layout, Natives natives) {
+        this.pool = pool;
+        this.rta = rta;
+        this.layout = layout;
+        this.natives = natives;
+        // init indices: classes whose initialization does something (or whose supers' does)
+        for (Cls c : layout.order) {
+            if (!c.initReachable) continue;
+            List<Cls> l = initOrder.computeIfAbsent(c.mod, k -> new ArrayList<>());
+            c.initIndex = l.size();
+            l.add(c);
+        }
+    }
+
+    int str(String s) { return strings.computeIfAbsent(s, k -> strings.size()); }
+
+    String klass(Cls c) {
+        if (c.id < 0) throw new TranslateException("class without layout: " + c);
+        return "K_" + c.cname;
+    }
+
+    String arrayKlass(Pool.Module mod, String desc) {
+        Type t = Type.getType(desc);
+        int dims = t.getDimensions();
+        Type e = t.getElementType();
+        String elem, ename;
+        if (e.getSort() == Type.OBJECT) {
+            Cls ec = pool.ref(mod, e.getInternalName());
+            elem = klass(ec);
+            ename = "L" + ec.name + ";";
+        } else {
+            elem = "K_prim_" + e.getDescriptor();
+            ename = e.getDescriptor();
+        }
+        String sym = null;
+        for (int d = 1; d <= dims; d++) {
+            sym = "KA" + d + "_" + elem.substring(2);
+            if (!arrays.containsKey(sym)) arrays.put(sym, new String[]{"" + d, elem, "[".repeat(d) + ename});
+        }
+        return sym;
+    }
+
+    String initFn(Cls c) { return "ci_" + c.cname; }
+
+    static String fn(Mth t) { return t.nativeImpl != null ? t.nativeImpl : t.cname; }
+
+    void invoke(Gen g, MethodInsnNode mi) {
+        int op = mi.getOpcode();
+        Type[] at = Type.getArgumentTypes(mi.desc);
+        Type rt = Type.getReturnType(mi.desc);
+        boolean inst = op != INVOKESTATIC;
+        int n = at.length + (inst ? 1 : 0);
+        int base = g.sp() - n;
+        List<String> args = new ArrayList<>();
+        for (int i = 0; i < n; i++) args.add(g.s(base + i, g.skind(base + i)));
+        String res = rt.getSort() == Type.VOID ? null : g.s(base, Layout.kind(rt));
+        String assign = res == null ? "" : res + " = ";
+        String argl = String.join(", ", args);
+        if (mi.owner.startsWith("[")) {
+            g.nullchk(args.get(0));
+            if (mi.name.equals("clone")) { g.line(assign + "rt_array_clone(" + args.get(0) + "); " + g.chk()); return; }
+            Mth r = pool.get(pool.sys, "java/lang/Object").resolveMethod(mi.name, mi.desc, false);
+            g.line(assign + "((" + Layout.fnType(r) + ")(" + args.get(0) + "->klass->vtable[" + r.vslot + "]))(" + argl + "); " + g.chk());
+            return;
+        }
+        Cls owner = pool.ref(g.mod, mi.owner);
+        Mth r = owner.resolveMethod(mi.name, mi.desc, mi.itf);
+        if (r == null) throw new TranslateException("unresolved " + mi.owner + "." + mi.name + mi.desc + " in " + g.m);
+        String call;
+        switch (op) {
+            case INVOKESTATIC -> {
+                g.initChk(r.owner);
+                call = fn(r) + "(" + argl + ")";
+            }
+            case INVOKESPECIAL -> {
+                Mth t = rta.special(g.cls, owner, r);
+                if (!mi.name.equals("<init>")) g.nullchk(args.get(0));
+                call = fn(t) + "(" + argl + ")";
+            }
+            default -> {
+                g.nullchk(args.get(0));
+                Mth d = r.isPrivate() ? r : layout.devirtualize(owner, r);
+                if (d != null) call = fn(d) + "(" + argl + ")";
+                else if (!layout.anyInstance(owner)) call = "rt_no_receiver<" + Layout.ctype(rt) + ">(" + str(r.toString()) + ")";
+                else if (r.owner.isInterface()) {
+                    int k = layout.itableIndex(r.owner, r);
+                    call = "((" + Layout.fnType(r) + ")(rt_itable(" + args.get(0) + "->klass, &" + klass(r.owner) + ")[" + k + "]))(" + argl + ")";
+                } else {
+                    int slot = layout.vslot(owner, r);
+                    call = "((" + Layout.fnType(r) + ")(" + args.get(0) + "->klass->vtable[" + slot + "]))(" + argl + ")";
+                }
+            }
+        }
+        g.line(assign + call + "; " + g.chk());
+    }
+
+    // ---------------- files
+    void write(Path out, int filesHint) throws IOException {
+        Files.createDirectories(out);
+        // generate method bodies first (collects strings and array klasses)
+        Map<Cls, StringBuilder> bodies = new LinkedHashMap<>();
+        for (Cls c : layout.order) {
+            StringBuilder sb = new StringBuilder();
+            for (Mth m : c.methods.values()) {
+                if (!m.reachable || m.isAbstract() || m.nativeImpl != null) continue;
+                sb.append(new Gen(this, m).gen()).append('\n');
+                m.emitted = true;
+                emitted.add(m);
+            }
+            if (sb.length() > 0) bodies.put(c, sb);
+        }
+        for (String a : rta.arrayTypes) {
+            Type t = Type.getType(a);
+            // array types of classes outside any module the code references are skipped by ref()
+            try { arrayKlass(moduleForArray(a), a); } catch (TranslateException e) { /* class unused */ }
+        }
+        writeTypes(out.resolve("types.h"));
+        writeKlasses(out.resolve("klasses.cpp"));
+        // method files: pack classes into files of bounded size
+        List<StringBuilder> files = new ArrayList<>();
+        StringBuilder curf = null;
+        long limit = 400_000;
+        for (StringBuilder sb : bodies.values()) {
+            if (curf == null || curf.length() + sb.length() > limit) { curf = new StringBuilder(); files.add(curf); }
+            curf.append(sb);
+        }
+        // delete stale method files
+        try (var ls = Files.list(out)) {
+            for (Path p : ls.toList()) if (p.getFileName().toString().matches("m\\d+\\.cpp")) Files.delete(p);
+        }
+        for (int i = 0; i < files.size(); i++) {
+            String code = "#include \"types.h\"\n\n" + files.get(i);
+            writeIfChanged(out.resolve("m" + i + ".cpp"), code);
+        }
+    }
+
+    private Pool.Module moduleForArray(String desc) { return pool.sys; }
+
+    static void writeIfChanged(Path p, String s) throws IOException {
+        if (Files.exists(p) && Files.readString(p).equals(s)) return;
+        Files.writeString(p, s);
+    }
+
+    private void writeTypes(Path p) throws IOException {
+        StringBuilder b = new StringBuilder("// generated by bcx.tr: do not edit\n#pragma once\n#include \"rt.h\"\n\n");
+        for (Cls c : layout.order) if (!c.isInterface()) b.append("struct ").append(c.cname).append(";\n");
+        b.append('\n');
+        for (Cls c : layout.order) {
+            if (c.isInterface()) continue;
+            Cls s = c.superCls();
+            b.append("struct ").append(c.cname).append(" : ").append(s == null ? "Obj" : s.cname).append(" {");
+            for (Fld f : c.fields.values()) if (!f.isStatic()) b.append(' ').append(Layout.ctype(Type.getType(f.desc))).append(' ').append(f.cname).append(';');
+            b.append(" };\n");
+        }
+        b.append('\n');
+        for (Cls c : layout.order) {
+            if (c.staticFields.isEmpty()) continue;
+            b.append("struct S_").append(c.cname).append(" {");
+            for (Fld f : c.staticFields) b.append(' ').append(Layout.ctype(Type.getType(f.desc))).append(' ').append(f.cname).append(';');
+            b.append(" };\n");
+            if (!c.mod.perRobot) b.append("extern S_").append(c.cname).append(" s_").append(c.cname).append(";\n");
+        }
+        for (Pool.Module m : pool.teams) {
+            b.append("struct BS").append(m.index).append(" {\n");
+            for (Cls c : layout.order) if (c.mod == m && !c.staticFields.isEmpty()) b.append("  S_").append(c.cname).append(' ').append(c.cname).append(";\n");
+            int n = initOrder.getOrDefault(m, List.of()).size();
+            b.append("  uint8_t init[").append(Math.max(n, 1)).append("];\n};\n");
+        }
+        b.append("extern uint8_t g_init0[];\n\n");
+        for (Cls c : layout.order) b.append("extern Klass ").append(klass(c)).append(";\n");
+        for (String a : arrays.keySet()) b.append("extern Klass ").append(a).append(";\n");
+        b.append('\n');
+        for (Cls c : layout.order) if (c.initIndex >= 0) b.append("void ").append(initFn(c)).append("();\n");
+        Set<String> protos = new HashSet<>();
+        for (Mth m : emitted) b.append(Layout.proto(m, m.cname)).append(";\n");
+        for (Cls c : layout.order)
+            for (Mth m : c.methods.values())
+                if (m.reachable && m.nativeImpl != null && protos.add(m.nativeImpl))
+                    b.append(Layout.proto(m, m.nativeImpl)).append(";\n");
+        writeIfChanged(p, b.toString());
+    }
+
+    private void writeKlasses(Path p) throws IOException {
+        StringBuilder b = new StringBuilder("// generated by bcx.tr: do not edit\n#include \"types.h\"\n\n");
+        int n0 = initOrder.getOrDefault(pool.sys, List.of()).size();
+        b.append("uint8_t g_init0[").append(Math.max(n0, 1)).append("];\n");
+        for (Cls c : layout.order)
+            if (!c.staticFields.isEmpty() && !c.mod.perRobot) b.append("S_").append(c.cname).append(" s_").append(c.cname).append(";\n");
+        b.append('\n');
+        // vtables, itables, displays
+        for (Cls c : layout.order) {
+            if (c.vtable != null && !c.vtable.isEmpty()) {
+                b.append("static void* vt_").append(c.cname).append("[] = {");
+                for (Mth m : c.vtable) b.append(' ').append(slotFn(m)).append(',');
+                b.append(" };\n");
+            }
+            if (c.itables != null && !c.itables.isEmpty()) {
+                int k = 0;
+                for (Map.Entry<Cls, Mth[]> e : c.itables.entrySet()) {
+                    b.append("static void* it_").append(c.cname).append('_').append(k++).append("[] = {");
+                    for (Mth m : e.getValue()) b.append(' ').append(m == null ? "(void*)&rt_abstract_method" : slotFn(m)).append(',');
+                    if (e.getValue().length == 0) b.append(" nullptr");
+                    b.append(" };\n");
+                }
+            }
+            List<Cls> ifs = new ArrayList<>(c.allInterfaces());
+            ifs.removeIf(i -> i.id < 0);
+            if (!ifs.isEmpty()) {
+                b.append("static Klass* if_").append(c.cname).append("[] = {");
+                for (Cls i : ifs) b.append(" &").append(klass(i)).append(',');
+                b.append(" };\n");
+                if (c.itables != null) {
+                    b.append("static void** its_").append(c.cname).append("[] = {");
+                    int k = 0;
+                    Map<Cls, Integer> pos = new HashMap<>();
+                    for (Cls i : c.itables.keySet()) pos.put(i, k++);
+                    for (Cls i : ifs) {
+                        Integer x = pos.get(i);
+                        b.append(' ').append(x == null ? "nullptr" : "it_" + c.cname + "_" + x).append(',');
+                    }
+                    b.append(" };\n");
+                }
+            }
+            if (!c.isInterface()) {
+                List<Cls> chain = new ArrayList<>();
+                for (Cls s = c; s != null; s = s.superCls()) chain.add(0, s);
+                b.append("static Klass* dp_").append(c.cname).append("[] = {");
+                for (Cls s : chain) b.append(" &").append(klass(s)).append(',');
+                b.append(" };\n");
+            }
+        }
+        b.append('\n');
+        for (Cls c : layout.order) {
+            List<Cls> ifs = new ArrayList<>(c.allInterfaces());
+            ifs.removeIf(i -> i.id < 0);
+            int depth = 0;
+            for (Cls s = c.superCls(); s != null; s = s.superCls()) depth++;
+            int flags = 0;
+            if (c.isInterface()) flags |= 1;
+            if (c.isAbstract()) flags |= 4;
+            if ((c.node.access & ACC_ENUM) != 0) flags |= 8;
+            flags |= (c.node.access & 0x7fff) << 8;
+            Mth values = (c.node.access & ACC_ENUM) != 0 ? c.own("values", "()[L" + c.name + ";") : null;
+            Mth clinit = c.own("<clinit>", "()V");
+            boolean hasClinit = clinit != null && clinit.reachable;
+            b.append("Klass ").append(klass(c)).append(" = { ")
+                    .append(Names.cstr(c.name)).append(", ")
+                    .append(c.superCls() == null ? "nullptr" : "&" + klass(c.superCls())).append(", ")
+                    .append(ifs.isEmpty() ? "nullptr" : "if_" + c.cname).append(", ")
+                    .append(c.itables != null && !ifs.isEmpty() ? "its_" + c.cname : "nullptr").append(", ")
+                    .append(ifs.size()).append(", ")
+                    .append(depth).append(", ")
+                    .append(c.isInterface() ? "nullptr" : "dp_" + c.cname).append(", ")
+                    .append(c.isInterface() ? "0" : "sizeof(" + c.cname + ")").append(", ")
+                    .append(flags).append(", 0, nullptr, nullptr, nullptr, ")
+                    .append(c.mod.index).append(", ")
+                    .append(c.initIndex).append(", ")
+                    .append(values != null && values.reachable ? "(void*)&" + fn(values) : "nullptr").append(", ")
+                    .append(c.vtable == null ? 0 : c.vtable.size()).append(", ")
+                    .append(c.vtable == null || c.vtable.isEmpty() ? "nullptr" : "vt_" + c.cname).append(", ")
+                    .append(c.node.signature == null ? "nullptr" : Names.cstr(c.node.signature)).append(", ")
+                    .append(c.initIndex >= 0 ? initFn(c) : "nullptr")
+                    .append(" };\n");
+        }
+        for (Map.Entry<String, String[]> e : arrays.entrySet()) {
+            String[] a = e.getValue();
+            int dims = Integer.parseInt(a[0]);
+            String comp = dims == 1 ? a[1] : "KA" + (dims - 1) + "_" + a[1].substring(2);
+            boolean prim = dims == 1 && a[1].startsWith("K_prim_");
+            String et = prim ? "'" + a[1].substring(7) + "'" : "'L'";
+            Cls obj = pool.find(pool.sys, "java/lang/Object");
+            b.append("Klass ").append(e.getKey()).append(" = { ").append(Names.cstr(a[2]))
+                    .append(", &").append(klass(obj)).append(", nullptr, nullptr, 0, 1, dp_").append(obj.cname)
+                    .append(", 0, 2, ").append(et).append(", &").append(comp).append(", nullptr, nullptr, 0, -1, nullptr, ")
+                    .append(obj.vtable.size()).append(", vt_").append(obj.cname).append(", nullptr, nullptr };\n");
+        }
+        b.append("Klass* const g_all_klasses[] = {");
+        for (Cls c : layout.order) b.append(" &").append(klass(c)).append(',');
+        b.append(" nullptr };\nconst int g_n_klasses = ").append(layout.order.size()).append(";\n");
+        // array klass links (component -> array)
+        b.append("\nvoid rt_link_arrays() {\n");
+        for (Map.Entry<String, String[]> e : arrays.entrySet()) {
+            String[] a = e.getValue();
+            int dims = Integer.parseInt(a[0]);
+            String comp = dims == 1 ? a[1] : "KA" + (dims - 1) + "_" + a[1].substring(2);
+            b.append("  ").append(comp).append(".array_klass = &").append(e.getKey()).append(";\n");
+        }
+        b.append("}\n\n");
+        // class initialization (JVMS 5.5)
+        for (Cls c : layout.order) {
+            if (c.initIndex < 0) continue;
+            String st = c.mod.perRobot ? "((BS" + c.mod.index + "*)g_S)->init[" + c.initIndex + "]" : "g_init0[" + c.initIndex + "]";
+            b.append("void ").append(initFn(c)).append("() {\n");
+            b.append("  uint8_t& st = ").append(st).append(";\n");
+            b.append("  if (st == 2 || st == 1) return;\n");
+            b.append("  if (st == 3) { rt_throw_ncdfe(&").append(klass(c)).append("); return; }\n");
+            b.append("  st = 1;\n");
+            List<Cls> pre = new ArrayList<>();
+            if (!c.isInterface() && c.superCls() != null && c.superCls().initIndex >= 0) pre.add(c.superCls());
+            if (!c.isInterface()) for (Cls i : c.allInterfaces()) if (i.initIndex >= 0 && Rta.hasDefaults(i)) pre.add(i);
+            for (Cls s : pre) b.append("  ").append(initFn(s)).append("(); if (g_exc) { st = 3; return; }\n");
+            for (Fld f : c.staticFields) {
+                if (f.node.value == null) continue;
+                String ref = (c.mod.perRobot ? "((BS" + c.mod.index + "*)g_S)->" + c.cname : "s_" + c.cname) + "." + f.cname;
+                Object v = f.node.value;
+                String lit;
+                if (v instanceof String s) lit = "g_str[" + str(s) + "]";
+                else if (v instanceof Float x) lit = "rt_fbits(0x" + Integer.toHexString(Float.floatToRawIntBits(x)) + "u)";
+                else if (v instanceof Double x) lit = "rt_dbits(0x" + Long.toHexString(Double.doubleToRawLongBits(x)) + "ull)";
+                else if (v instanceof Long x) lit = x == Long.MIN_VALUE ? "(jlong)0x8000000000000000ull" : x + "ll";
+                else if (v instanceof Integer x) lit = x == Integer.MIN_VALUE ? "(jint)0x80000000" : x.toString();
+                else throw new TranslateException("constant " + v);
+                b.append("  ").append(ref).append(" = ").append(lit).append(";\n");
+            }
+            Mth clinit = c.own("<clinit>", "()V");
+            if (clinit != null && clinit.reachable) {
+                b.append("  ").append(fn(clinit)).append("();\n");
+                b.append("  if (g_exc) { rt_init_failed(); st = 3; return; }\n");
+            }
+            b.append("  st = 2;\n}\n");
+        }
+        // strings
+        b.append("\nObj* g_str[").append(Math.max(1, strings.size())).append("];\n");
+        int k = 0;
+        for (String s : strings.keySet()) {
+            b.append("static const jchar sd_").append(k++).append("[] = {");
+            for (int i = 0; i < s.length(); i++) b.append(i == 0 ? "" : ",").append((int) s.charAt(i));
+            if (s.isEmpty()) b.append('0');
+            b.append("};\n");
+        }
+        b.append("void rt_init_strings() {\n");
+        k = 0;
+        for (String s : strings.keySet()) { b.append("  g_str[").append(k).append("] = rt_make_string(sd_").append(k).append(", ").append(s.length()).append(");\n"); k++; }
+        b.append("}\n");
+        // module table
+        b.append("\nconst ModuleInfo g_modules[] = {\n");
+        for (Pool.Module m : pool.teams) {
+            Cls rp = pool.find(m, m.id + "/RobotPlayer");
+            Mth run = rp == null ? null : rp.own("run", "(Lbattlecode/common/RobotController;)V");
+            b.append("  { ").append(Names.cstr(m.id)).append(", sizeof(BS").append(m.index).append("), offsetof(BS").append(m.index)
+                    .append(", init), ").append(rp != null && rp.initIndex >= 0 ? initFn(rp) : "nullptr").append(", ")
+                    .append(run != null && run.reachable ? "&" + fn(run) : "nullptr").append(" },\n");
+        }
+        b.append("  { nullptr, 0, 0, nullptr, nullptr }\n};\n");
+        b.append(Glue.code(this));
+        writeIfChanged(p, b.toString());
+    }
+
+    String slotFn(Mth m) {
+        if (m == null || m.isAbstract() || !m.reachable) return "(void*)&rt_abstract_method";
+        return "(void*)&" + fn(m);
+    }
+}

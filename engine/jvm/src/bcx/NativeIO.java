@@ -1,0 +1,1 @@
+package bcx; public final class NativeIO { private NativeIO() {} public static native void round(int round, long hash, String dump); public static native byte[] readFile(String path); public static native void writeFile(String path, byte[] data); public static native boolean exists(String path); public static native String bundledMaps(); }

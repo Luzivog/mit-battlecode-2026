@@ -39,8 +39,9 @@ public class BabyRat {
                 for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
                     MapLocation targ = myLoc.add(off);
                     MapLocation bruh = targ.add(targ.directionTo(cat.location));
-                    if (rc.canSenseLocation(bruh) && rc.senseRobotAtLocation(bruh).location.equals(cat.location)) {
-                        if (rc.canPlaceCatTrap(targ)) {
+                    if (rc.canSenseLocation(bruh)) {
+                        RobotInfo r = rc.senseRobotAtLocation(bruh);
+                        if (r != null && r.location.equals(cat.location) && rc.canPlaceCatTrap(targ)) {
                             rc.placeCatTrap(targ);
                         }
                     }
@@ -65,8 +66,9 @@ public class BabyRat {
                     for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
                         MapLocation targ = myLoc.add(off);
                         MapLocation bruh = targ.add(targ.directionTo(cat.location));
-                        if (rc.canSenseLocation(bruh) && rc.senseRobotAtLocation(bruh).location.equals(cat.location)) {
-                            if (rc.canPlaceCatTrap(targ)) {
+                        if (rc.canSenseLocation(bruh)) {
+                            RobotInfo r = rc.senseRobotAtLocation(bruh);
+                            if (r != null && r.location.equals(cat.location) && rc.canPlaceCatTrap(targ)) {
                                 rc.placeCatTrap(targ);
                             }
                         }

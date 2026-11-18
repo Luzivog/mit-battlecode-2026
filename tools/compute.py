@@ -1,0 +1,268 @@
+"""tools/compute: heavy work on DoC's Condor lab machines, the GPU cluster's CPUs and cpucluster1, for one job at a
+time (`run`), and the commands that watch jobs and runs (`tools/run`'s). No daemon and no state of its own: Slurm,
+Condor and the folders on /vol/bitbucket are the record. The compute skill says how to use it; its
+references/internals.md how it works.
+
+Exit codes: 2 when refused or a backend can't be reached. `wait` and `logs -f` exit with the job's own code, 3 when
+Slurm or Condor holds it, 4 when it ended without an exit file (cancelled, its node failed); for a run, 0 when every
+task ended 0, else the first task's positive code, else 1.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import asdict
+
+from tools import backends as B
+from tools import jobs as J
+from tools import runs as R
+from tools.remote import LOCAL, REMOTE_JOBS, REMOTE_ROOT, REMOTE_RUNS, Refused, login
+
+KEEP_DAYS = 7  # an ended job's or a closed run's folder is deleted this long after its end (sweep)
+
+
+def size_mb(spec: str) -> int:
+    """500M, 8G, 1.6G (decimal-ish: G = 1000 M) or a count of MB."""
+    m = re.fullmatch(r"(\d+(?:\.\d+)?)([MG]?)", spec)
+    if not m:
+        raise Refused(f"{spec!r}: give a size such as 500M, 1.6G or 8G")
+    return int(float(m[1]) * (1000 if m[2] == "G" else 1))
+
+
+def duration(spec: str) -> int:
+    """90m, 2h, 1d12h, 45s in seconds."""
+    parts = re.findall(r"(\d+)([dhms])", spec)
+    if not parts or "".join(a + b for a, b in parts) != spec:
+        raise Refused(f"--time {spec!r}: give e.g. 10m, 90m, 2h or 1d12h")
+    return sum(int(n) * {"d": 86400, "h": 3600, "m": 60, "s": 1}[u] for n, u in parts)
+
+
+# ---- status ----
+def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_MEM_MB) -> None:
+    def safe(f):  # type: ignore[no-untyped-def]
+        try:
+            return f()
+        except Refused as e:
+            return e
+
+    with ThreadPoolExecutor(3) as pool:
+        fc, fs, fk = pool.submit(safe, B.read_condor), pool.submit(safe, B.read_slurm), pool.submit(
+            safe, B.read_cpucluster)
+        c, s, k = fc.result(), fs.result(), fk.result()
+    notes: list[str] = []
+    free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes)] for o in B.WHERES}
+    out: dict[str, object] = {"task": {"cpus": task_cpus, "mem_mb": task_mem_mb}}
+    if isinstance(c, Refused):
+        out["condor"] = {"error": str(c)}
+    else:
+        fr = c.free()
+        out["condor"] = {"machines": len(c.machines), "idle_machines": len(fr), "idle_cpus": sum(m.cpus for m in fr),
+                         "idle_cpus_by_release": c.by_os, "task_slots_now": sum(o.slots for o in free["condor"]),
+                         "jobs": [asdict(j) for j in c.jobs]}
+    if isinstance(s, Refused):
+        out["slurm"] = {"error": str(s)}
+    else:
+        best = free["slurm"][0] if free["slurm"] else None
+        out["slurm"] = {"best_slot_now": asdict(best.slot) if best and best.slot else None,
+                        "task_slots_now": best.slots if best else 0,
+                        "caps": {q: {k2: asdict(v) for k2, v in lim.items()} for q, lim in s.qos.items()
+                                 if any(v.cap for v in lim.values())},
+                        "jobs": [asdict(j) for j in s.jobs if j.name.startswith("bc26-")]}
+    if isinstance(k, Refused):
+        out["cpucluster1"] = {"error": str(k)}
+    else:
+        out["cpucluster1"] = {"partitions": {p.name: asdict(p) for p in k.partitions.values()},
+                              "cap": asdict(k.cap), "mem": asdict(k.mem),
+                              "per_node": {n: asdict(v) for n, v in k.node.items()},
+                              "task_slots_now": sum(o.slots for o in free["cpucluster1"]),
+                              "jobs": [asdict(j) for j in k.jobs if j.name.startswith("bc26-")]}
+    out["task_slots_now"] = {w: sum(o.slots for o in free[w]) for w in B.WHERES}
+    if as_json:
+        print(json.dumps(out, indent=1))
+        return
+    t = f"{task_cpus} CPU{'s' * (task_cpus != 1)} and {task_mem_mb} MB"
+    cd = out["condor"]
+    assert isinstance(cd, dict)
+    if "error" in cd:
+        print(f"Condor: unreadable: {cd['error']}")
+    else:
+        print(f"Condor: {cd['idle_machines']} of {cd['machines']} lab machines idle ({cd['idle_cpus']} CPUs: "
+              + ", ".join(f"{o} {n}" for o, n in sorted(c.by_os.items())) + f"); tasks of {t} at once on them: "
+              f"{cd['task_slots_now']}")
+    sd = out["slurm"]
+    assert isinstance(sd, dict)
+    if "error" in sd:
+        print(f"Slurm (GPU cluster): unreadable: {sd['error']}")
+    else:
+        assert not isinstance(s, Refused)
+        best = free["slurm"][0] if free["slurm"] else None
+        print("Slurm (GPU cluster, CPU work holding one card): best slot now: " + (
+            f"{best.cpus} CPUs and {best.mem_mb} MB on {best.slot.node} ({best.slot.partition}, a {best.slot.card} "
+            f"card): {best.slots} tasks of {t}" if best and best.slot else "none"))
+        for q, lim in s.qos.items():
+            if lim.get("gpu") and lim["gpu"].cap:
+                print(f"  our {q} caps: " + ", ".join(f"{k2} {v.used}/{v.cap}" for k2, v in lim.items() if v.cap))
+    kd = out["cpucluster1"]
+    assert isinstance(kd, dict)
+    if "error" in kd:
+        print(f"cpucluster1: unreadable: {kd['error']}")
+    else:
+        assert not isinstance(k, Refused)
+        print("cpucluster1: " + ", ".join(f"{p.name} {p.idle_cpus} idle CPUs" for p in k.partitions.values())
+              + f"; our cap {k.cap.used}/{k.cap.cap} CPUs, {k.mem.used}/{k.mem.cap} MB, "
+              + ", ".join(f"{n} {v.cap}" for n, v in k.node.items()) + f" a job a node; tasks of {t} at once: "
+              f"{kd['task_slots_now']}")
+    for n in notes:
+        print(f"  {n}")
+    rows: list[str] = []
+    if not isinstance(c, Refused):
+        rows += [f"  {j.name.removeprefix('bc26-')}  condor {j.state}" + (f" on {j.host.split('@')[-1]}"
+                 if j.host != "undefined" else "") + (f" ({j.hold_reason})" if j.hold_reason else "") for j in c.jobs]
+    for name, sl in (("slurm", s), ("cpucluster1", k)):
+        if not isinstance(sl, Refused):
+            rows += [f"  {j.name.removeprefix('bc26-')}  {name} {j.state.lower()} {j.partition}"
+                     + (f" on {j.node}" if j.node else "") + f", {j.elapsed} of {j.limit}"
+                     for j in sl.jobs if j.name.startswith("bc26-")]
+    print("Our jobs:" + ("\n" + "\n".join(rows) if rows else " none"))
+
+
+# ---- wait ----
+def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
+    """Every job and run of IDS followed until it has ended, a job's folder pulled to runs/ID; the first non-zero
+    exit of IDS in their order."""
+    codes: dict[str, int] = {}
+    report: dict[str, dict[str, object]] = {}
+    jobs = [i for i in ids if not R.is_run(i)]
+    for i in jobs:
+        J.job(i)
+    for rid in (i for i in ids if R.is_run(i)):
+        summary = R.follow(rid, poll_s)
+        R.report(summary, J.LOCAL_RUNS / rid)
+        code = summary["exit"]
+        assert isinstance(code, int)
+        codes[rid] = code
+        report[rid] = summary
+    w = J.Waiter()
+    left = list(jobs)
+    finals: dict[str, J.State] = {}
+    shown: dict[str, str] = {}
+    while left:
+        try:
+            states = J.read_states(left)
+        except Refused as e:  # a lost connection says nothing about the jobs: keep waiting
+            J.say(f"compute: {e}; trying again in {poll_s:.0f} s")
+            time.sleep(poll_s)
+            continue
+        now = time.time()
+        for i in list(left):
+            st = states[i]
+            if shown.get(i) != st.detail:
+                J.say(J.describe(i, st))
+                shown[i] = st.detail
+            if (f := w.settle(i, st, now)) is not None:
+                finals[i] = f
+                left.remove(i)
+        if left:
+            time.sleep(poll_s)
+    for i in jobs:
+        st = finals[i]
+        codes[i] = J.code_of(st)
+        where = ""
+        if pull and st.phase != "gone":
+            try:
+                where = str(J.pull(i))
+            except Refused as e:
+                J.say(f"compute: pulling {i}: {e}")
+        report[i] = {"id": i, "phase": st.phase, "detail": st.detail, "exit": st.exit, "code": codes[i],
+                     "peak": st.peak, "results": where}
+        print(J.describe(i, st) + (f"; results in {where}/ (log, exit, out/)" if where else ""))
+    if as_json:
+        print(json.dumps([report[i] for i in ids], indent=1))
+    return next((codes[i] for i in ids if codes[i] != 0), 0)
+
+
+# ---- sweep ----
+def sweep() -> str:
+    """Deletes our job folders ended (an exit code written) or cancelled, and our runs closed, KEEP_DAYS ago: every
+    write on the volume is bounded."""
+    cmd = (f"n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; "
+           f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mtime +{KEEP_DAYS})\" ]; }} || "
+           f"{{ [ -e $d/cancelled ] && [ -n \"$(find $d/cancelled -mtime +{KEEP_DAYS})\" ]; }}; "
+           f"then rm -rf $d && n=$((n+1)); fi; done; "
+           f"m=0; for d in {REMOTE_RUNS}/*/; do d=${{d%/}}; "
+           f"if [ -e $d/closed ] && [ -n \"$(find $d/closed -mtime +{KEEP_DAYS})\" ]; then rm -rf $d && m=$((m+1)); "
+           f"fi; done; echo \"$n jobs and $m runs deleted\"; du -sh {REMOTE_ROOT} 2>/dev/null | cut -f1")
+    return login(cmd).strip().replace("\n", "; ") + " in use"
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(prog="tools/compute", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    st = sub.add_parser("status", help="what each backend can start now, and our jobs")
+    st.add_argument("--json", action="store_true")
+    st.add_argument("--task-cpus", type=int, default=1, help="size the 'tasks at once' counts for tasks of N CPUs")
+    st.add_argument("--task-mem", default=f"{R.DEFAULT_TASK_MEM_MB}M", help="... and of this memory (default 1700M)")
+    r = sub.add_parser("run", help="ship HEAD and run CMD as one job on WHERE; prints the job id")
+    r.add_argument("--where", required=True, choices=J.WHERES)
+    r.add_argument("--cpu", type=int, default=1, metavar="N", help="the CPUs it needs at least (Condor: a whole "
+                   "machine of at least N; cpucluster1: N on one node; Slurm: the most a free slot gives, at least N)")
+    r.add_argument("--mem", help="the memory it needs at least (8G, 500M)")
+    r.add_argument("--time", help="its own estimate (10m, 2h): required on Slurm and cpucluster1, where SIGUSR1 comes "
+                   "120 s before it; on Condor, the job is removed after it")
+    r.add_argument("--with", dest="ships", action="append", default=[], metavar="PATH",
+                   help="a file or folder the commit doesn't hold (a build's output), shipped to its path; repeatable")
+    r.add_argument("--kit", action="store_true", help="compile build/classes, ship it, and give the job the engine's "
+                   "jars: BC_CLASSPATH and BC_ENGINE_JARS")
+    r.add_argument("--no-build", action="store_true", help="with --kit: ship build/classes as it is")
+    r.add_argument("argv", nargs=argparse.REMAINDER, metavar="-- CMD")
+    lg = sub.add_parser("logs", help="a job's state and the end of its log")
+    lg.add_argument("id")
+    lg.add_argument("-n", "--lines", type=int, default=100)
+    lg.add_argument("-f", "--follow", action="store_true", help="stream it until the job ends; exit with its code")
+    wt = sub.add_parser("wait", help="block until every job or run named has ended, pull the results, exit with "
+                        "their status: start it as a background command, and its exit wakes you")
+    wt.add_argument("ids", nargs="+", metavar="ID")
+    wt.add_argument("--json", action="store_true")
+    wt.add_argument("--poll", type=float, default=J.POLL_S, help=f"seconds between reads (default {J.POLL_S:.0f}, "
+                    "at least 20)")
+    wt.add_argument("--no-pull", action="store_true")
+    pl = sub.add_parser("pull", help="copy a job's folder (log, exit, out/) to runs/ID")
+    pl.add_argument("id")
+    cn = sub.add_parser("cancel", help="end a job, or a run and its pieces, for good")
+    cn.add_argument("id")
+    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_DAYS} days")
+    a = ap.parse_args(argv)
+    try:
+        if a.cmd == "status":
+            status(a.json, a.task_cpus, size_mb(a.task_mem))
+        elif a.cmd == "run":
+            cmd: list[str] = a.argv[1:] if a.argv[:1] == ["--"] else a.argv
+            J.run(a.where, a.cpu, duration(a.time) if a.time else None, cmd, a.ships, a.kit,
+                  size_mb(a.mem) if a.mem else None, not a.no_build)
+        elif a.cmd == "logs":
+            return J.logs(a.id, a.lines, a.follow)
+        elif a.cmd == "wait":
+            if a.poll < 20 and not LOCAL:
+                raise Refused("--poll: at least 20 s, light on the login nodes")
+            return wait(a.ids, a.json, a.poll, not a.no_pull)
+        elif a.cmd == "pull":
+            print(J.pull(a.id))
+        elif a.cmd == "cancel":
+            print(R.cancel(a.id) if R.is_run(a.id) else J.cancel(a.id))
+        else:
+            print(sweep())
+    except Refused as e:
+        print(f"compute: {e}", file=sys.stderr)
+        return 2
+    except KeyboardInterrupt:
+        print("compute: interrupted; the jobs and runs go on (`tools/compute wait ID` to follow them again)",
+              file=sys.stderr)
+        return 130
+    return 0
+
+

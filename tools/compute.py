@@ -209,8 +209,8 @@ def main(argv: list[str] | None = None) -> int:
     st.add_argument("--task-mem", default=f"{R.DEFAULT_TASK_MEM_MB}M", help="... and of this memory (default 1700M)")
     r = sub.add_parser("run", help="ship HEAD and run CMD as one job on WHERE; prints the job id")
     r.add_argument("--where", required=True, choices=J.WHERES)
-    r.add_argument("--cpu", type=int, default=1, metavar="N", help="the CPUs it needs at least (Condor: a whole "
-                   "machine of at least N; cpucluster1: N on one node; Slurm: the most a free slot gives, at least N)")
+    r.add_argument("--cpu", type=int, default=1, metavar="N", help="the CPUs it needs (Condor: a whole machine of "
+                   "at least N, its JOB_CPUS all of them; Slurm and cpucluster1: N on one node)")
     r.add_argument("--mem", help="the memory it needs at least (8G, 500M)")
     r.add_argument("--time", help="its own estimate (10m, 2h): required on Slurm and cpucluster1, where SIGUSR1 comes "
                    "120 s before it; on Condor, the job is removed after it")

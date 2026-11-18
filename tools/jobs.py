@@ -286,7 +286,7 @@ def place(where: str, cpus: int, time_s: int | None, mem_mb: int | None) -> Plac
     if where == "slurm":
         est = checked_time(time_s, "Slurm")
         per = max(B.CPU_JOB_MIN_MEM_MB, -(-(mem_mb or 0) // cpus))
-        slots = B.slurm_starts_now(B.read_slurm(), cpus, None, est, per)
+        slots = B.slurm_starts_now(B.read_slurm(), cpus, cpus, est, per)
         if not slots:
             raise Refused(f"--cpu {cpus}: no GPU-cluster node has a free card and {cpus} CPUs with their memory free "
                           "within our caps now (`tools/compute status`)")
@@ -335,8 +335,8 @@ def submit(j: Job, files: dict[str, bytes], p: Place) -> str:
 
 def run(where: str, cpus: int, time_s: int | None, argv: list[str], ships: list[str], with_kit: bool,
         mem_mb: int | None, build: bool = True, repo: Path = REPO) -> str:
-    """ARGV on WHERE; its job id printed first on stdout. CPUS: the least it needs (Condor: a whole machine of at least
-    that many; cpucluster1: exactly that many on one node; Slurm: the most a free slot gives, at least that many).
+    """ARGV on WHERE; its job id printed first on stdout. CPUS: what it needs (Condor: a whole machine of at least that
+    many; Slurm and cpucluster1: that many on one node, or, on Slurm, the next count DoC's lua gives whole).
     MEM_MB: the least memory it needs. WITH_KIT: build/classes compiled and shipped, the engine's jars named."""
     if not argv:
         raise Refused("no command after --")

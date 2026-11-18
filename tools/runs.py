@@ -79,10 +79,11 @@ def slots_of(cpus: int, mem_mb: int, task_cpus: int, task_mem_mb: int) -> int:
     return 1 if task_cpus == 0 else min(cpus // task_cpus, mem_mb // task_mem_mb)
 
 
-def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: int,
-           notes: list[str]) -> list[Offer]:
+def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: int, notes: list[str],
+           need: int | None = None) -> list[Offer]:
     """What each backend of WHERES could start for this run now, read at once, best first (most slots, then ORDER).
-    A backend that can't be read is left out, its reason in NOTES."""
+    NEED: the tasks to run at once, the most a Slurm or cpucluster1 offer asks for (a lab machine is taken whole). A
+    backend that can't be read is left out, its reason in NOTES."""
     tc, mb_cpu = max(task_cpus, 1), max(1, -(-task_mem_mb // max(task_cpus, 1)))
 
     def condor() -> list[Offer]:
@@ -95,8 +96,9 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
         out: list[Offer] = []
         cap = c.cap.cap - c.cap.used if c.cap.cap is not None else None
         mem = c.mem.cap - c.mem.used if c.mem.cap is not None else None
+        left = need
         for name, n in sorted(c.nodes.items(), key=lambda x: -x[1].idle):
-            if not n.usable:
+            if not n.usable or (left is not None and left <= 0):
                 continue
             part = next((p for p in n.partitions if p in c.partitions and (
                 c.partitions[p].max_time_s is None or time_s <= (c.partitions[p].max_time_s or 0))), None)
@@ -104,17 +106,21 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
                 continue
             free = B.cpu_free(c, n, mb_cpu)
             free = min(free, *(() if cap is None else (cap,)), *(() if mem is None else (mem // mb_cpu,)))
+            if left is not None and task_cpus:
+                free = min(free, left * tc)
             free -= free % tc
             if free < tc:
                 continue
             out.append(Offer("cpucluster1", slots_of(free, free * mb_cpu, task_cpus, task_mem_mb), free,
                              free * mb_cpu, partition=part))
+            left = None if left is None else left - out[-1].slots
             cap = None if cap is None else cap - free
             mem = None if mem is None else mem - free * mb_cpu
         return out
 
     def slurm() -> list[Offer]:
-        slots = B.slurm_starts_now(B.read_slurm(), tc, None, time_s, max(B.CPU_JOB_MIN_MEM_MB, mb_cpu))
+        units = None if need is None or not task_cpus else need * tc
+        slots = B.slurm_starts_now(B.read_slurm(), tc, units, time_s, max(B.CPU_JOB_MIN_MEM_MB, mb_cpu))
         seen: set[str] = set()
         out: list[Offer] = []
         for x in slots:  # one a node: slots on one node's several partitions are the same CPUs
@@ -286,11 +292,11 @@ def place_pieces(s: Settings, need: int) -> list[str]:
     """Pieces for NEED tasks at once on what the backends offer now; when none offers anything, QUEUED_PIECES Condor
     pieces wait for machines (or one, for one task)."""
     notes: list[str] = []
-    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes)
+    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need)
     took = choose(found, need, s.max_cpus)
     # the GPU cluster: one slot a read (each pick changes what our caps leave), so more from fresh reads
     while "slurm" in s.wheres and sum(o.slots for o in took) < need and any(o.where == "slurm" for o in took):
-        more = offers(("slurm",), s.task_cpus, s.task_mem_mb, s.time_s, notes)
+        more = offers(("slurm",), s.task_cpus, s.task_mem_mb, s.time_s, notes, need - sum(o.slots for o in took))
         more = [o for o in more if o.slot and o.slot.node not in {x.slot.node for x in took if x.slot}]
         if not more or (s.max_cpus is not None and sum(o.cpus for o in took) + more[0].cpus > s.max_cpus):
             break

@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""tools/kitgame GAMES OUTDIR: plays each game of GAMES (a line each: TEAM_A TEAM_B MAP SEED) one after another, one
+JVM a game, with plain `java` on the game kit (tools/kit.py's classpath), and appends a JSON line a game to
+OUTDIR/results.jsonl (winner, round, reason, the replay's sha256), the replays in OUTDIR/replays/. The same command
+plays the same game here and on a DoC node: the compute skill's check that remote games equal local ones. The JVM
+flags and properties are autoscrims/ABtest.py's java runner's (override engine, indicators off).
+"""
+import hashlib
+import json
+import os
+import platform
+import re
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+
+from tools import kit  # noqa: E402
+
+JAVA_OPTS = ["-Xmx1g", "-XX:+UseSerialGC", "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
+             "--add-opens=java.base/jdk.internal.math=ALL-UNNAMED", "--add-opens=java.base/jdk.internal.util=ALL-UNNAMED",
+             "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+             "--add-opens=java.base/sun.security.action=ALL-UNNAMED"]
+
+
+def java() -> str:
+    home = os.environ.get("JAVA_HOME")
+    return str(Path(home) / "bin" / "java") if home and (Path(home) / "bin" / "java").exists() else "java"
+
+
+def play(a: str, b: str, map_name: str, seed: int, replay: Path, cp: str) -> dict[str, object]:
+    classes = cp.split(":")[0]
+    props = {"bc.server.websocket": "false", "bc.server.wait-for-client": "false", "bc.server.mode": "headless",
+             "bc.server.robot-player-to-system-out": "false", "bc.server.debug": "false",
+             "bc.engine.debug-methods": "false", "bc.engine.enable-profiler": "false",
+             "bc.engine.show-indicators": "false", "bc.game.team-a": a, "bc.game.team-b": b,
+             "bc.game.team-a.url": classes, "bc.game.team-b.url": classes, "bc.game.team-a.package": a,
+             "bc.game.team-b.package": b, "bc.game.maps": map_name, "bc.game.map-path": str(REPO / "maps"),
+             "bc.game.seed": str(seed), "bc.server.validate-maps": "true", "bc.server.alternate-order": "false",
+             "bc.server.save-file": str(replay)}
+    began = time.monotonic()
+    p = subprocess.run([java(), *JAVA_OPTS, *(f"-D{k}={v}" for k, v in props.items()), "-cp", cp,
+                        "battlecode.server.Main", "-c=-"], capture_output=True, text=True)
+    out = p.stdout + p.stderr
+    won = re.search(r"\[server\]\s+(\S+) \((A|B)\) wins \(round (\d+)\)", out)
+    reason = re.search(r"\[server\] Reason: (.*)", out)
+    return {"team_a": a, "team_b": b, "map": map_name, "seed": seed, "exit": p.returncode,
+            "winner": won[1] if won else None, "winner_side": won[2] if won else None,
+            "round": int(won[3]) if won else None, "reason": reason[1].strip() if reason else None,
+            "replay_sha256": hashlib.sha256(replay.read_bytes()).hexdigest() if replay.exists() else None,
+            "s": round(time.monotonic() - began, 2), "host": platform.node().split(".")[0],
+            **({} if won else {"output": out[-2000:]})}
+
+
+def main() -> int:
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    games, outdir = Path(sys.argv[1]), Path(sys.argv[2])
+    (outdir / "replays").mkdir(parents=True, exist_ok=True)
+    cp = kit.classpath()
+    bad = 0
+    for line in games.read_text().splitlines():
+        if not line.strip():
+            continue
+        a, b, map_name, seed = line.split()
+        r = play(a, b, map_name, int(seed), outdir / "replays" / f"{a}-{b}-{map_name}-{seed}.bc26", cp)
+        with open(outdir / "results.jsonl", "a") as f:
+            f.write(json.dumps(r) + "\n")
+        print(json.dumps(r), flush=True)
+        bad += r["winner"] is None
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

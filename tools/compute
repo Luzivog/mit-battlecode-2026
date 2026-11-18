@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+"""tools/compute: one job on DoC's compute, and watching jobs and runs (tools/compute.py; --help)."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # the repo root: `tools` is the package
+
+from tools.compute import main  # noqa: E402
+
+sys.exit(main())

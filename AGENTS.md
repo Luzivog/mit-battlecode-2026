@@ -51,7 +51,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
    deleting first, simplifying second, adding last. No fallbacks.
 8. Work in your own worktree on your own branch, commit small, push your branch to `origin`. Never push `main`,
    never open a PR. The integrator merges.
-9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools (`.claude/skills/compute/`).
+9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools, `tools/run` and `tools/compute`
+   (the compute skill, `.claude/skills/compute/`).
    This machine (clankerland, 16 cores) is shared: never stop or change anything you didn't start.
 10. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.
 

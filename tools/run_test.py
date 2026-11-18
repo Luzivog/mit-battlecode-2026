@@ -141,3 +141,29 @@ def test_refusals(world: tuple[Path, dict[str, str]]) -> None:
     assert p.returncode == 2 and "--where" in p.stderr
     p = tool(repo, env, "run", "--each", "/dev/null", "--chunk", "2", "--", "echo", "{}")
     assert p.returncode == 2
+
+
+def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]) -> None:
+    repo, env = world
+    root = Path(env["BC26_LOCAL_REMOTE"])
+    for name, age in (("old", "10 days ago"), ("new", "1 hour ago")):
+        (root / "jobs" / name).mkdir(parents=True)
+        (root / "jobs" / name / "exit").write_text("0\n")
+        subprocess.run(["touch", "-d", age, str(root / "jobs" / name / "exit")], check=True)
+    (root / "jobs" / "running").mkdir()
+    (root / "jobs" / "running" / "exit").write_text("")
+    subprocess.run(["touch", "-d", "10 days ago", str(root / "jobs" / "running" / "exit")], check=True)
+    ages: list[tuple[str, str | None, str | None]] = [("closed", "10 days ago", None), ("open", None, "1 day ago"),
+                                                      ("forgotten", None, "40 days ago")]
+    for name, closed_age, age in ages:
+        d = root / "runs" / f"run-1118-000000-{name}"
+        (d / "done").mkdir(parents=True)
+        if closed_age:
+            (d / "closed").touch()
+            subprocess.run(["touch", "-d", closed_age, str(d / "closed")], check=True)
+        if age:
+            subprocess.run(["touch", "-d", age, str(d), str(d / "done")], check=True)
+    p = tool(repo, env, "compute", "sweep")
+    assert p.returncode == 0 and p.stdout.startswith("1 jobs and 2 runs deleted"), p.stdout + p.stderr
+    assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "running"]
+    assert [x.name for x in (root / "runs").iterdir()] == ["run-1118-000000-open"]

@@ -368,9 +368,10 @@ def result_of(out: Path, n: int) -> dict[str, object]:
 
 
 def close(rid: str, pieces: list[str]) -> None:
-    """The run closed (pieces stop claiming), and its pieces that never started cancelled: no machine is held for
-    nothing."""
-    login(f"touch {run_dir(rid)}/closed")
+    """The run closed (pieces stop claiming), its inputs deleted (a piece still running holds its own links), and its
+    pieces that never started cancelled: no machine is held for nothing."""
+    d = run_dir(rid)
+    login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz")
     if not pieces:
         return
     states = J.read_states(pieces)
@@ -492,7 +493,7 @@ def exit_code(codes: list[object]) -> int:
 
 def cancel(rid: str) -> str:
     pr = read_progress(rid)
-    login(f"touch {run_dir(rid)}/closed")
+    login(f"touch {run_dir(rid)}/closed && rm -f {run_dir(rid)}/code.bundle {run_dir(rid)}/with.tgz")
     said = []
     for pid, st in J.read_states(pr.pieces).items():
         if st.phase in ("queued", "running", "held", "unknown"):

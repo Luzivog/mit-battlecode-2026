@@ -18,7 +18,7 @@ from pathlib import Path
 from tools import backends as B
 from tools import jobs as J
 from tools import runs as R
-from tools.compute import duration, size_mb
+from tools.compute import duration, size_mb, sweep_daily
 from tools.remote import Refused
 
 
@@ -66,7 +66,12 @@ def main(argv: list[str] | None = None) -> int:
         s = R.create(tasks, task_cpus, size_mb(a.task_mem), wheres, duration(a.time) if a.time else None,
                      a.max_cpus, a.kit, a.ships, tuple(a.gather), not a.no_build)
         print(s.id, flush=True)
-        R.place_pieces(s, len(tasks) if task_cpus else min(len(tasks), 1 << 30))
+        sweep_daily()
+        try:
+            R.place_pieces(s, len(tasks))
+        except Refused:
+            R.close(s.id, [])  # a run no piece serves is closed, so the sweep takes its folder
+            raise
         if a.detach:
             return 0
         summary = R.follow(s.id)

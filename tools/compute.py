@@ -23,6 +23,7 @@ from tools import runs as R
 from tools.remote import LOCAL, REMOTE_JOBS, REMOTE_ROOT, REMOTE_RUNS, Refused, login
 
 KEEP_DAYS = 7  # an ended job's or a closed run's folder is deleted this long after its end (sweep)
+STALE_DAYS = 30  # a run nothing has touched for this long is deleted, closed or not
 
 
 def size_mb(spec: str) -> int:
@@ -188,17 +189,30 @@ def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
 
 
 # ---- sweep ----
-def sweep() -> str:
-    """Deletes our job folders ended (an exit code written) or cancelled, and our runs closed, KEEP_DAYS ago: every
-    write on the volume is bounded."""
-    cmd = (f"n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; "
+def sweep(force: bool = True) -> str:
+    """Deletes our job folders ended (an exit code written) or cancelled, and our runs closed, KEEP_DAYS ago, and runs
+    nothing has touched for STALE_DAYS (no follower ever closed them): every write on the volume is bounded. Without
+    FORCE, at most once a day (`.swept`'s age): `run` and `tools/run` call it so."""
+    once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -1440 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
+    cmd = (f"{once}touch {REMOTE_ROOT}/.swept; n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
            f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mtime +{KEEP_DAYS})\" ]; }} || "
            f"{{ [ -e $d/cancelled ] && [ -n \"$(find $d/cancelled -mtime +{KEEP_DAYS})\" ]; }}; "
            f"then rm -rf $d && n=$((n+1)); fi; done; "
-           f"m=0; for d in {REMOTE_RUNS}/*/; do d=${{d%/}}; "
-           f"if [ -e $d/closed ] && [ -n \"$(find $d/closed -mtime +{KEEP_DAYS})\" ]; then rm -rf $d && m=$((m+1)); "
-           f"fi; done; echo \"$n jobs and $m runs deleted\"; du -sh {REMOTE_ROOT} 2>/dev/null | cut -f1")
+           f"m=0; for d in {REMOTE_RUNS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
+           f"if {{ [ -e $d/closed ] && [ -n \"$(find $d/closed -mtime +{KEEP_DAYS})\" ]; }} || "
+           f"[ -z \"$(find $d $d/done -maxdepth 0 -mtime -{STALE_DAYS})\" ]; then rm -rf $d && m=$((m+1)); fi; done; "
+           f"echo \"$n jobs and $m runs deleted\"; du -sh {REMOTE_ROOT} 2>/dev/null | cut -f1")
     return login(cmd).strip().replace("\n", "; ") + " in use"
+
+
+def sweep_daily() -> None:
+    """sweep() at most once a day; a failure only said."""
+    try:
+        said = sweep(force=False)
+        if "deleted" in said and not said.startswith("0 jobs and 0 runs"):
+            J.say(f"compute: sweep: {said}")
+    except Refused as e:
+        J.say(f"compute: sweep: {e}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -246,6 +260,7 @@ def main(argv: list[str] | None = None) -> int:
             cmd: list[str] = a.argv[1:] if a.argv[:1] == ["--"] else a.argv
             J.run(a.where, a.cpu, duration(a.time) if a.time else None, cmd, a.ships, a.kit,
                   size_mb(a.mem) if a.mem else None, not a.no_build)
+            sweep_daily()
         elif a.cmd == "logs":
             return J.logs(a.id, a.lines, a.follow)
         elif a.cmd == "wait":

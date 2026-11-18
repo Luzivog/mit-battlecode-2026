@@ -157,7 +157,7 @@ the `Rng.mcg()` call shifts the king's random stream, which is expected (arch§3
 | slot 15 | PC | points estimator |
 | the rest | reserved | amend this plan first |
 
-E1's siege flag stays king-only: no slot carries it, and only kings spawn.
+E2's siege flag (its siege-spawn arm) stays king-only: no slot carries it, and only kings spawn.
 
 **Squeak headers** (arch§4.2):
 - Header 2, the unused lure stub that receivers ignore (`C:comms/Squeaker.java:112-130`, default case): S1 moves the

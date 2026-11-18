@@ -27,7 +27,7 @@ Source keys:
 3. **Turn the exchange into territory, and territory into the enemy's starvation.** Income is a share of a fixed
    supply. Assign miners by deficit to our own and the contested mines, and spend everything above an upkeep
    reserve (§4.1).
-4. **More kings, earlier and safe.** Form a second king early by budding next to home. Have at least 3 kings before
+4. **More kings, earlier and safe.** Form a second king early (how early is open, §9). Have at least 3 kings before
    round 1201, refill to 2 after any loss, and park kings off cat lanes on home-side mines (§4.3).
 5. **Convert at the end.** Deliver all raw cheese, put spare cheese into cat damage, and never hoard. In cooperation,
    only the side that is ahead kills the last cat (§4.5).
@@ -40,7 +40,8 @@ Source keys:
 
 Data: challenger against awubot on the 43 official maps, both seats, the map's own seed, **engine 1.2.5 jar**
 (`match_results/abtest_2026-11-18_19-30-32.json` records `engine_version 1.2.5`). Every map splits 1–1 by seat
-(testing§4). Endings: 32 king kills and 11 points games (9 reach r2000, 2 end by cat death in cooperation;
+(testing§4). That follows from identical code in a deterministic engine: swapping seats replays the same game. It says
+nothing about how close the games are (§2.6). Endings: 32 king kills and 11 points games (9 reach r2000, 2 end by cat death in cooperation;
 T3§3.1, T4§2.1).
 
 Classification (S:losstable.py, from the losing king's HP split by source in T4§2.1):
@@ -140,16 +141,29 @@ and in mirroring it correctly on H and V maps (R§0). §10 lists which numbers d
 - The tiebreaks are nearly worthless (T3§1.5).
 - Kings at r2000 ≤ max(kings formed by r1200 that survive, 2) (R§6, T3§1.3).
 
-### 2.6 Why small systematic edges flip whole maps
+### 2.6 Do small systematic edges flip whole maps? (unmeasured)
 
-The mirror is balanced on a knife edge: the seat decides every map (testing§4). A game holds about 100 throws, 60–130
-trap triggers and about 110 bites per side (T2§2.3–2.4: 2,445 awubot throws in 24 games; 755–1,541 traps and
-1,267–1,409 bites per 12 games). Model (A): treat the N ≈ 300 engagements as independent, each won with probability
-0.5 + e. We are ahead in the total with probability Φ(2e√N). For e = 0.05, Φ(1.73) = 0.96.
+The plan's largest bet is that consistent small edges win both seats on the maps decided by close combat.
 
-So a consistent edge per engagement should win both seats on most maps decided by combat, and so should a removed
-failure mode that awubot keeps. Two things work against this: the independence assumption, and the chaos that
-follows any bytecode change (arch§8). This is the plan's weakest assumption (plan.md §5).
+**The argument.** A game holds about 100 throws, 60–130 trap triggers and about 110 bites per side (T2§2.3–2.4:
+2,445 awubot throws in 24 games; 755–1,541 traps and 1,267–1,409 bites per 12 games). Model (A): treat the N ≈ 300
+engagements as independent, each won with probability 0.5 + e. We are ahead in the total with probability Φ(2e√N).
+For e = 0.05, Φ(1.73) = 0.96.
+
+**Its premise is unmeasured.** The mirror's 1–1 splits do not show that the games are close (§1.1). Evidence of
+narrow margins exists only for some games:
+- points games: margins under 2 points in 6 of 11 (T3§3.2);
+- king races: in 15% of kill games the winner's king ended below 300 HP, in 32% below 500 (T1§2.7).
+
+**The perturbation data shows chaos instead.**
+- Adding prints flipped the cheesefarm mirror from a r2000 win to a r526 loss (strategy§8).
+- A heavier probe lost DefaultLarge at r456 where a lighter one won at r2000 (arch§8).
+- awubot plus prints, as team A against awubot, won only 2 of 11 (strategy§8): consistent with a bytecode tax, but
+  confounded with the seat.
+
+Small changes therefore flip whole games, and bytecode may cost games net. plan.md W0.1 measures the flip rate and the
+tax (a near-zero-cost random perturbation and a 200-bytecode arm) before any wave-1 verdict. Until then the COMBAT
+conversion in plan.md §5 is an assumption, and the plan's weakest one.
 
 ## 3. The game plan by phase
 
@@ -158,8 +172,8 @@ follows any bytecode change (arch§8). This is the plan's weakest assumption (pl
 | opening | 1 – first contact (r4–25; T3§3.1) | spawn 1 rat per round toward the centre (C:KingSpawningStrategy.java:76-97). Where kk_dirt > 20 (no contact before ≈ r10), test budding a second king from the first 7 spawns (150 cheese; §4.3) | first rat to the centre at r2, ray scouting until r20 (strategy§1). Learn mines, symmetry and cat lanes (§4.6) | only 38% of the r0–100 supply is harvested (T1§2.3); the opening is won by fighting, not by mining speed |
 | first contact | contact clock | stay home; no rush (T4§2.6) | hold at Chebyshev 2, trap the gap, grab before biting (§4.2) | the backstab comes at first contact against awubot (T3§3.1) |
 | midgame | ≈ 40–900 | second king by r≈200 at the latest (KB arms); park on home-side mines off cat lanes; step out of lanes before the cat arrives | exchange first, then territory by deficit; lone rats never go to enemy-side mines | army n* from income and attrition above the reserve; surplus goes to kings, then traps, then rats (§4.1) |
-| lock-in | ≈ 800–1195 | bud kings 3 (and 4) next to existing kings, off lanes, while the game is still running (§4.3) | fill the army back to n* | a bud costs 50 + Σ c(n..n+6): 430 at 16 rats; every mirror seat at r1100 holds 790–2120 global (T3§3.5) |
-| late | 1201–1800 | 1 king left: bud a second at once (R§6). Do not trade kings: losing one at 2v2 costs 16.7 | hunt cats on stalemate maps from ≈ r1300–1600 (PT arms) | – |
+| lock-in | ≈ 800–1195 | form kings 3 (and 4) while the game is still running: the existing coordinator with its gates relaxed first, budding only if those formations fail (§4.3) | fill the army back to n* | every r2000 mirror seat at r1100 holds 786–2122 global; 9 of the 18 have 1 king, so a third king needs two formations (T3§3.5) |
+| late | 1201–1800 | 1 king left: form a second at once (R§6). Do not trade kings: losing one at 2v2 costs 16.7 | hunt cats on stalemate maps from ≈ r1300–1600 (PT arms) | – |
 | endgame | ≈ 1800–2000 | turtle when ahead; strike a non-last enemy king when behind (+16.7) | deliver all raw before r2000, distance-aware | spend spare global on cat damage (1–2 cheese bites), never on hoarding (T3§4.4) |
 | cooperation (any time) | while `isCooperation()` | build a king lead early on maps likely to end in cooperation | take cat HP from cats the enemy would kill | only the side ahead kills the last cat; bank cheese before the clock runs out (T3§4.2) |
 
@@ -167,13 +181,27 @@ follows any bytecode change (arch§8). This is the plan's weakest assumption (pl
 
 ### 4.1 Economy
 
-1. **Upkeep reserve.** Spend only above R = 2K·H, with H ≈ 60–120 rounds (T1§2.8, T5 P5).
-   - In a siege (an enemy rat in the king's vision, or HP lost this turn), drop R to 2K·20. OBG's emergency rule then
-     applies: spawn toward the threat while cost ≤ global/5 (O:RatKing.java:235-256).
-   - Why: awubot spends to 0 through its `cost == 10` exception (C:KingSpawningStrategy.java:69), and the side that
-     starves first loses. Where both kings starved, the one that starved more lost on 4 of 5 maps (T4§2.2).
+1. **Upkeep reserve on every global spend.** Spend global only above R = max(100, 2K·H), with H ≈ 30–120 rounds
+   (T1§2.8, T5 P5). The gate covers spawns, traps whose cost raw cheese does not cover, digs, bite cheese and formation.
+   - **What drains the bank** (`critic/Starve.java` on the 1.2.5 mirror). From r1 to starvation, on the six STARVE
+     losses that end before r600:
+     - replacement spawns took 1,480–2,070;
+     - rat traps up to 480–900 (an upper bound: traps pay from raw cheese first);
+     - upkeep 268–558.
+
+     The `cost == 10` exception spent 0–50 per loss. Today's spawn floor is already 100
+     (C:KingSpawningStrategy.java:69), but rats spend global with no floor: traps (C:TryTrap.java.jinja2:64-76), digs
+     (C:BabyRat.java:222) and king digs.
+   - **What a reserve can flip.** Where both kings starved, the one that starved more lost on 4 of 5 maps (T4§2.2). But
+     on 5 of the 8 STARVE maps the winner never ran out (its minimum global was 52–144). There the loser starved
+     because its income collapsed after it lost the exchange and the share (T1§2.8, §2.2). A reserve only delays that;
+     CT, CW and E3 address the cause.
+   - **Keep the `cost == 10` exception.** It spent 0–50 per loss, and it is the only way to rebuild income with ≤ 3
+     rats (T1§2.8).
+   - **No siege waiver below 100.** Starving kings are also being bitten (T4§2.1: bites on 6 of the 8), so a waiver
+     would spend the last reserve exactly there.
    - T4's exact floor, max(0, 2K − I)·(2000 − t), is unusable early. With I ≈ 0 it asks for 4000 cheese against a
-     2500 bank (A). It is only an arm, with a capped horizon (plan.md E1).
+     2500 bank (A).
 2. **Army.** Size it to n* ≈ √((I − 2K)/(2.5δ)), with I the income, δ the deaths per rat-round and a floor of 8–12
    rats; no fixed ceiling (T1§2.5).
    - The champion's cap of 16 fits an even contested mirror. It over-builds under fast attrition (the bank drains)
@@ -235,12 +263,20 @@ budget.
 
 1. **Count.**
    - Two early (KB; the best round is open, §9).
-   - At least 3 by r1195 in every game still running: lock-in (T1 E1, T3 P1).
+   - At least 3 by r1195 in every game still running: lock-in (T1 E1, T3 P1). The lock-in cannot reach the
+     cooperation endings that come earlier (TheHeist r390, peaceinourtime r451; T3§3.1); those need the early king.
    - Refill to 2 after r1200 when down to 1 king (R§6).
    - The champion forms a king in 44% of official-pool team-games, first at a median r300. It had a third alive in 2
      of 306 mirror team-games, and stops trying at r1100 (T1§2.7, C:KingFormationCoordinatorStrategy.java:145).
-2. **How to form.** Budding: the king spawns 7 recruits next to a chosen 3×3 site, they step into fixed slots, and
-   the centre recruit calls `becomeRatKing` once 6 allies stand around it (R§8).
+2. **How to form.**
+   - First, simplify: the existing coordinator with its gates relaxed (`MINE_THRESHOLDS`, the 20·K rat gate, the
+     `req·K` abort, the r1100 abort and the far-mine score floor; C:KingFormationCoordinatorStrategy.java:13,141-151,
+     181-204,241).
+     - Its formations complete when the bot is rich or uncontested (strategy§6.3), which the r1100 points seats are
+       (T3§3.5).
+     - It recruits every rat within 25 tiles (strategy§3), which thins the army while it forms.
+   - Second, only if those formations fail: budding. The king spawns 7 recruits next to a chosen 3×3 site, they step
+     into fixed slots, and the centre recruit calls `becomeRatKing` once 6 allies stand around it (R§8).
    - **Geometry.** `buildRat` reaches only the 16-tile ring (dist² ≤ 8, R§7). A 3×3 site that does not overlap the
      king therefore contains at most 3 ring tiles, and the other recruits step 1–2 tiles (A).
    - **Cost.** 50 + Σ c(n..n+6): 150 at 0 babies, 290 at 8, 430 at 16, 570 at 24. Recruiting 7 existing rats costs
@@ -265,7 +301,10 @@ budget.
   - In ATTACK it targets the last robot in its chirality scan, of either team, kings included.
   - Cats pounce over walls (R§16.18).
 - **Lanes are deterministic**: a BFS on walls between fixed waypoints, repeated every loop. Two sightings a few rounds
-  apart give the local lane (T4§2.3). Rats relay each sighting to a king (squeak r² 16).
+  apart give the local lane (T4§2.3). Rats relay each sighting to a king (squeak r² 16), but only when no cat is within
+  r² 16 of themselves. In ATTACK a cat turns toward the oldest squeak it heard, from either team (R§12, §16.4), so a
+  relay near our king can steer the cat there.
+- **Dirt stocks start at 0.** A rat must dig (5 cheese each) before it can place dirt (R§8).
 - **Defending a king that cannot leave** (the tminusten pocket, §8 item 2). Rats:
   - stall the cat with dirt, since two placers out-pace one digging cat (T4§2.5);
   - bite it from outside its 180° cone;
@@ -312,15 +351,15 @@ Classes from T4§3 (`classes2.py`) and mine count (T5§7). A map can be in sever
 
 | class | test | what decides it | dominant emphasis | packages (plan.md) |
 |---|---|---|---|---|
-| FACEOFF | rat path ≤ 12 | king kill by r68–189: throws and bites (knifefight 512 HP of throws) | keep the champion's close-quarters micro; minimal-cheese bites, trap the gap, throw shield at the king; reserve; no bud before contact | CB, CT, CK, E1 |
-| MINEPOOR | ≤ 4 mines (14 official) | starvation (corridor 440, evileye 220, arrows 250) and the early swarm | reserve first; lean army (n* is small); home king; OBG and GST lose these, so do not import a central king | E1, E2 |
+| FACEOFF | rat path ≤ 12 | king kill by r68–189: throws and bites (knifefight 512 HP of throws) | keep the champion's close-quarters micro; minimal-cheese bites, trap the gap, throw shield at the king; reserve; no bud before contact | CB, CT, CC+CK, E1 |
+| MINEPOOR | ≤ 4 mines (14 official) | the early swarm (8 of the 15 COMBAT maps), and starvation (corridor 440, evileye 220, arrows 250) | exchange first; a reserve on every global spend where both sides starve; lean army (n* is small); home king; OBG and GST lose these, so do not import a central king | CT, CB, E1, E2 |
 | mines 5–7 | 8 official | split: exchange against king exposure | traps plus a home king | CT, E1 |
 | mines ≥ 8 | 21 official | exchange, then share, then starvation (OBG and GST win 11 of 12) | traps, territory by deficit, army from income, lock-in | CT, E3, E2, KL |
 | CHOKE | cut ≤ 4 | 7 of 11 mirror points games; starvation (whereisthecheese) | reserve; kings and conversion for points; trap or seal the choke when ahead | E1, KL, PT, CH |
 | NOCONTACT | no rat path even through dirt | points under cooperation weights, or a king killed by a cat | cat-safe king; early king lead; take cat damage; last-cat rule | K1–K3, KB, PC |
 | CATPATH | cat clock ≤ 320 (10 tournament maps, peaceinourtime) | awubot's parked king scratched to death (7 of 20 games against OBG) | lane memory, perpendicular escape, rats defend pockets; let the cat work on awubot's king | K1, K2, K3 |
 | MINE-OVERFLOW | ≥ 26 mines (sieveofriches, tminusten; bridges, bridgesCatless and quadrants are team-made) | awubot's kings destroyed by its overflow `assert` | remove the assert; then the economy | S1 |
-| DIRT | dirt ≥ 20% | digging is both the path and a cheese sink | dig only the needed path; ring dirt as armour | E1, CK |
+| DIRT | dirt ≥ 20% | digging is both the path and a cheese sink | dig only the needed path; ring dirt as armour | E1, CC+CK |
 | OPEN | none of the above | every channel; keepout's cats (1000 HP), closeup and popthecork starvation | economy, reserve, cat-safe king | E1, E3, K1, KL |
 
 ## 6. Where the champion falls short
@@ -329,8 +368,8 @@ All `C:` paths are in `src/challenger/` (= awubot).
 
 | # | gap | code | evidence | package |
 |---|---|---|---|---|
-| G1 | Errors kill its own robots: the ≥ 26-mine `assert(false)` destroys every king; `assert(rc.canThrowRat())` kills the carrier when a cat stands on the throw tile; `assert(performMoves(...))` in 5 move classes; RobotTracker throws at ≥ 26 visible robots and asserts at ≥ 44; the top level catches only `Exception` | C:comms/GlobalArray.java:427-428; moves/TryThrow.java.jinja2:101,106 (cats absent from the grid :258-293); TryAttack:67,71, TryTrap:99,103, TryRatNap:82,95, TryPosition:39, TryFight:55; RobotTracker.java.jinja2:46-49,106,137; RobotPlayer.java:84 | sieveofriches: kings removed at r457–597 while leading (T5 A15); TryThrow asserts in 15 of 70 validation games, all 5 instrumented failures with a cat on step 1 (T2§9.1); ≥ 26 visible on 11 king turns in 86 mirror games, all on cheesebottles (S:kingcrowd_mirror.txt) | S1 |
-| G2 | Starvation: the spawn floor `global ≥ 100 \|\| cost == 10` spends the last cheese | C:robot/king/KingSpawningStrategy.java:69 | 8 STARVE maps (§1.1); starvation in 9 of 13 king-kill losses against OBG and GST (T5§2.2) | E1 |
+| G1 | Its own code kills or blinds its robots: the ≥ 26-mine `assert(false)` destroys every king; `assert(rc.canThrowRat())` kills the carrier when a cat stands on the throw tile; `assert(performMoves(...))` in TryThrow and 4 other move classes; RobotTracker throws at ≥ 26 visible robots and asserts at ≥ 44; the top level catches only `Exception`; the panic squeak (`7<<29`, negative) and the king's empty enemy squeak decode as phantom enemies; the king's unguarded `rc.turn` costs it the rest of its turn; the spawn counter's write throws from the 1024th spawn | C:comms/GlobalArray.java:427-428, :108, :225; moves/TryThrow.java.jinja2:101,103,105,106 (cats absent from the grid :258-293); TryAttack:67,71, TryTrap:99,103, TryRatNap:82,95, TryPosition:39, TryFight:55; RobotTracker.java.jinja2:46-49,106,137; RobotPlayer.java:84; comms/Squeaker.java:91-105,215-217; comms/EnemyManager.java.jinja2:73-87; robot/king/KingSpawningStrategy.java:90; E:world/RobotControllerImpl.java:1312 | sieveofriches: kings removed at r457–597 while leading (T5 A15); TryThrow asserts in 15 of 70 validation games, all 5 instrumented failures with a cat on step 1 (T2§9.1); ≥ 26 visible on 11 king turns in 86 mirror games, all on cheesebottles (S:kingcrowd_mirror.txt) | S1 |
+| G2 | Starvation: spawns stop at 100 global, but rats spend global with no floor (traps, digs); the loser's income collapses after it loses the exchange | C:robot/king/KingSpawningStrategy.java:69; moves/TryTrap.java.jinja2:64-76; robot/rat/BabyRat.java:222 | 8 STARVE maps (§1.1); the bank went to replacement spawns, traps and upkeep, not to the `cost == 10` exception (§4.1); starvation in 9 of 13 king-kill losses against OBG and GST (T5§2.2) | E1, CT, E3 |
 | G3 | The king stands in cat lanes: walks to the centre box, parks on the nearest mine whatever the cats, flees by the direction to the cat's corner rather than its facing; ring-cell bug B3; the panic squeak decodes as two phantom enemies | C:robot/king/KingMiningStrategy.java.jinja2:53-76,173-278; KingCombatStrategy.java.jinja2:102-170,116-117; comms/Squeaker.java:173-217 | CAT class (3 maps); tminusten, attack_on_cat and sunandmoon against OBG (T4§2.1); 117 scratches on its kings against 50 on the opponents' (T5 A12) | K1, K2, K3 |
 | G4 | Kings: second king gated on ≥ 20 rats against a cap of 16; recruits every rat within 25 tiles; third king needs ≥ 9 mines and ≥ 40 rats; aborts at r1100 | C:robot/king/KingFormationCoordinatorStrategy.java:13,141-221,145; robot/rat/FormationStrategy.java:19-21,29-33,109-120 | 8 of 11 mirror points games end 2v2 (T3§3.2); formations fail 17 of 17 on cheesefarm and peaceinourtime (strategy§6.3) | KL, KB |
 | G5 | Exchange: traps only behind a gate (≥ 24 rats, raw ≥ 20, or a "strong" enemy) and never overlapping; throws at the first ready turn whatever the line, including 22% into open ground; TryPosition has no goal; cats absent from throw scoring; throw values 4 too high, dirt 10 below walls; bites fixed at 12; no trap model | C:moves/TryTrap.java.jinja2:64-90,270-282,357-361; CombatStrategy.java.jinja2:216-231,440-443; TryThrow.java.jinja2:91-95,319-376; TryPosition.java.jinja2:83-87; CombatTracker.java.jinja2:46-67 | awubot walks into 95–98% of enemy traps and lays 0.36–0.83× OBG's and GST's in their wins (T5§2.3, A8); 95% of carries thrown at exactly t+2 (T2§2.3) | CT, CW, CB, CX |
@@ -364,9 +403,9 @@ its traps fire 98%; the lean few-mine macro and close-quarters swarm (OBG lost D
 |---|---|---|---|---|
 | 1 | Self-inflicted king and rat deaths | T5 P1 (mine overflow), T2 P1 (TryThrow assert), T3 P7 (cat-trap NPE), T4/T5 (king in a cat lane) | One package, S1, for every code path that kills or freezes our own robot. The cat-lane king is behaviour, not a crash, and goes to K1–K3 | The NPE is an `Exception` (turn lost, not a death; C:BabyRat.java:42,68). S1 adds `catch (Throwable)`, which is safe because `RobotDeathException` extends `VirtualMachineError` (E:instrumenter/RobotDeathException.java) and the instrumenter makes every handler re-throw `VirtualMachineError` first (E:instrumenter/bytecode/InstrumentingMethodVisitor.java:278-290). This settles the open item in arch§9 invariant 2 |
 | 2 | tminusten: can the king step out? | T5 P1b: perpendicular steps save it. T4: a pocket, only rats can | **T4** | Map render (`t4/render.py maps.json tminusten`): the king's pocket is x 0–13, y 0–4; its exits at (7,5), (9,5) and (11,5) are 1 tile wide; the cat's waypoints (0,2), (6,2), (12,2) sweep rows 1–3 along the whole pocket. Every king position overlaps the lane. K1 cannot save it; K3 can |
-| 3 | Extra kings | T1 E1 (lock-in r900–1195, 3–5 kings), T1 E2 (early second king, 7 recruits at the 2-median mine, dose 40/100/200), T3 P1 (≥ 3 by r1200 by budding), T3 P3c (bud before r150 on cooperation maps), T5 P7 (OBG rule from r350) | One budding primitive and two packages: KL (lock-in, first) and KB (early, a dose-response that includes r350 and an opening bud) | Budding keeps the army in place, at +130 cheese over recruiting at 16 rats (A, §4.3). T3's "no walk" and "about 150 cheese at r150" are wrong (§4.3 geometry and costs). T1's argument for early formation (29% of official games are over by r300) is testable only by the dose |
+| 3 | Extra kings | T1 E1 (lock-in r900–1195, 3–5 kings), T1 E2 (early second king, 7 recruits at the 2-median mine, dose 40/100/200), T3 P1 (≥ 3 by r1200 by budding), T3 P3c (bud before r150 on cooperation maps), T5 P7 (OBG rule from r350) | Two packages: KL (lock-in, first) and KB (early, a dose-response that includes r350 and an opening bud). KL first relaxes the existing coordinator's gates (T1 E1) and builds budding only if those formations fail | Rule 7 (simplify before adding): the relaxed coordinator is 30–80 lines of existing code. Budding keeps the army in place, at +130 cheese over recruiting at 16 rats (A, §4.3). T3's "no walk" and "about 150 cheese at r150" are wrong (§4.3 geometry and costs). The lock-in reaches 8 of the 11 mirror points maps, not 10: TheHeist and peaceinourtime end in cooperation at r390 and r451 (T3§3.1). T1's argument for early formation (29% of official games are over by r300) is testable only by the dose |
 | 4 | Where the income edge comes from | T1: fewer early deaths; T5: traps and central mines; T4: central mines sit in cat lanes | One causal chain: exchange (traps; T1's 26% fewer deaths) → share (mines held) → the enemy starves | T1§2.4 measures equal income with fewer deaths before any share gap; T5§4.2 measures the trap ratio and mines held in the same games. T4's lane objection applies to the **king's** site, not to miners |
-| 5 | The reserve formula (shared code) | T4 WP1: max(0, 2K − I)·(2000 − t); T1 E3 and T5 P5: 2K·H | 2K·H with a siege waiver; T4's form only as an arm with a capped horizon and I estimated | A: T4's form needs 4000 > 2500 while I ≈ 0 early, which blocks all spawning. One lane owns KingSpawningStrategy: E1 (reserve) then E2 (army budget) |
+| 5 | The reserve (shared code) | T4 WP1: max(0, 2K − I)·(2000 − t); T1 E3 and T5 P5: 2K·H; T4 and T5: awubot spends to 0 | max(100, 2K·H) on **every** global spend, no siege waiver below 100, the `cost == 10` exception kept | A: T4's form needs 4000 > 2500 while I ≈ 0 early, which blocks all spawning. `critic/Starve.java`: the bank went to replacement spawns, traps and upkeep, and the exception spent 0–50 per loss (§4.1). A reserve flips only the maps where the winner also starved (3 of 8), so it ranks below CT and CW |
 | 6 | Trap-first engagement | T2 P3 (+3–8 pp), T5 P2 (+10–20 pp on mine-rich maps) | One owner, CT. Effect +3–8 pp overall, at the top of that range on ≥ 8-mine maps | SPAARK, powerpuff and food out-trap awubot yet win 1 game of 18 (T5§6). T5's figure is a correlation across bots that also differ in territory |
 | 7 | Collision damage | rules and combat fixed to 42; T4§2.4 and T5§2.3 still say 46 | 42 | R§9; E:world/RobotControllerImpl.java:1405 (the step-1 tile must be empty); none of 4,195 replayed throws dealt 46 (T2§1.2) |
 | 8 | Death counts | T2 CombatStats, T5 Deep, T1 Timeline | All three count formation crush, which is a `DieAction`, as a death. T5 also counts thread-end removals (disintegrations and Error deaths) from `Round.diedIds`; T2 omits them | E:world/RobotControllerImpl.java:1231-1262 (formation sets HP to 0). Formation crush is about 7 rats per formation, only on keepout, TheHeist and sieveofriches in D1, so no conclusion changes. awubot's 11–57 disintegrations per game against OBG are carried victims under 15 HP, i.e. kills, so T5's ratio is the right one. T1's δ includes formation consumption: E2 removes it |
@@ -375,7 +414,7 @@ its traps fire 98%; the lean few-mine macro and close-quarters swarm (OBG lost D
 | 11 | Go-home thresholds | T1 E5: raise the near-home ones; T5 A7: not a lever; T3: low thresholds at the end | Compatible. E5 is an arm of E3; the end-of-game recall is PT's and depends on time | T5 A7 refutes "large loads hurt awubot", not "small loads near home waste trips" |
 | 12 | King site | OBG and opp§4 #2: most central mine; T1, T4 and T5: home-side | Home-side mine that minimises delivery, off lanes (§4.3) | T5§4.4: OBG's central king loses ≤ 4-mine maps; T4§2.2: central mines sit in lanes |
 | 13 | Kings seeing > 25 robots | T3 P1 risk | Rare today, capped anyway in S1 | S:kingcrowd_mirror.txt: 11 king turns with ≥ 26 robots in view across 86 mirror games (cheesebottles only), none with ≥ 44. KL packs kings, so S1 caps the sort at 25 |
-| 14 | Flight squeak | opp§4 #4; T2§10 | Dropped; CC (pre-throw discipline) instead | T2§10: steps 1–2 fly inside the thrower's turn, and awubot's later collisions are under 400 HP per game |
+| 14 | Flight squeak | opp§4 #4; T2§10 | Dropped; CC+CK (pre-throw discipline) instead | T2§10: steps 1–2 fly inside the thrower's turn, and awubot's later collisions are under 400 HP per game |
 
 ## 9. Not settled, and what settles it
 
@@ -385,7 +424,10 @@ its traps fire 98%; the lean few-mine macro and close-quarters swarm (OBG lost D
 | The best round for the second king: an opening bud, r40, r100, r200 or r350 | KB dose-response |
 | δ as a function of army size; estimating income in-game | E2 step 0: a probe build logging global cheese and spending every 50 rounds |
 | Cat lanes around walls (straight segments vs the engine's BFS) | K2 step 0: port `GameWorld.bfsFromTarget` (E:world/GameWorld.java:223) and compare on the cat pool |
-| How many pairs flip from a pure bytecode shift (the noise floor of paired reads) | plan.md W0.1 |
+| How many games flip from a near-zero-cost change, and whether bytecode costs games net (§2.6) | plan.md W0.1, before any wave-1 verdict |
+| Which spend channels empty the bank on 1.2.6, which sets E1's H | plan.md W0.3 (`critic/Starve.java` on the baseline) |
+| Class frequencies per (map, seed) cell on the goal pool, in place of §1.1's one class per map | plan.md W0.3 |
+| Whether the relaxed coordinator completes formations in the lock-in window | KL arm A's formation-success diagnostic |
 | Whether a cat in ATTACK prefers kings | K1 diagnostics (scratches per cat phase) |
 | How exploitable awubot's trap gate is | CX |
 | 1.2.6 seat effects on H and V maps | every acceptance run on 1.2.6 (plan.md §1) |
@@ -406,3 +448,4 @@ cheese RNG stream (R§0). The spawn probability is unchanged.
 |---|---|
 | `KingCrowd.java`, `kingcrowd_mirror.txt` | per game and team: king turns with ≥ 26 and ≥ 44 robots within r² 25 (carried and flying rats counted, an over-estimate). Run: `java --add-opens java.base/java.nio=ALL-UNNAMED -cp "$(cat ../t3/cp.txt):." KingCrowd <replays>` |
 | `losstable.py`, `losstable.txt` | the §1.1 classification of the 43 official mirror maps, from T4§2.1's HP split and T4's `maps.tsv` and `classes2.py` |
+| `../critic/Starve.java` (the plan critic's) | global cheese per round (`Round.teamAliveRatKings` / 10, T3's decoding) and the spend channels from the first round below 100 to the first below 2 |

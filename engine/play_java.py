@@ -40,6 +40,19 @@ ADD_OPENS = [
 DEFAULT_JAVA_OPTS = "-Xmx1g -XX:+UseSerialGC"
 
 
+# the sources a reference game depends on (the agreement cache is keyed by them, not by the translator's)
+REFERENCE_SOURCES = ["bcx/Match.java", "bcx/RefMain.java", "battlecode/world/BcxStateHash.java",
+                     "battlecode/world/BcxMaps.java"]
+
+
+def reference_hash() -> str:
+    src = ENGINE / "jvm" / "src"
+    h = hashlib.sha256()
+    for f in REFERENCE_SOURCES:
+        h.update(f.encode() + b"\0" + (src / f).read_bytes() + b"\0")
+    return h.hexdigest()[:16]
+
+
 def compile_jvm(jars: Path = JARS) -> Path:
     """Compile engine/jvm/src (javac --release 21, against the official jar and the ASM jars) once per source hash."""
     src = ENGINE / "jvm" / "src"

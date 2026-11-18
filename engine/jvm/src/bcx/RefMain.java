@@ -143,12 +143,13 @@ public final class RefMain {
             sink.close();
         }
 
-        result.put("seed", hasSeed ? seed : r.seed);
         int code = 0;
         if (r.error != null || r.winner == null) {
+            if (hasSeed) result.put("seed", seed);
             result.put("error", r.error != null ? r.error : "no winner");
             code = 1;
         } else {
+            result.put("seed", r.seed);
             result.put("winner", r.winner == Team.A ? "A" : "B");
             result.put("winner_pkg", r.winner == Team.A ? a : b);
             result.put("win_type", r.winType.name());

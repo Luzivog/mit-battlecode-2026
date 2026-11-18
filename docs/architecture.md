@@ -89,12 +89,12 @@ isLastMove=true; executeGlance()           turn ±90° if the turn cooldown is u
 
 All of this is **bytecode-adaptive**: adding cost anywhere changes behaviour elsewhere.
 
-### 1.6 Exceptions, assertions and frozen robots (verified)
+### 1.6 Exceptions, assertions and robot death (verified)
 
 - `catch (Exception e) {}` (RobotPlayer.java:84) swallows **Exceptions** only. The turn ends early and 500 bytecodes are charged. Measured at ≈0.02–0.08% of rat turns.
 - **Assertions are enabled in matches.** The engine's `TeamClassLoaderFactory$Loader` calls `setDefaultAssertionStatus(true)`, and a probe printed `ea=true`. Two consequences:
   1. **Side-effecting asserts are load-bearing.** `assert(CombatStrategy.performMoves(...))` in `TryAttack.java.jinja2:67,71`, `TryTrap.java.jinja2:99,103`, `TryRatNap.java.jinja2:95` and `TryThrow.java.jinja2:103,105` performs the move. Do not delete them as if they were no-ops.
-  2. **A failing assert throws `AssertionError`, which is an `Error` and escapes the catch.** `run()` exits; the engine prints the stack trace, and the robot stays on the map but **never acts again** until it is killed. Observed in matches:
+  2. **A failing assert throws `AssertionError`, which is an `Error` and escapes the catch.** `run()` exits, the engine prints the stack trace and marks the robot terminated (`SandboxedRobotPlayer.java:235`), and `GameWorld.updateRobot` **destroys it** at the end of that turn (`GameWorld.java:356-359`, engine 1.2.5 and 1.2.6). Observed in matches:
      - Rats died at `TryThrow.java.jinja2:106` (`assert(rc.canThrowRat())`) on DefaultSmall.
      - **Every king** hit `assert(false)` in `GlobalArray.writeCheeseMines` (comms/GlobalArray.java:428) once it knew ≥ 26 cheese mines. On bridges (28 mines) challenger (instrumented copy) lost all 4 kings and the game at round 401; on quadrants (38 mines) awubot lost all 5 at round 764. Maps at risk: `bridges` (28), `bridgesCatless` (26), `quadrants` (38). All other local and built-in maps have ≤ 18 mines.
 - Other reachable `Error` sources: `assert(false)` in RobotTracker when > 43 robots are visible (only possible for kings), and the `encodeEnemy`/`decodeHealth` asserts.
@@ -193,7 +193,7 @@ There are 64 slots of 0–1023. **Only kings may write** (50 bytecodes per write
 | 21 | `KING_EXPAND` | bit k = king k is 5×5 | `expandKing()` after 17 stuck turns (`contractKing` unused) | `RobotTracker.reset` → `isKingExpanded(i)`. **Bug:** it tests bit `kingId`, not `i`; babies have kingId −1, so the result is always false |
 | 22–31 | `RAT_SPAWN_INFO`+2k, +2k+1 | A = `hi3<<7 \| marker`, where `marker=(dx+4)*9+(dy+4)` is the spawn cell relative to king k; B = low 10 bits of a 13-bit payload; 1023 = empty | king k in the postTick of the **round after** `buildRat` (`toSpawn1→toSpawn0` delay). The first king of each round resets all 10 slots to 1023 | `BabyRat.init → loadSpawnInfo()`: finds the king whose marker equals its own position |
 | 32–34, 35–37 | `MAP_CHUNK_START` | Two 30-bit values, little-endian 10/10/10. Bit 29 = empty flag; bits 0–28 = `MapTracker.encodeChunk` = `cx<<27 \| cy<<25 \| 25-bit unit mask` | every king postTick: 2 chunks per turn, round-robin over the chunks it has seen. The last king in turn order wins | everyone preTick → `MapManager.applyGlobalChunk` |
-| 38–63 | cheese list (`MIN_CHEESE`=38) | `encode2x2(mine)` written **from 63 downward**, then a 1023 terminator | every king rewrites its **whole** queue each postTick (rotated). ≥ 26 mines → `assert(false)` → king frozen (§1.6) | everyone preTick `readCheeseMines` (stops at 1023) |
+| 38–63 | cheese list (`MIN_CHEESE`=38) | `encode2x2(mine)` written **from 63 downward**, then a 1023 terminator | every king rewrites its **whole** queue each postTick (rotated). ≥ 26 mines → `assert(false)` → king destroyed (§1.6) | everyone preTick `readCheeseMines` (stops at 1023) |
 
 **Spawn payload channel (works, but unused).** `KingSpawningStrategy.trySpawn` (:93) sends `Rng.mcg() & 8191`. A probe confirmed that every newborn receives exactly its payload (63/63) in its first turn, one round after the spawn. `BabyRat.init` throws it away. This is a ready-made **13-bit king→newborn order** (role assignment) for one spawn per king per round.
 
@@ -268,7 +268,7 @@ The king's `trySqueakKing` has two more bugs: it shifts by loop index `i*15` ins
 
 - **`updateRobots()`** (:62) calls `senseNearbyRobots()` (cost 100) and sorts by distance. Each robot's index is inserted as a char before the marker `\u0FFF+d²` in a StringBuilder; then the 43 markers are deleted. The template is unrolled for 0–43 robots and per team.
   - `MAX_DIST=42` covers the largest anchor distance² (41) of a cat or king partly inside a king's r²=25 view.
-  - **Limits:** with > 25 robots visible, `sortedRobots[25]` throws `ArrayIndexOutOfBoundsException` and the whole turn is lost. With > 43, `assert(false)` freezes the robot. Only kings (360°, r² 25) can see that many.
+  - **Limits:** with > 25 robots visible, `sortedRobots[25]` throws `ArrayIndexOutOfBoundsException` and the whole turn is lost. With > 43, `assert(false)` kills the robot (§1.6). Only kings (360°, r² 25) can see that many.
   - Called in preTick and after every BabyRat move/turn unless `isLastMove`.
 - **`reset()`** (:164) adds all ally baby rats to `allies`/`allySet` and every king's 3×3 (or 5×5) footprint to `kingSet`. Pathfinder avoids both.
 - **`catHist[time%4]`** keeps up to 10 cats from each of the last 4 baby non-combat turns. Pathfinder nulls entries that it can sense are gone.
@@ -428,7 +428,7 @@ Cheesefarm (rounds 1–570) matches these numbers to within ~15% on every row. T
 
 **Invariants (do not break)**
 1. No `rc.move`/`rc.moveForward`/`rc.turn` outside `Game.java`. Read `Game.myLoc`/`myDir`/`time`, not `rc.getLocation()`.
-2. Nothing may throw an `Error`. **No new `assert`s that can fail, and no side effects inside new `assert`s.** Treat the existing side-effecting asserts as load-bearing. Not yet done: a cheap safety net is to change `catch (Exception e)` to `catch (Throwable t)` in `RobotPlayer`. The instrumenter injects a robot-death handler into catch blocks (`InstrumentingMethodVisitor.addRobotDeathHandler`), so this should not swallow engine kills, but verify it in a match. That would turn freezes into lost turn-tails. The real fix for the ≥ 26-mine freeze is to cap `count` at `slots` in `GlobalArray.writeCheeseMines`.
+2. Nothing may throw an `Error`. **No new `assert`s that can fail, and no side effects inside new `assert`s.** Treat the existing side-effecting asserts as load-bearing. Not yet done: a cheap safety net is to change `catch (Exception e)` to `catch (Throwable t)` in `RobotPlayer`. The instrumenter injects a robot-death handler into catch blocks (`InstrumentingMethodVisitor.addRobotDeathHandler`), so this should not swallow engine kills, but verify it in a match. That would turn these deaths into lost turn-tails. The real fix for the ≥ 26-mine king deaths is to cap `count` at `slots` in `GlobalArray.writeCheeseMines`.
 3. Shared-array writes only from kings, only in owned slots, values 0–1023. Spawn slots are cleared by the first king each round.
 4. One squeak per turn. All squeaking goes through `Squeaker.postTick` (EnemyManager is called from there).
 5. `BabyRat.isLastMove` must be true before the final action of the turn, otherwise you pay for useless rescans.

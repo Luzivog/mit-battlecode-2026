@@ -288,7 +288,7 @@ Range table. "dist²" is measured from the actor's `getLocation()`; for a cat, i
 - **Normal landing** (end of flight, or the map edge, which is not an obstacle): 10 damage (`THROW_DAMAGE`); +10 to all three cooldowns; traps at the landing tile fire.
 - **Collision** (next tile has a ground robot, wall, dirt, or a flying rat):
   - The rat stops on its current tile.
-  - It **and the ground robot it hit** (any team, kings included) take `10 + 4*(2*remaining + (first step of the pair ? 1 : 0))`. That is 46 or 42 on the throw turn, 38/34, 30/26, 22/18 later.
+  - It **and the ground robot it hit** (any team, kings included) take `10 + 4*(2*remaining + (first step of the pair ? 1 : 0))`. The throw needs the tile in front empty and passable (`RobotControllerImpl.java:1405`), so the first step never collides: **42** at most on the throw turn, then 38/34, 30/26, 22/18 later. No collision in 4,195 replayed throws dealt 46 (docs/theory/t2-combat.md).
   - The flier gets +20 to all three cooldowns. The robot hit is not stunned.
   - Hitting another flying rat: that rat just gets `remaining = 1` and lands normally on its next turn.
   - **None of this triggers a backstab.**
@@ -438,7 +438,7 @@ Paths are relative to the engine repo, `engine/src/main/battlecode/`.
 2. **Cats are passive in EXPLORE.** Biting a walking cat is safe unless you stand on the tiles it is about to enter (it moves every 2 rounds along a deterministic BFS path), or it reaches a waypoint and enters its 8-turn ATTACK. Cat paths are BFS on walls only, so they can be predicted. `world/InternalRobot.java:1204-1298`, `world/GameWorld.java:223`
 3. **Cat target choice is deterministic.** It picks the *last* rat in its chirality scan order (the max-x, then max-y rat for chirality 0). Teams are ignored, so you can make the cat pick an enemy rat. `world/InternalRobot.java:1338-1344`, `world/GameWorld.java:767-790`
 4. **Squeak steering.** In ATTACK the cat turns toward the **oldest** queued squeak, which may be up to 4 rounds old and from either team. It senses with its pre-turn facing but checks scratch range with the post-turn facing, so a squeak from behind can make its scratch fail and force a pounce or move instead. `world/InternalRobot.java:1310-1317`
-5. **Damage without backstab:** thrown-rat collisions (up to 46 damage to enemy rats or **kings**) and rat-king formation (kills enemy baby rats in the 3×3 and steals their raw cheese) never flip cooperation. `world/InternalRobot.java:785-788`, `world/RobotControllerImpl.java:1231-1256`
+5. **Damage without backstab:** thrown-rat collisions (up to 42 damage to enemy rats or **kings**) and rat-king formation (kills enemy baby rats in the 3×3 and steals their raw cheese) never flip cooperation. `world/InternalRobot.java:785-788`, `world/RobotControllerImpl.java:1231-1256`
 6. **The rat-trap owner is blamed for the backstab** even though the enemy walked in. The victim team keeps the right to place cat traps for 100 rounds and is not the "backstabber". `world/GameWorld.java:639-642`, `:420`
 7. **Stun is a set, not an add.** Trap stuns overwrite the movement cooldown, which can even lower it, e.g. for a king that just moved (40 → 30). `world/GameWorld.java:633`
 8. **Carrying is free.** `(int)1.5 == 1`, so carriers move and act at normal cooldowns. `world/InternalRobot.java:481,500,515`
@@ -451,7 +451,7 @@ Paths are relative to the engine repo, `engine/src/main/battlecode/`.
 15. **Feeding** any rat (even your own) into a cat freezes that cat for 2 of its turns, cooldowns included. `world/InternalRobot.java:825-832,1164,1192`
 16. **Cheese fallback:** if a spawn offset hits a wall or goes off the map on either side, the cheese spawns on the mine tiles themselves. Mines near walls or edges therefore often drop cheese on the mine tile. `world/GameWorld.java:517-539`
 17. **Cheese on dirt** can be picked up: pickup has no passability check. You can also bury cheese or traps under your own dirt, since placement does not check for either. `world/RobotControllerImpl.java:253-274,461-477`
-18. **Pounce cannot overlap the cat's own tiles** (its own body counts as a "cat" obstacle), cannot land on a king or dirt, and needs all 4 landing tiles passable. Dirt or kings around rats deny pounces. `world/InternalRobot.java:903-931`
+18. **Pounce cannot overlap the cat's own tiles** (its own body counts as a "cat" obstacle), cannot land on a king or dirt, and needs all 4 landing tiles passable. Dirt or kings around rats deny pounces. **The path is never checked**: a cat pounces over walls and dirt, e.g. across a dividing wall (seen on `t_minus_five_minutes`, docs/theory/t3-scoring.md). `world/InternalRobot.java:882-939`
 19. **King count edge:** the round-1200 rule only blocks *new* kings when you have ≥ 2, so 3–5 kings formed before round 1201 all survive and score. `world/RobotControllerImpl.java:1168-1179`
 20. **Scoring:** kings picking up cheese directly counts as "transferred". A king standing on a mine's spawn box earns score with no baby-rat trips. `world/RobotControllerImpl.java:498-501,522-525`
 21. **Losing the last king to your own bug loses the game:** an uncaught exception or a return from `run()` destroys the unit. `instrumenter/SandboxedRobotPlayer.java:200-236`, `world/GameWorld.java:356-359`

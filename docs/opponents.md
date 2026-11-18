@@ -64,7 +64,7 @@ Validation: every bot played `awubot` on DefaultSmall, DefaultMedium and cheesef
   - merlin: `Exception("Impossible")`;
   - gst: an NPE in `BRThrownCarried`.
 - Engine 1.2.5 bug: `RobotControllerImpl.processTrapsAtLocation:869` can throw `IndexOutOfBoundsException` from inside `rc.move()`. Seen twice on cheesefarm. **`move()` can throw a non-`GameActionException`.**
-- awubot's own `assert(...)` in `TryThrow` (java:151/156) froze rats in **15/70** games (architecture.md §1.6). This is a free fix for challenger.
+- awubot's own `assert(...)` in `TryThrow` (java:151/156) killed rats (the engine destroys a robot whose `run()` ends) in **15/70** games (architecture.md §1.6). This is a free fix for challenger.
 
 **How to run:**
 ```
@@ -140,7 +140,7 @@ Paths are inside `src/opp_<slug>/`.
 **opp_gst (GST).** Strategy-pattern behaviours; postmortem in references/postmortems/2026/2026-generalized-strokes-theorem.md.
 - **Distress answering**: the king writes inDistress plus the average enemy position. Rats within d² ≤ 25 drop everything and fight (`BabyRatStateUpdaters/DefectBRStateUpdater.java`, `Communication/Communicator.java`).
 - Spawning (`RatKing.java`, `RatKingBehaviors/RKHeadquarter.java`):
-  - `RAT_BUILD_THRESHOLD = 0.002·area + 6.2`; rat-cost threshold 40;
+  - `RAT_BUILD_THRESHOLD = 0.002·area + 6.2` is defined (`RatKing.java:83`) but never read; rat-cost threshold 40;
   - spawning continues while cheese ≥ 2000, and is spammed after r1900.
 - **King relocation**:
   - Kings walk to the **closest safe mine**: mines near enemies or cats get threat levels, and the mine symmetric to ours is marked threat 127 (`BabyRat.updateMineThreatLevels`, `RatKing.updateInfo`).
@@ -226,7 +226,7 @@ Paths are inside `src/opp_<slug>/`.
 
 | # | Idea | Who does it (paths in `src/opp_*`) | Why it should hurt awubot | Cost / risk |
 |---|---|---|---|---|
-| 1 | **Field more rats on medium and large maps, with an adaptive spawn budget** instead of a hard cap of 16 (12 on small maps) | obg `RatKing.shouldBuildRat` (5×cost rule plus a reserve of 2100−t); spaark `RatKing.run` + `Sustain.java`; cerr `RatKing.shouldBuildRat` (cap by area and mines); gst `RAT_BUILD_THRESHOLD=0.002·area+6.2`; goobie `getMaxRatsForCheese` | 12/15 OBG and GST wins came with 1.4–2× awubot's transferred cheese, and all non-cooperation wins with more rats alive (§0). intel.md §0.4: the economy ceiling lost sieveofriches 30k vs 71–91k. The champion stays at 16 until `2000−t/2` (strategy.md §5.2). | Low code cost. Keep small maps lean: food lost small maps at 16 rats. |
+| 1 | **Field more rats on medium and large maps, with an adaptive spawn budget** instead of a hard cap of 16 (12 on small maps) | obg `RatKing.shouldBuildRat` (5×cost rule plus a reserve of 2100−t); spaark `RatKing.run` + `Sustain.java`; cerr `RatKing.shouldBuildRat` (cap by area and mines); gst (spawns while cheese ≥ 2000; its `RAT_BUILD_THRESHOLD` is never read); goobie `getMaxRatsForCheese` | 12/15 OBG and GST wins came with 1.4–2× awubot's transferred cheese, and all non-cooperation wins with more rats alive (§0). intel.md §0.4: the economy ceiling lost sieveofriches 30k vs 71–91k. The champion stays at 16 until `2000−t/2` (strategy.md §5.2). | Low code cost. Keep small maps lean: food lost small maps at 16 rats. |
 | 2 | **Spread the miners: assign each new rat a mine round-robin, and park the king on the central mine** | obg `RatKing.buildWrapper`→`CommunicationManager.reportTargetMine`, `BabyRat.getBestMine`, `RatKing.findBestMine`; gst safe-mine relocation `RatKing.updateInfo` | The champion's mine choice is random and distance-weighted and ignores crowding (strategy.md §2.3). On cheesefarm and keepout, OBG and GST pull ahead on transferred cheese from r200–300, before any rat collapse (inference from the per-100-round stats, §0). | Medium. The payload slot (`GlobalArray` 22–31) is already free for role and mine assignment (strategy.md §4). |
 | 3 | **A reachable, rule-based second king**: from r≈350, when cost > 40, mines > 4×kings and cheese ≥ 1000, form at the most central mine far from the bases. Send a fixed share of rats (2 of every 4), not "everyone within 25". | obg `RatKing.shouldCreateNewKing/setNewKingTarget` + slaves in `BabyRat.updateTarget`; goobie income-driven `trySetFormationRallyPoint` + ring fill; food "who forms first wins" | The champion's coordinator needs ≥ 20 rats, which is unreachable at cap 16, and pulls every rat within 25 tiles off mining (strategy.md §3). Points also reward living kings. | Medium. Needs #1 to have spare rats. |
 | 4 | **Thrown-rat flight squeak**: a rat in flight squeaks its direction, and allies step off the line | obg `SqueakManager.squeakFlying` + `MovementManager.markFlying`; `DodgeManager.java` is a generated table, unused in basic51 | 29% of awubot's throws hit a second enemy rat for 46 damage each (combat.md §0.3). A champion-vs-champion mirror suffers the same. | Low. One squeak type plus a forbidden-move mask. |

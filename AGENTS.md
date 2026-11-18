@@ -41,8 +41,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
    error: check its output for `[error]` and `git diff --stat` for what moved.
 3. Every package under `src/` compiles together: one compile error breaks every game. Run `./gradlew build -x test`
    before every commit.
-4. Assertions are on in games. An `AssertionError` (any `Error`) escapes the bot's `catch (Exception)` and freezes the
-   robot for good. Add no assert that can fail. Some existing asserts do the work (`assert(performMoves(...))`):
+4. Assertions are on in games. An `AssertionError` (any `Error`) escapes the bot's `catch (Exception)`, ends `run()`,
+   and the engine destroys the robot at the end of that turn. Add no assert that can fail. Some existing asserts do the work (`assert(performMoves(...))`):
    never delete one as a no-op.
 5. Move only through the bot's wrappers (`docs/architecture.md` §6, §9), never `rc.move`/`rc.turn` directly.
 6. Bytecode is tight (rats average ~11k of 17.5k, kings ~13k of 20k). Any change shifts bytecode and randomness, so
@@ -51,7 +51,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
    deleting first, simplifying second, adding last. No fallbacks.
 8. Work in your own worktree on your own branch, commit small, push your branch to `origin`. Never push `main`,
    never open a PR. The integrator merges.
-9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools (`.claude/skills/compute/`).
+9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools, `tools/run` and `tools/compute`
+   (the compute skill, `.claude/skills/compute/`).
    This machine (clankerland, 16 cores) is shared: never stop or change anything you didn't start.
 10. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.
 
@@ -63,6 +64,9 @@ uv venv -q --allow-existing .venv && uv pip install -q -p .venv -r requirements.
 ./gradlew build -x test                                     # compile every package
 ./gradlew run -PteamA=challenger -PteamB=awubot -Pmaps=DefaultSmall   # one game (replay in matches/)
 git diff --quiet caterpillow-final -- src/awubot && echo baseline intact
+tools/compute status                                        # free Imperial capacity per backend
+tools/run --kit -- CMD                                      # one command on a whole Imperial machine
+tools/compute wait ID --json                                # run in the background: its exit wakes you
 ```
 
 Judging a change: `docs/evaluation.md` (`tools/games`). Until it lands, `docs/testing.md` §0 (`autoscrims/ABtest.py`).

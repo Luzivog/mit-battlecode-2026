@@ -205,3 +205,7 @@ gradle-app.setting
 .env
 /match_results/
 src/awubot/nul
+###### LOCAL SETUP ######
+.venv/
+__pycache__/
+*.pyc

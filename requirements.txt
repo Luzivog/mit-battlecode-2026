@@ -1,0 +1,6 @@
+jinja2
+watchdog
+python-dotenv
+rich
+requests
+psutil

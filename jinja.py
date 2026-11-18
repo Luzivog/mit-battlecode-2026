@@ -133,8 +133,17 @@ def make_env():
 
 
 ENV = make_env()
-ALLOWED_ROOT = Path("src/awubot").resolve()
+# Bot package whose templates get compiled. Default: the dev bot. src/awubot is the frozen baseline.
+DEFAULT_PACKAGE = "challenger"
+FROZEN_PACKAGES = {"awubot"}
+ALLOWED_ROOT = Path("src", DEFAULT_PACKAGE).resolve()
 TEMPLATES_DIR = (ALLOWED_ROOT / "templates").resolve()
+
+
+def set_package(name: str):
+    global ALLOWED_ROOT, TEMPLATES_DIR
+    ALLOWED_ROOT = Path("src", name).resolve()
+    TEMPLATES_DIR = (ALLOWED_ROOT / "templates").resolve()
 GLOBAL_EXPORTS = set()
 GLOBAL_EXPORTS_READY = False
 GLOBAL_TEMPLATE_NAMES = None
@@ -319,7 +328,17 @@ def main():
                         help="Enable debug rendering")
     parser.add_argument("--include-maptracker", action="store_true",
                         help="Include MapTracker.java.jinja2 in compilation")
+    parser.add_argument("--package", default=DEFAULT_PACKAGE,
+                        help="Bot package under src/ to compile (default: %(default)s)")
+    parser.add_argument("--allow-frozen", action="store_true",
+                        help="Allow compiling a frozen baseline package (e.g. awubot)")
     args = parser.parse_args()
+
+    if args.package in FROZEN_PACKAGES and not args.allow_frozen:
+        sys.exit(f"refusing to regenerate frozen package '{args.package}' (pass --allow-frozen)")
+    if not Path("src", args.package).is_dir():
+        sys.exit(f"no such package: src/{args.package}")
+    set_package(args.package)
 
     # Always do a full rebuild first
     compile_all(args.debug, args.include_maptracker)

@@ -58,9 +58,11 @@ it (appended to `pieces`).
 
 The follower (`runs.follow`, behind `tools/run` and `tools/compute wait RUN`) polls every 30 s: fetches new
 `done/` tars over one tar stream, reads the pieces' states, and when every task is done writes `closed` and cancels
-pieces that never started. When no piece is left and tasks remain: a piece that ended with a code other than 0 or 75
-stops the run (its log shown: it would fail again); otherwise a replacement round is submitted, once unclaimed tasks
-exist or the dead claims are stale, at most 3 rounds (`mkdir replace.K` lets one follower submit each).
+pieces that never started. When no piece is left and tasks remain: a held piece stops the follower with exit 3, the
+run left open (a hold is reported, never routed around); a piece that ended with a code other than 0 or 75 stops the
+run (its log shown: it would fail again); otherwise a replacement round is submitted, once unclaimed tasks exist or
+the dead claims are stale, at most 3 rounds (`mkdir replace.K` lets one follower submit each). A run no piece could
+be submitted for is closed at once.
 
 ## The games interface (track E)
 
@@ -101,7 +103,10 @@ tools/compute wait RUN --json      # in the background; exit 0 when every task e
   login a call, no kept connection. Reads go through a GPU-cluster login node. Submits and removals need a Kerberos
   ticket there: `kerberos_login` runs kinit with Bitwarden's password (item "Imperial College"), never twice with a
   password the server refused (its sha256 in `~/battlecode26-data/kinit-refused`; the previous project's record is
-  read too), never an empty one. `request_cpus = 1` takes the machine's one static slot, so every core; requirements
+  read too), never an empty one. ash04 timed out during ssh's banner exchange at times (18 Nov): a login to it that
+  failed before connecting is tried again (3 tries, 10 s apart); one that may have run its command never is. A
+  condor_submit whose answer was lost is reconciled with the queue (read through a login node): a job Condor holds
+  gets its backend-id, any other folder is removed. `request_cpus = 1` takes the machine's one static slot, so every core; requirements
   are our releases (Ubuntu 18.04 to 26.04), the task's CPUs and memory; rank by the tasks the machine holds, the
   machine of the last start last. No file transfer: everything is on `/vol/bitbucket`. `--time` becomes
   `periodic_remove`. An eviction's SIGTERM leaves no exit file, and Condor runs the job again. The one hold Condor
@@ -159,6 +164,7 @@ three rounds at most. These are yours:
 | Condor | `run-1118-205557-957e` (gallifrey; a second piece on hedwig found every task claimed and ended) | the same 48 games | all 48 equal to local |
 | cpucluster1 | `run-1118-211244-d5da` | the same 48 games | refused again (the controller's I/O error); closed |
 | both | `condor-1118-205433-e3d8` (suria), `slurm-1118-205442-8a4b` (dove01) | `tools/fixtures/launchcost.sh` | below |
+| Condor | `run-1118-211953-c86f` (gallifrey) | `tools/run -- CMD`: one task on a whole machine, exit 3 | JOB_CPUS 80, its output and exit 3 back |
 
 Launch cost (`launchcost.sh`): clankerland `/bin/true` 0.2 ms, `java -version` 14 ms; suria (lab, i9-13900K, auditd
 and acct active) 1.5 ms and 89 ms; dove01 (GPU-cluster VM, auditd and acct active) 0.9 ms and 60 ms.

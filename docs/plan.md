@@ -59,7 +59,7 @@ percentage points of win rate against awubot, under official conditions, both se
    - `points` is new: the 11 mirror points maps (DS§1.1) plus the points- and cooperation-prone tournament maps
      (groveisbeingdesecrated, t_minus_five_minutes, fullofsecrets, rose, clockwisdom; T3§6).
    - Always add `5t4rv4t10n_1337` explicitly (T4§3).
-5. **Read the mechanism, not just the totals.** Every package names its diagnostic metric (§3). If the metric does
+5. **Read the mechanism, not just the totals.** Every package names its diagnostic metric (§4). If the metric does
    not move, the result is noise whatever the totals say.
    - Read the flipped pairs. A pair counts as flipped only if it is outside W0.1's background rate.
    - Tools, all under `~/battlecode26-data/theory/`:
@@ -72,7 +72,7 @@ percentage points of win rate against awubot, under official conditions, both se
 
      Report deaths split by cause: combat, trap, collision, cat, formation (planned), disintegration, Error (DS§8
      item 8).
-6. **Kill criteria** are per package (§3). A package that ends on H0 is recorded in a closed-directions log with its
+6. **Kill criteria** are per package (§4). A package that ends on H0 is recorded in a closed-directions log with its
    diagnostic (lessons§9). A lane closes after 3 consecutive H0s.
 7. **Gauntlet.** Before merge, play every sparring bot paired against awubot's own score on the same cells, OBG and
    GST first. No significant drop.

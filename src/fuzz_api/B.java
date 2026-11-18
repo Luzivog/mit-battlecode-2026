@@ -4,7 +4,7 @@ import battlecode.common.*;
 
 // Behaviours: a king that builds rats and stays put, rats with roles (gather, trap field, carrier walk to the
 // enemy trap field, thrower, king assembly, wanderer). Shared array: [0..1] home+1, [2] assemble flag,
-// [3..4] rally+1, [5] kings formed, [8..63] fuzz writes.
+// [3..4] rally+1, [5] kings formed, [6..7] trap field+1, [8..63] fuzz writes.
 final class B {
     static RobotController rc;
     static int W, H, id;
@@ -109,7 +109,6 @@ final class B {
     // ---------------------------------------------------------------- sensing
 
     static MapLocation nearestCheese, myKing, cat, enemy, ally, dirt, ownTrap, ownCatTrap;
-    static int infoRound = -1;
 
     static void scan() throws GameActionException {
         MapLocation me = rc.getLocation();
@@ -216,6 +215,7 @@ final class B {
                 MapLocation l = me.translate(R.next(5) - 2, R.next(5) - 2);
                 if (rc.canBuildRat(l)) {
                     rc.buildRat(l);
+                    T.r(T.buildRat, T.OK);
                     break;
                 }
             }
@@ -242,6 +242,7 @@ final class B {
         // tiny maps end early; extra kings disintegrate after a while
         if ((W * H < 500 && !wasRat && round >= 100 + id % 150)
                 || (wasRat && round - kingSince > 60 + id % 100)) {
+            T.r(T.disintegrate, T.OK);
             T.print(rc, "disintegrate");
             rc.disintegrate();
         }
@@ -313,7 +314,6 @@ final class B {
             case ASSEMBLE: assemble(); break;
             default: wander();
         }
-        if (!wasRat) return;
     }
 
     static void gather() throws GameActionException {
@@ -323,12 +323,14 @@ final class B {
                 face(myKing);
                 if (rc.canTransferCheese(myKing, raw)) {
                     rc.transferCheese(myKing, raw);
+                    T.r(T.transferCheese, T.OK);
                     return;
                 }
                 for (Direction d : P.D8) {
                     MapLocation t = myKing.add(d);
                     if (rc.canTransferCheese(t, raw)) {
                         rc.transferCheese(t, raw);
+                        T.r(T.transferCheese, T.OK);
                         return;
                     }
                 }
@@ -366,6 +368,7 @@ final class B {
                     MapLocation t = field.translate(dx, dy);
                     if (rc.canPlaceRatTrap(t)) {
                         rc.placeRatTrap(t);
+                        T.r(T.placeRatTrap, T.OK);
                         return;
                     }
                 }
@@ -382,6 +385,7 @@ final class B {
                 MapLocation t = me.add(d);
                 if (rc.canPlaceCatTrap(t)) {
                     rc.placeCatTrap(t);
+                    T.r(T.placeCatTrap, T.OK);
                     return;
                 }
             }
@@ -390,6 +394,7 @@ final class B {
         }
         if (ownTrap != null && ownTrap.distanceSquaredTo(field) > 2 && rc.canRemoveRatTrap(ownTrap)) {
             rc.removeRatTrap(ownTrap);
+            T.r(T.removeRatTrap, T.OK);
         }
         if (ownCatTrap != null && R.next(3) == 0 && rc.canRemoveCatTrap(ownCatTrap)) rc.removeCatTrap(ownCatTrap);
         dirtWork();
@@ -399,12 +404,14 @@ final class B {
     static void dirtWork() throws GameActionException {
         if (dirt != null && rc.getGlobalCheese() > 300 && rc.canRemoveDirt(dirt)) {
             rc.removeDirt(dirt);
+            T.r(T.removeDirt, T.OK);
             return;
         }
         if (rc.getDirt() > 0 && R.next(3) == 0) {
             MapLocation t = rc.adjacentLocation(rc.getDirection());
             if (rc.canPlaceDirt(t)) {
                 rc.placeDirt(t);
+                T.r(T.placeDirt, T.OK);
                 return;
             }
         }
@@ -422,6 +429,7 @@ final class B {
                 face(enemyHome);
                 if (rc.canThrowRat()) {
                     rc.throwRat();
+                    T.r(T.throwRat, T.OK);
                     return;
                 }
             }
@@ -435,6 +443,7 @@ final class B {
                 RobotInfo ri = rc.senseRobotAtLocation(t);
                 if (ri != null && ri.team == rc.getTeam()) {
                     rc.carryRat(t);
+                    T.r(T.carryRat, T.OK);
                     return;
                 }
             }
@@ -465,6 +474,7 @@ final class B {
                 Direction d = P.dir();
                 P.cur = T.dropRat;
                 rc.dropRat(d);
+                T.r(T.dropRat, T.OK);
                 return;
             }
             MapLocation tgt = k == 1 && cat != null ? cat : k == 2 && enemy != null ? enemy
@@ -478,6 +488,7 @@ final class B {
             MapLocation t = me.add(d);
             if (rc.canCarryRat(t)) {
                 rc.carryRat(t);
+                T.r(T.carryRat, T.OK);
                 return;
             }
         }

@@ -6,6 +6,7 @@ import battlecode.common.*;
 // goes to squeaks, the shared array and indicator strings. Tally lines "FZT ..." on stdout.
 public class RobotPlayer {
     static RobotController rc;
+    // TRACE prints the hash before every probe: diff two runs' logs to find where they diverge
     static final boolean TRACE = false;
 
     public static void run(RobotController r) throws GameActionException {
@@ -59,6 +60,7 @@ public class RobotPlayer {
             P.call(P.pick());
         }
         if (!king && B.wasRat && R.mixOf(B.id, 3) % 60 == 0 && rc.getRoundNum() > 150 + B.id % 600) {
+            T.r(T.disintegrate, T.OK);
             T.print(rc, "disintegrate");
             rc.disintegrate();
         }

@@ -1,0 +1,29 @@
+==partitions
+PartitionName=amd48 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=YES QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=30-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=auklet[01-02] PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=96 TotalNodes=2 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=4000 MaxMemPerCPU=32000 TRES=cpu=96,mem=470000M,node=2,billing=96
+PartitionName=amd96 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=30-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=auklet[03-04,07-08] PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=384 TotalNodes=4 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=4000 MaxMemPerCPU=32000 TRES=cpu=384,mem=2020080M,node=4,billing=384
+PartitionName=amd24 AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=multigpu DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=30-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=auklet10 PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=24 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=4000 MaxMemPerCPU=32000 TRES=cpu=24,mem=127000M,node=1,billing=24
+==nodes
+auklet01|amd48*|idle|0/48/0/48|220000|0|(null)|(null)|2
+auklet02|amd48*|idle|0/48/0/48|250000|0|(null)|(null)|2
+auklet03|amd96|mixed|84/12/0/96|500040|129024|(null)|(null)|2
+auklet04|amd96|allocated|96/0/0/96|500040|147456|(null)|(null)|2
+auklet07|amd96|mixed|58/38/0/96|510000|112640|(null)|(null)|2
+auklet08|amd96|mixed|14/82/0/96|510000|21504|(null)|(null)|2
+auklet10|amd24|idle|0/24/0/24|127000|0|(null)|(null)|2
+==qos
+QOS=normal(1)
+    MaxTRESPN=
+      user(10000)
+        MaxJobsPU=N(0) MaxJobsAccruePU=N(0) MaxSubmitJobsPU=N(0)
+        MaxTRESPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)
+        MaxTRESRunMinsPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)
+QOS=multigpu(3)
+    MaxTRESPN=cpu=32,mem=192000
+      user(10000)
+        MaxJobsPU=N(0) MaxJobsAccruePU=N(0) MaxSubmitJobsPU=200(0)
+        MaxTRESPU=cpu=288(0),mem=512000(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=2(0),gres/gpumem=N(0),gres/gpuutil=N(0)
+        MaxTRESRunMinsPU=cpu=N(0),mem=N(0),energy=N(0),node=N(0),billing=N(0),fs/disk=N(0),vmem=N(0),pages=N(0),gres/gpu=N(0),gres/gpumem=N(0),gres/gpuutil=N(0)
+==jobs
+==statesave
+cloud-vm-45-10 cloud-vm-45-10 /var/spool/slurm/shared 0
+==end

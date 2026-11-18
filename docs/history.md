@@ -94,7 +94,7 @@ Signals for us:
 ## 5. Inspecting upstream later
 
 ```bash
-git fetch champion                                   # read-only; all ~30 branches land as champion/*
+git fetch origin '+refs/champion/*:refs/remotes/champion/*'   # the champion's branches, archived in our repo, land as champion/*
 git branch -r | grep champion/
 git log --oneline champion/final..champion/stable    # commits not in final
 git cherry -v champion/final champion/<branch>       # '-' = patch-equivalent already in final

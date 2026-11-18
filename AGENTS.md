@@ -17,7 +17,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 - `maps/`: the official, tournament and team-made maps (all valid). `test_maps/`: scenario maps.
 - `jinja.py`: the code generator. `tools/`, `autoscrims/`, `scripts/`: tooling, each tool with `--help`.
 - `references/postmortems/`: every public Battlecode postmortem, as text (`INDEX.md`).
-- Remotes: `origin` (ours, private), `champion` (the champion's repo, read-only, ~30 experiment branches).
+- Remote: `origin` only (ours, private). The champion's ~30 experiment branches are archived in it under
+  `refs/champion/*`: `git fetch origin '+refs/champion/*:refs/remotes/champion/*'` makes them `champion/<branch>`.
 - `~/battlecode26-data/`: data, caches and scratch. Never `/tmp` for anything worth keeping.
 
 ## Read before you change
@@ -49,7 +50,7 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 7. A number in the bot comes from the rules or a measurement. Find the root cause before changing anything; fix by
    deleting first, simplifying second, adding last. No fallbacks.
 8. Work in your own worktree on your own branch, commit small, push your branch to `origin`. Never push `main`,
-   never open a PR, never push to `champion`. The integrator merges.
+   never open a PR. The integrator merges.
 9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools (`.claude/skills/compute/`).
    This machine (clankerland, 16 cores) is shared: never stop or change anything you didn't start.
 10. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.

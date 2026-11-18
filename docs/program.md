@@ -20,8 +20,7 @@ against the other top public bots (`src/opp_*`, `docs/opponents.md`). Progress: 
 ## How work flows
 
 - Every agent works in its own worktree on its own branch, commits small, pushes its branch to `origin` and names
-  it in its report. Only the integrator (the orchestrating session) merges into `main`. Nobody opens a PR or pushes
-  to `champion`.
+  it in its report. Only the integrator (the orchestrating session) merges into `main`. Nobody opens a PR.
 - A bot change is derived from the rules or a measurement, built in `src/challenger`, and judged by `tools/games`
   (docs/evaluation.md): challenger against awubot, paired seats, on the tuning pool. Games are deterministic, so a
   result that changed is the change's doing: read the flipped games, not just the totals.

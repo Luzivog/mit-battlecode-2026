@@ -19,6 +19,7 @@ final class Natives {
     static final class Impl {
         final String cfun;
         final List<String> deps;
+        String cut;   // a method cut from the program: reaching it at run time is fatal
         Impl(String cfun, List<String> deps) { this.cfun = cfun; this.deps = deps; }
     }
 
@@ -26,6 +27,7 @@ final class Natives {
     final List<String[]> roots = new ArrayList<>();
     final List<String[]> substitutions = new ArrayList<>();
     final List<String[]> patches = new ArrayList<>();
+    final List<String> completes = new ArrayList<>();
     final List<String> perRobotRoots = new ArrayList<>();
     final Pool pool;
 
@@ -41,11 +43,29 @@ final class Natives {
             if (t[0].equals("subst")) { substitutions.add(new String[]{t[1], t[2]}); continue; }
             if (t[0].equals("patch")) { patches.add(new String[]{t[1], t[2]}); continue; }
             if (t[0].equals("robotroot")) { perRobotRoots.add(t[1]); continue; }
+            if (t[0].equals("cutclass")) { cutClasses.add(t[1]); continue; }
+            if (t[0].equals("complete")) { completes.add(t[1]); continue; }
+            if (t[0].equals("cut")) {
+                Impl impl = new Impl("cut_" + Names.mangle(t[1] + "." + t[2]) + "_" + Names.descHash(t[3]), List.of());
+                impl.cut = t[1] + "." + t[2] + t[3];
+                sys.put(t[1] + "." + t[2] + t[3], impl);
+                continue;
+            }
             if (t.length < 5) throw new TranslateException("natives.txt:" + n + ": " + line);
             Impl impl = new Impl(t[4], Arrays.asList(t).subList(5, t.length));
             String key = t[1] + "." + t[2] + t[3];
             (t[0].equals("bot") ? bot : sys).put(key, impl);
         }
+    }
+
+    final List<Mth> cutsReached = new ArrayList<>();
+    /** Classes never instantiated: a `new` of one is fatal at run time. */
+    final Set<String> cutClasses = new HashSet<>();
+
+    /** A cut class or a subclass of one. */
+    boolean isCut(Cls c) {
+        for (Cls s = c; s != null; s = s.superCls()) if (cutClasses.contains(s.name)) return true;
+        return false;
     }
 
     Impl lookup(Mth m) {

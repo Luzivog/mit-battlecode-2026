@@ -165,3 +165,35 @@ sys jdk/internal/misc/Unsafe fullFence ()V rt_noop_self
 sys java/lang/Class getGenericSignature0 ()Ljava/lang/String; rt_Class_getGenericSignature0
 sys java/lang/Class lookup0 (Ljava/lang/String;)Ljava/lang/Class; rt_Class_lookup0
 sys java/lang/Class getInterfaces0 ()[Ljava/lang/Class; rt_Class_getInterfaces0 new:java/lang/Class
+subst battlecode/instrumenter/inject/System bcx/subst/InjectSystem
+patch java/lang/String bcx/subst/String_p
+patch java/lang/Throwable bcx/subst/Throwable_p
+patch java/nio/charset/Charset bcx/subst/Charset_p
+
+# ---- cut: paths the program cannot take (reaching one at run time is fatal, never silent)
+cut java/util/concurrent/ForkJoinTask invoke ()Ljava/lang/Object;
+cut java/lang/Character codePointOf (Ljava/lang/String;)I
+cut java/util/Formatter format (Ljava/util/Locale;Ljava/lang/String;[Ljava/lang/Object;)Ljava/util/Formatter;
+
+# ---- references: the GC keeps every referent (soft and weak references behave as strong ones)
+sys java/lang/ref/Reference get0 ()Ljava/lang/Object; rt_Reference_get0
+sys java/lang/ref/Reference refersTo0 (Ljava/lang/Object;)Z rt_Reference_refersTo0
+sys java/lang/ref/PhantomReference refersTo0 (Ljava/lang/Object;)Z rt_Reference_refersTo0
+sys java/lang/ref/Reference clear0 ()V rt_Reference_clear0
+sys java/lang/ref/Reference hasReferencePendingList ()Z rt_false
+patch jdk/internal/util/random/RandomSupport bcx/subst/RandomSupport_p
+patch battlecode/server/ErrorReporter bcx/subst/ErrorReporter_p
+patch java/util/DualPivotQuicksort bcx/subst/DualPivotQuicksort_p
+patch java/util/Tripwire bcx/subst/Tripwire_p
+sys jdk/internal/misc/ScopedMemoryAccess registerNatives ()V rt_noop
+sys jdk/internal/misc/Unsafe copyMemory0 (Ljava/lang/Object;JLjava/lang/Object;JJ)V rt_Unsafe_copyMemory0
+subst java/lang/ThreadLocal bcx/subst/JThreadLocal
+patch java/nio/charset/StandardCharsets bcx/subst/StandardCharsets_p
+subst java/util/concurrent/ConcurrentHashMap bcx/subst/JConcurrentHashMap
+patch java/util/stream/Tripwire bcx/subst/StreamTripwire_p
+cutclass java/util/DualPivotQuicksort$Sorter
+cutclass java/util/DualPivotQuicksort$Merger
+cutclass java/util/DualPivotQuicksort$RunMerger
+cutclass java/util/concurrent/ForkJoinTask
+complete bcx/subst/LangAccess
+patch jdk/internal/access/SharedSecrets bcx/subst/SharedSecrets_p

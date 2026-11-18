@@ -35,6 +35,7 @@ public final class Main {
         Natives natives = new Natives(pool, nat);
         for (String[] s : natives.substitutions) pool.substitute(s[0], s[1]);
         for (String[] s : natives.patches) pool.patch(s[0], s[1]);
+        for (String s : natives.completes) pool.complete(s);
         for (String[] t : teams) pool.addTeam(t[0], t[1]);
         Rta rta = new Rta(pool, natives);
         Glue.roots(rta, pool);

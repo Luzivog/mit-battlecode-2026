@@ -276,6 +276,11 @@ final class Gen implements Opcodes {
             case INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC, INVOKEINTERFACE -> E.invoke(this, (MethodInsnNode) in);
             case NEW -> {
                 Cls c = pool.ref(mod, ((TypeInsnNode) in).desc);
+                if (E.natives.isCut(c)) {
+                    line("rt_fatal(\"cut class instantiated: %s\", " + Names.cstr(c.name) + ");");
+                    vars.add("Obj* " + push('a'));
+                    break;
+                }
                 initChk(c);
                 line(push('a') + " = rt_new(&" + E.klass(c) + ");");
             }

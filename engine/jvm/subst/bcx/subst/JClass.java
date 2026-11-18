@@ -150,6 +150,7 @@ public final class JClass implements java.io.Serializable, java.lang.reflect.Typ
     public boolean isHidden() { return false; }
     public boolean isSealed() { return false; }
     public ClassLoader getClassLoader() { return null; }
+    ClassLoader getClassLoader0() { return null; }
     public String descriptorString() {
         if (isPrimitive()) {
             switch (getName()) {

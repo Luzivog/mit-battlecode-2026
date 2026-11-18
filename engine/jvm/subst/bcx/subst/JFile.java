@@ -3,6 +3,10 @@ package bcx.subst;
 /** java.io.File for translated code (renamed): a path string; existence asked natively. */
 public class JFile implements java.io.Serializable, Comparable<JFile> {
     private final String path;
+    public static final char separatorChar = '/';
+    public static final String separator = "/";
+    public static final char pathSeparatorChar = ':';
+    public static final String pathSeparator = ":";
 
     public JFile(String pathname) {
         if (pathname == null) throw new NullPointerException();

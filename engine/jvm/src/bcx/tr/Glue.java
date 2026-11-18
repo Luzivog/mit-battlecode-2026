@@ -72,6 +72,13 @@ final class Glue {
         if (eiie.initIndex >= 0) b.append("  if (g_init0[").append(eiie.initIndex).append("] != 2) { ").append(e.initFn(eiie)).append("(); if (g_exc) return; }\n");
         b.append("  Obj* w = rt_new(&").append(e.klass(eiie)).append(");\n  ").append(Emit.fn(eiie.own("<init>", "(Ljava/lang/Throwable;)V")))
                 .append("(w, ex);\n  if (!g_exc) g_exc = w;\n}\n");
+        // the classes the VM initializes before any code runs (instances made natively, no `new`)
+        b.append("void rt_init_core() {\n");
+        for (String cn : new String[]{"java/lang/Object", "java/lang/String", "java/lang/Class"}) {
+            Cls c = pool.find(pool.sys, cn);
+            if (c != null && c.initIndex >= 0) b.append("  ").append(e.initFn(c)).append("();\n");
+        }
+        b.append("}\n");
         // ObjectMethods: which classes hash by identity (Object's, Enum's or Character's hashCode)
         Cls obj = pool.find(pool.sys, "java/lang/Object");
         Mth oh = obj.own("hashCode", "()I"), ots = obj.own("toString", "()Ljava/lang/String;");
@@ -96,6 +103,9 @@ final class Glue {
             b.append(" }\n");
         }
         b.append("  return -1;\n}\n");
+        // methods cut from the program
+        for (Mth m : e.natives.cutsReached)
+            b.append(Layout.proto(m, m.nativeImpl)).append(" { rt_fatal(\"cut method reached: %s\", ").append(Names.cstr(m.toString())).append("); }\n");
         // entry points (--entry), in order
         b.append("extern void* const g_entry_fns[] = {");
         for (Mth m : e.entries) b.append(" (void*)&").append(Emit.fn(m)).append(',');

@@ -98,15 +98,19 @@ final class Emit implements Opcodes {
                 call = fn(r) + "(" + argl + ")";
             }
             case INVOKESPECIAL -> {
+                if (r.name.equals("<init>") && natives.isCut(owner) && !g.cls.isSubclassOf(owner)) {
+                    g.line("rt_fatal(\"cut class constructed: %s\", " + Names.cstr(owner.name) + ");");
+                    return;
+                }
                 Mth t = rta.special(g.cls, owner, r);
                 if (!mi.name.equals("<init>")) g.nullchk(args.get(0));
                 call = fn(t) + "(" + argl + ")";
             }
             default -> {
                 g.nullchk(args.get(0));
-                Mth d = r.isPrivate() ? r : layout.devirtualize(owner, r);
-                if (d != null) call = fn(d) + "(" + argl + ")";
-                else if (!layout.anyInstance(owner)) call = "rt_no_receiver<" + Layout.ctype(rt) + ">(" + str(r.toString()) + ")";
+                Mth d = !layout.anyInstance(owner) ? null : r.isPrivate() ? r : layout.devirtualize(owner, r);
+                if (!layout.anyInstance(owner)) call = "rt_no_receiver<" + Layout.ctype(rt) + ">(" + str(r.toString()) + ")";
+                else if (d != null) call = fn(d) + "(" + argl + ")";
                 else if (r.owner.isInterface()) {
                     int k = layout.itableIndex(r.owner, r);
                     call = "((" + Layout.fnType(r) + ")(rt_itable(" + args.get(0) + "->klass, &" + klass(r.owner) + ")[" + k + "]))(" + argl + ")";

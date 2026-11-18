@@ -48,6 +48,7 @@ public final class Rta implements Opcodes {
         if (c.isInterface() || c.isAbstract()) return;
         c.instantiated = true;
         instantiated.add(c);
+        if (c.name.equals(System.getenv("BCX_WHY"))) System.err.println("WHY " + c + " instantiated in " + current + chain(current));
         List<Cls> sups = new ArrayList<>();
         for (Cls s = c; s != null; s = s.superCls()) sups.add(s);
         sups.addAll(c.allInterfaces());
@@ -79,6 +80,11 @@ public final class Rta implements Opcodes {
         if (!c.isInterface()) for (Cls i : c.allInterfaces()) if (hasDefaults(i)) init(i);
         Mth cl = c.own("<clinit>", "()V");
         if (cl != null) reach(cl);
+        // Class.getEnumConstantsShared calls values() (EnumMap, EnumSet, Enum.valueOf)
+        if ((c.node.access & ACC_ENUM) != 0 && "java/lang/Enum".equals(c.node.superName)) {
+            Mth v = c.own("values", "()[L" + c.name + ";");
+            if (v != null) reach(v);
+        }
     }
 
     static boolean hasDefaults(Cls i) {
@@ -103,6 +109,7 @@ public final class Rta implements Opcodes {
         if (ni == null && m.isNative()) { problems.add("native without implementation: " + m + chain(m)); return; }
         if (ni != null) {
             m.nativeImpl = ni.cfun;
+            if (ni.cut != null) natives.cutsReached.add(m);
             for (String dep : ni.deps) natives.reachDep(this, m.owner.mod, dep);
             return;
         }
@@ -114,7 +121,11 @@ public final class Rta implements Opcodes {
             switch (in.getType()) {
                 case AbstractInsnNode.TYPE_INSN -> {
                     TypeInsnNode t = (TypeInsnNode) in;
-                    if (in.getOpcode() == NEW) { Cls c = pool.ref(mod, t.desc); instantiate(c); init(c); }
+                    if (in.getOpcode() == NEW) {
+                        Cls c = pool.ref(mod, t.desc);
+                        if (natives.isCut(c)) use(c);
+                        else { instantiate(c); init(c); }
+                    }
                     else typeRef(mod, t.desc.startsWith("[") ? t.desc : "L" + t.desc + ";", in.getOpcode() == ANEWARRAY);
                 }
                 case AbstractInsnNode.MULTIANEWARRAY_INSN -> typeRef(mod, ((MultiANewArrayInsnNode) in).desc, false);
@@ -190,12 +201,14 @@ public final class Rta implements Opcodes {
         switch (mi.getOpcode()) {
             case INVOKESTATIC -> { init(r.owner); reach(r); }
             case INVOKESPECIAL -> {
+                if (r.name.equals("<init>") && natives.isCut(owner) && !from.owner.isSubclassOf(owner)) return;
                 Mth t = special(from.owner, owner, r);
                 if (t == null) throw new TranslateException("invokespecial selects nothing: " + r + " in " + from);
                 reach(t);
             }
             default -> {
-                if (r.isPrivate() || r.isStatic()) reach(r);
+                // a private method is still only reached through an instance of its class
+                if (r.isStatic()) reach(r);
                 else virtualCall(r);
             }
         }

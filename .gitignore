@@ -211,3 +211,6 @@ __pycache__/
 *.pyc
 submission.zip
 runs/
+
+# native engine build outputs
+engine/build/

@@ -128,12 +128,13 @@ public final class Pool {
             } else {
                 String src = substitutes.getOrDefault(name, name);
                 b = resource(src);
-                if (!src.equals(name)) b = Rename.rename(b, renames(src, name));
+                if (!src.equals(name) || name.startsWith("bcx/subst/")) b = Rename.rename(b, renames(src, name));
             }
             ClassNode cn = new ClassNode();
             new ClassReader(b).accept(cn, 0);
             if (!cn.name.equals(name)) throw new IllegalStateException("class " + name + " defines " + cn.name);
             if (!m.perRobot || ALWAYS_REDEFINE.contains(name)) applyPatches(cn);
+            if (completes.contains(name)) complete(cn);
             return cn;
         } catch (RuntimeException e) {
             throw new TranslateException("loading " + m + ":" + name + ": " + e, e);
@@ -167,7 +168,52 @@ public final class Pool {
         Map<String, String> m = new HashMap<>();
         for (Map.Entry<String, String> e : substitutes.entrySet()) m.put(e.getValue(), e.getKey());
         m.put(from, to);
+        // a patch's nested classes stand for the target's (only their names are used)
+        for (String n : List.of("Sorter", "Merger", "Node")) m.put(from + "$" + n, to + "$" + n);
         return m;
+    }
+
+    /** Abstract helper classes made concrete: missing interface methods throw, bcxNew() constructs one. */
+    private final Set<String> completes = new HashSet<>();
+    public void complete(String name) { completes.add(name); }
+
+    private void complete(ClassNode cn) throws Exception {
+        cn.access &= ~Opcodes.ACC_ABSTRACT;
+        Set<String> have = new HashSet<>();
+        for (MethodNode m : cn.methods) if ((m.access & Opcodes.ACC_ABSTRACT) == 0) have.add(m.name + m.desc);
+        cn.methods.removeIf(m -> (m.access & Opcodes.ACC_ABSTRACT) != 0);
+        ArrayDeque<String> todo = new ArrayDeque<>(cn.interfaces);
+        Set<String> seen = new HashSet<>();
+        while (!todo.isEmpty()) {
+            String i = todo.poll();
+            if (!seen.add(i)) continue;
+            ClassNode in = new ClassNode();
+            new ClassReader(resource(i)).accept(in, ClassReader.SKIP_CODE);
+            todo.addAll(in.interfaces);
+            for (MethodNode im : in.methods) {
+                if ((im.access & Opcodes.ACC_ABSTRACT) == 0 || !have.add(im.name + im.desc)) continue;
+                MethodNode st = new MethodNode(Opcodes.ACC_PUBLIC, im.name, im.desc, null, null);
+                st.instructions.add(new TypeInsnNode(Opcodes.NEW, "java/lang/UnsupportedOperationException"));
+                st.instructions.add(new InsnNode(Opcodes.DUP));
+                st.instructions.add(new LdcInsnNode("bcx: " + i + "." + im.name + " is not implemented"));
+                st.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "java/lang/UnsupportedOperationException", "<init>", "(Ljava/lang/String;)V", false));
+                st.instructions.add(new InsnNode(Opcodes.ATHROW));
+                st.maxStack = 3;
+                st.maxLocals = (org.objectweb.asm.Type.getArgumentsAndReturnSizes(im.desc) >> 2) + 1;
+                cn.methods.add(st);
+            }
+        }
+        for (MethodNode m : cn.methods) {
+            if (!m.name.equals("bcxNew")) continue;
+            m.instructions.clear();
+            m.tryCatchBlocks.clear();
+            m.instructions.add(new TypeInsnNode(Opcodes.NEW, cn.name));
+            m.instructions.add(new InsnNode(Opcodes.DUP));
+            m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, cn.name, "<init>", "()V", false));
+            m.instructions.add(new InsnNode(Opcodes.ARETURN));
+            m.maxStack = 2;
+            m.maxLocals = 0;
+        }
     }
 
     private static boolean isOrig(List<AnnotationNode> as) {

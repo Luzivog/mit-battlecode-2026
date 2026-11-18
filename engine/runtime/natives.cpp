@@ -361,3 +361,9 @@ jdouble rt_hs_log10(jdouble x) { return bcx_hs_log10(x); }
 jdouble rt_hs_sin(jdouble x) { return bcx_hs_sin(x); }
 jdouble rt_hs_cos(jdouble x) { return bcx_hs_cos(x); }
 jdouble rt_hs_tan(jdouble x) { return bcx_hs_tan(x); }
+
+// ---- java.lang.ref.Reference: referents are ordinary (strong) fields for this GC
+Obj* rt_Reference_get0(Obj* self) { return ((c0_java_lang_ref_Reference*)self)->f_referent; }
+jboolean rt_Reference_refersTo0(Obj* self, Obj* o) { return ((c0_java_lang_ref_Reference*)self)->f_referent == o; }
+void rt_Reference_clear0(Obj* self) { ((c0_java_lang_ref_Reference*)self)->f_referent = nullptr; }
+void rt_Unsafe_copyMemory0(Obj*, Obj* src, jlong so, Obj* dst, jlong d, jlong n) { memmove((char*)dst + d, (char*)src + so, (size_t)n); }

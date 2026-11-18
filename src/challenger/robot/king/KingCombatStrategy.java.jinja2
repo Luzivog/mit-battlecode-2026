@@ -140,11 +140,25 @@ public class KingCombatStrategy extends Strategy {
                 }
             }
         }
-        // A cat threatens the king only through its forward lane (laneCross). Leaving the lane comes first, getting
-        // closer to an exit the king can walk to second, moving away along the lane last. Other cats are ignored.
+        // The king keeps away from every visible cat. A cat whose forward lane (laneCross) holds the king also
+        // scores leaving that lane first, getting closer to an exit the king can walk to second.
         boolean inLane = false;
         for(int idx = 0; idx < RobotTracker.numCats; idx++) {
             var cat = RobotTracker.sortedCats[idx];
+            switch(myLoc.directionTo(cat.location).ordinal()) {
+                {% for i in range(8) %}
+                case {{i}} -> {
+                    score{{i}}           -= 15;
+                    score{{(i + 6) % 8}} += 5;
+                    score{{(i + 2) % 8}} += 5;
+                    score{{(i + 3) % 8}} += 6;
+                    score{{(i + 4) % 8}} += 6;
+                    score{{(i + 5) % 8}} += 6;
+                }
+                {% endfor %}
+                default -> {
+                }
+            }
             int c = laneCross(myLocX, myLocY, cat);
             if(c == NOT_IN_LANE) continue;
             inLane = true;
@@ -174,7 +188,7 @@ public class KingCombatStrategy extends Strategy {
             }
             {% endfor %}
         }
-        if(RobotTracker.numEnemies > 0 || inLane) {
+        {
             int best = -1;
             var move = Direction.CENTER;
             {% for i in range(8) %}

@@ -362,11 +362,79 @@ public class KingCombatStrategy extends Strategy {
                 }
             }
         }
-        // A cat threatens the king only through its forward lane (laneCross). Leaving the lane comes first, getting
-        // closer to an exit the king can walk to second, moving away along the lane last. Other cats are ignored.
+        // The king keeps away from every visible cat. A cat whose forward lane (laneCross) holds the king also
+        // scores leaving that lane first, getting closer to an exit the king can walk to second.
         boolean inLane = false;
         for(int idx = 0; idx < RobotTracker.numCats; idx++) {
             var cat = RobotTracker.sortedCats[idx];
+            switch(myLoc.directionTo(cat.location).ordinal()) {
+                case 0 -> {
+                    score0           -= 15;
+                    score6 += 5;
+                    score2 += 5;
+                    score3 += 6;
+                    score4 += 6;
+                    score5 += 6;
+                }
+                case 1 -> {
+                    score1           -= 15;
+                    score7 += 5;
+                    score3 += 5;
+                    score4 += 6;
+                    score5 += 6;
+                    score6 += 6;
+                }
+                case 2 -> {
+                    score2           -= 15;
+                    score0 += 5;
+                    score4 += 5;
+                    score5 += 6;
+                    score6 += 6;
+                    score7 += 6;
+                }
+                case 3 -> {
+                    score3           -= 15;
+                    score1 += 5;
+                    score5 += 5;
+                    score6 += 6;
+                    score7 += 6;
+                    score0 += 6;
+                }
+                case 4 -> {
+                    score4           -= 15;
+                    score2 += 5;
+                    score6 += 5;
+                    score7 += 6;
+                    score0 += 6;
+                    score1 += 6;
+                }
+                case 5 -> {
+                    score5           -= 15;
+                    score3 += 5;
+                    score7 += 5;
+                    score0 += 6;
+                    score1 += 6;
+                    score2 += 6;
+                }
+                case 6 -> {
+                    score6           -= 15;
+                    score4 += 5;
+                    score0 += 5;
+                    score1 += 6;
+                    score2 += 6;
+                    score3 += 6;
+                }
+                case 7 -> {
+                    score7           -= 15;
+                    score5 += 5;
+                    score1 += 5;
+                    score2 += 6;
+                    score3 += 6;
+                    score4 += 6;
+                }
+                default -> {
+                }
+            }
             int c = laneCross(myLocX, myLocY, cat);
             if(c == NOT_IN_LANE) continue;
             inLane = true;
@@ -462,7 +530,7 @@ public class KingCombatStrategy extends Strategy {
                 score7 += -fx + fy;
             }
         }
-        if(RobotTracker.numEnemies > 0 || inLane) {
+        {
             int best = -1;
             var move = Direction.CENTER;
             if(score0 > best) {

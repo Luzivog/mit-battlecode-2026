@@ -59,7 +59,7 @@ A result is one JSON object a line, in spec order:
 | `winner_pkg` | the winner's package |
 | `win_type` | `KILL_ALL_RAT_KINGS`, `MORE_POINTS`, `MORE_ROBOTS_ALIVE`, `MORE_CHEESE`, `WON_BY_DUBIOUS_REASONS`, `RESIGNATION` |
 | `round` | the last round played |
-| `hash` | hex SHA-256 over the per-round state hashes, in order |
+| `hash` | 16 hex digits: `BcxStateHash.chain()` fed each round's number then its state hash, in round order, then `finish()` (the 64-bit mixer of `BcxStateHash`, see its comment); the per-round hashes are `hashes.txt` |
 | `backend` | `native` or `java` |
 | `cpu_s` | the process's CPU seconds for the game |
 | `error` | present only when the game could not be played; then no outcome fields |

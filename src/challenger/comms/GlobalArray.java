@@ -424,8 +424,6 @@ public class GlobalArray {
         }
         if (n < slots) {
             writeSharedArray(N - 1 - n, 1023);
-        } else {
-            assert(false);
         }
     }
 

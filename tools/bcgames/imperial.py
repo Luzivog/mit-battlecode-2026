@@ -46,6 +46,8 @@ class ImperialRunner:
         threading.Thread(target=self._flusher, daemon=True).start()
 
     def cached(self, job: play.Job) -> dict | None:
+        if job.replay:  # a replay is asked for: play the game
+            return None
         with self.cache_lock:
             hit = self.cache.get(job.key)
         return play.finish(job, hit, True) if hit else None

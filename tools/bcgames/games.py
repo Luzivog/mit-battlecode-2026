@@ -930,7 +930,7 @@ def main(argv=None) -> int:
     sp.add_argument("--main", default=",".join(MAIN_OPPONENTS), help="opponents tested sequentially on --main-pool")
     sp.add_argument("--main-pool", default="goal")
     sp.add_argument("--rest-pool", default="quick")
-    sp.add_argument("--rest-passes", type=int, default=1, help="passes over --rest-pool for the other opponents")
+    sp.add_argument("--rest-passes", type=int, default=2, help="passes over --rest-pool for the other opponents")
     common(sp, 0.10)
 
     sp = sub.add_parser("wait", help="block until a run stops, then print its report")

@@ -64,22 +64,22 @@ the bots are compiled then: later edits don't reach a running test.
 ## Reading a report
 
 ```
-run 1118-222443-ab-59bc [done]  challenger vs awubot, gain test against ref challenger@c133834417b0  engine 1.2.6  pool quick  seed base 0
+run 1118-222544-ab-c167 [done]  calib_bc200 vs awubot, gain test, no ref  engine 1.2.6  pool goal  seed base 0
 
-challenger vs awubot: FAIL (H0): challenger is not better than challenger@c133834417b0
-  LLR -3.10 (stop at -2.94 / +2.94; H0 diff (ours - ref) = +0.00, H1 diff (ours - ref) = +0.10)
-  cells 41: challenger better 9, worse 8; diff counts -1..+1: [3, 5, 24, 6, 3]
-  games 46-36  score 0.561 [0.488, 0.634]  Elo +43 [-8, +95]  LOS 89.1%  (95% CI, bootstrap over maps)
-  challenger@c133834417b0 on the same cells: 0.549; diff +0.012 [-0.061, +0.085]
-  points margin per game (ours - theirs, engine scoring): +3.1 [-2.0, +8.2]; in the 12 games that reached round 2000: +1.4
-  win types: lost as A: KILL 12 PTS 4; lost as B: KILL 17 PTS 3; won as A: KILL 21 PTS 4; won as B: KILL 18 PTS 3
-  mean rounds 640; robots killed by their own uncaught exception: challenger 0, awubot 31
-  per map (worst first): map cells won/split/lost score ref
-    TheHeist                       3   0/ 1/ 2  0.17  0.50
+calib_bc200 vs awubot: FAIL (H0): calib_bc200 is not better
+  LLR -5.80 (stop at -2.94 / +2.94; H0 score = 0.50, H1 score = 0.55)
+  cells 285 (map+seed, both seats): won both 60, split 152, lost both 73; flip rate (2-0 + 0-2) 46.7%, net shift (2-0 - 0-2) -4.6%
+  games 272-298  score 0.477 [0.439, 0.517]  Elo -16 [-43, +12]  LOS 13.0%  (95% CI, bootstrap over maps)
+  points margin per game (ours - theirs, engine scoring): -1.5 [-5.3, +2.5]; in the 115 games that reached round 2000: +1.3
+  win types: lost as A: KILL 113 PTS 37; lost as B: KILL 111 PTS 37; won as A: KILL 106 PTS 29; won as B: KILL 108 PTS 29
+  mean rounds 866; robots killed by their own uncaught exception: calib_bc200 145, awubot 183
+  per map (worst first): map cells won/split/lost score
+    mushroom                       3   0/ 0/ 3  0.00
     ...
 ```
 
-(An illustration of the format, not a real run.)
+With a ref, the cells line becomes `cells N: challenger better B, worse W; diff counts -1..+1: [...]`, and a line gives
+the ref's own score on the same cells and the paired difference with its CI.
 
 - **Cells** are the unit: one map and seed, played with A in each seat. A cell is *won both*, *split* or *lost both*.
   With identical bots every cell splits. With a ref, a cell is *better* or *worse* when A's cell score differs from
@@ -195,4 +195,62 @@ holdout results are slightly optimistic. Never tune a constant on those games.
 
 ## Measured (2026-11-18)
 
-MEASUREMENTS
+**Exactness**
+- `bcplay.Play` replays are byte-identical to `battlecode.server.Main`'s.
+- A game equals itself alone, in sequence in one JVM, under full load, under three JVM flag sets, and on DoC's
+  Slurm and Condor nodes.
+- Seed variants equal the 1.2.5 override's `-Pseed`.
+- Details: docs/testing.md §7a.
+
+**Throughput** (games a minute)
+
+| where | what | games/min |
+|---|---|---|
+| clankerland, 8 workers, load 11-17 | 32 quick-pool games, official seeds | 13.1 (32 CPU-s a game) |
+| clankerland, 8 workers, load 20-40 | quick-pool sequential tests | 11 |
+| clankerland, `autoscrims/ABtest.py` (before) | quick, 12 workers / official, 8 workers | 9.8 / 4.7 |
+| Imperial: Condor lab machines and a 36-CPU Slurm slot | first gauntlet, 3,109 games, 1,200 in flight | 106 |
+| Imperial, same | W0: 3 runs of 570 games at once (one keeping replays) | 84 |
+
+**Cells the GSPRT needs** (`tools/games simulate`, α = β = 0.05, min 16 cells; a cell is 2 games). Mean / p90 at the
+H0 point, the midpoint and the H1 point. A change that moves bytecode splits ~53% of cells (W0.1), so read the
+split-0.5 rows:
+
+| δ | split 0.5 | split 0.7 |
+|---|---|---|
+| 0.20 | 22/37, 35/65, 21/30 | 19/26, 28/51, — |
+| 0.10 | 67/131, 114/247, 67/130 | 46/87, 74/159, 40/74 |
+| 0.05 | 261/545, 440/915, 279/521 | 174/325, 290/667, 165/336 |
+
+Error rates measured in the same runs: P(H1) at the H0 point 0.02-0.07, at the H1 point 0.94-0.98.
+
+**Calibration** (engine 1.2.6, plain mode against awubot)
+
+| arm | pool, cells | won both / split / lost both | flip rate | net shift | score [95% CI by map] | verdict |
+|---|---|---|---|---|---|---|
+| challenger = awubot (W0.1 plain, = W0.3) | goal, 3 passes, 285 | 0 / 285 / 0 | 0% | 0 | 0.500 | H0, "no behaviour change" |
+| RNG only: discarded spawn payload set to 0 (W0.1) | goal, 285 | 4 / 276 / 5 | 3.2% | −0.4% | 0.498 [0.488, 0.509] | H0 (δ 0.05) |
+| dead loop, ~235 bytecodes a rat turn (W0.1) | goal, 285 | 60 / 152 / 73 | 46.7% | −4.6% (p = 0.30) | 0.477 [0.439, 0.517] | H0 (δ 0.05) |
+| dead loop, ~150 bytecodes a turn, every robot | full, pass 0, 120 | 26 / 73 / 21 | 39.2% | +4.2% (p = 0.56) | 0.521 [0.467, 0.579] | inconclusive at the cap |
+| worse: baby rats skip 1 turn in 8 | quick, 18 | 2 / 4 / 12 | | −55.6% | 0.222 [0.059, 0.405] | H0 after 18 cells |
+| the same, reversed (awubot vs it) | quick, 24 | 17 / 5 / 2 | | +62.5% | 0.812 [0.650, 0.940] | H1 after 24 cells |
+| rat cap −4 (spawn threshold 40→30, 30→20 on small maps) | quick, 74 | 30 / 30 / 14 | | +21.6% | 0.608 [0.465, 0.740] | H1: wins every small map, loses the economy maps |
+
+- **The background is bytecode, not the RNG.** Moving only the king's random stream flips 3% of cells. Moving
+  bytecode, with no logic change, flips 40-47%. Nearly every package changes bytecode, so about half of its cells
+  flip whatever it does. A single flipped cell carries no information. Read class totals, clusters and the package's
+  diagnostic (the plan's §1 item 5; its 20% threshold is exceeded).
+- **No net bytecode tax was measured.** −4.6% and +4.2%, both within noise. The sign tests (p = 0.30, 0.56) cannot
+  exclude a tax of a few points.
+- **Robots killed by their own exception** move with bytecode too (145 vs 183 in the 235-bytecode arm), because
+  awubot's crashes depend on timing.
+- **The gauntlet's reference scores** (the first gauntlet; OBG and GST on official + team-made maps, the rest one pass
+  of `quick`). awubot scores 0.488 against `opp_obg` (301 cells), 0.731 against `opp_gst` (206), and 0.69-0.97
+  against the other eleven (16 cells each). Challenger's games all equalled awubot's.
+
+**W0.3 data** (challenger@main = awubot, `goal`, 3 passes, 285 cells, 570 games, replays kept):
+`~/battlecode26-data/games/runs/1118-222544-ab-6dea/`.
+- `results.jsonl`: one line a game.
+- `cells.tsv`: one line a cell: map, seed, winning and losing seat, ending, round, points, crashes, both replays.
+- `replays/<game id>.bc26`: every game.
+- Every cell splits. The seat that wins is A in 136 cells and B in 149. 213 cells end by king kill, 72 on points.

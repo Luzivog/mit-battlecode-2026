@@ -37,6 +37,12 @@ Python is stdlib only (it runs on remote nodes too). Data: `~/battlecode26-data/
 4. **Bots compile alone** with Gradle's javac flags; the class files are byte-identical to `./gradlew classes`.
 5. **A verdict depends only on the cells**: a test scores the complete prefix of its cells in submission order, so
    timing never changes a verdict, and a rerun of unchanged code reads the same verdict from the cache.
+   `rescore` rebuilds a run's state from `results.jsonl` alone (`retry` uses it after replaying failed games).
+6. **Tests** (`games.Test`): plain (trinomial on the cell score) or against a ref (pentanomial on (A − ref + 1)/2,
+   the ref playing the same cells); mode gain (H1 above 0.5) or harm (H1 below). The default ref is
+   `challenger@origin/main`, pinned to a commit at submission (`games.pin`). Exit 0 means the test passed.
+7. **Pools never hold a sealed map**: every visible pool, class pool and list pool is checked against
+   `pools.visible()`.
 
 ## Changing it
 

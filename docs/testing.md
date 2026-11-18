@@ -11,7 +11,7 @@ root (or your worktree root). Python is `.venv/bin/python`. Java 21. Engine pinn
 | Regenerate challenger `.java` from `.jinja2` | `.venv/bin/python jinja.py` | seconds |
 | Compile every bot package | `./gradlew classes` (or `./gradlew build -x test`) | ~45 s cold, ~2 s no-op |
 | One match + replay | `./gradlew runWithoutBuild -PteamA=challenger -PteamB=awubot -Pmaps=DefaultSmall -Pseed=158` | 20-90 s |
-| Is challenger stronger than awubot? | `tools/games ab challenger awubot`, then `tools/games wait ID` (docs/evaluation.md) | sequential; cached games are free |
+| Is my challenger better than main's (both against awubot)? | `tools/games ab challenger awubot --pool POOL`, then `tools/games wait ID` (docs/evaluation.md) | sequential; cached games are free; `--remote` for Imperial |
 | Play any list of games | `tools/play SPECS.jsonl OUTDIR --workers 8` | ~13 games/min on 8 workers (§7a) |
 | Submission zip + official verify | `scripts/check_submission.sh challenger` | ~15 s |
 

@@ -11,7 +11,7 @@ Source keys used below:
 - `src/...:line`: bot code. Generated classes are cited by their `.jinja2` template line.
 - `D:file`: my parsed data and tools in `~/battlecode26-data/theory/t3/` (§9 says how to reproduce them).
 - **Mirror**: the official-conditions run of challenger (identical to awubot) against awubot: 43 official maps, both
-  seats, engine 1.2.6, each map's own seed. The main checkout holds its results
+  seats, engine 1.2.5 (the result file's `engine_version`; `--engine official` ran the unmodified 1.2.5 jar), each map's own seed. The main checkout holds its results
   (`match_results/abtest_2026-11-18_19-30-32.json`) and replays (`matches/run-2026-11-18_19-30-32-*.bc26`), parsed
   into `D:mirror_official2.txt`. Identical code means the seat decides every map 1-1. These games therefore show
   how the game ends and how close each ending is, not who is stronger.
@@ -377,8 +377,8 @@ The rules:
 - **Take enemy kings that are not their last.** One kill at 2v2 gains 16.7.
 
 The cheapest formation is **budding**: the king spawns 7 rats into a clear 3×3 next to its spawn ring, and the centre
-rat calls `becomeRatKing` at once. It needs no walk and no recruiting (R§8 `becomeRatKing`, `buildRat` ring
-distance² ≤ 8). Goobie's 4 kings by r127 on sieveofriches show it works.
+rat calls `becomeRatKing`. No recruiting from the field, but the recruits spawn on the king's 16-tile ring (`buildRat`
+distance² ≤ 8), so they step 1–2 tiles into the 3×3 (R§8 `becomeRatKing`). Goobie's 4 kings by r127 on sieveofriches show it works.
 
 The limit (sieveofriches, §3.4): kings do not compensate for an economy at 0.3 share and cat damage at 0.19. Kings
 come first, but not at any price.
@@ -405,7 +405,7 @@ come first, but not at any price.
   path.
 - **Get the king lead early on maps likely to end in cooperation.** These are wall- or dirt-separated maps with a long
   king-to-king path, and maps with no enemy seen by about r100. A budded second king before r150 is +10 points in
-  cooperation and costs about 150 cheese at that point (7 rats at 10–20 each plus 50).
+  cooperation and costs 150 cheese with no baby rats alive, 430 at 16 (7 rats at the rat cost curve, rules.md §5, plus 50).
 - **Contact choice on dirt-separated maps.** Digging toward the enemy hands it the veto. If ahead on cooperation
   points, don't dig and run the clock. If behind, digging forces contact, and the champion then backstabs on its own,
   which cancels the cat ending.

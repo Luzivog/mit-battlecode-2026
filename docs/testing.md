@@ -127,7 +127,8 @@ nondeterminism).
 
 ## 5. Maps
 
-`maps/` (72): the 43 official maps (byte-identical to those bundled in the 1.2.5 jar) + 29 team-made maps.
+`maps/` (150): the 43 official maps (byte-identical to those bundled in the 1.2.5 jar), 29 team-made maps and 78
+recovered tournament maps.
 `test_maps/` (21) = byte-identical copy of default+sprint1 (the original `run.py` pool). The engine only reads
 `maps/`, then the jar; `--maps-dir` in the scripts only chooses *names*.
 

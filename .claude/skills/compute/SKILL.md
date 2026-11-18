@@ -70,7 +70,7 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
   game: 13 a minute; clankerland, 8 workers, 49 s a game: 9.7 a minute. About 0.3 games a minute per busy CPU on DoC.
 - Free on 18 Nov at 21:13 (`status`), in game tasks at once: Condor 2,654 (266 idle lab machines, 4,884 CPUs; most
   machines hold 8 to 16 games, memory binding first), the GPU cluster 36 (its best slot; up to 112 CPUs under our
-  caps), cpucluster1 148 (288 CPUs under our cap) when its controller takes jobs.
+  caps), cpucluster1 148 (288 CPUs under our cap).
 - A launch on a lab machine costs 1.5 ms (`/bin/true`; 0.2 ms here) and `java -version` 89 ms (14 ms here): DoC's
   auditd and process accounting log every exec. One JVM a game is fine; avoid scripts that fork per line.
 

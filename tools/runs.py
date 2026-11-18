@@ -80,10 +80,12 @@ def slots_of(cpus: int, mem_mb: int, task_cpus: int, task_mem_mb: int) -> int:
 
 
 def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: int, notes: list[str],
-           need: int | None = None) -> list[Offer]:
+           need: int | None = None, named: bool = False) -> list[Offer]:
     """What each backend of WHERES could start for this run now, read at once, best first (most slots, then ORDER).
     NEED: the tasks to run at once, the most a Slurm or cpucluster1 offer asks for (a lab machine is taken whole). A
-    backend that can't be read is left out, its reason in NOTES."""
+    backend that can't be read is left out, its reason in NOTES. cpucluster1 counts only while it can take jobs (its
+    read's takes_jobs), and is left out without a word otherwise, unless NAMED: asked for alone by name, it is offered
+    as read, and sbatch says why it refuses."""
     tc, mb_cpu = max(task_cpus, 1), max(1, -(-task_mem_mb // max(task_cpus, 1)))
 
     def condor() -> list[Offer]:
@@ -92,7 +94,14 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
                 if (s := slots_of(m.cpus, m.memory_mb, task_cpus, task_mem_mb)) >= 1]
 
     def cpucluster() -> list[Offer]:
-        c = B.read_cpucluster()
+        try:
+            c = B.read_cpucluster()
+        except Refused:
+            if named:
+                raise
+            return []
+        if not (c.takes_jobs or named):
+            return []
         out: list[Offer] = []
         cap = c.cap.cap - c.cap.used if c.cap.cap is not None else None
         mem = c.mem.cap - c.mem.used if c.mem.cap is not None else None
@@ -291,7 +300,7 @@ def place_pieces(s: Settings, need: int) -> list[str]:
     time, each from a read made after the last one's submit (each changes what our caps leave). When nothing is free,
     QUEUED_PIECES Condor pieces wait for machines. Refused when no piece could be submitted."""
     notes: list[str] = []
-    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need)
+    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need, named=s.wheres == ("cpucluster1",))
     took = choose(found, need, s.max_cpus)
     for n in notes:
         J.say(f"run {s.id}: {n}")

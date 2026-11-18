@@ -73,9 +73,7 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
                         "caps": {q: {k2: asdict(v) for k2, v in lim.items()} for q, lim in s.qos.items()
                                  if any(v.cap for v in lim.values())},
                         "jobs": [asdict(j) for j in s.jobs if j.name.startswith("bc26-")]}
-    if isinstance(k, Refused):
-        out["cpucluster1"] = {"error": str(k)}
-    else:
+    if not isinstance(k, Refused) and k.takes_jobs:  # a cpucluster1 that can't take jobs isn't a backend
         out["cpucluster1"] = {"partitions": {p.name: asdict(p) for p in k.partitions.values()},
                               "cap": asdict(k.cap), "mem": asdict(k.mem),
                               "per_node": {n: asdict(v) for n, v in k.node.items()},
@@ -107,11 +105,8 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         for q, lim in s.qos.items():
             if lim.get("gpu") and lim["gpu"].cap:
                 print(f"  our {q} caps: " + ", ".join(f"{k2} {v.used}/{v.cap}" for k2, v in lim.items() if v.cap))
-    kd = out["cpucluster1"]
-    assert isinstance(kd, dict)
-    if "error" in kd:
-        print(f"cpucluster1: unreadable: {kd['error']}")
-    else:
+    kd = out.get("cpucluster1")
+    if isinstance(kd, dict):
         assert not isinstance(k, Refused)
         print("cpucluster1: " + ", ".join(f"{p.name} {p.idle_cpus} idle CPUs" for p in k.partitions.values())
               + f"; our cap {k.cap.used}/{k.cap.cap} CPUs, {k.mem.used}/{k.mem.cap} MB, "

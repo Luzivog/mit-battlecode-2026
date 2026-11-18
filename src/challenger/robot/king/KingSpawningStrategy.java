@@ -19,11 +19,11 @@ public class KingSpawningStrategy extends Strategy {
         return ((x - 1) / 4) * 10 + 10;
     }
 
-    // The map holds at least RICH_MINES mines. Income is about 1.1 per mine per side (docs/theory/t1-economy.md §2.1),
-    // so below it the army the income sustains is under 16 rats (§2.5). Every mine's mirror is a mine, so the count is
-    // at least the known mines plus their unknown mirrors under the symmetry, and at least the smallest such count
-    // over the symmetries still possible. Latched: mines are never forgotten.
-    private static final int RICH_MINES = 8;
+    // The map holds at least RICH_MINES mines. Measured: a cap 4 rats lower wins on maps with <= 4 mines and loses on
+    // maps with >= 10 (docs/plan.md E2; T1§2.5: the army the income sustains grows with the mines). Every mine's
+    // mirror is a mine, so the count is at least the known mines plus their unknown mirrors under the symmetry, and at
+    // least the smallest such count over the symmetries still possible. Latched: mines are never forgotten.
+    private static final int RICH_MINES = 5;
     private static boolean rich = false;
     private static int richKey = -1;
 

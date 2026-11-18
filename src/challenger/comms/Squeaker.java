@@ -24,7 +24,7 @@ public class Squeaker {
         - Non-negative bytes: 3-bit header (bits 31..29)
             * 000: map chunk (29-bit payload, MapTracker.encodeChunk)
             * 001: symmetry (payload uses low 2 bits)
-            * 111: no-op (panic squeak)
+            * 010: no-op (panic squeak)
             * others unused
     */
     public static final int HEADER_BITS = 3;
@@ -33,7 +33,7 @@ public class Squeaker {
     private static final int BODY_MASK = (1 << BODY_BITS) - 1;
     private static final int HEADER_MAP = 0;
     private static final int HEADER_SYMMETRY = 1;
-    private static final int HEADER_NOP = 7;
+    private static final int HEADER_NOP = 2;
 
     private static final int CHEESE_LOC_BITS = 10;
     private static final int CHEESE_LOC_MASK = (1 << CHEESE_LOC_BITS) - 1; // 1023
@@ -132,13 +132,6 @@ public class Squeaker {
         rc.squeak((0b11 << 30) | data);// indicate
     }
 
-    public static void squeakLureSignal(MapLocation myCatLoc, MapLocation myEnemyKingLoc) {
-        int myEncodedCatLoc = encode2x2(myCatLoc);
-        int myEncodedEnemyLoc = encode2x2(myEnemyKingLoc);
-        int mySqueakContent = (0b10 << HEADER_SHIFT) | (myEncodedCatLoc << 10) | myEncodedEnemyLoc;
-        rc.squeak(mySqueakContent);
-    }
-
     // messages come in chronological order
     // there is currently a bug where fat units get sent the same message multiple times
     private static int lastMessageCount = 0;
@@ -209,8 +202,8 @@ public class Squeaker {
     }
 
     /**
-     * Panic squeak to distract cats: send an empty payload (0).
-     * This is a no-op for receivers but still produces noise.
+     * Panic squeak to distract cats: header 2 with an empty payload.
+     * Receivers ignore it; cats still hear it.
      */
     private static void squeakPanic() throws GameActionException {
         rc.squeak(HEADER_NOP << HEADER_SHIFT);

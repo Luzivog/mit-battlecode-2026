@@ -109,6 +109,8 @@ class ImperialRunner:
                 spec = dict(job.spec)
                 (a_jar, _), (b_jar, _) = self.resolver.bot(spec["a"]), self.resolver.bot(spec["b"])
                 spec["classes_a"], spec["classes_b"] = jars[str(a_jar)], jars[str(b_jar)]
+                if job.replay:
+                    spec["replay"] = True  # the task writes it to OUT/replays/, it comes back with the results
                 f.write(json.dumps(spec) + "\n")
         cmd = [str(store.ROOT / "tools" / "run"), "--detach", "--each", str(specs), "--chunk", str(CHUNK),
                "--gather", "results.jsonl", "--with", str(SHIP.relative_to(store.ROOT))]
@@ -152,8 +154,16 @@ class ImperialRunner:
         b["done"].add(gid)
         job, cb = b["jobs"][gid]
         res = {k: v for k, v in r.items() if k not in job.spec and k not in (
-            "key", "runner", "cached", "a_hash", "b_hash", "map_hash", "backend", "classes_a", "classes_b")}
+            "key", "runner", "cached", "a_hash", "b_hash", "map_hash", "backend", "classes_a", "classes_b",
+            "replay")}
         res["remote"] = b["run"]
+        res["replay"] = None
+        if job.replay and r.get("error") is None:
+            found = sorted((store.ROOT / "runs" / b["run"]).glob(f"*/out/replays/{play.safe(gid)}.bc26"))
+            if found:
+                Path(job.replay).parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(found[0]), job.replay)
+                res["replay"] = job.replay
         if r.get("error") is None:
             if r.get("key") == job.key:
                 keep = {k: v for k, v in res.items() if k not in ("replay", "remote")}

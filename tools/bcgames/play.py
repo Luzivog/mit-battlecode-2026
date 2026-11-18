@@ -7,6 +7,7 @@ Spec (one JSON object per line; the fields of engine/AGENTS.md):
   classes, classes_a, classes_b
               optional: play prebuilt classes (a directory or jar holding <pkg>/...) instead of compiling src/
   seed        optional, default: the map's embedded seed (= the official game); another seed is a map variant
+  replay      optional: true writes this game's replay to OUTDIR/replays/ (as --replays all does for every game)
   engine      optional, default 1.2.6 (official); 1.2.5 is the pinned dev engine
   other fields are copied to the result
 Result (one JSON object per line, in completion order): the spec's fields plus winner ("A"/"B"), winner_pkg,
@@ -330,7 +331,10 @@ def main(argv=None) -> int:
         for s in specs:
             if args.engine and "engine" not in s:
                 s["engine"] = args.engine
-            jobs.append(runner.resolver.job(s, replay_dir / f"{safe(s['id'])}.bc26" if replay_dir else None))
+            rdir = replay_dir or (outdir / "replays" if s.get("replay") else None)
+            if rdir:
+                rdir.mkdir(exist_ok=True)
+            jobs.append(runner.resolver.job(s, rdir / f"{safe(s['id'])}.bc26" if rdir else None))
     except store.SetupError as e:
         print(f"tools/play: {e}", file=sys.stderr)
         return 1

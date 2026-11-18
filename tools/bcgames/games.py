@@ -1,16 +1,19 @@
 """tools/games: is bot A stronger than bot B? Paired seats, sequential test, cache. docs/evaluation.md.
 
-  tools/games ab challenger awubot --pool quick      start a test, print its ID
-  tools/games wait ID                                block until it stops (run it in the background), print the report
-  tools/games show ID [--games]                      the report so far
-  tools/games gauntlet [challenger]                  challenger vs each sparring bot, paired with awubot's own score
-  tools/games diff ID1 ID2                           games whose result changed between two runs
-  tools/games replay ID GAME                         replay one game of a run, with a replay file
+  tools/games ab challenger awubot           gain test: challenger and main's challenger both play awubot on the same
+                                             cells; is the branch better than main? Prints the run's ID
+  tools/games ab challenger awubot --test harm         harm test: is the branch worse than main?
+  tools/games ab X awubot --ref none         plain: X against awubot alone (the integrator's progress rows)
+  tools/games wait ID                        block until it stops (run it in the background), print the report
+  tools/games show ID [--games | --game G]   the report so far; every game; one game's timeline
+  tools/games gauntlet [challenger]          harm test against each sparring bot, paired with main's own games
+  tools/games diff ID1 ID2                   games whose result changed between two runs
+  tools/games replay ID GAME                 replay one game of a run, with a replay file
+  tools/games replays ID [--cells ...]       replay files for a run's cells, after the fact
   tools/games list | stop ID | pools | simulate
 
-Exit codes of wait/show/ab --fg: 0 H1 accepted (A stronger; gauntlet: no opponent worse), 3 H0 accepted
-(A not stronger; gauntlet: worse against an opponent), 4 inconclusive (cell cap reached), 5 still running, 1 error,
-2 usage.
+Exit codes of wait/show/ab --fg: 0 passed (gain test: H1, better; harm test and gauntlet: H0, no harm), 3 failed
+(gain: H0; harm: H1, harm found), 4 inconclusive (cell cap reached), 5 still running, 1 error, 2 usage.
 """
 from __future__ import annotations
 
@@ -30,7 +33,7 @@ from pathlib import Path
 from . import imperial, play, pools, stats, store
 
 RUNS = store.DATA / "runs"
-EXIT = {"H1": 0, "H0": 3, "inconclusive": 4, "running": 5, "error": 1}
+EXIT = {"pass": 0, "fail": 3, "inconclusive": 4, "running": 5, "error": 1}
 MAIN_OPPONENTS = ["opp_obg", "opp_gst"]
 OTHER_OPPONENTS = ["opp_spaark", "opp_cerr", "opp_parmesan", "opp_gravy", "opp_goobie", "opp_powerpuff", "opp_food",
                    "awubot_quals", "awubot_us", "awubot_mystery", "awubot_sus"]
@@ -48,15 +51,19 @@ def cell_seed(map_name: str, seed_base: int, pass_no: int) -> int | None:
     return int.from_bytes(h[:4], "big") & 0x7FFFFFFF
 
 
-def cells(maps: list[str], seed_base: int):
-    """Round robin over the maps, in a new fixed random order each pass, one seed per map per pass."""
+def cells(entries: list[str], seed_base: int):
+    """Round robin over the pool's entries, in a new fixed random order each pass, one seed per entry per pass.
+
+    An entry "map:seed" plays that seed in pass 0 (whatever the seed base) and derived seeds later."""
     idx = 0
     pass_no = 0
     while True:
-        order = sorted(maps)
+        order = sorted(entries)
         random.Random(f"{seed_base}:{pass_no}").shuffle(order)
-        for m in order:
-            yield {"idx": idx, "pass": pass_no, "map": m, "seed": cell_seed(m, seed_base, pass_no)}
+        for e in order:
+            m, fixed = pools.entry_map(e), pools.entry_seed(e)
+            seed = fixed if (fixed is not None and pass_no == 0) else cell_seed(e, seed_base, pass_no)
+            yield {"idx": idx, "pass": pass_no, "map": m, "seed": seed}
             idx += 1
         pass_no += 1
 
@@ -68,11 +75,15 @@ def outcome(r: dict) -> tuple:
 
 
 class Test:
-    """One sequential paired test: `ours` vs `theirs` (ab), or ours-vs-theirs paired with ref-vs-theirs (gauntlet)."""
+    """One sequential paired test of `ours` against `theirs`.
+
+    Without a reference the unit is the cell score (trinomial; H0 0.5). With one (`ref`, e.g. main's challenger),
+    ref plays `theirs` on the same cells and the unit is the paired difference d = ours - ref, as (d + 1) / 2
+    (pentanomial; H0 0.5, no difference). mode "gain": H1 = better by delta; "harm": H1 = worse by delta."""
 
     def __init__(self, name: str, ours: str, theirs: str, ref: str | None, maps: list[str], sealed: bool,
                  seed_base: int, delta: float, alpha: float, beta: float, min_cells: int, max_cells: int,
-                 engine: str):
+                 engine: str, mode: str = "gain"):
         self.name, self.ours, self.theirs, self.ref = name, ours, theirs, ref
         self.maps, self.sealed, self.engine = maps, sealed, engine
         self.delta, self.alpha, self.beta = delta, alpha, beta
@@ -84,6 +95,10 @@ class Test:
         self.llr = 0.0
         self.errors = 0
         self.lo, self.hi = stats.bounds(alpha, beta)
+        self.mode = mode
+        self.scores = stats.PENTANOMIAL if ref else stats.TRINOMIAL
+        step = delta / 2 if ref else delta
+        self.s0, self.s1 = 0.5, (0.5 + step if mode == "gain" else 0.5 - step)
 
     def games(self, cell: dict) -> list[dict]:
         """The cell's games. role o: ours vs theirs; role r: ref vs theirs. seat: where the role's bot sits."""
@@ -123,10 +138,7 @@ class Test:
                 self.errors += 1
             self.prefix += 1
         counts = self.counts()
-        if self.ref:
-            self.llr = stats.llr(counts, stats.PENTANOMIAL, 0.5 - self.delta / 2, 0.5)
-        else:
-            self.llr = stats.llr(counts, stats.TRINOMIAL, 0.5, 0.5 + self.delta)
+        self.llr = stats.llr(counts, self.scores, self.s0, self.s1)
         if self.verdict != "running":
             return
         scored = sum(counts)
@@ -159,6 +171,7 @@ class Test:
     def summary(self) -> dict:
         sc = self.scored_cells()
         out = {"name": self.name, "ours": self.ours, "theirs": self.theirs, "ref": self.ref, "verdict": self.verdict,
+               "mode": self.mode, "s1": self.s1,
                "llr": round(self.llr, 3), "bounds": [round(self.lo, 3), round(self.hi, 3)], "delta": self.delta,
                "cells": len(sc), "submitted": len(self.cells), "errors": self.errors, "counts": self.counts()}
         if not sc:
@@ -260,15 +273,16 @@ def make_tests(meta: dict) -> list[Test]:
     p = meta["params"]
     if meta["kind"] == "ab":
         maps, sealed = pools.resolve(p["pool"])
-        return [Test("ab", p["a"], p["b"], None, maps, sealed, p["seed_base"], p["delta"], p["alpha"], p["beta"],
-                     p["min_cells"] or len(maps), p["max_cells"] or len(maps), p["engine"])]
+        return [Test("ab", p["a"], p["b"], p.get("ref"), maps, sealed, p["seed_base"], p["delta"], p["alpha"],
+                     p["beta"], p["min_cells"] or len(maps), p["max_cells"] or len(maps), p["engine"],
+                     p.get("mode", "gain"))]
     tests = []
     for opp in p["opponents"]:
         main = opp in p["main"]
         maps, sealed = pools.resolve(p["main_pool"] if main else p["rest_pool"])
         cap = p["max_cells"] if main else len(maps) * p["rest_passes"]
         tests.append(Test(opp, p["a"], opp, p["ref"], maps, sealed, p["seed_base"], p["delta"], p["alpha"],
-                          p["beta"], min(len(maps), cap), cap, p["engine"]))
+                          p["beta"], min(len(maps), cap), cap, p["engine"], "harm"))
     return tests
 
 
@@ -343,8 +357,10 @@ def drive(d: Path) -> int:
                     break
                 for t in running:
                     per_cell = 4 if t.ref else 2
+                    # Remote: a test gets at most a pass (or 32 cells) beyond its prefix, the next decision point.
+                    cap = per_cell * max(t.min_cells, 32) if p.get("remote") else ahead_cap
                     while (inflight["n"] < queue_cap and t.wants_more()
-                           and (len(t.cells) - t.prefix) * per_cell < ahead_cap):
+                           and (len(t.cells) - t.prefix) * per_cell < cap):
                         cell = t.next_cell()
                         for spec in t.games(cell):
                             path = replay_dir / f"{play.safe(spec['id'])}.bc26" if replay_dir else None
@@ -368,21 +384,25 @@ def drive(d: Path) -> int:
     return 0
 
 
+def test_outcome(t: dict, kind: str) -> str:
+    """pass / fail / inconclusive / running / error. Gain: H1 passes. Harm: H0 passes."""
+    v = t["verdict"]
+    if v not in ("H0", "H1"):
+        return v
+    mode = t.get("mode", "gain" if kind == "ab" else "noninf")  # noninf: runs made before harm tests existed
+    return "pass" if v == {"gain": "H1", "harm": "H0", "noninf": "H1"}[mode] else "fail"
+
+
 def verdict_of(state: dict, kind: str) -> str:
     if state["status"] == "running":
         return "running"
     if state["status"] in ("error", "stopped"):
         return "error"
-    vs = [t["verdict"] for t in state["tests"]]
-    if kind == "ab":
-        return vs[0]
-    if "error" in vs:
-        return "error"
-    if "H0" in vs:
-        return "H0"
-    if "inconclusive" in vs or "running" in vs:
-        return "inconclusive"
-    return "H1"
+    vs = [test_outcome(t, kind) for t in state["tests"]]
+    for v in ("error", "fail", "running", "inconclusive"):
+        if v in vs:
+            return "inconclusive" if v == "running" else v
+    return "pass"
 
 
 # ----------------------------------------------------------------------------------------------------------- report
@@ -399,8 +419,10 @@ def report(d: Path, show_games: bool = False) -> tuple[str, str]:
     st = json.loads((d / "state.json").read_text())
     verdict = verdict_of(st, meta["kind"])
     L = []
-    L.append(f"run {meta['id']} [{st['status']}]  {meta['kind']} {p['a']} vs "
-             f"{p['b'] if meta['kind'] == 'ab' else 'gauntlet (ref ' + p['ref'] + ')'}  engine {p['engine']}  "
+    what = f"{p['a']} vs {p['b']}" if meta["kind"] == "ab" else f"{p['a']} vs the gauntlet"
+    test = p.get("mode", "gain") if meta["kind"] == "ab" else "harm"
+    L.append(f"run {meta['id']} [{st['status']}]  {what}, {test} test"
+             + (f" against ref {p['ref']}" if p.get("ref") else ", no ref") + f"  engine {p['engine']}  "
              f"pool {p['pool'] if meta['kind'] == 'ab' else p['main_pool'] + '/' + p['rest_pool']}  "
              f"seed base {p['seed_base']}")
     if st.get("error"):
@@ -430,26 +452,35 @@ def report(d: Path, show_games: bool = False) -> tuple[str, str]:
 def report_test(t: dict, kind: str, p: dict) -> list[str]:
     L = [""]
     name = t["ours"] + " vs " + t["theirs"]
-    vtext = {
-        "H1": f"H1 accepted: {t['ours']} is stronger (score >= {0.5 + t['delta']:.2f})" if kind == "ab" else
-              f"not worse than {t['ref']} against {t['theirs']}",
-        "H0": f"H0 accepted: {t['ours']} is not stronger (score <= 0.50)" if kind == "ab" else
-              f"WORSE than {t['ref']} against {t['theirs']} (by >= {t['delta']:.2f})",
-        "inconclusive": "inconclusive: cell cap reached", "running": "running", "error": "error: too many failed games",
-    }[t["verdict"]]
-    L.append(f"{name}: {vtext}")
-    if kind == "ab":
-        h = f"H0 score <= 0.50, H1 score >= {0.5 + t['delta']:.2f}"
+    mode = t.get("mode", "gain" if kind == "ab" else "noninf")
+    d, ref = t["delta"], t.get("ref")
+    vs = f"than {ref} " if ref else ""
+    texts = {
+        "gain": {"H1": f"PASS (H1): {t['ours']} is better {vs}by >= {d:.2f}",
+                 "H0": f"FAIL (H0): {t['ours']} is not better {vs}".rstrip()},
+        "harm": {"H0": f"PASS (H0): no harm" + (f" relative to {ref}" if ref else ""),
+                 "H1": f"FAIL (H1): {t['ours']} is worse {vs}by >= {d:.2f}"},
+        "noninf": {"H1": f"not worse than {ref}", "H0": f"WORSE than {ref} (by >= {d:.2f})"},
+    }[mode]
+    texts.update({"inconclusive": "INCONCLUSIVE: cell cap reached", "running": "running",
+                  "error": "ERROR: too many failed games"})
+    L.append(f"{name}: {texts[t['verdict']]}")
+    unit = "diff (ours - ref)" if ref else "score"
+    if mode == "noninf":
+        h = f"H0 diff <= -{d:.2f}, H1 diff >= 0"
     else:
-        h = f"H0 diff <= -{t['delta']:.2f}, H1 diff >= 0"
+        h0, h1 = (0.0, (t["s1"] - 0.5) * 2) if ref else (0.5, t["s1"])
+        h = f"H0 {unit} = {h0:+.2f}, H1 {unit} = {h1:+.2f}" if ref else f"H0 {unit} = {h0:.2f}, H1 {unit} = {h1:.2f}"
     L.append(f"  LLR {t['llr']:+.2f} (stop at {t['bounds'][0]:+.2f} / {t['bounds'][1]:+.2f}; {h})")
     if not t["cells"]:
         L.append(f"  no complete cells yet ({t['submitted']} submitted)")
         return L
     c = t["counts"]
-    if kind == "ab":
-        L.append(f"  cells {t['cells']} (map+seed, both seats): won both {c[2]}, split {c[1]}, lost both {c[0]}"
-                 + (f"; {t['errors']} failed" if t["errors"] else ""))
+    if not ref:
+        n = t["cells"]
+        L.append(f"  cells {n} (map+seed, both seats): won both {c[2]}, split {c[1]}, lost both {c[0]}"
+                 + (f"; {t['errors']} failed" if t["errors"] else "")
+                 + f"; flip rate (2-0 + 0-2) {pct((c[0] + c[2]) / n)}, net shift (2-0 - 0-2) {pct((c[2] - c[0]) / n)}")
     else:
         L.append(f"  cells {t['cells']}: {t['ours']} better {t['better_cells']}, worse {t['worse_cells']}; "
                  f"diff counts -1..+1: {c}" + (f"; {t['errors']} failed" if t["errors"] else ""))
@@ -457,7 +488,7 @@ def report_test(t: dict, kind: str, p: dict) -> list[str]:
     L.append(f"  games {t['games_won']}-{t['games_lost']}  score {t['score']:.3f} "
              f"[{t['score_ci'][0]:.3f}, {t['score_ci'][1]:.3f}]  Elo {t['elo']:+d}"
              + (f" [{ci[0]:+d}, {ci[1]:+d}]" if ci else "") + f"  LOS {pct(t['los'])}  (95% CI, bootstrap over maps)")
-    if kind != "ab":
+    if ref:
         L.append(f"  {t['ref']} on the same cells: {t['ref_score']:.3f}; diff {t['diff']:+.3f} "
                  f"[{t['diff_ci'][0]:+.3f}, {t['diff_ci'][1]:+.3f}]")
     pm = t["points_margin_ci"]
@@ -466,8 +497,7 @@ def report_test(t: dict, kind: str, p: dict) -> list[str]:
              + (f" [{pm[0]:+.1f}, {pm[1]:+.1f}]" if pm else "")
              + (f"; in the {r2[1]} games that reached round 2000: {r2[0]:+.1f}" if r2 else ""))
     if t["identical"]:
-        L.append("  no behaviour change: " + ("every game equals its mirror" if kind == "ab" else
-                                              f"every game equals {t['ref']}'s"))
+        L.append("  no behaviour change: " + (f"every game equals {ref}'s" if ref else "every game equals its mirror"))
     mix = "; ".join(f"{k}: " + " ".join(f"{w} {n}" for w, n in sorted(v.items())) for k, v in sorted(t["win_types"].items()))
     L.append(f"  win types: {mix}")
     L.append(f"  mean rounds {t['mean_rounds']}; robots killed by their own uncaught exception: " +
@@ -475,24 +505,58 @@ def report_test(t: dict, kind: str, p: dict) -> list[str]:
              (f"; engine errors {t['engine_errors']}" if t["engine_errors"] else ""))
     if "maps" in t:
         rows = sorted(t["maps"].items(), key=lambda kv: (kv[1]["score"] / kv[1]["cells"], kv[0]))
-        L.append("  per map (worst first): map cells won/split/lost score" + (" ref" if kind != "ab" else ""))
+        L.append("  per map (worst first): map cells won/split/lost score" + (" ref" if ref else ""))
         for m, v in rows:
             L.append(f"    {m:28s} {v['cells']:3d}  {v['won']:2d}/{v['split']:2d}/{v['lost']:2d}  "
-                     f"{v['score'] / v['cells']:.2f}" + (f"  {v['ref'] / v['cells']:.2f}" if kind != "ab" else ""))
+                     f"{v['score'] / v['cells']:.2f}" + (f"  {v['ref'] / v['cells']:.2f}" if ref else ""))
     return L
 
 
 # --------------------------------------------------------------------------------------------------------- commands
 
+def pin(ref: str | None) -> str | None:
+    """pkg@REV -> pkg@<commit>, so a run names exactly what it played (origin/... is fetched first)."""
+    if ref is None:
+        return None
+    pkg, rev = store.parse_bot(ref)
+    if rev is None:
+        return ref
+    if rev.startswith("origin/"):
+        subprocess.run(["git", "-C", str(store.ROOT), "fetch", "-q", "origin", rev.split("/", 1)[1]],
+                       capture_output=True)
+    proc = subprocess.run(["git", "-C", str(store.ROOT), "rev-parse", "--short=12", f"{rev}^{{commit}}"],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise store.SetupError(f"bot {ref}: unknown revision {rev!r}")
+    return f"{pkg}@{proc.stdout.strip()}"
+
+
+def default_ref(a: str, ref: str) -> str | None:
+    """--ref auto: main's challenger when A is the working tree's challenger, else none."""
+    if ref == "none":
+        return None
+    if ref == "auto":
+        return "challenger@origin/main" if a == "challenger" else None
+    return ref
+
+
 def start(kind: str, params: dict, fg: bool) -> int:
+    for k in ("a", "b", "ref"):
+        if params.get(k):
+            params[k] = pin(params[k])
+    params["opponents"] = [pin(o) for o in params.get("opponents", [])] if kind == "gauntlet" else []
+    if kind == "ab":
+        params.pop("opponents")
     bots = [params["a"], params.get("b"), params.get("ref"), *params.get("opponents", [])]
     for ref in bots:
         if ref:
             store.parse_bot(ref)
     if kind == "ab" and params["a"] == params["b"]:
         raise store.SetupError("A and B are the same bot: every cell splits by construction")
-    if kind == "gauntlet" and params["a"] == params["ref"]:
+    if params.get("ref") and params["a"] == params["ref"]:
         raise store.SetupError("A and REF are the same bot")
+    if params.get("ref") and params["ref"] == params.get("b"):
+        raise store.SetupError("REF and B are the same bot")
     sealed = any(pools.resolve(params[k])[1] for k in ("pool", "main_pool", "rest_pool") if k in params)
     if sealed and os.environ.get("BCGAMES_INTEGRATOR") != "1":
         raise store.SetupError("the holdout pool is for the integrator only (BCGAMES_INTEGRATOR=1)")
@@ -673,6 +737,86 @@ def cmd_replay(args) -> int:
     return 0 if same else 1
 
 
+def select_games(d: Path, which: str) -> list[dict]:
+    """A run's finished games for `replays`: all, the decisive cells (ours won or lost both seats), the games ours
+    lost, or (with a ref) the cells where ours' score differs from the ref's."""
+    recs = [json.loads(l) for l in open(d / "results.jsonl")]
+    recs = [r for r in recs if not r.get("error")]
+    if which == "all":
+        return recs
+    if which == "lost":
+        return [r for r in recs if r.get("role", "o") == "o" and r["winner"] != r.get("seat", "A")]
+    cells: dict = {}
+    for r in recs:
+        cells.setdefault((r.get("test", "ab"), r.get("cell")), []).append(r)
+    out = []
+    for games in cells.values():
+        score = {"o": 0.0, "r": 0.0}
+        n = {"o": 0, "r": 0}
+        for r in games:
+            role = r.get("role", "o")
+            score[role] += r["winner"] == r.get("seat", "A")
+            n[role] += 1
+        if n["o"] != 2:
+            continue
+        if which == "decisive" and score["o"] in (0, 2):
+            out += games
+        elif which == "changed" and n["r"] == 2 and score["o"] != score["r"]:
+            out += games
+    return out
+
+
+def cmd_replays(args) -> int:
+    d = run_dir(args.id)
+    meta = json.loads((d / "run.json").read_text())
+    recs = select_games(d, args.cells)
+    out = d / "replays"
+    out.mkdir(exist_ok=True)
+    todo = [r for r in recs if not (out / f"{play.safe(r['id'])}.bc26").exists()]
+    print(f"{len(recs)} games selected ({args.cells}), {len(recs) - len(todo)} already have replays, "
+          f"{len(todo)} to play", file=sys.stderr)
+    if args.remote:
+        runner = imperial.ImperialRunner(d, args.where, 3600)
+    else:
+        runner = play.Runner(args.workers, d, play.DEFAULT_TIMEOUT, use_cache=False)
+    for ref, (jar, h) in meta.get("bots", {}).items():
+        runner.resolver.bots[ref] = (Path(jar), h)
+    index = open(out / "index.jsonl", "a")
+    lock = threading.Lock()
+    done = threading.Event()
+    left = {"n": len(todo), "bad": 0}
+
+    def record(rec: dict, res: dict) -> None:
+        with lock:
+            same = res.get("digest") == rec["digest"]
+            left["bad"] += not same
+            index.write(json.dumps({k: rec.get(k) for k in ("id", "test", "cell", "map", "seed", "engine", "a", "b",
+                                                             "role", "seat", "winner", "win_type", "round")}
+                                   | {"replay": res.get("replay"), "same_game": same,
+                                      "error": res.get("error")}) + "\n")
+            index.flush()
+            left["n"] -= 1
+            if left["n"] == 0:
+                done.set()
+
+    for rec in todo:
+        for ref, h in ((rec["a"], rec["a_hash"]), (rec["b"], rec["b_hash"])):
+            if ref not in runner.resolver.bots:
+                jar = find_jar(h)
+                if jar is None:
+                    raise store.SetupError(f"the build of {ref} that played {rec['id']} ({h}) is no longer in the store")
+                runner.resolver.bots[ref] = (jar, h)
+        spec = {k: rec[k] for k in ("id", "a", "b", "map", "seed", "engine")}
+        job = runner.resolver.job(spec, (out / f"{play.safe(rec['id'])}.bc26").resolve())
+        runner.submit(job, lambda r, rec=rec: record(rec, r))
+    if todo:
+        done.wait()
+    runner.close(wait=not args.remote)
+    print(f"{len(todo)} replays in {out}/ ({left['bad']} not identical to the recorded game); index: "
+          f"{out / 'index.jsonl'}")
+    return 1 if left["bad"] else 0
+
+
 def game_index(d: Path) -> dict:
     """(test, role, map, seed, seat of the role's bot) -> result, for matching games across runs."""
     out = {}
@@ -765,19 +909,26 @@ def main(argv=None) -> int:
         sp.add_argument("--where", help="--remote backends, e.g. condor,slurm (default: tools/run's)")
         sp.add_argument("--fg", action="store_true", help="run in the foreground and print the report")
 
-    sp = sub.add_parser("ab", help="sequential paired test: is A stronger than B?")
+    sp = sub.add_parser("ab", help="sequential paired test of A against B (by default: is A better than main?)")
     sp.add_argument("a")
     sp.add_argument("b")
+    sp.add_argument("--ref", default="auto",
+                    help="REF plays B on the same cells and the test is on A - REF. auto (default): "
+                         "challenger@origin/main when A is challenger, else none; none: A against B alone")
+    sp.add_argument("--test", dest="mode", choices=["gain", "harm"], default="gain",
+                    help="gain (default): H1 = A better by delta, passes on H1; harm: H1 = A worse by delta, "
+                         "passes on H0")
     sp.add_argument("--pool", default="quick")
     sp.add_argument("--min-cells", type=int, default=0, help="default: one pass over the pool")
     common(sp, 0.10)
 
-    sp = sub.add_parser("gauntlet", help="A vs each sparring bot, paired with REF's own games on the same cells")
+    sp = sub.add_parser("gauntlet", help="harm test of A against each sparring bot, paired with REF's games")
     sp.add_argument("a", nargs="?", default="challenger")
-    sp.add_argument("--ref", default="awubot")
+    sp.add_argument("--ref", default="auto",
+                    help="auto (default): challenger@origin/main when A is challenger, else awubot")
     sp.add_argument("--opponents", default=",".join(MAIN_OPPONENTS + OTHER_OPPONENTS))
     sp.add_argument("--main", default=",".join(MAIN_OPPONENTS), help="opponents tested sequentially on --main-pool")
-    sp.add_argument("--main-pool", default="tune")
+    sp.add_argument("--main-pool", default="goal")
     sp.add_argument("--rest-pool", default="quick")
     sp.add_argument("--rest-passes", type=int, default=1, help="passes over --rest-pool for the other opponents")
     common(sp, 0.10)
@@ -799,6 +950,14 @@ def main(argv=None) -> int:
     sp.add_argument("id")
     sp.add_argument("game", help="game id, from tools/games show ID --games")
     sp.add_argument("--out")
+    sp = sub.add_parser("replays", help="replay files for a run's games, played again deterministically")
+    sp.add_argument("id")
+    sp.add_argument("--cells", choices=["all", "decisive", "lost", "changed"], default="decisive",
+                    help="decisive (default): cells ours won or lost in both seats; lost: games ours lost; changed: "
+                         "cells where ours and the ref differ; all")
+    sp.add_argument("--workers", type=int, default=8)
+    sp.add_argument("--remote", action="store_true")
+    sp.add_argument("--where")
     sp = sub.add_parser("diff", help="games whose outcome changed between two runs")
     sp.add_argument("id1")
     sp.add_argument("id2")
@@ -816,19 +975,23 @@ def main(argv=None) -> int:
     sp.add_argument("id")
     args = ap.parse_args(argv)
 
-    if getattr(args, "remote", None) is not None:
+    if getattr(args, "remote", None) is not None and hasattr(args, "timeout"):
         args.workers = args.workers or (256 if args.remote else 8)
         args.timeout = args.timeout or (3600 if args.remote else play.DEFAULT_TIMEOUT)
     try:
         if args.cmd == "ab":
             params = {k: getattr(args, k) for k in ("a", "b", "pool", "engine", "delta", "alpha", "beta",
                                                       "min_cells", "seed_base", "workers", "timeout", "replays",
-                                                      "remote", "where")}
+                                                      "remote", "where", "mode")}
+            params["ref"] = default_ref(args.a, args.ref)
             params["max_cells"] = args.max_cells or (0 if args.pool == "smoke" else round(4 / args.delta ** 2))
             return start("ab", params, args.fg)
         if args.cmd == "gauntlet":
             opps = [o for o in args.opponents.split(",") if o]
-            params = {"a": args.a, "ref": args.ref, "opponents": opps, "main": args.main.split(","),
+            ref = default_ref(args.a, args.ref) or ("awubot" if args.ref == "auto" else None)
+            if ref is None:
+                raise store.SetupError("the gauntlet needs a ref")
+            params = {"a": args.a, "ref": ref, "opponents": opps, "main": args.main.split(","),
                       "main_pool": args.main_pool, "rest_pool": args.rest_pool, "rest_passes": args.rest_passes,
                       "engine": args.engine, "delta": args.delta, "alpha": args.alpha, "beta": args.beta,
                       "max_cells": args.max_cells or round(4 / args.delta ** 2), "seed_base": args.seed_base, "workers": args.workers,
@@ -837,6 +1000,7 @@ def main(argv=None) -> int:
         if args.cmd == "_drive":
             return drive(run_dir(args.id))
         return {"wait": cmd_wait, "show": cmd_show, "list": cmd_list, "stop": cmd_stop, "replay": cmd_replay,
+                "replays": cmd_replays,
                 "diff": cmd_diff, "pools": cmd_pools, "simulate": cmd_simulate}[args.cmd](args)
     except store.SetupError as e:
         print(f"tools/games: {e}", file=sys.stderr)

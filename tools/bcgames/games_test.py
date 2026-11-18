@@ -13,9 +13,9 @@ def result(spec, winner, rounds=100, **metrics):
     return r
 
 
-def make(ref=None, maps=("m1", "m2", "m3", "m4"), min_cells=4, max_cells=400, delta=0.1):
+def make(ref=None, maps=("m1", "m2", "m3", "m4"), min_cells=4, max_cells=400, delta=0.1, mode="gain"):
     return games.Test("t", "ours", "theirs", ref, list(maps), False, 0, delta, 0.05, 0.05, min_cells, max_cells,
-                      "1.2.6")
+                      "1.2.6", mode)
 
 
 def play_cell(t, ours_wins, ref_wins=(True, False), rounds=(100, 100)):
@@ -94,24 +94,41 @@ class AbTest(unittest.TestCase):
         self.assertEqual(t.verdict, "inconclusive")
 
 
-class GauntletTest(unittest.TestCase):
-    def test_same_as_ref_is_not_worse(self):
-        t = make(ref="ref")
-        for _ in range(40):
-            play_cell(t, (True, False), ref_wins=(True, False))
-            if t.verdict != "running":
-                break
-        self.assertEqual(t.verdict, "H1")
-        self.assertTrue(t.summary()["identical"])
+class RefTest(unittest.TestCase):
+    """Paired against a reference (main): the test is on ours - ref, so an edge both share cancels out."""
 
-    def test_worse_than_ref_is_flagged(self):
-        t = make(ref="ref")
-        for i in range(80):
-            play_cell(t, (False, False) if i % 2 else (True, False), ref_wins=(True, False))
+    def run_until_verdict(self, t, ours, ref, n=120):
+        for i in range(n):
+            play_cell(t, ours(i), ref_wins=ref(i))
             if t.verdict != "running":
                 break
-        self.assertEqual(t.verdict, "H0")
+        return t
+
+    def test_same_as_ref_reads_no_gain_and_no_harm(self):
+        same = lambda i: (True, i % 3 == 0)  # ref and ours both beat theirs often: a shared edge
+        g = self.run_until_verdict(make(ref="ref", mode="gain"), same, same)
+        h = self.run_until_verdict(make(ref="ref", mode="harm"), same, same)
+        self.assertEqual((g.verdict, h.verdict), ("H0", "H0"))
+        self.assertTrue(g.summary()["identical"])
+        self.assertEqual(games.test_outcome(g.summary(), "ab"), "fail")
+        self.assertEqual(games.test_outcome(h.summary(), "ab"), "pass")
+
+    def test_better_than_ref_passes_the_gain_test(self):
+        t = self.run_until_verdict(make(ref="ref", mode="gain"), lambda i: (True, i % 2 == 0), lambda i: (True, False))
+        self.assertEqual(t.verdict, "H1")
+        self.assertGreater(t.summary()["diff"], 0)
+
+    def test_worse_than_ref_fails_the_harm_test(self):
+        t = self.run_until_verdict(make(ref="ref", mode="harm"), lambda i: (False, False) if i % 2 else (True, False),
+                                   lambda i: (True, False))
+        self.assertEqual(t.verdict, "H1")
+        self.assertEqual(games.test_outcome(t.summary(), "ab"), "fail")
         self.assertLess(t.summary()["diff"], 0)
+
+    def test_plain_harm_test(self):
+        t = self.run_until_verdict(make(mode="harm"), lambda i: (False, False) if i % 2 else (True, False),
+                                   lambda i: (True, False))
+        self.assertEqual(t.verdict, "H1")
 
 
 if __name__ == "__main__":

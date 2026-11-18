@@ -14,7 +14,7 @@ against the other top public bots (`src/opp_*`, `docs/opponents.md`). Progress: 
 | X | fast engine: profile the official engine, port it to native code, exact agreement with the Java engine | `engine/` | running | lead + sub-agents, xhigh |
 | XE | engine-speed eval (the `evaluation` skill): cost over a fixed game corpus, `INVALID` unless every output matches | `tools/enginebench/` | X | 1, xhigh |
 | XC | engine-speed climb | a branch | XE | 1 climber, Opus 5.5 high |
-| T | theory: the dominant strategy from first principles, models of the top bots, gaps, work packages | `docs/theory/`, `docs/plan.md` | lenses done; synthesis, then critic | 5 lenses + synthesis + critic, xhigh |
+| T | theory: the dominant strategy from first principles, models of the top bots, gaps, work packages | `docs/theory/`, `docs/plan.md` | done (plan reviewed by a critic, fixes applied) | 5 lenses + synthesis + critic, xhigh |
 | B | bot improvement: one work package an agent, judged on Imperial, win rates reported | branches merged into main | T and E | many, xhigh |
 
 ## How work flows

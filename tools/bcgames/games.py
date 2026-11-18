@@ -855,7 +855,9 @@ def cmd_diff(args) -> int:
 
 
 def cmd_pools(args) -> int:
-    every = list(pools.POOLS.items()) + [(n, pools.class_pool(n)) for n in pools.CLASS_POOLS]
+    every = list(pools.POOLS.items()) + [("points", pools.resolve("points")[0])]
+    every += [(n, pools.class_pool(n)) for n in pools.CLASS_POOLS]
+    every += [(f.stem, pools.list_pool(f)) for f in sorted(pools.LIST_DIR.glob("*.txt"))]
     for name, maps in every:
         print(f"{name:11s} {len(maps):3d}  " + ", ".join(maps if args.v else maps[:8] + (["..."] if len(maps) > 8 else [])))
     try:

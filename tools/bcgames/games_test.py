@@ -46,6 +46,24 @@ class CellsTest(unittest.TestCase):
         self.assertNotEqual(next(games.cells(["a", "b", "c"], 7))["seed"], next(games.cells(["a", "b", "c"], 8))["seed"])
 
 
+class ListPoolTest(unittest.TestCase):
+    def test_list_pool_entries_and_refusal(self):
+        import tempfile
+        from pathlib import Path
+        from bcgames import pools, store
+        with tempfile.TemporaryDirectory() as d:
+            ok = Path(d) / "ok.txt"
+            ok.write_text("tiny:5  # a cell\nDefaultSmall\n")
+            entries = pools.list_pool(ok)
+            self.assertEqual(entries, ["tiny:5", "DefaultSmall"])
+            first = [next(c) for c in [games.cells(entries, 9)] for _ in range(2)]
+            self.assertEqual({(c["map"], c["seed"]) for c in first if c["map"] == "tiny"}, {("tiny", 5)})
+            bad = Path(d) / "bad.txt"
+            bad.write_text("tiny\nnosuchmap:3\n")
+            with self.assertRaises(store.SetupError):
+                pools.list_pool(bad)
+
+
 class AbTest(unittest.TestCase):
     def test_identical_bots_split_and_read_no_change(self):
         t = make()

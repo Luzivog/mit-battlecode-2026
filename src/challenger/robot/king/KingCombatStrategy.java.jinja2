@@ -187,9 +187,10 @@ public class KingCombatStrategy extends Strategy {
             digDirtInDirection(move);
             if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         }
-        if (RobotTracker.numCats > 0) {
+        // Dirt in front of a cat that holds the lane takes its dig action instead of a scratch (rules §12).
+        if (inLane) {
             placeDefensiveDirt();
-        } else {
+        } else if (RobotTracker.numCats == 0) {
             digSurroundingDirt();
         }
         if(rc.isActionReady()) {

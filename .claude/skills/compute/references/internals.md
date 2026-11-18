@@ -122,7 +122,12 @@ tools/compute wait RUN --json      # in the background; exit 0 when every task e
   Its lua wants `--ntasks=1` stated. A job asks `--mem-per-cpu` (the task's memory), not the 4,000 MB default, so our
   memory cap doesn't bind first. **On 18 Nov 2026 it refused every submission**: `sbatch: error: Batch job
   submission failed: I/O error writing script/environment to file`; its controller (the login node) had `/var` 100%
-  full (26 GB, 53 MB free). Only DoC can clear it.
+  full (26 GB, 53 MB free; at 21:29, 0 bytes free and 38% of its inodes used: bytes, not inodes). Only DoC can
+  clear it. Slurm 25.05.1 writes a job's script and environment into StateSaveLocation for a batch job only
+  (`job_mgr.c`, `_copy_job_desc_to_file`, skipped for `--test-only`, which is why the probe passes and the submit
+  fails); a job without a batch script (`srun`, `salloc`) skips that write. But cpucluster1's job_submit.lua answers
+  every such job "Interactive jobs restricted to one hour, use sbatch afte testing your scripts": DoC's rule, so its
+  jobs go by `sbatch` only, and wait for DoC while it refuses.
 - **local** (tests only, when `BC26_LOCAL_REMOTE` is set): every login runs here with bash in that folder, and a job
   is `job.sh` run here under `taskset -c 0,1`.
 

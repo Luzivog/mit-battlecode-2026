@@ -12,7 +12,7 @@ Related docs: rules.md (engine truth, especially §4 cooldowns, §8 actions, §9
 
 1. **The whole micro is built around ratnapping.** An enemy can grab you if it has strictly more HP than you, or if it stands where you can't see it (rules.md §8 `carryRat`). `CombatTracker` precomputes, for every (move, facing) pair, whether any enemy could step next to you and grab you next turn (§4). Every candidate action adds `-100` if it would leave you grabbable. The result: rats approach, bite and grab only when they can't be grabbed back. They also turn to face the enemy (+2 for turning, and facing choices point at the target), so enemies with equal or lower HP can never grab them from the front.
 2. **HP ordering is the currency.** Bites cost 2 cheese for 12 damage (`CombatStrategy:440`) instead of 10. Whoever lands the first bite goes ahead in HP, and from then on can grab the opponent while being immune to grabs from its front. The pipeline tries a grab before a bite (`CombatStrategy:236-256`).
-3. **Grab, then throw.** A grabbed enemy is out of the fight (it can't act, and it is immune to bites). Two turns later it is thrown. In observed throws, 41% hit a wall or dirt (≈34–46 damage, +20 stun), 29% hit a second enemy rat (46 damage to each) and 3.5% hit an enemy king (§13). A grab is worth about a 46-damage hit plus a stun, while a bite is 12.
+3. **Grab, then throw.** A grabbed enemy is out of the fight (it can't act, and it is immune to bites). Two turns later it is thrown. In observed throws, 41% hit a wall or dirt (≈34–42 damage, +20 stun), 29% hit a second enemy rat (up to 42 damage to each) and 3.5% hit an enemy king (§13). A grab is worth about a 42-damage hit plus a stun, while a bite is 12.
 4. **Move and act in the same turn.** Each candidate is a (move, facing, action-before-or-after-move) triple, ranked by a hand-tuned score. The rat can step in and bite, or bite and back off ("secondary" moves), within the cooldown rules.
 5. **Bytecode-dense code generation.** Byte-packed SIMD-style threat counters (8 neighbours per `long`) and fully unrolled per-(move × facing × throw-direction) evaluators fit the whole search into about 10–14k of the 17.5k bytecode limit (§13).
 
@@ -47,7 +47,7 @@ Engine truth is in rules.md. These are only the numbers the scores refer to.
 - Bite: `10 + ceil(sqrt(cheese))`. `getCheeseNeeded(k) = (k−1)²+1` (`CombatStrategy:484`) is the minimum cheese that buys +k damage. Kings and cats always get 10 (`BabyRat.java:246`).
 - Grab legality: target adjacent and inside **my** 3-tile front cone, and (target HP < mine, or target can't see me, or ally). Enemy kings and cats can't be grabbed.
 - A baby rat sees exactly 3 of its 8 neighbours (front and front diagonals). "Hidden" neighbours = the other 5.
-- Throw (rules.md §9): flies in the thrower's facing. A collision deals `10 + 4·rem` to **both** the flier and the robot hit: 46/42 on the throw turn, 38/34 on the next. Landing on open ground or at the map edge deals 10. A rat thrown into a cat is **eaten**, and the cat sleeps 2 turns. Throw collisions never trigger a backstab.
+- Throw (rules.md §9): flies in the thrower's facing. A collision deals `10 + 4·rem` to **both** the flier and the robot hit: 42 at most on the throw turn (the first tile must be empty, rules.md §9), 38/34 on the next. Landing on open ground or at the map edge deals 10. A rat thrown into a cat is **eaten**, and the cat sleeps 2 turns. Throw collisions never trigger a backstab.
 - Rat trap: cost 20 (engine), damage 50, movement cooldown set to 30. It triggers when an enemy *enters* any tile of its 3×3.
 - Cat: 4,000 HP, scratch 20 damage anywhere in its cone (r² 17, 180°), pounce r² 13 kills every rat on the landing tiles (rules.md §12).
 
@@ -212,7 +212,7 @@ Score of one candidate (`tryThrow`, `:297-396`). The landing cell `me+m+d` must 
 | Hit at step s (rem = 11−s) | Score | Stop? | Template |
 |---|---|---|---|
 | Unseen cell (`'\0'`) | +0 | stop | :328 |
-| Wall | +10 + 4·rem (46, 42, 38, 34) | stop | :333 |
+| Wall | +10 + 4·rem (46, 42, 38, 34; each 4 above the real damage, which tops out at 42) | stop | :333 |
 | Off map | +10 (normal landing) | stop | :337 |
 | Own king zone | = −1000 | stop | :346 |
 | Own rat, s=2 | −4·rem = −36 | stop | :350 |
@@ -428,7 +428,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | own king | −1000 | `:346` | Never | – |
 | own rat at s=2 | −4·rem (−36) | `:350` | Friendly collision | M |
 | own rat s≥3 | −2·rem, continue | `:353` | | L |
-| enemy king | +300 | `:358` | King hit (the actual damage is ≤ 46) | M |
+| enemy king | +300 | `:358` | King hit (the actual damage is ≤ 42) | M |
 | enemy rat at s=2 | 2(10+4rem)+10 = 102 | `:362` | Double collision | H |
 | enemy rat s≥3 | (10+4rem)/(10−rem) | `:366` | Discounted because it may move | L |
 | dirt hit | +4·rem (no +10) | `:374` | Undervalued compared with walls | L |
@@ -588,7 +588,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 
 | Score | Meaning | Share |
 |---|---|---|
-| 34–46 | wall or dirt | 40.8% |
+| 34–42 | wall or dirt | 40.8% |
 | 102–299 | enemy rat at step 2 | 29.1% |
 | 0 | nothing hit; enemy lands for 10 damage | 16.1% |
 | 12.7–34 | | 5.2% |
@@ -618,7 +618,7 @@ There were no overruns.
 Each item lists the claim, then the evidence, then how to test it. The order is expected value / effort **(inference)**.
 
 **H1. Feed enemies to cats and make throws cat-aware.**
-- Evidence: TryThrow has no cat term (§6.1, `TryThrow:258-293`). A thrown rat that hits a cat dies outright and the cat sleeps 2 turns (rules.md §9). That would replace a 34–46-damage throw with a 100-HP kill. B1 shows that cats near carriers currently cause a crash.
+- Evidence: TryThrow has no cat term (§6.1, `TryThrow:258-293`). A thrown rat that hits a cat dies outright and the cat sleeps 2 turns (rules.md §9). That would replace a 34–42-damage throw with a 100-HP kill. B1 shows that a cat on the throw tile currently kills the carrier (failed `assert(rc.canThrowRat())`).
 - Implementation: mark the cat's 2×2 in the occupancy grid as "cat" and score it high (≥ the +300 king value). Treat cat-occupied landing cells as illegal. Have TryPosition carry toward cats when one is within ~4 tiles.
 - Test on cat maps, against awubot, both sides.
 

@@ -19,11 +19,13 @@ public final class Rta implements Opcodes {
     final Set<Cls> used = new LinkedHashSet<>();   // classes needing a Klass
     final List<String> problems = new ArrayList<>();
     final Set<String> arrayTypes = new TreeSet<>();
+    final Linkage link;
 
     Rta(Pool pool, Natives natives) {
         this.pool = pool;
         this.natives = natives;
         this.indy = new Indy(pool);
+        this.link = new Linkage(pool);
     }
 
     void use(Cls c) {
@@ -122,6 +124,9 @@ public final class Rta implements Opcodes {
             switch (in.getType()) {
                 case AbstractInsnNode.TYPE_INSN -> {
                     TypeInsnNode t = (TypeInsnNode) in;
+                    String en = t.desc.startsWith("[") ? Type.getType(t.desc).getElementType().getSort() == Type.OBJECT
+                            ? Type.getType(t.desc).getElementType().getInternalName() : null : t.desc;
+                    if (en != null && link.cls(mod, m.owner, en, in) == null) break;
                     if (in.getOpcode() == NEW) {
                         Cls c = pool.ref(mod, t.desc);
                         if (natives.isCut(c)) use(c);
@@ -135,9 +140,8 @@ public final class Rta implements Opcodes {
                 }
                 case AbstractInsnNode.FIELD_INSN -> {
                     FieldInsnNode f = (FieldInsnNode) in;
-                    Cls owner = pool.ref(mod, f.owner);
-                    Fld fd = owner.resolveField(f.name, f.desc);
-                    if (fd == null) throw new TranslateException("unresolved field " + f.owner + "." + f.name + " in " + m);
+                    Fld fd = link.field(m.owner, f);
+                    if (fd == null) break;
                     use(fd.owner);
                     if (in.getOpcode() == GETSTATIC || in.getOpcode() == PUTSTATIC) init(fd.owner);
                     typeRef(mod, f.desc, false);
@@ -195,10 +199,9 @@ public final class Rta implements Opcodes {
             virtualCall(r);
             return;
         }
-        if (natives.isIntrinsicCall(mod, mi)) { natives.reachIntrinsic(this, mod, mi); return; }
+        Mth r = link.method(from.owner, mi);
+        if (r == null) return;
         Cls owner = pool.ref(mod, mi.owner);
-        Mth r = owner.resolveMethod(mi.name, mi.desc, mi.itf);
-        if (r == null) throw new TranslateException("unresolved method " + mi.owner + "." + mi.name + mi.desc + " in " + from);
         switch (mi.getOpcode()) {
             case INVOKESTATIC -> { init(r.owner); reach(r); }
             case INVOKESPECIAL -> {

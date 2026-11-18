@@ -170,6 +170,12 @@ final class Gen implements Opcodes {
     // ---------------- instructions
     void insn(AbstractInsnNode in) {
         int op = in.getOpcode();
+        String[] le = E.rta.link.errors.get(in);
+        if (le != null) {
+            String kind = Glue.linkageKind(le[0]);
+            line("rt_throw_new_" + kind + "(rt_cstring(" + Names.cstr(le[1]) + ")); goto " + xl() + ";");
+            return;
+        }
         switch (op) {
             case NOP -> {}
             case ACONST_NULL -> line(push('a') + " = nullptr;");

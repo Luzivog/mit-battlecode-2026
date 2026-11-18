@@ -113,6 +113,18 @@ def translator(version: str) -> str:
     return os.pathsep.join([str(out)] + cp)
 
 
+def classes_hash(classes: Path, pkg: str) -> str:
+    """FNV-1a 64 over the package's class files (relative path, NUL, bytes, NUL), sorted by path: runtime/main.cpp
+    computes the same to check a spec's classes against the build's."""
+    h = 0xcbf29ce484222325
+    root = classes / pkg
+    for f in sorted(root.rglob("*.class"), key=lambda p: str(p.relative_to(root)).encode()):
+        for chunk in (str(f.relative_to(root)).encode(), b"\0", f.read_bytes(), b"\0"):
+            for byte in chunk:
+                h = ((h ^ byte) * 0x100000001b3) & 0xFFFFFFFFFFFFFFFF
+    return f"{h:016x}"
+
+
 def bot_packages(classes: Path):
     return sorted(p.parent.name for p in classes.glob("*/RobotPlayer.class"))
 
@@ -134,6 +146,8 @@ def build(version: str, bots, jobs: int, opt: str):
     sh(cmd)
     vc = gen / "version.cpp"
     text = f'extern "C" const char bcx_engine_version[] = "{version}";\n'
+    text += 'extern "C" const char* const bcx_bot_hashes[] = {' + ", ".join(
+        f'"{b}", "{classes_hash(classes, b)}"' for b in bots) + ", nullptr};\n'
     if not vc.exists() or vc.read_text() != text:
         vc.write_text(text)
     rt = ENGINE / "runtime"

@@ -15,7 +15,17 @@ final class Glue {
             {"ncdfe", "java/lang/NoClassDefFoundError", "(Ljava/lang/String;)V"},
             {"ame", "java/lang/AbstractMethodError", "(Ljava/lang/String;)V"},
             {"internal", "java/lang/InternalError", "(Ljava/lang/String;)V"},
+            {"nsme", "java/lang/NoSuchMethodError", "(Ljava/lang/String;)V"},
+            {"nsfe", "java/lang/NoSuchFieldError", "(Ljava/lang/String;)V"},
+            {"iae", "java/lang/IllegalAccessError", "(Ljava/lang/String;)V"},
+            {"icce", "java/lang/IncompatibleClassChangeError", "(Ljava/lang/String;)V"},
+            {"nsfx", "java/lang/NoSuchFieldException", "(Ljava/lang/String;)V"},
     };
+
+    static String linkageKind(String errClass) {
+        for (String[] t : THROWS) if (t[1].equals(errClass)) return t[0];
+        throw new TranslateException("no runtime throw for " + errClass);
+    }
 
     /** Methods and classes the glue needs, for the RTA. */
     static void roots(Rta rta, Pool pool) {

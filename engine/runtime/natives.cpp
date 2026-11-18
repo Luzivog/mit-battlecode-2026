@@ -367,3 +367,27 @@ Obj* rt_Reference_get0(Obj* self) { return ((c0_java_lang_ref_Reference*)self)->
 jboolean rt_Reference_refersTo0(Obj* self, Obj* o) { return ((c0_java_lang_ref_Reference*)self)->f_referent == o; }
 void rt_Reference_clear0(Obj* self) { ((c0_java_lang_ref_Reference*)self)->f_referent = nullptr; }
 void rt_Unsafe_copyMemory0(Obj*, Obj* src, jlong so, Obj* dst, jlong d, jlong n) { memmove((char*)dst + d, (char*)src + so, (size_t)n); }
+
+// ---- the reflection java.util.Random's static initializer uses (getDeclaredField, objectFieldOffset)
+Obj* rt_Class_getDeclaredField(Obj* self, Obj* name) {
+    if (!name) { rt_throw_npe(); return nullptr; }
+    std::string n = utf8(name);
+    if (rt_field_offset(KL(self), n.c_str()) < 0) { rt_throw_new_nsfx(name); return nullptr; }
+    extern Klass K_c0_java_lang_reflect_Field;
+    c0_java_lang_reflect_Field* f = (c0_java_lang_reflect_Field*)rt_new(&K_c0_java_lang_reflect_Field);
+    f->f_clazz = self;
+    f->f_name = name;
+    return f;
+}
+jlong rt_Unsafe_objectFieldOffset0(Obj*, Obj* field) {
+    c0_java_lang_reflect_Field* f = (c0_java_lang_reflect_Field*)field;
+    std::string n = utf8(f->f_name);
+    return rt_field_offset(KL(f->f_clazz), n.c_str());
+}
+void rt_Unsafe_copySwapMemory0(Obj*, Obj* src, jlong so, Obj* dst, jlong d, jlong n, jlong es) {
+    char* s = (char*)src + so;
+    char* t = (char*)dst + d;
+    std::string tmp(s, (size_t)n);
+    for (jlong i = 0; i < n; i += es)
+        for (jlong k = 0; k < es; k++) t[i + k] = tmp[i + es - 1 - k];
+}

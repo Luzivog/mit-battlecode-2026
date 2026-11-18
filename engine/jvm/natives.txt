@@ -197,3 +197,7 @@ cutclass java/util/DualPivotQuicksort$RunMerger
 cutclass java/util/concurrent/ForkJoinTask
 complete bcx/subst/LangAccess
 patch jdk/internal/access/SharedSecrets bcx/subst/SharedSecrets_p
+
+sys java/lang/Class getDeclaredField (Ljava/lang/String;)Ljava/lang/reflect/Field; rt_Class_getDeclaredField inst:java/lang/reflect/Field
+sys jdk/internal/misc/Unsafe objectFieldOffset0 (Ljava/lang/reflect/Field;)J rt_Unsafe_objectFieldOffset0
+sys jdk/internal/misc/Unsafe copySwapMemory0 (Ljava/lang/Object;JLjava/lang/Object;JJJ)V rt_Unsafe_copySwapMemory0

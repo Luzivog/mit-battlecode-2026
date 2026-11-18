@@ -30,6 +30,20 @@ public final class InjectSystem {
 
     public static void setSystemOut(PrintStream newOut) {}
 
+    public static void setIn(InputStream newIn) {
+        throw new battlecode.instrumenter.InstrumentationException(battlecode.instrumenter.InstrumentationException.Type.ILLEGAL, "You can't change System.in, sorry.");
+    }
+
+    public static void setOut(PrintStream newOut) {
+        throw new battlecode.instrumenter.InstrumentationException(battlecode.instrumenter.InstrumentationException.Type.ILLEGAL, "You can't change System.out, sorry.");
+    }
+
+    public static void setErr(PrintStream newErr) {
+        throw new battlecode.instrumenter.InstrumentationException(battlecode.instrumenter.InstrumentationException.Type.ILLEGAL, "You can't change System.err, sorry.");
+    }
+
+    public static java.nio.channels.Channel inheritedChannel() { return null; }
+
     public static java.io.Console console() { return null; }
 
     public static String lineSeparator() { return "\n"; }

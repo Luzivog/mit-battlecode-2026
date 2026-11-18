@@ -134,6 +134,11 @@ void rt_throw_new_ase(Obj* msg);
 void rt_throw_new_ncdfe(Obj* msg);
 void rt_throw_new_ame(Obj* msg);
 void rt_throw_new_internal(Obj* msg);
+void rt_throw_new_nsme(Obj* msg);
+void rt_throw_new_nsfe(Obj* msg);
+void rt_throw_new_iae(Obj* msg);
+void rt_throw_new_icce(Obj* msg);
+void rt_throw_new_nsfx(Obj* msg);
 void rt_init_failed();
 inline void rt_throw_npe() { rt_throw_new_npe(nullptr); }
 void rt_throw_arith();

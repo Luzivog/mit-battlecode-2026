@@ -87,6 +87,8 @@ final class Natives {
             Cls c = pool.ref(mod, dep.substring(4));
             rta.instantiate(c);
             rta.init(c);
+        } else if (dep.startsWith("inst:")) {
+            rta.instantiate(pool.ref(mod, dep.substring(5)));   // made natively; its class initialization is not observable
         } else if (dep.startsWith("m:")) {
             String d = dep.substring(2);
             int dot = d.lastIndexOf('.', d.indexOf('('));

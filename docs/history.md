@@ -8,8 +8,8 @@ Competitive intel (results, scrims, attack angles) lives in [intel.md](intel.md)
 | Item | Value |
 |---|---|
 | Upstream | https://github.com/awu7/battlecode-2026, default branch `final` |
-| Champion commit | `a70328e` "fix glorp trolling" (2026-01-29 22:12), tagged locally `caterpillow-final` (annotated tag) = `upstream/final` |
-| Local `main` | `upstream/final` + 2 local setup commits: `8e72610` (pin Python deps, parametrize `jinja.py`, default match challenger vs awubot) and `1ff4b32` (`src/challenger` = copy of awubot with package renamed) |
+| Champion commit | `a70328e` "fix glorp trolling" (2026-01-29 22:12), tagged locally `caterpillow-final` (annotated tag) = `champion/final` |
+| Local `main` | `champion/final` + 2 local setup commits: `8e72610` (pin Python deps, parametrize `jinja.py`, default match challenger vs awubot) and `1ff4b32` (`src/challenger` = copy of awubot with package renamed) |
 | Team | "subscribe to caterpillow", team id 2067, episode `bc26`. Platform members: `awu` (Cambridge), `caterpillow`, `lmkae`, `horiseun` (UNSW) ([API](https://api.battlecode.org/api/team/bc26/t/2067/)) |
 | People | [battlecode.org/past.html](https://battlecode.org/past.html) lists the winners as Naman Doshi, Alexander Wang, Andy Wu, Yiheng You |
 | Git authors on `final` | `caterpillow` (Alexander Wang): 159 commits. Combat micro (Jinja codegen), comms/squeaks, combat tracker, throwing, traps, autoscrims. `awu`/`awu7` (Andy Wu): 150. Pathfinding (BFS/bugnav), Cell/Robot trackers, king pathing, spawning/econ, final-day tweaks. `naman-doshi`/`Naman Doshi`: 56. King formation, mining, defense, traps, testing scripts. `Yiheng You`: 7. Early cheese farming/roaming. Which platform user is which of Naman and Yiheng is not known. |
@@ -56,7 +56,7 @@ The sprint submissions (`experiment`, `awubot_fixratthrowing_old`, `awubot_sprin
 
 ## 4. Upstream branch atlas
 
-How to read this: "ahead" = commits not in `final` (`git rev-list --count upstream/final..B`). "Merged?" is judged from `git cherry` plus matching commit subjects. Many branches were merged by re-applying patches rather than by merge commits, and none of the unmerged diffs reverse-apply cleanly onto final, so expect to port them by hand. Commit-message evidence is quoted.
+How to read this: "ahead" = commits not in `final` (`git rev-list --count champion/final..B`). "Merged?" is judged from `git cherry` plus matching commit subjects. Many branches were merged by re-applying patches rather than by merge commits, and none of the unmerged diffs reverse-apply cleanly onto final, so expect to port them by hand. Commit-message evidence is quoted.
 
 | Branch | When / who | What it tried | In final? | Evidence / notes |
 |---|---|---|---|---|
@@ -94,13 +94,13 @@ Signals for us:
 ## 5. Inspecting upstream later
 
 ```bash
-git fetch upstream                                   # read-only; all ~30 branches land as upstream/*
-git branch -r | grep upstream/
-git log --oneline upstream/final..upstream/stable    # commits not in final
-git cherry -v upstream/final upstream/<branch>       # '-' = patch-equivalent already in final
-git diff --stat upstream/final upstream/<branch> -- 'src/awubot/**/*.jinja2'   # templates only; generated .java diffs are huge
-git show upstream/<branch>:src/awubot/robot/rat/combat/moves/TryThrow.java.jinja2 | less
-git worktree add --detach /tmp/wt-<name> upstream/<branch> && … && git worktree remove /tmp/wt-<name>
+git fetch champion                                   # read-only; all ~30 branches land as champion/*
+git branch -r | grep champion/
+git log --oneline champion/final..champion/stable    # commits not in final
+git cherry -v champion/final champion/<branch>       # '-' = patch-equivalent already in final
+git diff --stat champion/final champion/<branch> -- 'src/awubot/**/*.jinja2'   # templates only; generated .java diffs are huge
+git show champion/<branch>:src/awubot/robot/rat/combat/moves/TryThrow.java.jinja2 | less
+git worktree add --detach /tmp/wt-<name> champion/<branch> && … && git worktree remove /tmp/wt-<name>
 ```
 
 Diff only the `*.jinja2` files and hand-written `.java` files (those without a `.jinja2` sibling). Regenerate code with `jinja.py` (see [codegen.md](codegen.md)).

@@ -90,6 +90,15 @@ def engine_jar(version: str) -> Path:
     return jar
 
 
+def java_version() -> str:
+    """The JDK's runtime version. Part of every game key: bots' java.util classes are instrumented from this JDK."""
+    proc = subprocess.run(["java", "-XshowSettings:properties", "-version"], capture_output=True, text=True)
+    for line in proc.stderr.splitlines():
+        if line.strip().startswith("java.runtime.version ="):
+            return line.split("=", 1)[1].strip()
+    raise SetupError("cannot read the java version (is a JDK 21 on PATH?)")
+
+
 def runner_classes() -> tuple[Path, str]:
     """Compiles tools/bcgames/java once per source version. Returns (class dir, runner version)."""
     sources = sorted(JAVA_DIR.rglob("*.java"))
@@ -184,6 +193,26 @@ def bot_jar(ref: str) -> tuple[Path, str]:
         _atomic_write(meta, json.dumps({"bot": ref, "class_hash": class_hash}).encode())
         _atomic_write(jar, buf.read_bytes())
         return jar, class_hash
+
+
+def bot_classes(pkg: str, path: str) -> tuple[Path, str]:
+    """A prebuilt bot: a class directory or jar holding <pkg>/... Returns (path, class hash over the package)."""
+    p = Path(path).expanduser().resolve()
+    prefix = pkg.replace(".", "/") + "/"
+    h = hashlib.sha256()
+    n = 0
+    if p.is_dir():
+        for f in sorted(x for x in (p / prefix).rglob("*") if x.is_file()):
+            h.update(f.relative_to(p).as_posix().encode() + b"\0" + f.read_bytes() + b"\0")
+            n += 1
+    elif p.is_file():
+        with zipfile.ZipFile(p) as z:
+            for name in sorted(i for i in z.namelist() if i.startswith(prefix) and not i.endswith("/")):
+                h.update(name.encode() + b"\0" + z.read(name) + b"\0")
+                n += 1
+    if n == 0:
+        raise SetupError(f"no classes of {pkg} in {path}")
+    return p, h.hexdigest()[:16]
 
 
 # ------------------------------------------------------------------------------------------------------------- maps

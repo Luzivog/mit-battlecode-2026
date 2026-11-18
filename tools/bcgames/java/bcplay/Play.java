@@ -43,6 +43,9 @@ import java.util.Random;
  */
 public final class Play {
     private static final long CAT_RNG_SEED = 1092; // battlecode.world.InternalRobot: new Random(1092)
+    // One game at a time per JVM, so the process's CPU time over a game is that game's (JIT and GC included).
+    private static final com.sun.management.OperatingSystemMXBean OS =
+            (com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean();
 
     public static void main(String[] args) throws Exception {
         PrintStream results = new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8);
@@ -76,6 +79,7 @@ public final class Play {
     static String play(String teamA, String urlA, String teamB, String urlB, String mapName, String mapDir,
                        String replayPath, boolean validate, Scanner scanner) throws Exception {
         long start = System.nanoTime();
+        long cpu0 = OS.getProcessCpuTime();
         CountingRandom catRng = new CountingRandom(CAT_RNG_SEED);
         InternalRobot.rand = catRng;
         scanner.reset(teamA, teamB);
@@ -111,13 +115,16 @@ public final class Play {
         byte[] replay = gameMaker.toBytes();
         if (saveFile != null) Files.write(saveFile.toPath(), replay);
         long wallMs = (System.nanoTime() - start) / 1_000_000;
+        double cpuS = (OS.getProcessCpuTime() - cpu0) / 1e9;
 
         TeamInfo ti = world.getTeamInfo();
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"winner\":\"").append(winner.name()).append('"');
-        sb.append(",\"wintype\":\"").append(world.getGameStats().getDominationFactor().name()).append('"');
-        sb.append(",\"rounds\":").append(world.getCurrentRound());
+        sb.append(",\"winner_pkg\":").append(quote(winner == Team.A ? teamA : teamB));
+        sb.append(",\"win_type\":\"").append(world.getGameStats().getDominationFactor().name()).append('"');
+        sb.append(",\"round\":").append(world.getCurrentRound());
         sb.append(",\"wall_ms\":").append(wallMs);
+        sb.append(",\"cpu_s\":").append(String.format("%.2f", cpuS));
         sb.append(",\"digest\":\"").append(sha256(replay).substring(0, 16)).append('"');
         for (Team t : new Team[]{Team.A, Team.B}) {
             sb.append(",\"").append(t.name()).append("\":{");
@@ -126,10 +133,10 @@ public final class Play {
             sb.append(",\"rats\":").append(ti.getNumBabyRats(t));
             sb.append(",\"kings\":").append(ti.getNumRatKings(t));
             sb.append(",\"cheese\":").append(ti.getCheese(t));
-            sb.append(",\"frozen\":").append(scanner.frozen[t.ordinal()]);
+            sb.append(",\"crashed\":").append(scanner.crashed[t.ordinal()]);
             sb.append('}');
         }
-        sb.append(",\"engine_errors\":").append(scanner.frozen[2]);
+        sb.append(",\"engine_errors\":").append(scanner.crashed[2]);
         sb.append(",\"cat_rng_draws\":").append(catRng.draws);
         sb.append('}');
         return sb.toString();
@@ -160,22 +167,23 @@ public final class Play {
     }
 
     /**
-     * Passes console output through and counts robots frozen per team. The engine reports a Throwable escaping a
-     * robot's run() as "Stack trace: " followed by the trace (ErrorReporter); the first frame in a team's package
-     * names the team (no team frame: an engine error). A robot returning from run() prints "<Team>'s <id> ... froze".
-     * Robots run one at a time, so traces don't interleave.
+     * Passes console output through and counts, per team, robots whose code crashed: a Throwable escaping run(),
+     * which the engine reports as "Stack trace: " and the trace (ErrorReporter), or run() returning ("... froze in
+     * round"). Either way the robot is terminated and GameWorld.updateRobot destroys it at the end of that turn.
+     * The first frame in a team's package names the team; a trace with none is an engine error. Robots run one at a
+     * time, so traces don't interleave.
      */
     static final class Scanner extends OutputStream {
         final OutputStream out;
         final StringBuilder line = new StringBuilder();
-        final int[] frozen = new int[3]; // A, B, unattributed
+        final int[] crashed = new int[3]; // A, B, unattributed
         String prefixA, prefixB;
         boolean inTrace;
 
         Scanner(OutputStream out) { this.out = out; }
 
         synchronized void reset(String teamA, String teamB) {
-            frozen[0] = frozen[1] = frozen[2] = 0;
+            crashed[0] = crashed[1] = crashed[2] = 0;
             prefixA = "at " + teamA + ".";
             prefixB = "at " + teamB + ".";
             closeTrace();
@@ -195,7 +203,7 @@ public final class Play {
 
         /** Ends the current game's scan: a trace with no team frame was an engine error. */
         synchronized void closeTrace() {
-            if (inTrace) frozen[2]++;
+            if (inTrace) crashed[2]++;
             inTrace = false;
         }
 
@@ -203,13 +211,13 @@ public final class Play {
             String t = s.trim();
             if (t.startsWith("Stack trace:")) { closeTrace(); inTrace = true; return; }
             if (inTrace && t.startsWith("at ")) {
-                if (t.startsWith(prefixA)) { frozen[0]++; inTrace = false; }
-                else if (t.startsWith(prefixB)) { frozen[1]++; inTrace = false; }
+                if (t.startsWith(prefixA)) { crashed[0]++; inTrace = false; }
+                else if (t.startsWith(prefixB)) { crashed[1]++; inTrace = false; }
                 return;
             }
             if (t.contains(" froze in round ") && t.contains(" because it returned from its run() method")) {
-                if (t.startsWith("A's ")) frozen[0]++;
-                else if (t.startsWith("B's ")) frozen[1]++;
+                if (t.startsWith("A's ")) crashed[0]++;
+                else if (t.startsWith("B's ")) crashed[1]++;
             }
         }
     }

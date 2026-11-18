@@ -1,13 +1,18 @@
 """tools/play: play games from a JSONL spec file with the unmodified engine, many games per JVM, N JVMs.
 
-Spec (one JSON object per line):  {"id": "g1", "a": "challenger", "b": "awubot", "map": "DefaultSmall",
-                                    "seed": 158, "engine": "1.2.6"}
-  a, b    bots as team A and team B: a package under src/, or pkg@REV for a git revision of this repo
-  seed    optional, default: the map's embedded seed (= the official game); any other seed is a map variant
-  engine  optional, default 1.2.6 (official); 1.2.5 is the pinned dev engine
-Result (one JSON object per line, in completion order): the spec's fields plus winner ("A"/"B"), wintype, rounds,
-wall_ms, digest (sha256 of the replay bytes), per team {cheese_transferred, cat_damage, rats, kings, cheese, frozen},
-engine_errors, cat_rng_draws, key, runner, cached, error, replay.
+Spec (one JSON object per line; the fields of engine/AGENTS.md):
+  {"id": "g1", "a": "challenger", "b": "awubot", "map": "DefaultSmall", "seed": 158, "engine": "1.2.6"}
+  a, b        team A's and team B's bot: a package under src/ (compiled alone, like a submission), or pkg@REV
+              for that package at a git revision of this repo
+  classes, classes_a, classes_b
+              optional: play prebuilt classes (a directory or jar holding <pkg>/...) instead of compiling src/
+  seed        optional, default: the map's embedded seed (= the official game); another seed is a map variant
+  engine      optional, default 1.2.6 (official); 1.2.5 is the pinned dev engine
+  other fields are copied to the result
+Result (one JSON object per line, in completion order): the spec's fields plus winner ("A"/"B"), winner_pkg,
+win_type, round, wall_ms, cpu_s, digest (sha256 of the replay bytes), per team A/B {cheese_transferred, cat_damage,
+rats, kings, cheese, crashed}, engine_errors, cat_rng_draws, backend, key, runner, cached, error, replay.
+"crashed": robots the engine destroyed because their code threw (an uncaught Error) or returned from run().
 """
 from __future__ import annotations
 
@@ -53,18 +58,21 @@ class Resolver:
     """Turns specs into jobs: builds bots and map variants once, computes cache keys."""
 
     def __init__(self):
-        self.runner_dir, self.runner = store.runner_classes()
+        self.runner_dir, runner = store.runner_classes()
+        self.runner = f"{runner}/{store.java_version()}"
         self.bots: dict[str, tuple[Path, str]] = {}
         self.maps: dict[str, str] = {}
         self.lock = threading.Lock()
 
-    def bot(self, ref: str) -> tuple[Path, str]:
+    def bot(self, ref: str, classes: str | None = None) -> tuple[Path, str]:
+        key = ref if classes is None else f"{ref}|{classes}"
         with self.lock:
-            if ref not in self.bots:
-                self.bots[ref] = store.bot_jar(ref)
-            return self.bots[ref]
+            if key not in self.bots:
+                self.bots[key] = (store.bot_jar(ref) if classes is None else
+                                  store.bot_classes(store.parse_bot(ref)[0], classes))
+            return self.bots[key]
 
-    def job(self, spec: dict, replay_dir: Path | None = None) -> Job:
+    def job(self, spec: dict, replay: Path | None = None) -> Job:
         for k in ("id", "a", "b", "map"):
             if k not in spec:
                 raise store.SetupError(f"spec {spec!r} has no {k!r}")
@@ -77,14 +85,15 @@ class Resolver:
         if spec.get("seed") is None:
             spec["seed"] = store.embedded_seed(name)
         seed = int(spec["seed"])
-        (a_jar, a_hash), (b_jar, b_hash) = self.bot(spec["a"]), self.bot(spec["b"])
+        a_jar, a_hash = self.bot(spec["a"], spec.get("classes_a", spec.get("classes")))
+        b_jar, b_hash = self.bot(spec["b"], spec.get("classes_b", spec.get("classes")))
         a_pkg, b_pkg = store.parse_bot(spec["a"])[0], store.parse_bot(spec["b"])[0]
         key = store.game_key(self.runner, engine, a_hash, b_hash, a_pkg, b_pkg, name, self.maps[name], seed)
-        replay = str(replay_dir / f"{safe(spec['id'])}.bc26") if replay_dir else ""
         line = "\t".join([str(spec["id"]), a_pkg, str(a_jar), b_pkg, str(b_jar), name,
-                          str(store.map_variant(name, seed)), replay])
-        meta = {"a_hash": a_hash, "b_hash": b_hash, "map_hash": self.maps[name], "key": key, "runner": self.runner}
-        return Job(spec=spec, key=key, line=line, replay=replay, meta=meta)
+                          str(store.map_variant(name, seed)), str(replay or "")])
+        meta = {"a_hash": a_hash, "b_hash": b_hash, "map_hash": self.maps[name], "key": key, "runner": self.runner,
+                "backend": "java"}
+        return Job(spec=spec, key=key, line=line, replay=str(replay or ""), meta=meta)
 
 
 def safe(s: str) -> str:
@@ -95,7 +104,8 @@ class Worker:
     """One JVM running bcplay.Play; restarted after a timeout, a crash or an engine error."""
 
     def __init__(self, engine: str, runner_dir: Path, log: Path):
-        self.cmd = (["java", *JVM_FLAGS, *OPENS, *[f"-D{k}={v}" for k, v in PROPS.items()],
+        flags = os.environ["BCGAMES_JVM"].split() if os.environ.get("BCGAMES_JVM") else JVM_FLAGS
+        self.cmd = (["java", *flags, *OPENS, *[f"-D{k}={v}" for k, v in PROPS.items()],
                      "-cp", f"{store.engine_jar(engine)}{os.pathsep}{runner_dir}", "bcplay.Play"])
         self.log_path = log
         self.proc: subprocess.Popen | None = None
@@ -241,7 +251,7 @@ def describe(r: dict) -> str:
     win = r["a"] if r["winner"] == "A" else r["b"]
     src = "cache" if r["cached"] else f"{r['wall_ms'] / 1000:.1f}s"
     return (f"{r['id']}: {r['map']} s{r['seed']} {r['a']}(A) vs {r['b']}(B) -> {win} "
-            f"{r['wintype']} r{r['rounds']} [{src}]")
+            f"{r['win_type']} r{r['round']} [{src}]")
 
 
 def main(argv=None) -> int:
@@ -271,7 +281,7 @@ def main(argv=None) -> int:
         for s in specs:
             if args.engine and "engine" not in s:
                 s["engine"] = args.engine
-            jobs.append(runner.resolver.job(s, replay_dir))
+            jobs.append(runner.resolver.job(s, replay_dir / f"{safe(s['id'])}.bc26" if replay_dir else None))
     except store.SetupError as e:
         print(f"tools/play: {e}", file=sys.stderr)
         return 1

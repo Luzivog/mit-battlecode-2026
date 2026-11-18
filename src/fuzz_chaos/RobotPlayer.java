@@ -44,14 +44,15 @@ public class RobotPlayer {
         int id = rc.getID();
         int W = rc.getMapWidth(), H = rc.getMapHeight();
         if (rc.getType().isRatKingType()) {
-            // the king survives, except on some maps where it dies by an escaping exception
-            boolean dies = (W + H) % 6 == 2;
-            fate = dies ? 13 : 0;
-            deathRound = 200 + id % 300;
+            // the king survives, except on some maps: an escaping exception, a failed assert, or run() returning
+            int k = (W + H) % 6;
+            fate = k == 2 ? 13 : k == 4 ? 14 : k == 5 ? 12 : 0;
+            deathRound = 200 + 100 * (k / 2) + id % 200;
         } else {
             int k = mixOf(id, 99) % 20;
             fate = k < 12 ? 0 : k;
-            deathRound = rc.getRoundNum() + 5 + mixOf(id, 7) % 120;
+            // some die on their very first turn
+            deathRound = rc.getRoundNum() - 5 + mixOf(id, 7) % 125;
         }
         while (true) {
             int round = rc.getRoundNum();

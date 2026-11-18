@@ -493,7 +493,9 @@ final class B {
     static void assemble() throws GameActionException {
         MapLocation me = rc.getLocation();
         if (me.equals(rally)) {
-            if (rc.canBecomeRatKing()) {
+            boolean can = rc.canBecomeRatKing();
+            T.r(T.canBecomeRatKing, can ? T.OK : T.NO);
+            if (can) {
                 rc.becomeRatKing();
                 T.r(T.becomeRatKing, T.OK);
                 rc.writeSharedArray(2, 0);

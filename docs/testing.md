@@ -323,6 +323,10 @@ the games.
 - AppCDS / `-Xshare` would only shorten JVM start (~0.5 s), which a worker pays once per run.
 - `BCGAMES_JVM="flags"` overrides the flags, to re-measure elsewhere.
 
+**Remote** (`tools/games --remote`, track C's `tools/run`): the first gauntlet played 3,109 games in 1,764 s on
+Condor lab machines plus a 36-CPU Slurm slot, 106 games/min, with 1,200 games in flight. Remote games are
+byte-identical to local ones (replay digests, Slurm and Condor).
+
 **Throughput.** Under the same load, the nv flags measured 13.1 games/min on 8 workers (quick pool, official seeds).
 ABtest measured 48 games in 294 s on 12 workers (9.8 games/min) and 86 games in 1103 s on 8 workers (4.7 games/min,
 official pool). Per-pool rates: docs/evaluation.md.

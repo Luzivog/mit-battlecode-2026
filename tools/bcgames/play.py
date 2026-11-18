@@ -55,8 +55,8 @@ class Slots:
     (lock files under the data dir, one per slot). BCGAMES_SLOTS sets the cap (default 8, this shared box's share);
     0 turns it off."""
 
-    def __init__(self):
-        self.n = int(os.environ.get("BCGAMES_SLOTS", "8"))
+    def __init__(self, n: int | None = None):
+        self.n = int(os.environ.get("BCGAMES_SLOTS", "8")) if n is None else n
         self.dir = store.DATA / "slots" / socket.gethostname()
         if self.n:
             self.dir.mkdir(parents=True, exist_ok=True)
@@ -200,9 +200,7 @@ class Pool:
         self.workers: list[Worker] = []
         self.closed = False
         self.stopping = threading.Event()
-        self.slots = Slots() if slots else Slots.__new__(Slots)
-        if not slots:
-            self.slots.n = 0
+        self.slots = Slots() if slots else Slots(0)
         logdir.mkdir(parents=True, exist_ok=True)
 
     def submit(self, job: Job, on_result) -> None:

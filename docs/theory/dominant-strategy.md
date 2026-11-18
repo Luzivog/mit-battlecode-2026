@@ -36,7 +36,40 @@ Source keys:
 
 ## 1. What decides games now
 
-### 1.1 The champion mirror: ending and cause per map
+### 1.1 The champion mirror on `goal`, per cell (engine 1.2.6)
+
+Data: plan.md W0.3, run `1118-222544-ab-6dea` (docs/evaluation.md "W0.3 data"): main (= awubot) against awubot on
+`goal` (the 43 official and 52 visible tournament maps), 3 seed passes, 285 cells, 570 games. Every cell splits. Each
+cell's losing seat is classified by the rules of §1.1b, with one more class (S:w03_classify.py → S:w03_cells.tsv):
+- **SELF**: a losing king removed by its own code (an id in `Round.diedIds` with no `DieAction`,
+  E:world/GameWorld.java:356-359, :1168-1171), within 5 rounds of the end.
+- The HP split comes from T4's ReplayStats, starvation from its KingTrace, as in §1.1b.
+
+| class | cells | share | maps | median end round | the losing kings' HP lost (median): bites / scratches / starvation / throws and rest |
+|---|---|---|---|---|---|
+| COMBAT | 96 | 34% | 49 | 259 | 315 / 0 / 0 / 248 |
+| POINTS | 72 | 25% | 33 | 2000 (62 reach r1000; 10 cooperation endings before r1000) | – |
+| STARVE | 62 | 22% | 35 | 598 | 30 / 0 / 480 / 50 |
+| CAT | 33 | 12% | 19 | 399 | 10 / 540 / 0 / 26 |
+| COMBAT+starve | 19 | 7% | – | 361 | 170 / 20 / 190 / 238 |
+| SELF | 3 | 1% | 1 (sieveofriches, every seed) | – | – |
+
+- **Official and tournament maps differ.** Official 129 cells: COMBAT 41%, STARVE 21%, POINTS 21%, CAT 9%,
+  COMBAT+starve 8%. Tournament 156 cells: POINTS 29%, COMBAT 28%, STARVE 22%, CAT 13%, COMBAT+starve 6%, SELF 2%.
+- **By mine count:**
+  - ≤ 4 mines, 75 cells: COMBAT 31, STARVE 25, COMBAT+starve 8, POINTS 6, CAT 5.
+  - 5–7 mines, 57 cells: COMBAT 28, STARVE 12, POINTS 9, COMBAT+starve 5, CAT 3.
+  - ≥ 8 mines, 153 cells: POINTS 57, COMBAT 37, CAT 25, STARVE 25, COMBAT+starve 6, SELF 3.
+- **Classes move with the seed and the engine.** 55 of the 95 maps keep one class in all 3 cells. 20 of the 43
+  official pass-0 cells keep their 1.2.5 class (§1.1b). Every count above is per cell, not per map.
+- **Points games are less close than on the official 1.2.5 maps.**
+  - Kings at the end, winner against loser: 2v2 in 35 cells, 2v1 in 23.
+  - Margin: median 15 points; 15% within 2.
+  - With the losers' final totals, one more king flips 29 of the 62 points cells that reach r1000, and two more flip
+    40 (A).
+- **Crashes.** Robots destroyed by their own uncaught exception: 0.64 per game, in 94 of 285 cells (cells.tsv).
+
+### 1.1b The official maps on 1.2.5 (the lenses' data)
 
 Data: challenger against awubot on the 43 official maps, both seats, the map's own seed, **engine 1.2.5 jar**
 (`match_results/abtest_2026-11-18_19-30-32.json` records `engine_version 1.2.5`). Every map splits 1–1 by seat
@@ -141,29 +174,31 @@ and in mirroring it correctly on H and V maps (R§0). §10 lists which numbers d
 - The tiebreaks are nearly worthless (T3§1.5).
 - Kings at r2000 ≤ max(kings formed by r1200 that survive, 2) (R§6, T3§1.3).
 
-### 2.6 Do small systematic edges flip whole maps? (unmeasured)
+### 2.6 Close games, and what 90% needs
 
-The plan's largest bet is that consistent small edges win both seats on the maps decided by close combat.
+**Most games are close.** Measured (plan.md W0.1, docs/evaluation.md "Calibration", 1.2.6):
+- moving only the kings' random stream flips 3.2% of cells;
+- adding about 235 bytecodes a rat turn, with no logic change, flips 46.7% (60 won both, 73 lost both, net −4.6%,
+  p = 0.30);
+- about 150 a turn for every robot flips 39.2% (net +4.2%).
 
-**The argument.** A game holds about 100 throws, 60–130 trap triggers and about 110 bites per side (T2§2.3–2.4:
-2,445 awubot throws in 24 games; 755–1,541 traps and 1,267–1,409 bites per 12 games). Model (A): treat the N ≈ 300
-engagements as independent, each won with probability 0.5 + e. We are ahead in the total with probability Φ(2e√N).
-For e = 0.05, Φ(1.73) = 0.96.
+A cell flips when the same team wins both seats, so a game whose result does not depend on the noise cannot flip it.
+If a share q of games become fair coins under the perturbation and the rest keep their result, the flip rate is
+0.5·(1 − (1 − q)²) (A), so q ≈ 0.54–0.74. Most mirror games are decided by noise-sized differences. Earlier signs of
+the same thing: adding prints flipped the cheesefarm mirror from a r2000 win to a r526 loss (strategy§8), and a
+heavier probe lost DefaultLarge at r456 where a lighter one won at r2000 (arch§8). No net bytecode cost is measurable
+(−4.6% and +4.2%, both within noise).
 
-**Its premise is unmeasured.** The mirror's 1–1 splits do not show that the games are close (§1.1). Evidence of
-narrow margins exists only for some games:
-- points games: margins under 2 points in 6 of 11 (T3§3.2);
-- king races: in 15% of kill games the winner's king ended below 300 HP, in 32% below 500 (T1§2.7).
+**Small consistent edges should therefore move games.** A game holds about 100 throws, 60–130 trap triggers and about
+110 bites per side (T2§2.3–2.4: 2,445 awubot throws in 24 games; 755–1,541 traps and 1,267–1,409 bites per 12 games).
+Model (A): treat the N ≈ 300 engagements as independent, each won with probability 0.5 + e. We are ahead in the total
+with probability Φ(2e√N); for e = 0.05, Φ(1.73) = 0.96. The model's independence is unmeasured. The one measured
+lever, a rat cap 4 lower, moved whole map groups: 0.86 on ≤ 4-mine maps, 0.33 on ≥ 8 (plan.md §4.1 E2).
 
-**The perturbation data shows chaos instead.**
-- Adding prints flipped the cheesefarm mirror from a r2000 win to a r526 loss (strategy§8).
-- A heavier probe lost DefaultLarge at r456 where a lighter one won at r2000 (arch§8).
-- awubot plus prints, as team A against awubot, won only 2 of 11 (strategy§8): consistent with a bytecode tax, but
-  confounded with the seat.
-
-Small changes therefore flip whole games, and bytecode may cost games net. plan.md W0.1 measures the flip rate and the
-tax (a near-zero-cost random perturbation and a 200-bytecode arm) before any wave-1 verdict. Until then the COMBAT
-conversion in plan.md §5 is an assumption, and the plan's weakest one.
+**But 90% needs games that are no longer close.** The goal score is Σ w_c·s_c over the loss classes of §1.1 (plan.md
+§5.1). With every class at s = 0.5 today, 90% needs s ≈ 0.9 in every class: about +382 Elo. Close games lost to noise
+are a ceiling on any bot that is only slightly better. So the dominant plan stacks levers that change many engagements
+per game in the same direction (army size, kings, the spend gate, cat safety, traps), not single-engagement tweaks.
 
 ## 3. The game plan by phase
 
@@ -183,21 +218,22 @@ conversion in plan.md §5 is an assumption, and the plan's weakest one.
 
 1. **Upkeep reserve on every global spend.** Spend global only above R = max(100, 2K·H), with H ≈ 30–120 rounds
    (T1§2.8, T5 P5). The gate covers spawns, traps whose cost raw cheese does not cover, digs, bite cheese and formation.
-   - **What drains the bank** (`critic/Starve.java` on the 1.2.5 mirror). From r1 to starvation, on the six STARVE
-     losses that end before r600:
-     - replacement spawns took 1,480–2,070;
-     - rat traps up to 480–900 (an upper bound: traps pay from raw cheese first);
-     - upkeep 268–558.
+   - **What drains the bank** (`critic/Starve.java` on the 62 STARVE cells of §1.1, 1.2.6; S:w03_starve.txt). From r1
+     to starvation, the losing seat spent a median of:
+     - 2,180 on spawns (52% of its spending);
+     - up to 900 on rat traps (≤ 22%: traps pay from raw cheese first);
+     - 820 on upkeep (18%);
+     - 178 on digs (4%).
 
-     The `cost == 10` exception spent 0–50 per loss. Today's spawn floor is already 100
+     Over all 62 cells, the `cost == 10` exception spent 1,440 cheese. Today's spawn floor is already 100
      (C:KingSpawningStrategy.java:69), but rats spend global with no floor: traps (C:TryTrap.java.jinja2:64-76), digs
      (C:BabyRat.java:222) and king digs.
-   - **What a reserve can flip.** Where both kings starved, the one that starved more lost on 4 of 5 maps (T4§2.2). But
-     on 5 of the 8 STARVE maps the winner never ran out (its minimum global was 52–144). There the loser starved
-     because its income collapsed after it lost the exchange and the share (T1§2.8, §2.2). A reserve only delays that;
-     CT, CW and E3 address the cause.
-   - **Keep the `cost == 10` exception.** It spent 0–50 per loss, and it is the only way to rebuild income with ≤ 3
-     rats (T1§2.8).
+   - **What a reserve can flip.** Where both kings starved, the one that starved more lost on 4 of 5 maps (T4§2.2). The
+     winner also starved in 12 of the 62 STARVE cells (19%). In the rest the loser starved because its income
+     collapsed after it lost the exchange and the share (T1§2.8, §2.2). A reserve only delays that; CT, CW, E2 and E3
+     address the cause.
+   - **Keep the `cost == 10` exception.** It spent 1,440 cheese across 62 starvation losses (about 23 each), and it is
+     the only way to rebuild income with ≤ 3 rats (T1§2.8).
    - **No siege waiver below 100.** Starving kings are also being bitten (T4§2.1: bites on 6 of the 8), so a waiver
      would spend the last reserve exactly there.
    - T4's exact floor, max(0, 2K − I)·(2000 − t), is unusable early. With I ≈ 0 it asks for 4000 cheese against a
@@ -206,6 +242,9 @@ conversion in plan.md §5 is an assumption, and the plan's weakest one.
    rats; no fixed ceiling (T1§2.5).
    - The champion's cap of 16 fits an even contested mirror. It over-builds under fast attrition (the bank drains)
      and under-builds on low-contact maps, where n* is 20–44 (T1§2.5).
+   - **Measured** (plan.md §4.1 E2, `quick`, 1.2.6): a rat cap 4 lower scored 0.86 on maps with ≤ 4 mines, 0.65 on
+     5–7 and 0.33 on ≥ 8. The army follows the mine count, not the area: cheesefarm and DefaultSmall are both 900
+     tiles, and cheesefarm (10 mines) scored 0.12 where DefaultSmall (4) scored 0.6.
    - δ must exclude rats consumed by king formation: those are a planned spend, not attrition. T1's δ counts them
      (§8 item 8).
 3. **Order for surplus above R and n*:** kings before r1201, then traps (2.4 HP per cheese, T2§2.4), then rats above
@@ -265,6 +304,7 @@ budget.
    - Two early (KB; the best round is open, §9).
    - At least 3 by r1195 in every game still running: lock-in (T1 E1, T3 P1). The lock-in cannot reach the
      cooperation endings that come earlier (TheHeist r390, peaceinourtime r451; T3§3.1); those need the early king.
+     On `goal` (§1.1), one more king would flip 29 of the 62 points cells that reach r1000, and two more would flip 40.
    - Refill to 2 after r1200 when down to 1 king (R§6).
    - The champion forms a king in 44% of official-pool team-games, first at a median r300. It had a third alive in 2
      of 306 mirror team-games, and stops trying at r1100 (T1§2.7, C:KingFormationCoordinatorStrategy.java:145).
@@ -352,7 +392,7 @@ Classes from T4§3 (`classes2.py`) and mine count (T5§7). A map can be in sever
 | class | test | what decides it | dominant emphasis | packages (plan.md) |
 |---|---|---|---|---|
 | FACEOFF | rat path ≤ 12 | king kill by r68–189: throws and bites (knifefight 512 HP of throws) | keep the champion's close-quarters micro; minimal-cheese bites, trap the gap, throw shield at the king; reserve; no bud before contact | CB, CT, CC+CK, E1 |
-| MINEPOOR | ≤ 4 mines (14 official) | the early swarm (8 of the 15 COMBAT maps), and starvation (corridor 440, evileye 220, arrows 250) | exchange first; a reserve on every global spend where both sides starve; lean army (n* is small); home king; OBG and GST lose these, so do not import a central king | CT, CB, E1, E2 |
+| MINEPOOR | ≤ 4 mines (14 official; 75 of 285 `goal` cells) | the early swarm (31 COMBAT cells) and starvation (25 STARVE cells) | a smaller army: a rat cap 4 lower scored 0.86 here (§4.1); exchange; a reserve on every global spend where both sides starve; home king; OBG and GST lose these, so do not import a central king | E2, CT, CB, E1 |
 | mines 5–7 | 8 official | split: exchange against king exposure | traps plus a home king | CT, E1 |
 | mines ≥ 8 | 21 official | exchange, then share, then starvation (OBG and GST win 11 of 12) | traps, territory by deficit, army from income, lock-in | CT, E3, E2, KL |
 | CHOKE | cut ≤ 4 | 7 of 11 mirror points games; starvation (whereisthecheese) | reserve; kings and conversion for points; trap or seal the choke when ahead | E1, KL, PT, CH |
@@ -369,7 +409,7 @@ All `C:` paths are in `src/challenger/` (= awubot).
 | # | gap | code | evidence | package |
 |---|---|---|---|---|
 | G1 | Its own code kills or blinds its robots: the ≥ 26-mine `assert(false)` destroys every king; `assert(rc.canThrowRat())` kills the carrier when a cat stands on the throw tile; `assert(performMoves(...))` in TryThrow and 4 other move classes; RobotTracker throws at ≥ 26 visible robots and asserts at ≥ 44; the top level catches only `Exception`; the panic squeak (`7<<29`, negative) and the king's empty enemy squeak decode as phantom enemies; the king's unguarded `rc.turn` costs it the rest of its turn; the spawn counter's write throws from the 1024th spawn | C:comms/GlobalArray.java:427-428, :108, :225; moves/TryThrow.java.jinja2:101,103,105,106 (cats absent from the grid :258-293); TryAttack:67,71, TryTrap:99,103, TryRatNap:82,95, TryPosition:39, TryFight:55; RobotTracker.java.jinja2:46-49,106,137; RobotPlayer.java:84; comms/Squeaker.java:91-105,215-217; comms/EnemyManager.java.jinja2:73-87; robot/king/KingSpawningStrategy.java:90; E:world/RobotControllerImpl.java:1312 | sieveofriches: kings removed at r457–597 while leading (T5 A15); TryThrow asserts in 15 of 70 validation games, all 5 instrumented failures with a cat on step 1 (T2§9.1); ≥ 26 visible on 11 king turns in 86 mirror games, all on cheesebottles (S:kingcrowd_mirror.txt) | S1 |
-| G2 | Starvation: spawns stop at 100 global, but rats spend global with no floor (traps, digs); the loser's income collapses after it loses the exchange | C:robot/king/KingSpawningStrategy.java:69; moves/TryTrap.java.jinja2:64-76; robot/rat/BabyRat.java:222 | 8 STARVE maps (§1.1); the bank went to replacement spawns, traps and upkeep, not to the `cost == 10` exception (§4.1); starvation in 9 of 13 king-kill losses against OBG and GST (T5§2.2) | E1, CT, E3 |
+| G2 | Starvation: spawns stop at 100 global, but rats spend global with no floor (traps, digs); the loser's income collapses after it loses the exchange | C:robot/king/KingSpawningStrategy.java:69; moves/TryTrap.java.jinja2:64-76; robot/rat/BabyRat.java:222 | 62 STARVE cells, 22% of `goal` (§1.1); the bank went to spawns, traps and upkeep, not to the `cost == 10` exception (§4.1); starvation in 9 of 13 king-kill losses against OBG and GST (T5§2.2) | E2, E1, CT, E3 |
 | G3 | The king stands in cat lanes: walks to the centre box, parks on the nearest mine whatever the cats, flees by the direction to the cat's corner rather than its facing; ring-cell bug B3; the panic squeak decodes as two phantom enemies | C:robot/king/KingMiningStrategy.java.jinja2:53-76,173-278; KingCombatStrategy.java.jinja2:102-170,116-117; comms/Squeaker.java:173-217 | CAT class (3 maps); tminusten, attack_on_cat and sunandmoon against OBG (T4§2.1); 117 scratches on its kings against 50 on the opponents' (T5 A12) | K1, K2, K3 |
 | G4 | Kings: second king gated on ≥ 20 rats against a cap of 16; recruits every rat within 25 tiles; third king needs ≥ 9 mines and ≥ 40 rats; aborts at r1100 | C:robot/king/KingFormationCoordinatorStrategy.java:13,141-221,145; robot/rat/FormationStrategy.java:19-21,29-33,109-120 | 8 of 11 mirror points games end 2v2 (T3§3.2); formations fail 17 of 17 on cheesefarm and peaceinourtime (strategy§6.3) | KL, KB |
 | G5 | Exchange: traps only behind a gate (≥ 24 rats, raw ≥ 20, or a "strong" enemy) and never overlapping; throws at the first ready turn whatever the line, including 22% into open ground; TryPosition has no goal; cats absent from throw scoring; throw values 4 too high, dirt 10 below walls; bites fixed at 12; no trap model | C:moves/TryTrap.java.jinja2:64-90,270-282,357-361; CombatStrategy.java.jinja2:216-231,440-443; TryThrow.java.jinja2:91-95,319-376; TryPosition.java.jinja2:83-87; CombatTracker.java.jinja2:46-67 | awubot walks into 95–98% of enemy traps and lays 0.36–0.83× OBG's and GST's in their wins (T5§2.3, A8); 95% of carries thrown at exactly t+2 (T2§2.3) | CT, CW, CB, CX |
@@ -420,13 +460,12 @@ its traps fire 98%; the lean few-mine macro and close-quarters swarm (OBG lost D
 
 | question | settled by |
 |---|---|
-| Do consistent per-engagement micro edges win both seats on most COMBAT maps? (§2.6; the plan's weakest assumption) | CT, CW, CB, CX results, read by class |
+| Do the combat packages lift the COMBAT cells (34% of `goal`) from coin flips to 0.8–0.9? (§2.6; the plan's weakest assumption) | CT, CW, CB, CX results on `L-combat`, read by class |
 | The best round for the second king: an opening bud, r40, r100, r200 or r350 | KB dose-response |
 | δ as a function of army size; estimating income in-game | E2 step 0: a probe build logging global cheese and spending every 50 rounds |
 | Cat lanes around walls (straight segments vs the engine's BFS) | K2 step 0: port `GameWorld.bfsFromTarget` (E:world/GameWorld.java:223) and compare on the cat pool |
-| How many games flip from a near-zero-cost change, and whether bytecode costs games net (§2.6) | plan.md W0.1, before any wave-1 verdict |
-| Which spend channels empty the bank on 1.2.6, which sets E1's H | plan.md W0.3 (`critic/Starve.java` on the baseline) |
-| Class frequencies per (map, seed) cell on the goal pool, in place of §1.1's one class per map | plan.md W0.3 |
+| How the bot can estimate the mine count early enough to gate E2's arm 1 | E2 step 0: a probe logging the estimate and the true count |
+| Whether E2's arm-1 effect (0.86 on 7 maps, 10 games each) holds across `mines-le4` | E2's gain test on `mines-le4` |
 | Whether the relaxed coordinator completes formations in the lock-in window | KL arm A's formation-success diagnostic |
 | Whether a cat in ATTACK prefers kings | K1 diagnostics (scratches per cat phase) |
 | How exploitable awubot's trap gate is | CX |
@@ -440,12 +479,15 @@ cheese RNG stream (R§0). The spawn probability is unchanged.
 
 | unaffected | affected (re-measure on 1.2.6 before relying on the exact value) |
 |---|---|
-| supply per mine (2.257 per round), upkeep, rat costs, combat, traps, throws, cats, scoring, king rules | the king's direct-pickup share (17% on 1.2.5; its box share goes from 9/64 to 9/81); mines held and pickup counts (T5); income shares and starvation rounds (T1§2.4, T4 starvation clock), hence E1's H and E2's n*; seat bias on the 22 H/V official maps; which maps reach points (T3§7) |
+| supply per mine (2.257 per round), upkeep, rat costs, combat, traps, throws, cats, scoring, king rules | the king's direct-pickup share (17% on 1.2.5; its box share goes from 9/64 to 9/81); mines held and pickup counts (T5); income shares and starvation rounds (T1§2.4, T4 starvation clock), hence E1's H and E2's n*; seat bias on the 22 H/V official maps; which maps reach points (T3§7). Measured on 1.2.6 so far: the loss classes and the starvation spend channels (§1.1, §4.1) |
 
 ## 11. Synthesis scratch (`~/battlecode26-data/theory/synthesis/`)
 
 | file | content |
 |---|---|
 | `KingCrowd.java`, `kingcrowd_mirror.txt` | per game and team: king turns with ≥ 26 and ≥ 44 robots within r² 25 (carried and flying rats counted, an over-estimate). Run: `java --add-opens java.base/java.nio=ALL-UNNAMED -cp "$(cat ../t3/cp.txt):." KingCrowd <replays>` |
-| `losstable.py`, `losstable.txt` | the §1.1 classification of the 43 official mirror maps, from T4§2.1's HP split and T4's `maps.tsv` and `classes2.py` |
+| `losstable.py`, `losstable.txt` | the §1.1b classification of the 43 official mirror maps, from T4§2.1's HP split and T4's `maps.tsv` and `classes2.py` |
+| `w03_classify.py`, `w03_cells.tsv`, `w03_stats.jsonl` | the §1.1 classification of W0.3's 285 cells: `python3 w03_classify.py RUN_DIR` runs T4's ReplayStats (HP split) and KingTrace (starvation) over each cell's replay; SELF comes from `KingSelf` |
+| `KingSelf.java`, `w03_kingself.txt` | per replay and team: kings removed without a `DieAction` (their own code ended) and kings killed by damage |
+| `w03_starve.txt` | `critic/Starve.java` over the 62 STARVE cells |
 | `../critic/Starve.java` (the plan critic's) | global cheese per round (`Round.teamAliveRatKings` / 10, T3's decoding) and the spend channels from the first round below 100 to the first below 2 |

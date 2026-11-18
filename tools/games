@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""Is bot A stronger than bot B? See tools/games --help and docs/evaluation.md."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bcgames.games import main  # noqa: E402
+
+sys.exit(main())

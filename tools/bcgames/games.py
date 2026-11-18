@@ -315,8 +315,12 @@ def drive(d: Path) -> int:
         stop["flag"] = True
     signal.signal(signal.SIGTERM, on_term)
 
-    def record(test: Test, cell: dict, r: dict) -> None:
+    def record(test: Test, cell: dict, r: dict, job=None) -> None:
         with cond:
+            if r.get("error") and job is not None and not getattr(job, "retried", False):
+                job.retried = True  # one more try: remote machines and JVM starts fail now and then
+                runner.submit(job, lambda r2: record(test, cell, r2, job))
+                return
             if r.get("replay") and p.get("replays") == "losses" and r.get("winner") == r["seat"]:
                 os.unlink(r["replay"])
                 r["replay"] = None
@@ -370,7 +374,7 @@ def drive(d: Path) -> int:
                                 record(t, cell, hit)
                             else:
                                 inflight["n"] += 1
-                                runner.submit(job, lambda r, t=t, cell=cell: record(t, cell, r))
+                                runner.submit(job, lambda r, t=t, cell=cell, job=job: record(t, cell, r, job))
                         t.update()
                 save_state("running")
                 if inflight["n"] and any(t.verdict == "running" for t in tests):
@@ -391,6 +395,70 @@ def test_outcome(t: dict, kind: str) -> str:
         return v
     mode = t.get("mode", "gain" if kind == "ab" else "noninf")  # noninf: runs made before harm tests existed
     return "pass" if v == {"gain": "H1", "harm": "H0", "noninf": "H1"}[mode] else "fail"
+
+
+def rescore(d: Path) -> None:
+    """Rebuilds state.json from results.jsonl (the last result of a game wins), with the run's own tests."""
+    meta = json.loads((d / "run.json").read_text())
+    tests = {t.name: t for t in make_tests(meta)}
+    old = json.loads((d / "state.json").read_text()) if (d / "state.json").exists() else {}
+    for line in open(d / "results.jsonl"):
+        r = json.loads(line)
+        t = tests[r.get("test", "ab")]
+        while len(t.cells) <= r["cell"]:
+            t.next_cell()
+        t.cells[r["cell"]]["games"][r["id"]] = r
+    for t in tests.values():
+        t.update()
+    old["tests"] = [t.summary() for t in tests.values()]
+    write_json(d / "state.json", old)
+
+
+def cmd_retry(args) -> int:
+    """Plays a finished run's failed games again (with replays if the run kept them) and rescores the run."""
+    d = run_dir(args.id)
+    meta = json.loads((d / "run.json").read_text())
+    st = json.loads((d / "state.json").read_text())
+    if st["status"] == "running":
+        raise store.SetupError("the run is still running")
+    last = {}
+    for line in open(d / "results.jsonl"):
+        r = json.loads(line)
+        last[r["id"]] = r
+    failed = [r for r in last.values() if r.get("error")]
+    print(f"{len(failed)} failed games to play again", file=sys.stderr)
+    if failed:
+        runner = imperial.ImperialRunner(d, args.where, 3600) if args.remote else play.Runner(args.workers, d)
+        for ref, (jar, h) in meta.get("bots", {}).items():
+            runner.resolver.bots[ref] = (Path(jar), h)
+        keep_replays = meta["params"].get("replays", "none") != "none"
+        lock = threading.Lock()
+        done = threading.Event()
+        left = {"n": len(failed)}
+        out = open(d / "results.jsonl", "a")
+
+        def record(old: dict, r: dict) -> None:
+            with lock:
+                r["test"], r["cell"] = old.get("test", "ab"), old["cell"]
+                out.write(json.dumps(r) + "\n")
+                out.flush()
+                print(play.describe(r), file=sys.stderr)
+                left["n"] -= 1
+                if left["n"] == 0:
+                    done.set()
+
+        for old in failed:
+            spec = {k: old[k] for k in ("id", "a", "b", "map", "seed", "engine", "role", "seat") if k in old}
+            path = (d / "replays" / f"{play.safe(old['id'])}.bc26").resolve() if keep_replays else None
+            job = runner.resolver.job(spec, path)
+            runner.submit(job, lambda r, old=old: record(old, r))
+        done.wait()
+        runner.close(wait=not args.remote)
+        out.close()
+    rescore(d)
+    text, verdict = report(d)
+    print(text)
+    return EXIT[verdict]
 
 
 def verdict_of(state: dict, kind: str) -> str:
@@ -960,6 +1028,11 @@ def main(argv=None) -> int:
     sp.add_argument("--workers", type=int, default=8)
     sp.add_argument("--remote", action="store_true")
     sp.add_argument("--where")
+    sp = sub.add_parser("retry", help="play a finished run's failed games again and rescore it")
+    sp.add_argument("id")
+    sp.add_argument("--workers", type=int, default=8)
+    sp.add_argument("--remote", action="store_true")
+    sp.add_argument("--where")
     sp = sub.add_parser("diff", help="games whose outcome changed between two runs")
     sp.add_argument("id1")
     sp.add_argument("id2")
@@ -1002,7 +1075,7 @@ def main(argv=None) -> int:
         if args.cmd == "_drive":
             return drive(run_dir(args.id))
         return {"wait": cmd_wait, "show": cmd_show, "list": cmd_list, "stop": cmd_stop, "replay": cmd_replay,
-                "replays": cmd_replays,
+                "replays": cmd_replays, "retry": cmd_retry,
                 "diff": cmd_diff, "pools": cmd_pools, "simulate": cmd_simulate}[args.cmd](args)
     except store.SetupError as e:
         print(f"tools/games: {e}", file=sys.stderr)

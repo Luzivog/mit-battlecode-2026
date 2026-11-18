@@ -77,10 +77,7 @@ public final class TryRatNap {
         if (bestScore < 0.5) return false;
         // println("target " + t);
         if (bestMove != null) {
-            if (!CombatStrategy.performMoves(bestMove, bestFacing)) {
-                // println(bestMove + " " + bestFacing);
-                assert(false);
-            }
+            if (!CombatStrategy.performMoves(bestMove, bestFacing)) return false;
             if (rc.canCarryRat(target.location)) {
                 rc.carryRat(target.location);
             } else {
@@ -92,7 +89,7 @@ public final class TryRatNap {
             } else {
                 attack(target);
             }
-            assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
+            CombatStrategy.performMoves(bestSecondaryMove, bestFacing);
         }
         // println("!!!!!!!!!!!!!!!!!!!!!!! napped rat");
         // indicate("COMBAT STRAT: NAP");

@@ -554,8 +554,44 @@ def alive(pid) -> bool:
     return True
 
 
+def game_record(d: Path, gid: str) -> dict:
+    rec = None
+    for line in open(d / "results.jsonl"):
+        r = json.loads(line)
+        if r["id"] == gid:
+            rec = r
+    if rec is None:
+        raise store.SetupError(f"no game {gid!r} in run {d.name} (tools/games show {d.name} --games)")
+    return rec
+
+
+def timeline(rec: dict) -> str:
+    """One game's record and its per-100-round series, for reading a game without a replay viewer."""
+    if rec.get("error"):
+        return f"{rec['id']}: ERROR {rec['error']}"
+    w = rec["a"] if rec["winner"] == "A" else rec["b"]
+    L = [f"{rec['id']}: {rec['map']} s{rec['seed']} engine {rec['engine']}: {rec['a']} (A) vs {rec['b']} (B) -> {w} "
+         f"{WIN_SHORT.get(rec['win_type'], rec['win_type'])} round {rec['round']}"
+         + (" (cooperation)" if rec.get("cooperation") else "")]
+    for t in "AB":
+        m = rec[t]
+        L.append(f"  {t} {rec['a' if t == 'A' else 'b']}: points {m['points']}, cheese transferred "
+                 f"{m['cheese_transferred']}, cat damage {m['cat_damage']}, rats {m['rats']}, kings {m['kings']}, "
+                 f"cheese {m['cheese']}, robots killed by their own exception {m['crashed']}")
+    ser = rec.get("series")
+    if ser:
+        L.append("  round   A: cheese_tr rats kings cat_dmg   B: cheese_tr rats kings cat_dmg")
+        for i, (a, b) in enumerate(zip(ser["A"], ser["B"])):
+            rnd = (i + 1) * ser["every"] if i < len(ser["A"]) - 1 else rec["round"]
+            L.append(f"  {rnd:5d}   {a[0]:12d} {a[1]:4d} {a[2]:5d} {a[3]:7d}   {b[0]:12d} {b[1]:4d} {b[2]:5d} {b[3]:7d}")
+    return "\n".join(L)
+
+
 def cmd_show(args) -> int:
     d = run_dir(args.id)
+    if args.game:
+        print(timeline(game_record(d, args.game)))
+        return 0
     if args.json:
         st = json.loads((d / "state.json").read_text()) if (d / "state.json").exists() else {}
         meta = json.loads((d / "run.json").read_text())
@@ -607,13 +643,9 @@ def find_jar(class_hash: str) -> Path | None:
 
 def cmd_replay(args) -> int:
     d = run_dir(args.id)
-    rec = None
-    for line in open(d / "results.jsonl"):
-        r = json.loads(line)
-        if r["id"] == args.game:
-            rec = r
-    if rec is None or rec.get("error"):
-        raise store.SetupError(f"no finished game {args.game!r} in run {d.name} (tools/games show {d.name} --games)")
+    rec = game_record(d, args.game)
+    if rec.get("error"):
+        raise store.SetupError(f"game {args.game!r} of run {d.name} failed: {rec['error']}")
     resolver = play.Resolver()
     for ref, h in ((rec["a"], rec["a_hash"]), (rec["b"], rec["b_hash"])):
         jar = find_jar(h)
@@ -624,7 +656,7 @@ def cmd_replay(args) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     spec = {k: rec[k] for k in ("id", "a", "b", "map", "seed", "engine")}
     job = resolver.job(spec, out.resolve())
-    pool = play.Pool(1, d / "logs", resolver.runner_dir)
+    pool = play.Pool(1, d / "logs", resolver.runner_dir, slots=False)  # one game: no need to queue for a slot
     done = threading.Event()
     res = {}
     pool.submit(job, lambda j, r: (res.update(r), done.set()))
@@ -637,6 +669,7 @@ def cmd_replay(args) -> int:
     print(f"{out}\n{rec['map']} s{rec['seed']} {rec['a']}(A) vs {rec['b']}(B): {res['winner']} {res['win_type']} "
           f"r{res['round']}; " + ("identical to the recorded game" if same else
                                    f"DIFFERENT from the recorded game ({rec['digest']} vs {res['digest']})"))
+    print(timeline(rec))
     return 0 if same else 1
 
 
@@ -756,6 +789,7 @@ def main(argv=None) -> int:
     sp = sub.add_parser("show", help="print a run's report")
     sp.add_argument("id")
     sp.add_argument("--games", action="store_true", help="list every game")
+    sp.add_argument("--game", help="one game's record and per-100-round timeline")
     sp.add_argument("--json", action="store_true")
     sp = sub.add_parser("list", help="recent runs")
     sp.add_argument("-n", type=int, default=20)

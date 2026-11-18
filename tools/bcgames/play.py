@@ -191,14 +191,17 @@ class Worker:
 class Pool:
     """N workers per engine pulling jobs from one queue. on_result(job, result) is called from worker threads."""
 
-    def __init__(self, workers: int, logdir: Path, runner_dir: Path, timeout: float = DEFAULT_TIMEOUT):
+    def __init__(self, workers: int, logdir: Path, runner_dir: Path, timeout: float = DEFAULT_TIMEOUT,
+                 slots: bool = True):
         self.n, self.logdir, self.runner_dir, self.timeout = workers, logdir, runner_dir, timeout
         self.queues: dict[str, queue.Queue] = {}
         self.threads: list[threading.Thread] = []
         self.workers: list[Worker] = []
         self.closed = False
         self.stopping = threading.Event()
-        self.slots = Slots()
+        self.slots = Slots() if slots else Slots.__new__(Slots)
+        if not slots:
+            self.slots.n = 0
         logdir.mkdir(parents=True, exist_ok=True)
 
     def submit(self, job: Job, on_result) -> None:

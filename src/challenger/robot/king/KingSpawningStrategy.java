@@ -6,8 +6,10 @@ import challenger.util.Rng;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
 
+import challenger.CellTracker;
 import challenger.RobotTracker;
 import challenger.comms.GlobalArray;
+import challenger.util.string.FastIndexedIntSet;
 
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;
@@ -17,12 +19,49 @@ public class KingSpawningStrategy extends Strategy {
         return ((x - 1) / 4) * 10 + 10;
     }
 
+    // The map holds at least RICH_MINES mines: the known ones plus their unknown mirrors. Income is about 1.1 per
+    // mine per side (docs/theory/t1-economy.md §2.1), so below it the army the income sustains is under 16 rats
+    // (§2.5). Latched: mines are never forgotten.
+    private static final int RICH_MINES = 8;
+    private static boolean rich = false;
+    private static int richKey = -1;
+
+    static boolean isRichMap() {
+        if (rich) return true;
+        FastIndexedIntSet mines = GlobalArray.globalCheeseMines;
+        int n = mines.size();
+        boolean sym = CellTracker.isSymmetryKnown();
+        int key = sym ? n + 1024 : n;
+        if (key == richKey) return false;
+        richKey = key;
+        int est = n;
+        if (sym) {
+            // encode2x2 halves coordinates, so on an odd dimension the mirror of an odd coordinate lands one cell high
+            int sym3 = CellTracker.getSymmetry().ordinal();
+            boolean oddX = sym3 != 3 && (mapWidth & 1) == 1;
+            boolean oddY = sym3 != 2 && (mapHeight & 1) == 1;
+            for (int i = 0; i < n && est < RICH_MINES; i++) {
+                int s = getSymmetricEncoded(mines.at(i));
+                if (mines.contains(s)) continue;
+                if (oddX && mines.contains(s - 1)) continue;
+                if (oddY && mines.contains(s - 32)) continue;
+                if (oddX && oddY && mines.contains(s - 33)) continue;
+                est++;
+            }
+        }
+        rich = est >= RICH_MINES;
+        return rich;
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
         // indicate("spawned " + numSpawned);
-        int defaultThresh = 30;
+        int defaultThresh = 40;
         if (mapWidth * mapHeight <= 900 && time < 400) {
-            defaultThresh = 20;
+            defaultThresh = 30;
+        }
+        if (!isRichMap()) {
+            defaultThresh -= 10;
         }
         int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
         if (rc.getGlobalCheese() >= 3000 - time * 3 / 4) {

@@ -41,8 +41,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
    error: check its output for `[error]` and `git diff --stat` for what moved.
 3. Every package under `src/` compiles together: one compile error breaks every game. Run `./gradlew build -x test`
    before every commit.
-4. Assertions are on in games. An `AssertionError` (any `Error`) escapes the bot's `catch (Exception)` and freezes the
-   robot for good. Add no assert that can fail. Some existing asserts do the work (`assert(performMoves(...))`):
+4. Assertions are on in games. An `AssertionError` (any `Error`) escapes the bot's `catch (Exception)`, ends `run()`,
+   and the engine destroys the robot at the end of that turn. Add no assert that can fail. Some existing asserts do the work (`assert(performMoves(...))`):
    never delete one as a no-op.
 5. Move only through the bot's wrappers (`docs/architecture.md` §6, §9), never `rc.move`/`rc.turn` directly.
 6. Bytecode is tight (rats average ~11k of 17.5k, kings ~13k of 20k). Any change shifts bytecode and randomness, so

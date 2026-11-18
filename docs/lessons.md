@@ -15,7 +15,7 @@ The goal is unusual. Our "opponent" is one fixed, known bot, and the maps are mo
 | # | Lesson | Why here | Cite | Champion |
 |---|---|---|---|---|
 | 1 | **Accept a change only on a paired, both-sides, many-seed head-to-head against the current best, with ≥ 200 games.** Treat 41-37 as a tie and test one change at a time. | Local noise made bad changes look good for 3Mice and UnderTheC. The engine is deterministic per seed but chaotic across seeds (architecture.md §7). | [3mice26] [utc26] [tvb26] [xsq] | ABtest.py already does paired sides plus a sign test (testing.md §7) |
-| 2 | **No untested changes. Fix the champion's own final-day bugs first, each A/B'd.** | awubot shipped "(untested)" final-day commits (history.md). Asserts freeze every king at ≥ 26 known mines (architecture.md §1.6). SPAARK lost 2023 and 2024 to last-minute changes. | [spaark25] [thg20] [kragle25] [ivy21] | NO: shipped untested code |
+| 2 | **No untested changes. Fix the champion's own final-day bugs first, each A/B'd.** | awubot shipped "(untested)" final-day commits (history.md). Asserts kill every king at ≥ 26 known mines (architecture.md §1.6). SPAARK lost 2023 and 2024 to last-minute changes. | [spaark25] [thg20] [kragle25] [ivy21] | NO: shipped untested code |
 | 3 | **Find hypotheses by tracing replays for degenerate stalls, not by theorising.** Watch individual units. | The 2025 #1/#2 and 2026 #2 teams all credit replay review over cleverness. Trace-first produced the accepted changes in the 2026 agent loop. | [GST26] [confused25] [jwu25] [tvb26] [food26] | n/a |
 | 4 | **The economy snowballs: cut idle time and raise production when rich.** | awubot caps contested play at 16 rats while sitting on 700–1850 cheese (strategy.md §10 H1), and loses cheese-rich maps on transfer (intel.md §0 item 4). | [kragle25] [confused25] [chop21] [jwu25] | PARTIAL: cap 16; 20% exploration never ends |
 | 5 | **Micro decides fights, and 2026 was a micro year. Improve the search where it is blind:** cat-aware throws, all 8 throw directions, cheese-scaled bites. | A micro gain is worth +30–50% win rate vs ~5% for macro (Gone Fishin'). GST scores throws into cats. awubot ignores cats in TryThrow (combat.md §14 H1/H3/H4). | [gf23] [GST26] [food26] [3mice26] | PARTIAL: strong search, known gaps |
@@ -54,7 +54,7 @@ The goal is unusual. Our "opponent" is one fixed, known bot, and the maps are mo
 - **Use the widest pool, both sides** [xsq] [dam23] [jwu25]. Ours: 43 official maps (testing.md §5).
 - **Add behaviour-specific maps** (micro: small/open; pathing: mazes; economy: cheese-rich) for the inner loop, because a full-pool win rate dilutes a local change [xsq] [food26] [lorem26].
 - **Keep a holdout the agent never tunes on.** Tournament maps differ from ladder maps and cause upsets [chop21] [conf20] [4m23] [bd21]. UnderTheC kept 100 hidden maps for champion picking only, and generated map families exposed a centre rush that only won on known maps [utc26]. Ours: the 29 team-made maps and the recovered tournament maps (intel.md §7) can serve as holdout.
-- **Stress maps for robustness**: degenerate geometry (4 Musketeers lost quals as top seed to 3 HQs in a corner [4m23]), many mines (awubot freezes at ≥ 26, architecture.md §1.6), many cats, heavy dirt.
+- **Stress maps for robustness**: degenerate geometry (4 Musketeers lost quals as top seed to 3 HQs in a corner [4m23]), many mines (awubot loses every king at ≥ 26, architecture.md §1.6), many cats, heavy dirt.
 
 ### T.3 Sample sizes and statistics
 
@@ -132,7 +132,7 @@ The goal is unusual. Our "opponent" is one fixed, known bot, and the maps are mo
 | Bitmask BFS and bitboards (Om Nom pathing ~1.5k, symmetry ~1k; GST reachability ~300) | A | Already the pathing core; reuse it for new reachability questions (e.g. combat through walls) | [omnom25] [GST26] | YES (11×11 two-long BFS) |
 | Codegen (Jinja/Python) for unrolled code; macros instead of function calls | A | All the hot code is templates; edit the templates, not the generated `.java` | [xsq] [omnom25] [lmax26] | YES (codegen.md) |
 | Don't bytecode-optimise early, but late-season complexity will need it | C (we are late-season) | The bot is mature: optimisation frees room for features | [xsq] [dam23] | n/a |
-| A single top-level try/catch; exceptions cost 500 bytecodes; a `isCompetitive` flag for debug-only paths | B | awubot swallows Exceptions; **`AssertionError` escapes and freezes the robot** | [lmax26] | PARTIAL (architecture.md §1.6) |
+| A single top-level try/catch; exceptions cost 500 bytecodes; a `isCompetitive` flag for debug-only paths | B | awubot swallows Exceptions; **`AssertionError` escapes and the engine destroys the robot** | [lmax26] | PARTIAL (architecture.md §1.6) |
 | "Codegen spam" is not what wins; strategy and replay review are | B | Guards against agents sinking time into micro-optimisation | [GST26] [jwu25] [confused25] [lorem26] | n/a |
 
 ## 3. Pathfinding

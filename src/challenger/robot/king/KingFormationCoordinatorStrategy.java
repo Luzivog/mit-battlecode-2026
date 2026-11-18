@@ -15,6 +15,12 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
     private static final int COORDINATION_TIMEOUT = 120;
 
+    // King lock-in: kings formed by RAT_KING_CUTOFF_ROUND survive to the end, after it a team with 1 king can form only
+    // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form with only the rat floor.
+    private static final int LOCK_IN_ROUND = 800;
+    private static final int KING_TARGET = 3;
+    private static final int LOCK_IN_MIN_RATS = 12;
+
     private static int MIN_DIST_FROM_KINGS_SQ;
 
     private final KingMiningStrategy miningStrategy;
@@ -29,6 +35,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private MapLocation targetMine = null;
     private int coordinationStartTurn = 0;
     private int kingCount = 1;
+    private boolean lockIn = false;
     private RobotInfo nearestCat = null;
 
     private enum FormationState {
@@ -142,7 +149,11 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if(mapWidth * mapHeight <= 1200) {
             req = 8;
         }
-        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < req * myKingCount) {
+        lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
+        int minRats = lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
+        if (myKingCount >= 5
+            || (time > GameConstants.RAT_KING_CUTOFF_ROUND && myKingCount >= GameConstants.MAX_NUMBER_OF_RAT_KINGS_AFTER_CUTOFF)
+            || numRats < minRats) {
             // indicate("FORMATION: aborting due to king count or rat count");
             // indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
             abortFormation();
@@ -191,7 +202,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             if (myKingCount == 5) return;
             // indicate("C");
             int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
-            if(time <= 1800) {
+            if(!lockIn) {
                 if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
                 // indicate("D");
                 if(mapWidth * mapHeight > 1200) {
@@ -200,7 +211,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                     if (numRats < 20 * myKingCount - 4) return;
                 }
             } else {
-                if (numRats < 12) return;
+                if (numRats < LOCK_IN_MIN_RATS) return;
             }
         }
         // indicate("passed formation checks");
@@ -238,7 +249,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 myBestMine = myMine;
             }
         }
-        if(time < 1800 && myBestScore < -40000) {
+        if(!lockIn && myBestScore < -40000) {
             return null;
         }
         return myBestMine;

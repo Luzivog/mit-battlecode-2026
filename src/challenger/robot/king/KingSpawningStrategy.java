@@ -20,9 +20,9 @@ public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         // indicate("spawned " + numSpawned);
-        int defaultThresh = 40;
+        int defaultThresh = 30;
         if (mapWidth * mapHeight <= 900 && time < 400) {
-            defaultThresh = 30;
+            defaultThresh = 20;
         }
         int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
         if (rc.getGlobalCheese() >= 3000 - time * 3 / 4) {

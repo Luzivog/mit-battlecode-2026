@@ -128,7 +128,8 @@ nondeterminism).
 
 ## 5. Maps
 
-`maps/` (72): the 43 official maps (byte-identical to those bundled in the 1.2.5 jar) + 29 team-made maps.
+`maps/` (150): the 43 official maps (byte-identical to those bundled in the 1.2.5 jar), 29 team-made maps and 78
+recovered tournament maps.
 `test_maps/` (21) = byte-identical copy of default+sprint1 (the original `run.py` pool). The engine only reads
 `maps/`, then the jar; `--maps-dir` in the scripts only chooses *names*.
 
@@ -144,8 +145,8 @@ Team-made (local only, not official): `*Catless` (Default{Small,Medium,Large}, a
 cats walled into corners), bridges, checkerboard, cups, far, hidden, maze1-3, messy, mining, quadrants,
 micro1/2, microtest(_wide), pvparena(_mines, _mines2) (combat sandboxes), testpathfinding(2),
 `pathfinding test` (name has a space; breaks space-separated `--maps`), coop, troll1/2 (degenerate; skipped by
-ABtest's directory listing together with 5t4rv4t10n_1337). Tournament maps (qualifiers/final) were private and
-are not available; treat the custom maps as a holdout set to catch overfitting to the 43.
+ABtest's directory listing together with 5t4rv4t10n_1337). The recovered tournament maps (qualifiers/final) feed the
+sealed holdout (docs/evaluation.md); the custom maps catch overfitting to the 43.
 
 ## 6. Script inventory
 

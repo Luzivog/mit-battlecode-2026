@@ -96,7 +96,7 @@ All of this is **bytecode-adaptive**: adding cost anywhere changes behaviour els
   1. **Side-effecting asserts are load-bearing.** `assert(CombatStrategy.performMoves(...))` in `TryAttack.java.jinja2:67,71`, `TryTrap.java.jinja2:99,103`, `TryRatNap.java.jinja2:95` and `TryThrow.java.jinja2:103,105` performs the move. Do not delete them as if they were no-ops.
   2. **A failing assert throws `AssertionError`, which is an `Error` and escapes the catch.** `run()` exits, the engine prints the stack trace and marks the robot terminated (`SandboxedRobotPlayer.java:235`), and `GameWorld.updateRobot` **destroys it** at the end of that turn (`GameWorld.java:356-359`, engine 1.2.5 and 1.2.6). Observed in matches:
      - Rats died at `TryThrow.java.jinja2:106` (`assert(rc.canThrowRat())`) on DefaultSmall.
-     - **Every king** hit `assert(false)` in `GlobalArray.writeCheeseMines` (comms/GlobalArray.java:428) once it knew ≥ 26 cheese mines. On bridges (28 mines) challenger (instrumented copy) lost all 4 kings and the game at round 401; on quadrants (38 mines) awubot lost all 5 at round 764. Maps at risk: `bridges` (28), `bridgesCatless` (26), `quadrants` (38). All other local and built-in maps have ≤ 18 mines.
+     - **Every king** hit `assert(false)` in `GlobalArray.writeCheeseMines` (comms/GlobalArray.java:428) once it knew ≥ 26 cheese mines. On bridges (28 mines) challenger (instrumented copy) lost all 4 kings and the game at round 401; on quadrants (38 mines) awubot lost all 5 at round 764. Maps at risk include `bridges` (28), `bridgesCatless` (26), `quadrants` (38), `sieveofriches` (30) and `tminusten` (30); count mines in `maps/` (150 maps, tournament ones included) rather than trusting a list.
 - Other reachable `Error` sources: `assert(false)` in RobotTracker when > 43 robots are visible (only possible for kings), and the `encodeEnemy`/`decodeHealth` asserts.
 
 ---
@@ -199,7 +199,7 @@ There are 64 slots of 0–1023. **Only kings may write** (50 bytecodes per write
 
 **Adding a field.**
 - Free space: slot 15 (10 bits), slot 1 bits 2–9, slot 9 bits 3–9 (values ≤ 4) and slot 21 bits 5–9.
-- For more space, raise `MIN_CHEESE` (shrinking the cheese list) and fix the `writeCheeseMines` overflow. Real maps have ≤ 18 mines, except bridges (28), bridgesCatless (26) and quadrants (38).
+- For more space, raise `MIN_CHEESE` (shrinking the cheese list) and fix the `writeCheeseMines` overflow. Several real maps have ≥ 26 mines (bridges 28, bridgesCatless 26, quadrants 38, sieveofriches 30, tminusten 30).
 - Babies cannot write. They must squeak to a king (r² ≤ 16), and the king writes.
 - Budget 50 bytecodes per king write. King postTick is already ~1.4–2.0k bytecodes, dominated by the 6 map-chunk writes and the full cheese-list rewrite.
 - Every king writes the same chunk and cheese slots, so whichever king runs last in the engine's turn order wins.

@@ -307,7 +307,9 @@ Summary:
 
 - Every game backstabbed at r10–26 (bites or rat traps), except the 4 TheHeist games against OBG and GST.
 - **Those 4 stayed in cooperation and ended by cat deaths** at r152–286, with cat damage exactly 4000/4000: each team
-  killed the cat on its own side. Cheese and kings decided them:
+  killed the cat on its own side. The 4000/4000 reading is genuine, not a replay artifact. Per-hit attribution
+  confirms it: in the grand-final `groveisbeingdesecrated` game, awubot dealt 370 bites × 10 + 3 cat traps × 100 =
+  4000 to its own cat, and GST 1500 + 2500 = 4000 to its own (`D:CatHits.java`). Cheese and kings decided them:
   - awubot won 3 (one with kings 2/1);
   - GST won one as team B by 320 to 290 cheese.
 
@@ -499,8 +501,10 @@ game** (§7).
 - **Risks.**
   - 7 rats taken out of the army mid-game.
   - King deaths: each costs 10–16.7 points.
-  - Kings packed together see > 25 robots, which makes `RobotTracker` throw (turn lost), and > 43, which triggers an
-    assert freeze (docs/architecture.md §5.2).
+  - Kings packed together can see > 25 robots, which makes `RobotTracker` throw and loses the turn. Above 43 robots
+    an assert fails, and the escaping `AssertionError` **destroys the king** at the end of that turn
+    (E:world/GameWorld.java:356-359; docs/architecture.md §1.6, §5.2). That is a king death: −10 to −16.7 points, or
+    the game if it was the last king. Budding must keep the robot count each king sees below 25.
   - More king turns cost more wall time (1200 s per team per game, R§14).
   - A bud next to the main king shares its danger. A separate safe site costs a walk (T4 site choice).
 - **Size.** Medium: about 150–250 lines (trigger, site test, spawn-into-block, bud). It overlaps T1's formation work
@@ -649,8 +653,13 @@ has the largest upside; merge it with T1's formation work.
 4. **King-kill outcomes with more kings** (does a third king cost early fights?) cannot be derived; P1 measures it.
 5. **Backstab blame attribution** in my parser is approximate: it reads the action order in the first
    non-cooperation turn and does not resolve whether a bite targeted a cat. Exact attribution needs an engine log line.
-6. **The tournament replay `tminusten`** (awubot's king died in cooperation at r103, opponent cat damage 3216): I did
-   not establish the mechanism (a cat lured by the opponent, or thrown rats, which never backstab). T5 may want it.
+6. **`tminusten`** (awubot's king died in cooperation at r103): settled by T5 (`docs/theory/t5-opponents.md`, A12).
+   A cat stuck against the parked king scratched it to death. In scoring terms it is a king-kill loss in cooperation
+   that no points play can recover; the fix is king safety (T5 P1b).
+7. **Deaths by `Error` count as deaths.** An escaping `AssertionError` destroys the robot at the end of its turn
+   (E:world/GameWorld.java:356-359). Every king count in this file comes from the engine's own per-round king count
+   (§9), so such deaths are already included. This also covers the champion's ≥ 26-mine overflow, which destroys
+   all its kings (docs/architecture.md §1.6; T5 A15).
 
 ---
 

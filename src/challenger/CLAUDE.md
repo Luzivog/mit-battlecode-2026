@@ -1,3 +1,7 @@
+> The original authors' guide, kept as they wrote it. The repo root `AGENTS.md` and `docs/architecture.md` §9
+> take precedence. Stale here: `Pathfinder.makeMove` no longer exists (move with `BabyRat.autoMove(Pathfinder.getMove(t))`,
+> kings with `RatKing.rawMove`), and "never edit BabyRat.java" is a strong default, not absolute (§9).
+
 **when refactoring, always maintain 100% functionality the same as before**
 
 # Infrastructure & Code Organization Guidelines

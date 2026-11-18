@@ -5,7 +5,7 @@ Local, greppable copies of published Battlecode postmortems and guides, for agen
 - **Sources:** everything linked from <https://battlecode.org/past.html> (2019–2026), plus 5 extra write-ups found by search (marked ★).
 - **Conversion:** PDFs were converted with pymupdf4llm (layout mode). Page headers, footers and numbers, broken hyphenation and tables of contents were removed. Code in Om Nom 2025 and The Kragle 2025 had its spacing restored from `pdftotext -layout`. Web pages were converted with html2text or taken from the authors' Markdown source. Figures appear as `[figure omitted: <caption>]`. Code that the PDF shows only as an image is lost the same way, so open the stored PDF when a figure matters.
 - **Original PDFs** are stored next to the `.md` when under 5 MB (22 files). Two are larger and are not stored: 2021 Three Musketeers (6.2 MB) and 2022 5 Musketeers (11 MB). Use the source URL for those.
-- **Search:** `grep -ril "bugnav" references/postmortems --include=*.md`, or `grep -l "testing/infra" references/postmortems/README.md` for the tags.
+- **Search:** `grep -ril "bugnav" references/postmortems --include=*.md`, or `grep -l "testing/infra" references/postmortems/INDEX.md` for the tags.
 
 **Tags:** `pathfinding` · `bytecode` · `codegen` · `comms` · `micro` · `macro/econ` · `map-analysis` · `symmetry` · `testing/infra` · `process` (team workflow, prioritisation, regrets) · `ai-agents` (LLM-driven development loops) · `2026-game` (mechanics of the 2026 game: rats, cats, cheese, dirt, ratnapping).
 

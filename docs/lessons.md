@@ -1,6 +1,6 @@
 # Cross-year lessons from Battlecode postmortems (2019–2026), ranked for beating `awubot`
 
-Sources: the 38 archived write-ups in [`references/postmortems/`](../references/postmortems/README.md), cited by short key (key → file table in §10). Rules facts come from [rules.md](rules.md). Champion facts come from [architecture.md](architecture.md), [combat.md](combat.md), [strategy.md](strategy.md), [intel.md](intel.md), [history.md](history.md) and [testing.md](testing.md).
+Sources: the 38 archived write-ups in [`references/postmortems/`](../references/postmortems/INDEX.md), cited by short key (key → file table in §10). Rules facts come from [rules.md](rules.md). Champion facts come from [architecture.md](architecture.md), [combat.md](combat.md), [strategy.md](strategy.md), [intel.md](intel.md), [history.md](history.md) and [testing.md](testing.md).
 
 **Applicability:** **A** = directly actionable for the challenger-vs-awubot bet, **B** = useful context or a second-order gain, **C** = background.
 
@@ -82,7 +82,7 @@ The goal is unusual. Our "opponent" is one fixed, known bot, and the maps are mo
 | Much stronger external bots | ~3% | Direction only, but the only instrument that sees threats your lineage never poses |
 | Peers sharing your code | ~50% always | Regression check only; goes stale |
 
-- **"The mirror can prove a feature is not paying for itself. It cannot prove a feature is unnecessary."** An ablation that won on the mirror raised early king wipes by bench bots from 16% to 26% [tvb26]. For defensive features, keep external bots in the gauntlet: GST `uravt/Battlecode26`, Old But Gold `IvanGeffner/BC26`, SPAARK, food, Lorem Ipsum (intel.md §5, README "Not archived").
+- **"The mirror can prove a feature is not paying for itself. It cannot prove a feature is unnecessary."** An ablation that won on the mirror raised early king wipes by bench bots from 16% to 26% [tvb26]. For defensive features, keep external bots in the gauntlet: GST `uravt/Battlecode26`, Old But Gold `IvanGeffner/BC26`, SPAARK, food, Lorem Ipsum (intel.md §5, INDEX.md "Not archived").
 - **Do not tune against benchmark source.** Run their bots and read replays only, to keep the benchmark independent [tvb26].
 - A pool made only of your own relatives "rewards beating our own habits". Add non-family bots early [utc26].
 - **Fix the measurement before trusting it.** UnderTheC's simulator diverged from the official judge (an FMA float-contraction difference), and for days the league judged "a slightly different game" [utc26]. For us: local engine 1.2.5 vs official 1.2.6/1.2.7 differ in cheese spawn (rules.md §0). Validate on `--engine official` before final acceptance.
@@ -271,7 +271,7 @@ Two published post-season or parallel efforts ran LLM agents in a loop. One was 
 | conf20 | [`references/postmortems/2020/2020-confused.md`][conf20] |
 | brb19 | [`references/postmortems/2019/2019-big-red-battlecode.md`][brb19] |
 
-Not cited above but archived: muskellunge 2024, zhugeduck 2024, Bowl of Chowder 2020, smite 2019, NP-cgw 2019, Oak's Last Disciple 2019, Double J 2019. See the [index](../references/postmortems/README.md).
+Not cited above but archived: muskellunge 2024, zhugeduck 2024, Bowl of Chowder 2020, smite 2019, NP-cgw 2019, Oak's Last Disciple 2019, Double J 2019. See the [index](../references/postmortems/INDEX.md).
 
 [GST26]: ../references/postmortems/2026/2026-generalized-strokes-theorem.md
 [food26]: ../references/postmortems/2026/2026-food.md

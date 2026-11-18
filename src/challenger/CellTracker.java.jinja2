@@ -257,14 +257,151 @@ public class CellTracker {
         // Profiler.end("storeVisibleCellsPostMove");
     }
 
+    // King scan. senseNearbyMapInfos lists the r² 25 disc clipped to the map column by column (x outer, y inner), each
+    // axis ascending or reversed by the robot's chirality and the map's symmetry
+    // (GameWorld.getAllLocationsWithinConeRadiusSquaredWithoutMap). Walls and mines never change, so once every
+    // visible cell is seen a scan only refreshes dirt: isDirt cell by cell into row bits, then one write per row.
+    {% set kingHalf = {-5: 0, -4: 3, -3: 4, -2: 4, -1: 4, 0: 5, 1: 4, 2: 4, 3: 4, 4: 3, 5: 0} %}
+    static int kingScanOrder = -1; // 2 * (x descending) + (y descending)
+    static long kingMask0, kingMask3, kingMask4, kingMask5; // visible cells of a row of half-width 0, 3, 4, 5
+    {% for dy in range(-5, 6) %}
+    static long kingDirt{{dy + 5}}; // dirt bits of row myLocY {{ "%+d" % dy }}
+    {% endfor %}
+
     public static void storeVisibleCellsKing() throws GameActionException {
-        // IF TLE: tone this down
-        // Profiler.begin();
-        for(var info : rc.senseNearbyMapInfos()) {
-            CellTracker.storeCellKing(info);
+        var infos = rc.senseNearbyMapInfos();
+        int x = myLocX, y = myLocY;
+        long onMap = (1l << mapWidth) - 1;
+        kingMask0 = 1l << x;
+        kingMask3 = (x >= 3 ? 0x7fl << (x - 3) : 0x7fl >>> (3 - x)) & onMap;
+        kingMask4 = (x >= 4 ? 0x1ffl << (x - 4) : 0x1ffl >>> (4 - x)) & onMap;
+        kingMask5 = (x >= 5 ? 0x7ffl << (x - 5) : 0x7ffl >>> (5 - x)) & onMap;
+        if (!kingRowsSeen(y)) {
+            // a cell seen for the first time: the full scan registers walls and mines in the engine's order
+            for (var info : infos) {
+                CellTracker.storeCellKing(info);
+            }
+            return;
         }
-        // Profiler.end("storeVisibleCellsKing");
+        if (kingScanOrder < 0) kingScanOrder = findKingScanOrder(infos);
+        // rows myLocY + dy exist for dy in [lo, hi]; at most one side is clipped (maps are at least 20 high)
+        int lo = y < 5 ? -y : -5, hi = y > mapHeight - 6 ? mapHeight - 1 - y : 5;
+        {% for dy in range(-5, 6) %}
+        kingDirt{{dy + 5}} = 0;
+        {% endfor %}
+        switch (kingScanOrder) {
+            case 0 -> { if (hi < 5) kingDirt0End(infos, x, hi); else kingDirt0Start(infos, x, lo); }
+            case 1 -> { if (lo > -5) kingDirt1End(infos, x, lo); else kingDirt1Start(infos, x, hi); }
+            case 2 -> { if (hi < 5) kingDirt2End(infos, x, hi); else kingDirt2Start(infos, x, lo); }
+            case 3 -> { if (lo > -5) kingDirt3End(infos, x, lo); else kingDirt3Start(infos, x, hi); }
+        }
+        kingStoreDirtRows(y);
     }
+
+    private static int findKingScanOrder(MapInfo[] infos) {
+        var prev = infos[0].getMapLocation();
+        int order = prev.x < infos[infos.length - 1].getMapLocation().x ? 0 : 2;
+        for (int i = 1; ; i++) {
+            var loc = infos[i].getMapLocation();
+            if (loc.x == prev.x) return loc.y > prev.y ? order : order + 1;
+            prev = loc;
+        }
+    }
+
+    // Rows at or above mapHeight are marked seen by init and never hold dirt, so both switches may touch them.
+    private static boolean kingRowsSeen(int y) {
+        switch (y) {
+            {% for Y in range(MAX_MAP_SIZE) %}
+            case {{Y}} -> {
+                return (0
+                {% for dy in range(-5, 6) if 0 <= Y + dy < MAX_MAP_SIZE %}
+                        | kingMask{{kingHalf[dy]}} & ~seen{{Y + dy}}
+                {% endfor %}
+                ) == 0;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    private static void kingStoreDirtRows(int y) {
+        switch (y) {
+            {% for Y in range(MAX_MAP_SIZE) %}
+            case {{Y}} -> {
+                {% for dy in range(-5, 6) if 0 <= Y + dy < MAX_MAP_SIZE %}
+                dirt{{Y + dy}} = dirt{{Y + dy}} & ~kingMask{{kingHalf[dy]}} | kingDirt{{dy + 5}};
+                {% endfor %}
+            }
+            {% endfor %}
+        }
+    }
+
+    // One method per listing order and clipped side. A column's cells are consecutive in the array, in the order of
+    // ys; the clip removes cells at one end of every column, so a fall-through switch on the clip bound b enters at
+    // the first cell present. Start: the clip (if any) is at the start of each column, walk forward from k.
+    // End: the clip is at the end, walk backward from the column's last cell j.
+    {% for order in range(4) %}
+    {% set xs = range(-5, 6) if order < 2 else range(5, -6, -1) %}
+    {% set ydesc = order % 2 == 1 %}
+    {% for kind in ["Start", "End"] %}
+    private static void kingDirt{{order}}{{kind}}(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        {% if kind == "End" %}
+        int j;
+        {% endif %}
+        {% for dx in xs %}
+        {% set h = kingHalf[dx] %}
+        {% set ys = range(h, -h - 1, -1) if ydesc else range(-h, h + 1) %}
+        {% if dx < 0 %}
+        if (x >= {{ -dx }}) {
+        {% elif dx > 0 %}
+        if (x < mapWidth - {{dx}}) {
+        {% else %}
+        {
+        {% endif %}
+            long c = 1l << (x {{ "%+d" % dx if dx else "" }});
+            {% if kind == "Start" %}
+            {# b = the first row present: lo in [-5, 0] (ys ascending) or hi in [0, 5] (descending) #}
+            switch (b) {
+                {% for dy in ys %}
+                {% if loop.first %}
+                {% for v in (range(h, 6) if ydesc else range(-5, -h + 1)) %}
+                case {{v}}:
+                {% endfor %}
+                {% elif (dy >= 0 if ydesc else dy <= 0) %}
+                case {{dy}}:
+                {% endif %}
+                    if (infos[k++].isDirt()) kingDirt{{dy + 5}} |= c;
+                {% endfor %}
+            }
+            {% else %}
+            {# b = the last row present: hi in [0, 5] (ys ascending) or lo in [-5, 0] (descending) #}
+            {% if ydesc %}
+            j = k + {{h}} - (b > {{ -h }} ? b : {{ -h }});
+            {% else %}
+            j = k + {{h}} + (b < {{h}} ? b : {{h}});
+            {% endif %}
+            k = j + 1;
+            switch (b) {
+                {% for dy in ys|reverse %}
+                {% if loop.first %}
+                {% for v in (range(-5, -h + 1) if ydesc else range(h, 6)) %}
+                case {{v}}:
+                {% endfor %}
+                {% elif (dy <= 0 if ydesc else dy >= 0) %}
+                case {{dy}}:
+                {% endif %}
+                    if (infos[j--].isDirt()) kingDirt{{dy + 5}} |= c;
+                {% endfor %}
+            }
+            {% endif %}
+        }
+        {% endfor %}
+    }
+    {% endfor %}
+    {% endfor %}
 
     public static long localPassable0, localPassable1;
     public static long localDirt0, localDirt1;

@@ -5815,13 +5815,3441 @@ public class CellTracker {
         // Profiler.end("storeVisibleCellsPostMove");
     }
 
+    // King scan. senseNearbyMapInfos lists the r² 25 disc clipped to the map column by column (x outer, y inner), each
+    // axis ascending or reversed by the robot's chirality and the map's symmetry
+    // (GameWorld.getAllLocationsWithinConeRadiusSquaredWithoutMap). Walls and mines never change, so once every
+    // visible cell is seen a scan only refreshes dirt: isDirt cell by cell into row bits, then one write per row.
+    static int kingScanOrder = -1; // 2 * (x descending) + (y descending)
+    static long kingMask0, kingMask3, kingMask4, kingMask5; // visible cells of a row of half-width 0, 3, 4, 5
+    static long kingDirt0; // dirt bits of row myLocY -5
+    static long kingDirt1; // dirt bits of row myLocY -4
+    static long kingDirt2; // dirt bits of row myLocY -3
+    static long kingDirt3; // dirt bits of row myLocY -2
+    static long kingDirt4; // dirt bits of row myLocY -1
+    static long kingDirt5; // dirt bits of row myLocY +0
+    static long kingDirt6; // dirt bits of row myLocY +1
+    static long kingDirt7; // dirt bits of row myLocY +2
+    static long kingDirt8; // dirt bits of row myLocY +3
+    static long kingDirt9; // dirt bits of row myLocY +4
+    static long kingDirt10; // dirt bits of row myLocY +5
+
     public static void storeVisibleCellsKing() throws GameActionException {
-        // IF TLE: tone this down
-        // Profiler.begin();
-        for(var info : rc.senseNearbyMapInfos()) {
-            CellTracker.storeCellKing(info);
+        var infos = rc.senseNearbyMapInfos();
+        int x = myLocX, y = myLocY;
+        long onMap = (1l << mapWidth) - 1;
+        kingMask0 = 1l << x;
+        kingMask3 = (x >= 3 ? 0x7fl << (x - 3) : 0x7fl >>> (3 - x)) & onMap;
+        kingMask4 = (x >= 4 ? 0x1ffl << (x - 4) : 0x1ffl >>> (4 - x)) & onMap;
+        kingMask5 = (x >= 5 ? 0x7ffl << (x - 5) : 0x7ffl >>> (5 - x)) & onMap;
+        if (!kingRowsSeen(y)) {
+            // a cell seen for the first time: the full scan registers walls and mines in the engine's order
+            for (var info : infos) {
+                CellTracker.storeCellKing(info);
+            }
+            return;
         }
-        // Profiler.end("storeVisibleCellsKing");
+        if (kingScanOrder < 0) kingScanOrder = findKingScanOrder(infos);
+        // rows myLocY + dy exist for dy in [lo, hi]; at most one side is clipped (maps are at least 20 high)
+        int lo = y < 5 ? -y : -5, hi = y > mapHeight - 6 ? mapHeight - 1 - y : 5;
+        kingDirt0 = 0;
+        kingDirt1 = 0;
+        kingDirt2 = 0;
+        kingDirt3 = 0;
+        kingDirt4 = 0;
+        kingDirt5 = 0;
+        kingDirt6 = 0;
+        kingDirt7 = 0;
+        kingDirt8 = 0;
+        kingDirt9 = 0;
+        kingDirt10 = 0;
+        switch (kingScanOrder) {
+            case 0 -> { if (hi < 5) kingDirt0End(infos, x, hi); else kingDirt0Start(infos, x, lo); }
+            case 1 -> { if (lo > -5) kingDirt1End(infos, x, lo); else kingDirt1Start(infos, x, hi); }
+            case 2 -> { if (hi < 5) kingDirt2End(infos, x, hi); else kingDirt2Start(infos, x, lo); }
+            case 3 -> { if (lo > -5) kingDirt3End(infos, x, lo); else kingDirt3Start(infos, x, hi); }
+        }
+        kingStoreDirtRows(y);
+    }
+
+    private static int findKingScanOrder(MapInfo[] infos) {
+        var prev = infos[0].getMapLocation();
+        int order = prev.x < infos[infos.length - 1].getMapLocation().x ? 0 : 2;
+        for (int i = 1; ; i++) {
+            var loc = infos[i].getMapLocation();
+            if (loc.x == prev.x) return loc.y > prev.y ? order : order + 1;
+            prev = loc;
+        }
+    }
+
+    // Rows at or above mapHeight are marked seen by init and never hold dirt, so both switches may touch them.
+    private static boolean kingRowsSeen(int y) {
+        switch (y) {
+            case 0 -> {
+                return (0
+                        | kingMask5 & ~seen0
+                        | kingMask4 & ~seen1
+                        | kingMask4 & ~seen2
+                        | kingMask4 & ~seen3
+                        | kingMask3 & ~seen4
+                        | kingMask0 & ~seen5
+                ) == 0;
+            }
+            case 1 -> {
+                return (0
+                        | kingMask4 & ~seen0
+                        | kingMask5 & ~seen1
+                        | kingMask4 & ~seen2
+                        | kingMask4 & ~seen3
+                        | kingMask4 & ~seen4
+                        | kingMask3 & ~seen5
+                        | kingMask0 & ~seen6
+                ) == 0;
+            }
+            case 2 -> {
+                return (0
+                        | kingMask4 & ~seen0
+                        | kingMask4 & ~seen1
+                        | kingMask5 & ~seen2
+                        | kingMask4 & ~seen3
+                        | kingMask4 & ~seen4
+                        | kingMask4 & ~seen5
+                        | kingMask3 & ~seen6
+                        | kingMask0 & ~seen7
+                ) == 0;
+            }
+            case 3 -> {
+                return (0
+                        | kingMask4 & ~seen0
+                        | kingMask4 & ~seen1
+                        | kingMask4 & ~seen2
+                        | kingMask5 & ~seen3
+                        | kingMask4 & ~seen4
+                        | kingMask4 & ~seen5
+                        | kingMask4 & ~seen6
+                        | kingMask3 & ~seen7
+                        | kingMask0 & ~seen8
+                ) == 0;
+            }
+            case 4 -> {
+                return (0
+                        | kingMask3 & ~seen0
+                        | kingMask4 & ~seen1
+                        | kingMask4 & ~seen2
+                        | kingMask4 & ~seen3
+                        | kingMask5 & ~seen4
+                        | kingMask4 & ~seen5
+                        | kingMask4 & ~seen6
+                        | kingMask4 & ~seen7
+                        | kingMask3 & ~seen8
+                        | kingMask0 & ~seen9
+                ) == 0;
+            }
+            case 5 -> {
+                return (0
+                        | kingMask0 & ~seen0
+                        | kingMask3 & ~seen1
+                        | kingMask4 & ~seen2
+                        | kingMask4 & ~seen3
+                        | kingMask4 & ~seen4
+                        | kingMask5 & ~seen5
+                        | kingMask4 & ~seen6
+                        | kingMask4 & ~seen7
+                        | kingMask4 & ~seen8
+                        | kingMask3 & ~seen9
+                        | kingMask0 & ~seen10
+                ) == 0;
+            }
+            case 6 -> {
+                return (0
+                        | kingMask0 & ~seen1
+                        | kingMask3 & ~seen2
+                        | kingMask4 & ~seen3
+                        | kingMask4 & ~seen4
+                        | kingMask4 & ~seen5
+                        | kingMask5 & ~seen6
+                        | kingMask4 & ~seen7
+                        | kingMask4 & ~seen8
+                        | kingMask4 & ~seen9
+                        | kingMask3 & ~seen10
+                        | kingMask0 & ~seen11
+                ) == 0;
+            }
+            case 7 -> {
+                return (0
+                        | kingMask0 & ~seen2
+                        | kingMask3 & ~seen3
+                        | kingMask4 & ~seen4
+                        | kingMask4 & ~seen5
+                        | kingMask4 & ~seen6
+                        | kingMask5 & ~seen7
+                        | kingMask4 & ~seen8
+                        | kingMask4 & ~seen9
+                        | kingMask4 & ~seen10
+                        | kingMask3 & ~seen11
+                        | kingMask0 & ~seen12
+                ) == 0;
+            }
+            case 8 -> {
+                return (0
+                        | kingMask0 & ~seen3
+                        | kingMask3 & ~seen4
+                        | kingMask4 & ~seen5
+                        | kingMask4 & ~seen6
+                        | kingMask4 & ~seen7
+                        | kingMask5 & ~seen8
+                        | kingMask4 & ~seen9
+                        | kingMask4 & ~seen10
+                        | kingMask4 & ~seen11
+                        | kingMask3 & ~seen12
+                        | kingMask0 & ~seen13
+                ) == 0;
+            }
+            case 9 -> {
+                return (0
+                        | kingMask0 & ~seen4
+                        | kingMask3 & ~seen5
+                        | kingMask4 & ~seen6
+                        | kingMask4 & ~seen7
+                        | kingMask4 & ~seen8
+                        | kingMask5 & ~seen9
+                        | kingMask4 & ~seen10
+                        | kingMask4 & ~seen11
+                        | kingMask4 & ~seen12
+                        | kingMask3 & ~seen13
+                        | kingMask0 & ~seen14
+                ) == 0;
+            }
+            case 10 -> {
+                return (0
+                        | kingMask0 & ~seen5
+                        | kingMask3 & ~seen6
+                        | kingMask4 & ~seen7
+                        | kingMask4 & ~seen8
+                        | kingMask4 & ~seen9
+                        | kingMask5 & ~seen10
+                        | kingMask4 & ~seen11
+                        | kingMask4 & ~seen12
+                        | kingMask4 & ~seen13
+                        | kingMask3 & ~seen14
+                        | kingMask0 & ~seen15
+                ) == 0;
+            }
+            case 11 -> {
+                return (0
+                        | kingMask0 & ~seen6
+                        | kingMask3 & ~seen7
+                        | kingMask4 & ~seen8
+                        | kingMask4 & ~seen9
+                        | kingMask4 & ~seen10
+                        | kingMask5 & ~seen11
+                        | kingMask4 & ~seen12
+                        | kingMask4 & ~seen13
+                        | kingMask4 & ~seen14
+                        | kingMask3 & ~seen15
+                        | kingMask0 & ~seen16
+                ) == 0;
+            }
+            case 12 -> {
+                return (0
+                        | kingMask0 & ~seen7
+                        | kingMask3 & ~seen8
+                        | kingMask4 & ~seen9
+                        | kingMask4 & ~seen10
+                        | kingMask4 & ~seen11
+                        | kingMask5 & ~seen12
+                        | kingMask4 & ~seen13
+                        | kingMask4 & ~seen14
+                        | kingMask4 & ~seen15
+                        | kingMask3 & ~seen16
+                        | kingMask0 & ~seen17
+                ) == 0;
+            }
+            case 13 -> {
+                return (0
+                        | kingMask0 & ~seen8
+                        | kingMask3 & ~seen9
+                        | kingMask4 & ~seen10
+                        | kingMask4 & ~seen11
+                        | kingMask4 & ~seen12
+                        | kingMask5 & ~seen13
+                        | kingMask4 & ~seen14
+                        | kingMask4 & ~seen15
+                        | kingMask4 & ~seen16
+                        | kingMask3 & ~seen17
+                        | kingMask0 & ~seen18
+                ) == 0;
+            }
+            case 14 -> {
+                return (0
+                        | kingMask0 & ~seen9
+                        | kingMask3 & ~seen10
+                        | kingMask4 & ~seen11
+                        | kingMask4 & ~seen12
+                        | kingMask4 & ~seen13
+                        | kingMask5 & ~seen14
+                        | kingMask4 & ~seen15
+                        | kingMask4 & ~seen16
+                        | kingMask4 & ~seen17
+                        | kingMask3 & ~seen18
+                        | kingMask0 & ~seen19
+                ) == 0;
+            }
+            case 15 -> {
+                return (0
+                        | kingMask0 & ~seen10
+                        | kingMask3 & ~seen11
+                        | kingMask4 & ~seen12
+                        | kingMask4 & ~seen13
+                        | kingMask4 & ~seen14
+                        | kingMask5 & ~seen15
+                        | kingMask4 & ~seen16
+                        | kingMask4 & ~seen17
+                        | kingMask4 & ~seen18
+                        | kingMask3 & ~seen19
+                        | kingMask0 & ~seen20
+                ) == 0;
+            }
+            case 16 -> {
+                return (0
+                        | kingMask0 & ~seen11
+                        | kingMask3 & ~seen12
+                        | kingMask4 & ~seen13
+                        | kingMask4 & ~seen14
+                        | kingMask4 & ~seen15
+                        | kingMask5 & ~seen16
+                        | kingMask4 & ~seen17
+                        | kingMask4 & ~seen18
+                        | kingMask4 & ~seen19
+                        | kingMask3 & ~seen20
+                        | kingMask0 & ~seen21
+                ) == 0;
+            }
+            case 17 -> {
+                return (0
+                        | kingMask0 & ~seen12
+                        | kingMask3 & ~seen13
+                        | kingMask4 & ~seen14
+                        | kingMask4 & ~seen15
+                        | kingMask4 & ~seen16
+                        | kingMask5 & ~seen17
+                        | kingMask4 & ~seen18
+                        | kingMask4 & ~seen19
+                        | kingMask4 & ~seen20
+                        | kingMask3 & ~seen21
+                        | kingMask0 & ~seen22
+                ) == 0;
+            }
+            case 18 -> {
+                return (0
+                        | kingMask0 & ~seen13
+                        | kingMask3 & ~seen14
+                        | kingMask4 & ~seen15
+                        | kingMask4 & ~seen16
+                        | kingMask4 & ~seen17
+                        | kingMask5 & ~seen18
+                        | kingMask4 & ~seen19
+                        | kingMask4 & ~seen20
+                        | kingMask4 & ~seen21
+                        | kingMask3 & ~seen22
+                        | kingMask0 & ~seen23
+                ) == 0;
+            }
+            case 19 -> {
+                return (0
+                        | kingMask0 & ~seen14
+                        | kingMask3 & ~seen15
+                        | kingMask4 & ~seen16
+                        | kingMask4 & ~seen17
+                        | kingMask4 & ~seen18
+                        | kingMask5 & ~seen19
+                        | kingMask4 & ~seen20
+                        | kingMask4 & ~seen21
+                        | kingMask4 & ~seen22
+                        | kingMask3 & ~seen23
+                        | kingMask0 & ~seen24
+                ) == 0;
+            }
+            case 20 -> {
+                return (0
+                        | kingMask0 & ~seen15
+                        | kingMask3 & ~seen16
+                        | kingMask4 & ~seen17
+                        | kingMask4 & ~seen18
+                        | kingMask4 & ~seen19
+                        | kingMask5 & ~seen20
+                        | kingMask4 & ~seen21
+                        | kingMask4 & ~seen22
+                        | kingMask4 & ~seen23
+                        | kingMask3 & ~seen24
+                        | kingMask0 & ~seen25
+                ) == 0;
+            }
+            case 21 -> {
+                return (0
+                        | kingMask0 & ~seen16
+                        | kingMask3 & ~seen17
+                        | kingMask4 & ~seen18
+                        | kingMask4 & ~seen19
+                        | kingMask4 & ~seen20
+                        | kingMask5 & ~seen21
+                        | kingMask4 & ~seen22
+                        | kingMask4 & ~seen23
+                        | kingMask4 & ~seen24
+                        | kingMask3 & ~seen25
+                        | kingMask0 & ~seen26
+                ) == 0;
+            }
+            case 22 -> {
+                return (0
+                        | kingMask0 & ~seen17
+                        | kingMask3 & ~seen18
+                        | kingMask4 & ~seen19
+                        | kingMask4 & ~seen20
+                        | kingMask4 & ~seen21
+                        | kingMask5 & ~seen22
+                        | kingMask4 & ~seen23
+                        | kingMask4 & ~seen24
+                        | kingMask4 & ~seen25
+                        | kingMask3 & ~seen26
+                        | kingMask0 & ~seen27
+                ) == 0;
+            }
+            case 23 -> {
+                return (0
+                        | kingMask0 & ~seen18
+                        | kingMask3 & ~seen19
+                        | kingMask4 & ~seen20
+                        | kingMask4 & ~seen21
+                        | kingMask4 & ~seen22
+                        | kingMask5 & ~seen23
+                        | kingMask4 & ~seen24
+                        | kingMask4 & ~seen25
+                        | kingMask4 & ~seen26
+                        | kingMask3 & ~seen27
+                        | kingMask0 & ~seen28
+                ) == 0;
+            }
+            case 24 -> {
+                return (0
+                        | kingMask0 & ~seen19
+                        | kingMask3 & ~seen20
+                        | kingMask4 & ~seen21
+                        | kingMask4 & ~seen22
+                        | kingMask4 & ~seen23
+                        | kingMask5 & ~seen24
+                        | kingMask4 & ~seen25
+                        | kingMask4 & ~seen26
+                        | kingMask4 & ~seen27
+                        | kingMask3 & ~seen28
+                        | kingMask0 & ~seen29
+                ) == 0;
+            }
+            case 25 -> {
+                return (0
+                        | kingMask0 & ~seen20
+                        | kingMask3 & ~seen21
+                        | kingMask4 & ~seen22
+                        | kingMask4 & ~seen23
+                        | kingMask4 & ~seen24
+                        | kingMask5 & ~seen25
+                        | kingMask4 & ~seen26
+                        | kingMask4 & ~seen27
+                        | kingMask4 & ~seen28
+                        | kingMask3 & ~seen29
+                        | kingMask0 & ~seen30
+                ) == 0;
+            }
+            case 26 -> {
+                return (0
+                        | kingMask0 & ~seen21
+                        | kingMask3 & ~seen22
+                        | kingMask4 & ~seen23
+                        | kingMask4 & ~seen24
+                        | kingMask4 & ~seen25
+                        | kingMask5 & ~seen26
+                        | kingMask4 & ~seen27
+                        | kingMask4 & ~seen28
+                        | kingMask4 & ~seen29
+                        | kingMask3 & ~seen30
+                        | kingMask0 & ~seen31
+                ) == 0;
+            }
+            case 27 -> {
+                return (0
+                        | kingMask0 & ~seen22
+                        | kingMask3 & ~seen23
+                        | kingMask4 & ~seen24
+                        | kingMask4 & ~seen25
+                        | kingMask4 & ~seen26
+                        | kingMask5 & ~seen27
+                        | kingMask4 & ~seen28
+                        | kingMask4 & ~seen29
+                        | kingMask4 & ~seen30
+                        | kingMask3 & ~seen31
+                        | kingMask0 & ~seen32
+                ) == 0;
+            }
+            case 28 -> {
+                return (0
+                        | kingMask0 & ~seen23
+                        | kingMask3 & ~seen24
+                        | kingMask4 & ~seen25
+                        | kingMask4 & ~seen26
+                        | kingMask4 & ~seen27
+                        | kingMask5 & ~seen28
+                        | kingMask4 & ~seen29
+                        | kingMask4 & ~seen30
+                        | kingMask4 & ~seen31
+                        | kingMask3 & ~seen32
+                        | kingMask0 & ~seen33
+                ) == 0;
+            }
+            case 29 -> {
+                return (0
+                        | kingMask0 & ~seen24
+                        | kingMask3 & ~seen25
+                        | kingMask4 & ~seen26
+                        | kingMask4 & ~seen27
+                        | kingMask4 & ~seen28
+                        | kingMask5 & ~seen29
+                        | kingMask4 & ~seen30
+                        | kingMask4 & ~seen31
+                        | kingMask4 & ~seen32
+                        | kingMask3 & ~seen33
+                        | kingMask0 & ~seen34
+                ) == 0;
+            }
+            case 30 -> {
+                return (0
+                        | kingMask0 & ~seen25
+                        | kingMask3 & ~seen26
+                        | kingMask4 & ~seen27
+                        | kingMask4 & ~seen28
+                        | kingMask4 & ~seen29
+                        | kingMask5 & ~seen30
+                        | kingMask4 & ~seen31
+                        | kingMask4 & ~seen32
+                        | kingMask4 & ~seen33
+                        | kingMask3 & ~seen34
+                        | kingMask0 & ~seen35
+                ) == 0;
+            }
+            case 31 -> {
+                return (0
+                        | kingMask0 & ~seen26
+                        | kingMask3 & ~seen27
+                        | kingMask4 & ~seen28
+                        | kingMask4 & ~seen29
+                        | kingMask4 & ~seen30
+                        | kingMask5 & ~seen31
+                        | kingMask4 & ~seen32
+                        | kingMask4 & ~seen33
+                        | kingMask4 & ~seen34
+                        | kingMask3 & ~seen35
+                        | kingMask0 & ~seen36
+                ) == 0;
+            }
+            case 32 -> {
+                return (0
+                        | kingMask0 & ~seen27
+                        | kingMask3 & ~seen28
+                        | kingMask4 & ~seen29
+                        | kingMask4 & ~seen30
+                        | kingMask4 & ~seen31
+                        | kingMask5 & ~seen32
+                        | kingMask4 & ~seen33
+                        | kingMask4 & ~seen34
+                        | kingMask4 & ~seen35
+                        | kingMask3 & ~seen36
+                        | kingMask0 & ~seen37
+                ) == 0;
+            }
+            case 33 -> {
+                return (0
+                        | kingMask0 & ~seen28
+                        | kingMask3 & ~seen29
+                        | kingMask4 & ~seen30
+                        | kingMask4 & ~seen31
+                        | kingMask4 & ~seen32
+                        | kingMask5 & ~seen33
+                        | kingMask4 & ~seen34
+                        | kingMask4 & ~seen35
+                        | kingMask4 & ~seen36
+                        | kingMask3 & ~seen37
+                        | kingMask0 & ~seen38
+                ) == 0;
+            }
+            case 34 -> {
+                return (0
+                        | kingMask0 & ~seen29
+                        | kingMask3 & ~seen30
+                        | kingMask4 & ~seen31
+                        | kingMask4 & ~seen32
+                        | kingMask4 & ~seen33
+                        | kingMask5 & ~seen34
+                        | kingMask4 & ~seen35
+                        | kingMask4 & ~seen36
+                        | kingMask4 & ~seen37
+                        | kingMask3 & ~seen38
+                        | kingMask0 & ~seen39
+                ) == 0;
+            }
+            case 35 -> {
+                return (0
+                        | kingMask0 & ~seen30
+                        | kingMask3 & ~seen31
+                        | kingMask4 & ~seen32
+                        | kingMask4 & ~seen33
+                        | kingMask4 & ~seen34
+                        | kingMask5 & ~seen35
+                        | kingMask4 & ~seen36
+                        | kingMask4 & ~seen37
+                        | kingMask4 & ~seen38
+                        | kingMask3 & ~seen39
+                        | kingMask0 & ~seen40
+                ) == 0;
+            }
+            case 36 -> {
+                return (0
+                        | kingMask0 & ~seen31
+                        | kingMask3 & ~seen32
+                        | kingMask4 & ~seen33
+                        | kingMask4 & ~seen34
+                        | kingMask4 & ~seen35
+                        | kingMask5 & ~seen36
+                        | kingMask4 & ~seen37
+                        | kingMask4 & ~seen38
+                        | kingMask4 & ~seen39
+                        | kingMask3 & ~seen40
+                        | kingMask0 & ~seen41
+                ) == 0;
+            }
+            case 37 -> {
+                return (0
+                        | kingMask0 & ~seen32
+                        | kingMask3 & ~seen33
+                        | kingMask4 & ~seen34
+                        | kingMask4 & ~seen35
+                        | kingMask4 & ~seen36
+                        | kingMask5 & ~seen37
+                        | kingMask4 & ~seen38
+                        | kingMask4 & ~seen39
+                        | kingMask4 & ~seen40
+                        | kingMask3 & ~seen41
+                        | kingMask0 & ~seen42
+                ) == 0;
+            }
+            case 38 -> {
+                return (0
+                        | kingMask0 & ~seen33
+                        | kingMask3 & ~seen34
+                        | kingMask4 & ~seen35
+                        | kingMask4 & ~seen36
+                        | kingMask4 & ~seen37
+                        | kingMask5 & ~seen38
+                        | kingMask4 & ~seen39
+                        | kingMask4 & ~seen40
+                        | kingMask4 & ~seen41
+                        | kingMask3 & ~seen42
+                        | kingMask0 & ~seen43
+                ) == 0;
+            }
+            case 39 -> {
+                return (0
+                        | kingMask0 & ~seen34
+                        | kingMask3 & ~seen35
+                        | kingMask4 & ~seen36
+                        | kingMask4 & ~seen37
+                        | kingMask4 & ~seen38
+                        | kingMask5 & ~seen39
+                        | kingMask4 & ~seen40
+                        | kingMask4 & ~seen41
+                        | kingMask4 & ~seen42
+                        | kingMask3 & ~seen43
+                        | kingMask0 & ~seen44
+                ) == 0;
+            }
+            case 40 -> {
+                return (0
+                        | kingMask0 & ~seen35
+                        | kingMask3 & ~seen36
+                        | kingMask4 & ~seen37
+                        | kingMask4 & ~seen38
+                        | kingMask4 & ~seen39
+                        | kingMask5 & ~seen40
+                        | kingMask4 & ~seen41
+                        | kingMask4 & ~seen42
+                        | kingMask4 & ~seen43
+                        | kingMask3 & ~seen44
+                        | kingMask0 & ~seen45
+                ) == 0;
+            }
+            case 41 -> {
+                return (0
+                        | kingMask0 & ~seen36
+                        | kingMask3 & ~seen37
+                        | kingMask4 & ~seen38
+                        | kingMask4 & ~seen39
+                        | kingMask4 & ~seen40
+                        | kingMask5 & ~seen41
+                        | kingMask4 & ~seen42
+                        | kingMask4 & ~seen43
+                        | kingMask4 & ~seen44
+                        | kingMask3 & ~seen45
+                        | kingMask0 & ~seen46
+                ) == 0;
+            }
+            case 42 -> {
+                return (0
+                        | kingMask0 & ~seen37
+                        | kingMask3 & ~seen38
+                        | kingMask4 & ~seen39
+                        | kingMask4 & ~seen40
+                        | kingMask4 & ~seen41
+                        | kingMask5 & ~seen42
+                        | kingMask4 & ~seen43
+                        | kingMask4 & ~seen44
+                        | kingMask4 & ~seen45
+                        | kingMask3 & ~seen46
+                        | kingMask0 & ~seen47
+                ) == 0;
+            }
+            case 43 -> {
+                return (0
+                        | kingMask0 & ~seen38
+                        | kingMask3 & ~seen39
+                        | kingMask4 & ~seen40
+                        | kingMask4 & ~seen41
+                        | kingMask4 & ~seen42
+                        | kingMask5 & ~seen43
+                        | kingMask4 & ~seen44
+                        | kingMask4 & ~seen45
+                        | kingMask4 & ~seen46
+                        | kingMask3 & ~seen47
+                        | kingMask0 & ~seen48
+                ) == 0;
+            }
+            case 44 -> {
+                return (0
+                        | kingMask0 & ~seen39
+                        | kingMask3 & ~seen40
+                        | kingMask4 & ~seen41
+                        | kingMask4 & ~seen42
+                        | kingMask4 & ~seen43
+                        | kingMask5 & ~seen44
+                        | kingMask4 & ~seen45
+                        | kingMask4 & ~seen46
+                        | kingMask4 & ~seen47
+                        | kingMask3 & ~seen48
+                        | kingMask0 & ~seen49
+                ) == 0;
+            }
+            case 45 -> {
+                return (0
+                        | kingMask0 & ~seen40
+                        | kingMask3 & ~seen41
+                        | kingMask4 & ~seen42
+                        | kingMask4 & ~seen43
+                        | kingMask4 & ~seen44
+                        | kingMask5 & ~seen45
+                        | kingMask4 & ~seen46
+                        | kingMask4 & ~seen47
+                        | kingMask4 & ~seen48
+                        | kingMask3 & ~seen49
+                        | kingMask0 & ~seen50
+                ) == 0;
+            }
+            case 46 -> {
+                return (0
+                        | kingMask0 & ~seen41
+                        | kingMask3 & ~seen42
+                        | kingMask4 & ~seen43
+                        | kingMask4 & ~seen44
+                        | kingMask4 & ~seen45
+                        | kingMask5 & ~seen46
+                        | kingMask4 & ~seen47
+                        | kingMask4 & ~seen48
+                        | kingMask4 & ~seen49
+                        | kingMask3 & ~seen50
+                        | kingMask0 & ~seen51
+                ) == 0;
+            }
+            case 47 -> {
+                return (0
+                        | kingMask0 & ~seen42
+                        | kingMask3 & ~seen43
+                        | kingMask4 & ~seen44
+                        | kingMask4 & ~seen45
+                        | kingMask4 & ~seen46
+                        | kingMask5 & ~seen47
+                        | kingMask4 & ~seen48
+                        | kingMask4 & ~seen49
+                        | kingMask4 & ~seen50
+                        | kingMask3 & ~seen51
+                        | kingMask0 & ~seen52
+                ) == 0;
+            }
+            case 48 -> {
+                return (0
+                        | kingMask0 & ~seen43
+                        | kingMask3 & ~seen44
+                        | kingMask4 & ~seen45
+                        | kingMask4 & ~seen46
+                        | kingMask4 & ~seen47
+                        | kingMask5 & ~seen48
+                        | kingMask4 & ~seen49
+                        | kingMask4 & ~seen50
+                        | kingMask4 & ~seen51
+                        | kingMask3 & ~seen52
+                        | kingMask0 & ~seen53
+                ) == 0;
+            }
+            case 49 -> {
+                return (0
+                        | kingMask0 & ~seen44
+                        | kingMask3 & ~seen45
+                        | kingMask4 & ~seen46
+                        | kingMask4 & ~seen47
+                        | kingMask4 & ~seen48
+                        | kingMask5 & ~seen49
+                        | kingMask4 & ~seen50
+                        | kingMask4 & ~seen51
+                        | kingMask4 & ~seen52
+                        | kingMask3 & ~seen53
+                        | kingMask0 & ~seen54
+                ) == 0;
+            }
+            case 50 -> {
+                return (0
+                        | kingMask0 & ~seen45
+                        | kingMask3 & ~seen46
+                        | kingMask4 & ~seen47
+                        | kingMask4 & ~seen48
+                        | kingMask4 & ~seen49
+                        | kingMask5 & ~seen50
+                        | kingMask4 & ~seen51
+                        | kingMask4 & ~seen52
+                        | kingMask4 & ~seen53
+                        | kingMask3 & ~seen54
+                        | kingMask0 & ~seen55
+                ) == 0;
+            }
+            case 51 -> {
+                return (0
+                        | kingMask0 & ~seen46
+                        | kingMask3 & ~seen47
+                        | kingMask4 & ~seen48
+                        | kingMask4 & ~seen49
+                        | kingMask4 & ~seen50
+                        | kingMask5 & ~seen51
+                        | kingMask4 & ~seen52
+                        | kingMask4 & ~seen53
+                        | kingMask4 & ~seen54
+                        | kingMask3 & ~seen55
+                        | kingMask0 & ~seen56
+                ) == 0;
+            }
+            case 52 -> {
+                return (0
+                        | kingMask0 & ~seen47
+                        | kingMask3 & ~seen48
+                        | kingMask4 & ~seen49
+                        | kingMask4 & ~seen50
+                        | kingMask4 & ~seen51
+                        | kingMask5 & ~seen52
+                        | kingMask4 & ~seen53
+                        | kingMask4 & ~seen54
+                        | kingMask4 & ~seen55
+                        | kingMask3 & ~seen56
+                        | kingMask0 & ~seen57
+                ) == 0;
+            }
+            case 53 -> {
+                return (0
+                        | kingMask0 & ~seen48
+                        | kingMask3 & ~seen49
+                        | kingMask4 & ~seen50
+                        | kingMask4 & ~seen51
+                        | kingMask4 & ~seen52
+                        | kingMask5 & ~seen53
+                        | kingMask4 & ~seen54
+                        | kingMask4 & ~seen55
+                        | kingMask4 & ~seen56
+                        | kingMask3 & ~seen57
+                        | kingMask0 & ~seen58
+                ) == 0;
+            }
+            case 54 -> {
+                return (0
+                        | kingMask0 & ~seen49
+                        | kingMask3 & ~seen50
+                        | kingMask4 & ~seen51
+                        | kingMask4 & ~seen52
+                        | kingMask4 & ~seen53
+                        | kingMask5 & ~seen54
+                        | kingMask4 & ~seen55
+                        | kingMask4 & ~seen56
+                        | kingMask4 & ~seen57
+                        | kingMask3 & ~seen58
+                        | kingMask0 & ~seen59
+                ) == 0;
+            }
+            case 55 -> {
+                return (0
+                        | kingMask0 & ~seen50
+                        | kingMask3 & ~seen51
+                        | kingMask4 & ~seen52
+                        | kingMask4 & ~seen53
+                        | kingMask4 & ~seen54
+                        | kingMask5 & ~seen55
+                        | kingMask4 & ~seen56
+                        | kingMask4 & ~seen57
+                        | kingMask4 & ~seen58
+                        | kingMask3 & ~seen59
+                ) == 0;
+            }
+            case 56 -> {
+                return (0
+                        | kingMask0 & ~seen51
+                        | kingMask3 & ~seen52
+                        | kingMask4 & ~seen53
+                        | kingMask4 & ~seen54
+                        | kingMask4 & ~seen55
+                        | kingMask5 & ~seen56
+                        | kingMask4 & ~seen57
+                        | kingMask4 & ~seen58
+                        | kingMask4 & ~seen59
+                ) == 0;
+            }
+            case 57 -> {
+                return (0
+                        | kingMask0 & ~seen52
+                        | kingMask3 & ~seen53
+                        | kingMask4 & ~seen54
+                        | kingMask4 & ~seen55
+                        | kingMask4 & ~seen56
+                        | kingMask5 & ~seen57
+                        | kingMask4 & ~seen58
+                        | kingMask4 & ~seen59
+                ) == 0;
+            }
+            case 58 -> {
+                return (0
+                        | kingMask0 & ~seen53
+                        | kingMask3 & ~seen54
+                        | kingMask4 & ~seen55
+                        | kingMask4 & ~seen56
+                        | kingMask4 & ~seen57
+                        | kingMask5 & ~seen58
+                        | kingMask4 & ~seen59
+                ) == 0;
+            }
+            case 59 -> {
+                return (0
+                        | kingMask0 & ~seen54
+                        | kingMask3 & ~seen55
+                        | kingMask4 & ~seen56
+                        | kingMask4 & ~seen57
+                        | kingMask4 & ~seen58
+                        | kingMask5 & ~seen59
+                ) == 0;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    private static void kingStoreDirtRows(int y) {
+        switch (y) {
+            case 0 -> {
+                dirt0 = dirt0 & ~kingMask5 | kingDirt5;
+                dirt1 = dirt1 & ~kingMask4 | kingDirt6;
+                dirt2 = dirt2 & ~kingMask4 | kingDirt7;
+                dirt3 = dirt3 & ~kingMask4 | kingDirt8;
+                dirt4 = dirt4 & ~kingMask3 | kingDirt9;
+                dirt5 = dirt5 & ~kingMask0 | kingDirt10;
+            }
+            case 1 -> {
+                dirt0 = dirt0 & ~kingMask4 | kingDirt4;
+                dirt1 = dirt1 & ~kingMask5 | kingDirt5;
+                dirt2 = dirt2 & ~kingMask4 | kingDirt6;
+                dirt3 = dirt3 & ~kingMask4 | kingDirt7;
+                dirt4 = dirt4 & ~kingMask4 | kingDirt8;
+                dirt5 = dirt5 & ~kingMask3 | kingDirt9;
+                dirt6 = dirt6 & ~kingMask0 | kingDirt10;
+            }
+            case 2 -> {
+                dirt0 = dirt0 & ~kingMask4 | kingDirt3;
+                dirt1 = dirt1 & ~kingMask4 | kingDirt4;
+                dirt2 = dirt2 & ~kingMask5 | kingDirt5;
+                dirt3 = dirt3 & ~kingMask4 | kingDirt6;
+                dirt4 = dirt4 & ~kingMask4 | kingDirt7;
+                dirt5 = dirt5 & ~kingMask4 | kingDirt8;
+                dirt6 = dirt6 & ~kingMask3 | kingDirt9;
+                dirt7 = dirt7 & ~kingMask0 | kingDirt10;
+            }
+            case 3 -> {
+                dirt0 = dirt0 & ~kingMask4 | kingDirt2;
+                dirt1 = dirt1 & ~kingMask4 | kingDirt3;
+                dirt2 = dirt2 & ~kingMask4 | kingDirt4;
+                dirt3 = dirt3 & ~kingMask5 | kingDirt5;
+                dirt4 = dirt4 & ~kingMask4 | kingDirt6;
+                dirt5 = dirt5 & ~kingMask4 | kingDirt7;
+                dirt6 = dirt6 & ~kingMask4 | kingDirt8;
+                dirt7 = dirt7 & ~kingMask3 | kingDirt9;
+                dirt8 = dirt8 & ~kingMask0 | kingDirt10;
+            }
+            case 4 -> {
+                dirt0 = dirt0 & ~kingMask3 | kingDirt1;
+                dirt1 = dirt1 & ~kingMask4 | kingDirt2;
+                dirt2 = dirt2 & ~kingMask4 | kingDirt3;
+                dirt3 = dirt3 & ~kingMask4 | kingDirt4;
+                dirt4 = dirt4 & ~kingMask5 | kingDirt5;
+                dirt5 = dirt5 & ~kingMask4 | kingDirt6;
+                dirt6 = dirt6 & ~kingMask4 | kingDirt7;
+                dirt7 = dirt7 & ~kingMask4 | kingDirt8;
+                dirt8 = dirt8 & ~kingMask3 | kingDirt9;
+                dirt9 = dirt9 & ~kingMask0 | kingDirt10;
+            }
+            case 5 -> {
+                dirt0 = dirt0 & ~kingMask0 | kingDirt0;
+                dirt1 = dirt1 & ~kingMask3 | kingDirt1;
+                dirt2 = dirt2 & ~kingMask4 | kingDirt2;
+                dirt3 = dirt3 & ~kingMask4 | kingDirt3;
+                dirt4 = dirt4 & ~kingMask4 | kingDirt4;
+                dirt5 = dirt5 & ~kingMask5 | kingDirt5;
+                dirt6 = dirt6 & ~kingMask4 | kingDirt6;
+                dirt7 = dirt7 & ~kingMask4 | kingDirt7;
+                dirt8 = dirt8 & ~kingMask4 | kingDirt8;
+                dirt9 = dirt9 & ~kingMask3 | kingDirt9;
+                dirt10 = dirt10 & ~kingMask0 | kingDirt10;
+            }
+            case 6 -> {
+                dirt1 = dirt1 & ~kingMask0 | kingDirt0;
+                dirt2 = dirt2 & ~kingMask3 | kingDirt1;
+                dirt3 = dirt3 & ~kingMask4 | kingDirt2;
+                dirt4 = dirt4 & ~kingMask4 | kingDirt3;
+                dirt5 = dirt5 & ~kingMask4 | kingDirt4;
+                dirt6 = dirt6 & ~kingMask5 | kingDirt5;
+                dirt7 = dirt7 & ~kingMask4 | kingDirt6;
+                dirt8 = dirt8 & ~kingMask4 | kingDirt7;
+                dirt9 = dirt9 & ~kingMask4 | kingDirt8;
+                dirt10 = dirt10 & ~kingMask3 | kingDirt9;
+                dirt11 = dirt11 & ~kingMask0 | kingDirt10;
+            }
+            case 7 -> {
+                dirt2 = dirt2 & ~kingMask0 | kingDirt0;
+                dirt3 = dirt3 & ~kingMask3 | kingDirt1;
+                dirt4 = dirt4 & ~kingMask4 | kingDirt2;
+                dirt5 = dirt5 & ~kingMask4 | kingDirt3;
+                dirt6 = dirt6 & ~kingMask4 | kingDirt4;
+                dirt7 = dirt7 & ~kingMask5 | kingDirt5;
+                dirt8 = dirt8 & ~kingMask4 | kingDirt6;
+                dirt9 = dirt9 & ~kingMask4 | kingDirt7;
+                dirt10 = dirt10 & ~kingMask4 | kingDirt8;
+                dirt11 = dirt11 & ~kingMask3 | kingDirt9;
+                dirt12 = dirt12 & ~kingMask0 | kingDirt10;
+            }
+            case 8 -> {
+                dirt3 = dirt3 & ~kingMask0 | kingDirt0;
+                dirt4 = dirt4 & ~kingMask3 | kingDirt1;
+                dirt5 = dirt5 & ~kingMask4 | kingDirt2;
+                dirt6 = dirt6 & ~kingMask4 | kingDirt3;
+                dirt7 = dirt7 & ~kingMask4 | kingDirt4;
+                dirt8 = dirt8 & ~kingMask5 | kingDirt5;
+                dirt9 = dirt9 & ~kingMask4 | kingDirt6;
+                dirt10 = dirt10 & ~kingMask4 | kingDirt7;
+                dirt11 = dirt11 & ~kingMask4 | kingDirt8;
+                dirt12 = dirt12 & ~kingMask3 | kingDirt9;
+                dirt13 = dirt13 & ~kingMask0 | kingDirt10;
+            }
+            case 9 -> {
+                dirt4 = dirt4 & ~kingMask0 | kingDirt0;
+                dirt5 = dirt5 & ~kingMask3 | kingDirt1;
+                dirt6 = dirt6 & ~kingMask4 | kingDirt2;
+                dirt7 = dirt7 & ~kingMask4 | kingDirt3;
+                dirt8 = dirt8 & ~kingMask4 | kingDirt4;
+                dirt9 = dirt9 & ~kingMask5 | kingDirt5;
+                dirt10 = dirt10 & ~kingMask4 | kingDirt6;
+                dirt11 = dirt11 & ~kingMask4 | kingDirt7;
+                dirt12 = dirt12 & ~kingMask4 | kingDirt8;
+                dirt13 = dirt13 & ~kingMask3 | kingDirt9;
+                dirt14 = dirt14 & ~kingMask0 | kingDirt10;
+            }
+            case 10 -> {
+                dirt5 = dirt5 & ~kingMask0 | kingDirt0;
+                dirt6 = dirt6 & ~kingMask3 | kingDirt1;
+                dirt7 = dirt7 & ~kingMask4 | kingDirt2;
+                dirt8 = dirt8 & ~kingMask4 | kingDirt3;
+                dirt9 = dirt9 & ~kingMask4 | kingDirt4;
+                dirt10 = dirt10 & ~kingMask5 | kingDirt5;
+                dirt11 = dirt11 & ~kingMask4 | kingDirt6;
+                dirt12 = dirt12 & ~kingMask4 | kingDirt7;
+                dirt13 = dirt13 & ~kingMask4 | kingDirt8;
+                dirt14 = dirt14 & ~kingMask3 | kingDirt9;
+                dirt15 = dirt15 & ~kingMask0 | kingDirt10;
+            }
+            case 11 -> {
+                dirt6 = dirt6 & ~kingMask0 | kingDirt0;
+                dirt7 = dirt7 & ~kingMask3 | kingDirt1;
+                dirt8 = dirt8 & ~kingMask4 | kingDirt2;
+                dirt9 = dirt9 & ~kingMask4 | kingDirt3;
+                dirt10 = dirt10 & ~kingMask4 | kingDirt4;
+                dirt11 = dirt11 & ~kingMask5 | kingDirt5;
+                dirt12 = dirt12 & ~kingMask4 | kingDirt6;
+                dirt13 = dirt13 & ~kingMask4 | kingDirt7;
+                dirt14 = dirt14 & ~kingMask4 | kingDirt8;
+                dirt15 = dirt15 & ~kingMask3 | kingDirt9;
+                dirt16 = dirt16 & ~kingMask0 | kingDirt10;
+            }
+            case 12 -> {
+                dirt7 = dirt7 & ~kingMask0 | kingDirt0;
+                dirt8 = dirt8 & ~kingMask3 | kingDirt1;
+                dirt9 = dirt9 & ~kingMask4 | kingDirt2;
+                dirt10 = dirt10 & ~kingMask4 | kingDirt3;
+                dirt11 = dirt11 & ~kingMask4 | kingDirt4;
+                dirt12 = dirt12 & ~kingMask5 | kingDirt5;
+                dirt13 = dirt13 & ~kingMask4 | kingDirt6;
+                dirt14 = dirt14 & ~kingMask4 | kingDirt7;
+                dirt15 = dirt15 & ~kingMask4 | kingDirt8;
+                dirt16 = dirt16 & ~kingMask3 | kingDirt9;
+                dirt17 = dirt17 & ~kingMask0 | kingDirt10;
+            }
+            case 13 -> {
+                dirt8 = dirt8 & ~kingMask0 | kingDirt0;
+                dirt9 = dirt9 & ~kingMask3 | kingDirt1;
+                dirt10 = dirt10 & ~kingMask4 | kingDirt2;
+                dirt11 = dirt11 & ~kingMask4 | kingDirt3;
+                dirt12 = dirt12 & ~kingMask4 | kingDirt4;
+                dirt13 = dirt13 & ~kingMask5 | kingDirt5;
+                dirt14 = dirt14 & ~kingMask4 | kingDirt6;
+                dirt15 = dirt15 & ~kingMask4 | kingDirt7;
+                dirt16 = dirt16 & ~kingMask4 | kingDirt8;
+                dirt17 = dirt17 & ~kingMask3 | kingDirt9;
+                dirt18 = dirt18 & ~kingMask0 | kingDirt10;
+            }
+            case 14 -> {
+                dirt9 = dirt9 & ~kingMask0 | kingDirt0;
+                dirt10 = dirt10 & ~kingMask3 | kingDirt1;
+                dirt11 = dirt11 & ~kingMask4 | kingDirt2;
+                dirt12 = dirt12 & ~kingMask4 | kingDirt3;
+                dirt13 = dirt13 & ~kingMask4 | kingDirt4;
+                dirt14 = dirt14 & ~kingMask5 | kingDirt5;
+                dirt15 = dirt15 & ~kingMask4 | kingDirt6;
+                dirt16 = dirt16 & ~kingMask4 | kingDirt7;
+                dirt17 = dirt17 & ~kingMask4 | kingDirt8;
+                dirt18 = dirt18 & ~kingMask3 | kingDirt9;
+                dirt19 = dirt19 & ~kingMask0 | kingDirt10;
+            }
+            case 15 -> {
+                dirt10 = dirt10 & ~kingMask0 | kingDirt0;
+                dirt11 = dirt11 & ~kingMask3 | kingDirt1;
+                dirt12 = dirt12 & ~kingMask4 | kingDirt2;
+                dirt13 = dirt13 & ~kingMask4 | kingDirt3;
+                dirt14 = dirt14 & ~kingMask4 | kingDirt4;
+                dirt15 = dirt15 & ~kingMask5 | kingDirt5;
+                dirt16 = dirt16 & ~kingMask4 | kingDirt6;
+                dirt17 = dirt17 & ~kingMask4 | kingDirt7;
+                dirt18 = dirt18 & ~kingMask4 | kingDirt8;
+                dirt19 = dirt19 & ~kingMask3 | kingDirt9;
+                dirt20 = dirt20 & ~kingMask0 | kingDirt10;
+            }
+            case 16 -> {
+                dirt11 = dirt11 & ~kingMask0 | kingDirt0;
+                dirt12 = dirt12 & ~kingMask3 | kingDirt1;
+                dirt13 = dirt13 & ~kingMask4 | kingDirt2;
+                dirt14 = dirt14 & ~kingMask4 | kingDirt3;
+                dirt15 = dirt15 & ~kingMask4 | kingDirt4;
+                dirt16 = dirt16 & ~kingMask5 | kingDirt5;
+                dirt17 = dirt17 & ~kingMask4 | kingDirt6;
+                dirt18 = dirt18 & ~kingMask4 | kingDirt7;
+                dirt19 = dirt19 & ~kingMask4 | kingDirt8;
+                dirt20 = dirt20 & ~kingMask3 | kingDirt9;
+                dirt21 = dirt21 & ~kingMask0 | kingDirt10;
+            }
+            case 17 -> {
+                dirt12 = dirt12 & ~kingMask0 | kingDirt0;
+                dirt13 = dirt13 & ~kingMask3 | kingDirt1;
+                dirt14 = dirt14 & ~kingMask4 | kingDirt2;
+                dirt15 = dirt15 & ~kingMask4 | kingDirt3;
+                dirt16 = dirt16 & ~kingMask4 | kingDirt4;
+                dirt17 = dirt17 & ~kingMask5 | kingDirt5;
+                dirt18 = dirt18 & ~kingMask4 | kingDirt6;
+                dirt19 = dirt19 & ~kingMask4 | kingDirt7;
+                dirt20 = dirt20 & ~kingMask4 | kingDirt8;
+                dirt21 = dirt21 & ~kingMask3 | kingDirt9;
+                dirt22 = dirt22 & ~kingMask0 | kingDirt10;
+            }
+            case 18 -> {
+                dirt13 = dirt13 & ~kingMask0 | kingDirt0;
+                dirt14 = dirt14 & ~kingMask3 | kingDirt1;
+                dirt15 = dirt15 & ~kingMask4 | kingDirt2;
+                dirt16 = dirt16 & ~kingMask4 | kingDirt3;
+                dirt17 = dirt17 & ~kingMask4 | kingDirt4;
+                dirt18 = dirt18 & ~kingMask5 | kingDirt5;
+                dirt19 = dirt19 & ~kingMask4 | kingDirt6;
+                dirt20 = dirt20 & ~kingMask4 | kingDirt7;
+                dirt21 = dirt21 & ~kingMask4 | kingDirt8;
+                dirt22 = dirt22 & ~kingMask3 | kingDirt9;
+                dirt23 = dirt23 & ~kingMask0 | kingDirt10;
+            }
+            case 19 -> {
+                dirt14 = dirt14 & ~kingMask0 | kingDirt0;
+                dirt15 = dirt15 & ~kingMask3 | kingDirt1;
+                dirt16 = dirt16 & ~kingMask4 | kingDirt2;
+                dirt17 = dirt17 & ~kingMask4 | kingDirt3;
+                dirt18 = dirt18 & ~kingMask4 | kingDirt4;
+                dirt19 = dirt19 & ~kingMask5 | kingDirt5;
+                dirt20 = dirt20 & ~kingMask4 | kingDirt6;
+                dirt21 = dirt21 & ~kingMask4 | kingDirt7;
+                dirt22 = dirt22 & ~kingMask4 | kingDirt8;
+                dirt23 = dirt23 & ~kingMask3 | kingDirt9;
+                dirt24 = dirt24 & ~kingMask0 | kingDirt10;
+            }
+            case 20 -> {
+                dirt15 = dirt15 & ~kingMask0 | kingDirt0;
+                dirt16 = dirt16 & ~kingMask3 | kingDirt1;
+                dirt17 = dirt17 & ~kingMask4 | kingDirt2;
+                dirt18 = dirt18 & ~kingMask4 | kingDirt3;
+                dirt19 = dirt19 & ~kingMask4 | kingDirt4;
+                dirt20 = dirt20 & ~kingMask5 | kingDirt5;
+                dirt21 = dirt21 & ~kingMask4 | kingDirt6;
+                dirt22 = dirt22 & ~kingMask4 | kingDirt7;
+                dirt23 = dirt23 & ~kingMask4 | kingDirt8;
+                dirt24 = dirt24 & ~kingMask3 | kingDirt9;
+                dirt25 = dirt25 & ~kingMask0 | kingDirt10;
+            }
+            case 21 -> {
+                dirt16 = dirt16 & ~kingMask0 | kingDirt0;
+                dirt17 = dirt17 & ~kingMask3 | kingDirt1;
+                dirt18 = dirt18 & ~kingMask4 | kingDirt2;
+                dirt19 = dirt19 & ~kingMask4 | kingDirt3;
+                dirt20 = dirt20 & ~kingMask4 | kingDirt4;
+                dirt21 = dirt21 & ~kingMask5 | kingDirt5;
+                dirt22 = dirt22 & ~kingMask4 | kingDirt6;
+                dirt23 = dirt23 & ~kingMask4 | kingDirt7;
+                dirt24 = dirt24 & ~kingMask4 | kingDirt8;
+                dirt25 = dirt25 & ~kingMask3 | kingDirt9;
+                dirt26 = dirt26 & ~kingMask0 | kingDirt10;
+            }
+            case 22 -> {
+                dirt17 = dirt17 & ~kingMask0 | kingDirt0;
+                dirt18 = dirt18 & ~kingMask3 | kingDirt1;
+                dirt19 = dirt19 & ~kingMask4 | kingDirt2;
+                dirt20 = dirt20 & ~kingMask4 | kingDirt3;
+                dirt21 = dirt21 & ~kingMask4 | kingDirt4;
+                dirt22 = dirt22 & ~kingMask5 | kingDirt5;
+                dirt23 = dirt23 & ~kingMask4 | kingDirt6;
+                dirt24 = dirt24 & ~kingMask4 | kingDirt7;
+                dirt25 = dirt25 & ~kingMask4 | kingDirt8;
+                dirt26 = dirt26 & ~kingMask3 | kingDirt9;
+                dirt27 = dirt27 & ~kingMask0 | kingDirt10;
+            }
+            case 23 -> {
+                dirt18 = dirt18 & ~kingMask0 | kingDirt0;
+                dirt19 = dirt19 & ~kingMask3 | kingDirt1;
+                dirt20 = dirt20 & ~kingMask4 | kingDirt2;
+                dirt21 = dirt21 & ~kingMask4 | kingDirt3;
+                dirt22 = dirt22 & ~kingMask4 | kingDirt4;
+                dirt23 = dirt23 & ~kingMask5 | kingDirt5;
+                dirt24 = dirt24 & ~kingMask4 | kingDirt6;
+                dirt25 = dirt25 & ~kingMask4 | kingDirt7;
+                dirt26 = dirt26 & ~kingMask4 | kingDirt8;
+                dirt27 = dirt27 & ~kingMask3 | kingDirt9;
+                dirt28 = dirt28 & ~kingMask0 | kingDirt10;
+            }
+            case 24 -> {
+                dirt19 = dirt19 & ~kingMask0 | kingDirt0;
+                dirt20 = dirt20 & ~kingMask3 | kingDirt1;
+                dirt21 = dirt21 & ~kingMask4 | kingDirt2;
+                dirt22 = dirt22 & ~kingMask4 | kingDirt3;
+                dirt23 = dirt23 & ~kingMask4 | kingDirt4;
+                dirt24 = dirt24 & ~kingMask5 | kingDirt5;
+                dirt25 = dirt25 & ~kingMask4 | kingDirt6;
+                dirt26 = dirt26 & ~kingMask4 | kingDirt7;
+                dirt27 = dirt27 & ~kingMask4 | kingDirt8;
+                dirt28 = dirt28 & ~kingMask3 | kingDirt9;
+                dirt29 = dirt29 & ~kingMask0 | kingDirt10;
+            }
+            case 25 -> {
+                dirt20 = dirt20 & ~kingMask0 | kingDirt0;
+                dirt21 = dirt21 & ~kingMask3 | kingDirt1;
+                dirt22 = dirt22 & ~kingMask4 | kingDirt2;
+                dirt23 = dirt23 & ~kingMask4 | kingDirt3;
+                dirt24 = dirt24 & ~kingMask4 | kingDirt4;
+                dirt25 = dirt25 & ~kingMask5 | kingDirt5;
+                dirt26 = dirt26 & ~kingMask4 | kingDirt6;
+                dirt27 = dirt27 & ~kingMask4 | kingDirt7;
+                dirt28 = dirt28 & ~kingMask4 | kingDirt8;
+                dirt29 = dirt29 & ~kingMask3 | kingDirt9;
+                dirt30 = dirt30 & ~kingMask0 | kingDirt10;
+            }
+            case 26 -> {
+                dirt21 = dirt21 & ~kingMask0 | kingDirt0;
+                dirt22 = dirt22 & ~kingMask3 | kingDirt1;
+                dirt23 = dirt23 & ~kingMask4 | kingDirt2;
+                dirt24 = dirt24 & ~kingMask4 | kingDirt3;
+                dirt25 = dirt25 & ~kingMask4 | kingDirt4;
+                dirt26 = dirt26 & ~kingMask5 | kingDirt5;
+                dirt27 = dirt27 & ~kingMask4 | kingDirt6;
+                dirt28 = dirt28 & ~kingMask4 | kingDirt7;
+                dirt29 = dirt29 & ~kingMask4 | kingDirt8;
+                dirt30 = dirt30 & ~kingMask3 | kingDirt9;
+                dirt31 = dirt31 & ~kingMask0 | kingDirt10;
+            }
+            case 27 -> {
+                dirt22 = dirt22 & ~kingMask0 | kingDirt0;
+                dirt23 = dirt23 & ~kingMask3 | kingDirt1;
+                dirt24 = dirt24 & ~kingMask4 | kingDirt2;
+                dirt25 = dirt25 & ~kingMask4 | kingDirt3;
+                dirt26 = dirt26 & ~kingMask4 | kingDirt4;
+                dirt27 = dirt27 & ~kingMask5 | kingDirt5;
+                dirt28 = dirt28 & ~kingMask4 | kingDirt6;
+                dirt29 = dirt29 & ~kingMask4 | kingDirt7;
+                dirt30 = dirt30 & ~kingMask4 | kingDirt8;
+                dirt31 = dirt31 & ~kingMask3 | kingDirt9;
+                dirt32 = dirt32 & ~kingMask0 | kingDirt10;
+            }
+            case 28 -> {
+                dirt23 = dirt23 & ~kingMask0 | kingDirt0;
+                dirt24 = dirt24 & ~kingMask3 | kingDirt1;
+                dirt25 = dirt25 & ~kingMask4 | kingDirt2;
+                dirt26 = dirt26 & ~kingMask4 | kingDirt3;
+                dirt27 = dirt27 & ~kingMask4 | kingDirt4;
+                dirt28 = dirt28 & ~kingMask5 | kingDirt5;
+                dirt29 = dirt29 & ~kingMask4 | kingDirt6;
+                dirt30 = dirt30 & ~kingMask4 | kingDirt7;
+                dirt31 = dirt31 & ~kingMask4 | kingDirt8;
+                dirt32 = dirt32 & ~kingMask3 | kingDirt9;
+                dirt33 = dirt33 & ~kingMask0 | kingDirt10;
+            }
+            case 29 -> {
+                dirt24 = dirt24 & ~kingMask0 | kingDirt0;
+                dirt25 = dirt25 & ~kingMask3 | kingDirt1;
+                dirt26 = dirt26 & ~kingMask4 | kingDirt2;
+                dirt27 = dirt27 & ~kingMask4 | kingDirt3;
+                dirt28 = dirt28 & ~kingMask4 | kingDirt4;
+                dirt29 = dirt29 & ~kingMask5 | kingDirt5;
+                dirt30 = dirt30 & ~kingMask4 | kingDirt6;
+                dirt31 = dirt31 & ~kingMask4 | kingDirt7;
+                dirt32 = dirt32 & ~kingMask4 | kingDirt8;
+                dirt33 = dirt33 & ~kingMask3 | kingDirt9;
+                dirt34 = dirt34 & ~kingMask0 | kingDirt10;
+            }
+            case 30 -> {
+                dirt25 = dirt25 & ~kingMask0 | kingDirt0;
+                dirt26 = dirt26 & ~kingMask3 | kingDirt1;
+                dirt27 = dirt27 & ~kingMask4 | kingDirt2;
+                dirt28 = dirt28 & ~kingMask4 | kingDirt3;
+                dirt29 = dirt29 & ~kingMask4 | kingDirt4;
+                dirt30 = dirt30 & ~kingMask5 | kingDirt5;
+                dirt31 = dirt31 & ~kingMask4 | kingDirt6;
+                dirt32 = dirt32 & ~kingMask4 | kingDirt7;
+                dirt33 = dirt33 & ~kingMask4 | kingDirt8;
+                dirt34 = dirt34 & ~kingMask3 | kingDirt9;
+                dirt35 = dirt35 & ~kingMask0 | kingDirt10;
+            }
+            case 31 -> {
+                dirt26 = dirt26 & ~kingMask0 | kingDirt0;
+                dirt27 = dirt27 & ~kingMask3 | kingDirt1;
+                dirt28 = dirt28 & ~kingMask4 | kingDirt2;
+                dirt29 = dirt29 & ~kingMask4 | kingDirt3;
+                dirt30 = dirt30 & ~kingMask4 | kingDirt4;
+                dirt31 = dirt31 & ~kingMask5 | kingDirt5;
+                dirt32 = dirt32 & ~kingMask4 | kingDirt6;
+                dirt33 = dirt33 & ~kingMask4 | kingDirt7;
+                dirt34 = dirt34 & ~kingMask4 | kingDirt8;
+                dirt35 = dirt35 & ~kingMask3 | kingDirt9;
+                dirt36 = dirt36 & ~kingMask0 | kingDirt10;
+            }
+            case 32 -> {
+                dirt27 = dirt27 & ~kingMask0 | kingDirt0;
+                dirt28 = dirt28 & ~kingMask3 | kingDirt1;
+                dirt29 = dirt29 & ~kingMask4 | kingDirt2;
+                dirt30 = dirt30 & ~kingMask4 | kingDirt3;
+                dirt31 = dirt31 & ~kingMask4 | kingDirt4;
+                dirt32 = dirt32 & ~kingMask5 | kingDirt5;
+                dirt33 = dirt33 & ~kingMask4 | kingDirt6;
+                dirt34 = dirt34 & ~kingMask4 | kingDirt7;
+                dirt35 = dirt35 & ~kingMask4 | kingDirt8;
+                dirt36 = dirt36 & ~kingMask3 | kingDirt9;
+                dirt37 = dirt37 & ~kingMask0 | kingDirt10;
+            }
+            case 33 -> {
+                dirt28 = dirt28 & ~kingMask0 | kingDirt0;
+                dirt29 = dirt29 & ~kingMask3 | kingDirt1;
+                dirt30 = dirt30 & ~kingMask4 | kingDirt2;
+                dirt31 = dirt31 & ~kingMask4 | kingDirt3;
+                dirt32 = dirt32 & ~kingMask4 | kingDirt4;
+                dirt33 = dirt33 & ~kingMask5 | kingDirt5;
+                dirt34 = dirt34 & ~kingMask4 | kingDirt6;
+                dirt35 = dirt35 & ~kingMask4 | kingDirt7;
+                dirt36 = dirt36 & ~kingMask4 | kingDirt8;
+                dirt37 = dirt37 & ~kingMask3 | kingDirt9;
+                dirt38 = dirt38 & ~kingMask0 | kingDirt10;
+            }
+            case 34 -> {
+                dirt29 = dirt29 & ~kingMask0 | kingDirt0;
+                dirt30 = dirt30 & ~kingMask3 | kingDirt1;
+                dirt31 = dirt31 & ~kingMask4 | kingDirt2;
+                dirt32 = dirt32 & ~kingMask4 | kingDirt3;
+                dirt33 = dirt33 & ~kingMask4 | kingDirt4;
+                dirt34 = dirt34 & ~kingMask5 | kingDirt5;
+                dirt35 = dirt35 & ~kingMask4 | kingDirt6;
+                dirt36 = dirt36 & ~kingMask4 | kingDirt7;
+                dirt37 = dirt37 & ~kingMask4 | kingDirt8;
+                dirt38 = dirt38 & ~kingMask3 | kingDirt9;
+                dirt39 = dirt39 & ~kingMask0 | kingDirt10;
+            }
+            case 35 -> {
+                dirt30 = dirt30 & ~kingMask0 | kingDirt0;
+                dirt31 = dirt31 & ~kingMask3 | kingDirt1;
+                dirt32 = dirt32 & ~kingMask4 | kingDirt2;
+                dirt33 = dirt33 & ~kingMask4 | kingDirt3;
+                dirt34 = dirt34 & ~kingMask4 | kingDirt4;
+                dirt35 = dirt35 & ~kingMask5 | kingDirt5;
+                dirt36 = dirt36 & ~kingMask4 | kingDirt6;
+                dirt37 = dirt37 & ~kingMask4 | kingDirt7;
+                dirt38 = dirt38 & ~kingMask4 | kingDirt8;
+                dirt39 = dirt39 & ~kingMask3 | kingDirt9;
+                dirt40 = dirt40 & ~kingMask0 | kingDirt10;
+            }
+            case 36 -> {
+                dirt31 = dirt31 & ~kingMask0 | kingDirt0;
+                dirt32 = dirt32 & ~kingMask3 | kingDirt1;
+                dirt33 = dirt33 & ~kingMask4 | kingDirt2;
+                dirt34 = dirt34 & ~kingMask4 | kingDirt3;
+                dirt35 = dirt35 & ~kingMask4 | kingDirt4;
+                dirt36 = dirt36 & ~kingMask5 | kingDirt5;
+                dirt37 = dirt37 & ~kingMask4 | kingDirt6;
+                dirt38 = dirt38 & ~kingMask4 | kingDirt7;
+                dirt39 = dirt39 & ~kingMask4 | kingDirt8;
+                dirt40 = dirt40 & ~kingMask3 | kingDirt9;
+                dirt41 = dirt41 & ~kingMask0 | kingDirt10;
+            }
+            case 37 -> {
+                dirt32 = dirt32 & ~kingMask0 | kingDirt0;
+                dirt33 = dirt33 & ~kingMask3 | kingDirt1;
+                dirt34 = dirt34 & ~kingMask4 | kingDirt2;
+                dirt35 = dirt35 & ~kingMask4 | kingDirt3;
+                dirt36 = dirt36 & ~kingMask4 | kingDirt4;
+                dirt37 = dirt37 & ~kingMask5 | kingDirt5;
+                dirt38 = dirt38 & ~kingMask4 | kingDirt6;
+                dirt39 = dirt39 & ~kingMask4 | kingDirt7;
+                dirt40 = dirt40 & ~kingMask4 | kingDirt8;
+                dirt41 = dirt41 & ~kingMask3 | kingDirt9;
+                dirt42 = dirt42 & ~kingMask0 | kingDirt10;
+            }
+            case 38 -> {
+                dirt33 = dirt33 & ~kingMask0 | kingDirt0;
+                dirt34 = dirt34 & ~kingMask3 | kingDirt1;
+                dirt35 = dirt35 & ~kingMask4 | kingDirt2;
+                dirt36 = dirt36 & ~kingMask4 | kingDirt3;
+                dirt37 = dirt37 & ~kingMask4 | kingDirt4;
+                dirt38 = dirt38 & ~kingMask5 | kingDirt5;
+                dirt39 = dirt39 & ~kingMask4 | kingDirt6;
+                dirt40 = dirt40 & ~kingMask4 | kingDirt7;
+                dirt41 = dirt41 & ~kingMask4 | kingDirt8;
+                dirt42 = dirt42 & ~kingMask3 | kingDirt9;
+                dirt43 = dirt43 & ~kingMask0 | kingDirt10;
+            }
+            case 39 -> {
+                dirt34 = dirt34 & ~kingMask0 | kingDirt0;
+                dirt35 = dirt35 & ~kingMask3 | kingDirt1;
+                dirt36 = dirt36 & ~kingMask4 | kingDirt2;
+                dirt37 = dirt37 & ~kingMask4 | kingDirt3;
+                dirt38 = dirt38 & ~kingMask4 | kingDirt4;
+                dirt39 = dirt39 & ~kingMask5 | kingDirt5;
+                dirt40 = dirt40 & ~kingMask4 | kingDirt6;
+                dirt41 = dirt41 & ~kingMask4 | kingDirt7;
+                dirt42 = dirt42 & ~kingMask4 | kingDirt8;
+                dirt43 = dirt43 & ~kingMask3 | kingDirt9;
+                dirt44 = dirt44 & ~kingMask0 | kingDirt10;
+            }
+            case 40 -> {
+                dirt35 = dirt35 & ~kingMask0 | kingDirt0;
+                dirt36 = dirt36 & ~kingMask3 | kingDirt1;
+                dirt37 = dirt37 & ~kingMask4 | kingDirt2;
+                dirt38 = dirt38 & ~kingMask4 | kingDirt3;
+                dirt39 = dirt39 & ~kingMask4 | kingDirt4;
+                dirt40 = dirt40 & ~kingMask5 | kingDirt5;
+                dirt41 = dirt41 & ~kingMask4 | kingDirt6;
+                dirt42 = dirt42 & ~kingMask4 | kingDirt7;
+                dirt43 = dirt43 & ~kingMask4 | kingDirt8;
+                dirt44 = dirt44 & ~kingMask3 | kingDirt9;
+                dirt45 = dirt45 & ~kingMask0 | kingDirt10;
+            }
+            case 41 -> {
+                dirt36 = dirt36 & ~kingMask0 | kingDirt0;
+                dirt37 = dirt37 & ~kingMask3 | kingDirt1;
+                dirt38 = dirt38 & ~kingMask4 | kingDirt2;
+                dirt39 = dirt39 & ~kingMask4 | kingDirt3;
+                dirt40 = dirt40 & ~kingMask4 | kingDirt4;
+                dirt41 = dirt41 & ~kingMask5 | kingDirt5;
+                dirt42 = dirt42 & ~kingMask4 | kingDirt6;
+                dirt43 = dirt43 & ~kingMask4 | kingDirt7;
+                dirt44 = dirt44 & ~kingMask4 | kingDirt8;
+                dirt45 = dirt45 & ~kingMask3 | kingDirt9;
+                dirt46 = dirt46 & ~kingMask0 | kingDirt10;
+            }
+            case 42 -> {
+                dirt37 = dirt37 & ~kingMask0 | kingDirt0;
+                dirt38 = dirt38 & ~kingMask3 | kingDirt1;
+                dirt39 = dirt39 & ~kingMask4 | kingDirt2;
+                dirt40 = dirt40 & ~kingMask4 | kingDirt3;
+                dirt41 = dirt41 & ~kingMask4 | kingDirt4;
+                dirt42 = dirt42 & ~kingMask5 | kingDirt5;
+                dirt43 = dirt43 & ~kingMask4 | kingDirt6;
+                dirt44 = dirt44 & ~kingMask4 | kingDirt7;
+                dirt45 = dirt45 & ~kingMask4 | kingDirt8;
+                dirt46 = dirt46 & ~kingMask3 | kingDirt9;
+                dirt47 = dirt47 & ~kingMask0 | kingDirt10;
+            }
+            case 43 -> {
+                dirt38 = dirt38 & ~kingMask0 | kingDirt0;
+                dirt39 = dirt39 & ~kingMask3 | kingDirt1;
+                dirt40 = dirt40 & ~kingMask4 | kingDirt2;
+                dirt41 = dirt41 & ~kingMask4 | kingDirt3;
+                dirt42 = dirt42 & ~kingMask4 | kingDirt4;
+                dirt43 = dirt43 & ~kingMask5 | kingDirt5;
+                dirt44 = dirt44 & ~kingMask4 | kingDirt6;
+                dirt45 = dirt45 & ~kingMask4 | kingDirt7;
+                dirt46 = dirt46 & ~kingMask4 | kingDirt8;
+                dirt47 = dirt47 & ~kingMask3 | kingDirt9;
+                dirt48 = dirt48 & ~kingMask0 | kingDirt10;
+            }
+            case 44 -> {
+                dirt39 = dirt39 & ~kingMask0 | kingDirt0;
+                dirt40 = dirt40 & ~kingMask3 | kingDirt1;
+                dirt41 = dirt41 & ~kingMask4 | kingDirt2;
+                dirt42 = dirt42 & ~kingMask4 | kingDirt3;
+                dirt43 = dirt43 & ~kingMask4 | kingDirt4;
+                dirt44 = dirt44 & ~kingMask5 | kingDirt5;
+                dirt45 = dirt45 & ~kingMask4 | kingDirt6;
+                dirt46 = dirt46 & ~kingMask4 | kingDirt7;
+                dirt47 = dirt47 & ~kingMask4 | kingDirt8;
+                dirt48 = dirt48 & ~kingMask3 | kingDirt9;
+                dirt49 = dirt49 & ~kingMask0 | kingDirt10;
+            }
+            case 45 -> {
+                dirt40 = dirt40 & ~kingMask0 | kingDirt0;
+                dirt41 = dirt41 & ~kingMask3 | kingDirt1;
+                dirt42 = dirt42 & ~kingMask4 | kingDirt2;
+                dirt43 = dirt43 & ~kingMask4 | kingDirt3;
+                dirt44 = dirt44 & ~kingMask4 | kingDirt4;
+                dirt45 = dirt45 & ~kingMask5 | kingDirt5;
+                dirt46 = dirt46 & ~kingMask4 | kingDirt6;
+                dirt47 = dirt47 & ~kingMask4 | kingDirt7;
+                dirt48 = dirt48 & ~kingMask4 | kingDirt8;
+                dirt49 = dirt49 & ~kingMask3 | kingDirt9;
+                dirt50 = dirt50 & ~kingMask0 | kingDirt10;
+            }
+            case 46 -> {
+                dirt41 = dirt41 & ~kingMask0 | kingDirt0;
+                dirt42 = dirt42 & ~kingMask3 | kingDirt1;
+                dirt43 = dirt43 & ~kingMask4 | kingDirt2;
+                dirt44 = dirt44 & ~kingMask4 | kingDirt3;
+                dirt45 = dirt45 & ~kingMask4 | kingDirt4;
+                dirt46 = dirt46 & ~kingMask5 | kingDirt5;
+                dirt47 = dirt47 & ~kingMask4 | kingDirt6;
+                dirt48 = dirt48 & ~kingMask4 | kingDirt7;
+                dirt49 = dirt49 & ~kingMask4 | kingDirt8;
+                dirt50 = dirt50 & ~kingMask3 | kingDirt9;
+                dirt51 = dirt51 & ~kingMask0 | kingDirt10;
+            }
+            case 47 -> {
+                dirt42 = dirt42 & ~kingMask0 | kingDirt0;
+                dirt43 = dirt43 & ~kingMask3 | kingDirt1;
+                dirt44 = dirt44 & ~kingMask4 | kingDirt2;
+                dirt45 = dirt45 & ~kingMask4 | kingDirt3;
+                dirt46 = dirt46 & ~kingMask4 | kingDirt4;
+                dirt47 = dirt47 & ~kingMask5 | kingDirt5;
+                dirt48 = dirt48 & ~kingMask4 | kingDirt6;
+                dirt49 = dirt49 & ~kingMask4 | kingDirt7;
+                dirt50 = dirt50 & ~kingMask4 | kingDirt8;
+                dirt51 = dirt51 & ~kingMask3 | kingDirt9;
+                dirt52 = dirt52 & ~kingMask0 | kingDirt10;
+            }
+            case 48 -> {
+                dirt43 = dirt43 & ~kingMask0 | kingDirt0;
+                dirt44 = dirt44 & ~kingMask3 | kingDirt1;
+                dirt45 = dirt45 & ~kingMask4 | kingDirt2;
+                dirt46 = dirt46 & ~kingMask4 | kingDirt3;
+                dirt47 = dirt47 & ~kingMask4 | kingDirt4;
+                dirt48 = dirt48 & ~kingMask5 | kingDirt5;
+                dirt49 = dirt49 & ~kingMask4 | kingDirt6;
+                dirt50 = dirt50 & ~kingMask4 | kingDirt7;
+                dirt51 = dirt51 & ~kingMask4 | kingDirt8;
+                dirt52 = dirt52 & ~kingMask3 | kingDirt9;
+                dirt53 = dirt53 & ~kingMask0 | kingDirt10;
+            }
+            case 49 -> {
+                dirt44 = dirt44 & ~kingMask0 | kingDirt0;
+                dirt45 = dirt45 & ~kingMask3 | kingDirt1;
+                dirt46 = dirt46 & ~kingMask4 | kingDirt2;
+                dirt47 = dirt47 & ~kingMask4 | kingDirt3;
+                dirt48 = dirt48 & ~kingMask4 | kingDirt4;
+                dirt49 = dirt49 & ~kingMask5 | kingDirt5;
+                dirt50 = dirt50 & ~kingMask4 | kingDirt6;
+                dirt51 = dirt51 & ~kingMask4 | kingDirt7;
+                dirt52 = dirt52 & ~kingMask4 | kingDirt8;
+                dirt53 = dirt53 & ~kingMask3 | kingDirt9;
+                dirt54 = dirt54 & ~kingMask0 | kingDirt10;
+            }
+            case 50 -> {
+                dirt45 = dirt45 & ~kingMask0 | kingDirt0;
+                dirt46 = dirt46 & ~kingMask3 | kingDirt1;
+                dirt47 = dirt47 & ~kingMask4 | kingDirt2;
+                dirt48 = dirt48 & ~kingMask4 | kingDirt3;
+                dirt49 = dirt49 & ~kingMask4 | kingDirt4;
+                dirt50 = dirt50 & ~kingMask5 | kingDirt5;
+                dirt51 = dirt51 & ~kingMask4 | kingDirt6;
+                dirt52 = dirt52 & ~kingMask4 | kingDirt7;
+                dirt53 = dirt53 & ~kingMask4 | kingDirt8;
+                dirt54 = dirt54 & ~kingMask3 | kingDirt9;
+                dirt55 = dirt55 & ~kingMask0 | kingDirt10;
+            }
+            case 51 -> {
+                dirt46 = dirt46 & ~kingMask0 | kingDirt0;
+                dirt47 = dirt47 & ~kingMask3 | kingDirt1;
+                dirt48 = dirt48 & ~kingMask4 | kingDirt2;
+                dirt49 = dirt49 & ~kingMask4 | kingDirt3;
+                dirt50 = dirt50 & ~kingMask4 | kingDirt4;
+                dirt51 = dirt51 & ~kingMask5 | kingDirt5;
+                dirt52 = dirt52 & ~kingMask4 | kingDirt6;
+                dirt53 = dirt53 & ~kingMask4 | kingDirt7;
+                dirt54 = dirt54 & ~kingMask4 | kingDirt8;
+                dirt55 = dirt55 & ~kingMask3 | kingDirt9;
+                dirt56 = dirt56 & ~kingMask0 | kingDirt10;
+            }
+            case 52 -> {
+                dirt47 = dirt47 & ~kingMask0 | kingDirt0;
+                dirt48 = dirt48 & ~kingMask3 | kingDirt1;
+                dirt49 = dirt49 & ~kingMask4 | kingDirt2;
+                dirt50 = dirt50 & ~kingMask4 | kingDirt3;
+                dirt51 = dirt51 & ~kingMask4 | kingDirt4;
+                dirt52 = dirt52 & ~kingMask5 | kingDirt5;
+                dirt53 = dirt53 & ~kingMask4 | kingDirt6;
+                dirt54 = dirt54 & ~kingMask4 | kingDirt7;
+                dirt55 = dirt55 & ~kingMask4 | kingDirt8;
+                dirt56 = dirt56 & ~kingMask3 | kingDirt9;
+                dirt57 = dirt57 & ~kingMask0 | kingDirt10;
+            }
+            case 53 -> {
+                dirt48 = dirt48 & ~kingMask0 | kingDirt0;
+                dirt49 = dirt49 & ~kingMask3 | kingDirt1;
+                dirt50 = dirt50 & ~kingMask4 | kingDirt2;
+                dirt51 = dirt51 & ~kingMask4 | kingDirt3;
+                dirt52 = dirt52 & ~kingMask4 | kingDirt4;
+                dirt53 = dirt53 & ~kingMask5 | kingDirt5;
+                dirt54 = dirt54 & ~kingMask4 | kingDirt6;
+                dirt55 = dirt55 & ~kingMask4 | kingDirt7;
+                dirt56 = dirt56 & ~kingMask4 | kingDirt8;
+                dirt57 = dirt57 & ~kingMask3 | kingDirt9;
+                dirt58 = dirt58 & ~kingMask0 | kingDirt10;
+            }
+            case 54 -> {
+                dirt49 = dirt49 & ~kingMask0 | kingDirt0;
+                dirt50 = dirt50 & ~kingMask3 | kingDirt1;
+                dirt51 = dirt51 & ~kingMask4 | kingDirt2;
+                dirt52 = dirt52 & ~kingMask4 | kingDirt3;
+                dirt53 = dirt53 & ~kingMask4 | kingDirt4;
+                dirt54 = dirt54 & ~kingMask5 | kingDirt5;
+                dirt55 = dirt55 & ~kingMask4 | kingDirt6;
+                dirt56 = dirt56 & ~kingMask4 | kingDirt7;
+                dirt57 = dirt57 & ~kingMask4 | kingDirt8;
+                dirt58 = dirt58 & ~kingMask3 | kingDirt9;
+                dirt59 = dirt59 & ~kingMask0 | kingDirt10;
+            }
+            case 55 -> {
+                dirt50 = dirt50 & ~kingMask0 | kingDirt0;
+                dirt51 = dirt51 & ~kingMask3 | kingDirt1;
+                dirt52 = dirt52 & ~kingMask4 | kingDirt2;
+                dirt53 = dirt53 & ~kingMask4 | kingDirt3;
+                dirt54 = dirt54 & ~kingMask4 | kingDirt4;
+                dirt55 = dirt55 & ~kingMask5 | kingDirt5;
+                dirt56 = dirt56 & ~kingMask4 | kingDirt6;
+                dirt57 = dirt57 & ~kingMask4 | kingDirt7;
+                dirt58 = dirt58 & ~kingMask4 | kingDirt8;
+                dirt59 = dirt59 & ~kingMask3 | kingDirt9;
+            }
+            case 56 -> {
+                dirt51 = dirt51 & ~kingMask0 | kingDirt0;
+                dirt52 = dirt52 & ~kingMask3 | kingDirt1;
+                dirt53 = dirt53 & ~kingMask4 | kingDirt2;
+                dirt54 = dirt54 & ~kingMask4 | kingDirt3;
+                dirt55 = dirt55 & ~kingMask4 | kingDirt4;
+                dirt56 = dirt56 & ~kingMask5 | kingDirt5;
+                dirt57 = dirt57 & ~kingMask4 | kingDirt6;
+                dirt58 = dirt58 & ~kingMask4 | kingDirt7;
+                dirt59 = dirt59 & ~kingMask4 | kingDirt8;
+            }
+            case 57 -> {
+                dirt52 = dirt52 & ~kingMask0 | kingDirt0;
+                dirt53 = dirt53 & ~kingMask3 | kingDirt1;
+                dirt54 = dirt54 & ~kingMask4 | kingDirt2;
+                dirt55 = dirt55 & ~kingMask4 | kingDirt3;
+                dirt56 = dirt56 & ~kingMask4 | kingDirt4;
+                dirt57 = dirt57 & ~kingMask5 | kingDirt5;
+                dirt58 = dirt58 & ~kingMask4 | kingDirt6;
+                dirt59 = dirt59 & ~kingMask4 | kingDirt7;
+            }
+            case 58 -> {
+                dirt53 = dirt53 & ~kingMask0 | kingDirt0;
+                dirt54 = dirt54 & ~kingMask3 | kingDirt1;
+                dirt55 = dirt55 & ~kingMask4 | kingDirt2;
+                dirt56 = dirt56 & ~kingMask4 | kingDirt3;
+                dirt57 = dirt57 & ~kingMask4 | kingDirt4;
+                dirt58 = dirt58 & ~kingMask5 | kingDirt5;
+                dirt59 = dirt59 & ~kingMask4 | kingDirt6;
+            }
+            case 59 -> {
+                dirt54 = dirt54 & ~kingMask0 | kingDirt0;
+                dirt55 = dirt55 & ~kingMask3 | kingDirt1;
+                dirt56 = dirt56 & ~kingMask4 | kingDirt2;
+                dirt57 = dirt57 & ~kingMask4 | kingDirt3;
+                dirt58 = dirt58 & ~kingMask4 | kingDirt4;
+                dirt59 = dirt59 & ~kingMask5 | kingDirt5;
+            }
+        }
+    }
+
+    // One method per listing order and clipped side. A column's cells are consecutive in the array, in the order of
+    // ys; the clip removes cells at one end of every column, so a fall-through switch on the clip bound b enters at
+    // the first cell present. Start: the clip (if any) is at the start of each column, walk forward from k.
+    // End: the clip is at the end, walk backward from the column's last cell j.
+    private static void kingDirt0Start(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            switch (b) {
+                case -5:
+                    if (infos[k++].isDirt()) kingDirt0 |= c;
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                    if (infos[k++].isDirt()) kingDirt10 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt0End(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        int j;
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            j = k + 0 + (b < 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            j = k + 3 + (b < 3 ? b : 3);
+            k = j + 1;
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            j = k + 5 + (b < 5 ? b : 5);
+            k = j + 1;
+            switch (b) {
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt10 |= c;
+                case 4:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                    if (infos[j--].isDirt()) kingDirt0 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            j = k + 3 + (b < 3 ? b : 3);
+            k = j + 1;
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            j = k + 0 + (b < 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt1Start(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            switch (b) {
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt10 |= c;
+                case 4:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                    if (infos[k++].isDirt()) kingDirt0 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt1End(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        int j;
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            j = k + 0 - (b > 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            j = k + 3 - (b > -3 ? b : -3);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            j = k + 5 - (b > -5 ? b : -5);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                    if (infos[j--].isDirt()) kingDirt0 |= c;
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                    if (infos[j--].isDirt()) kingDirt10 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            j = k + 3 - (b > -3 ? b : -3);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            j = k + 0 - (b > 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt2Start(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            switch (b) {
+                case -5:
+                    if (infos[k++].isDirt()) kingDirt0 |= c;
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                    if (infos[k++].isDirt()) kingDirt10 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt2End(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        int j;
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            j = k + 0 + (b < 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            j = k + 3 + (b < 3 ? b : 3);
+            k = j + 1;
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            j = k + 5 + (b < 5 ? b : 5);
+            k = j + 1;
+            switch (b) {
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt10 |= c;
+                case 4:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                    if (infos[j--].isDirt()) kingDirt0 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            j = k + 4 + (b < 4 ? b : 4);
+            k = j + 1;
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            j = k + 3 + (b < 3 ? b : 3);
+            k = j + 1;
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            j = k + 0 + (b < 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt3Start(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            switch (b) {
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt10 |= c;
+                case 4:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+                    if (infos[k++].isDirt()) kingDirt0 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            switch (b) {
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt9 |= c;
+                case 3:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+                    if (infos[k++].isDirt()) kingDirt1 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            switch (b) {
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt8 |= c;
+                case 2:
+                    if (infos[k++].isDirt()) kingDirt7 |= c;
+                case 1:
+                    if (infos[k++].isDirt()) kingDirt6 |= c;
+                case 0:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+                    if (infos[k++].isDirt()) kingDirt4 |= c;
+                    if (infos[k++].isDirt()) kingDirt3 |= c;
+                    if (infos[k++].isDirt()) kingDirt2 |= c;
+            }
+        }
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            switch (b) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    if (infos[k++].isDirt()) kingDirt5 |= c;
+            }
+        }
+    }
+    private static void kingDirt3End(MapInfo[] infos, int x, int b) {
+        int k = 0;
+        int j;
+        if (x < mapWidth - 5) {
+            long c = 1l << (x +5);
+            j = k + 0 - (b > 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
+        if (x < mapWidth - 4) {
+            long c = 1l << (x +4);
+            j = k + 3 - (b > -3 ? b : -3);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x < mapWidth - 3) {
+            long c = 1l << (x +3);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 2) {
+            long c = 1l << (x +2);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x < mapWidth - 1) {
+            long c = 1l << (x +1);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        {
+            long c = 1l << (x );
+            j = k + 5 - (b > -5 ? b : -5);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                    if (infos[j--].isDirt()) kingDirt0 |= c;
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+                    if (infos[j--].isDirt()) kingDirt10 |= c;
+            }
+        }
+        if (x >= 1) {
+            long c = 1l << (x -1);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 2) {
+            long c = 1l << (x -2);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 3) {
+            long c = 1l << (x -3);
+            j = k + 4 - (b > -4 ? b : -4);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                    if (infos[j--].isDirt()) kingDirt1 |= c;
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+                    if (infos[j--].isDirt()) kingDirt9 |= c;
+            }
+        }
+        if (x >= 4) {
+            long c = 1l << (x -4);
+            j = k + 3 - (b > -3 ? b : -3);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                    if (infos[j--].isDirt()) kingDirt2 |= c;
+                case -2:
+                    if (infos[j--].isDirt()) kingDirt3 |= c;
+                case -1:
+                    if (infos[j--].isDirt()) kingDirt4 |= c;
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+                    if (infos[j--].isDirt()) kingDirt6 |= c;
+                    if (infos[j--].isDirt()) kingDirt7 |= c;
+                    if (infos[j--].isDirt()) kingDirt8 |= c;
+            }
+        }
+        if (x >= 5) {
+            long c = 1l << (x -5);
+            j = k + 0 - (b > 0 ? b : 0);
+            k = j + 1;
+            switch (b) {
+                case -5:
+                case -4:
+                case -3:
+                case -2:
+                case -1:
+                case 0:
+                    if (infos[j--].isDirt()) kingDirt5 |= c;
+            }
+        }
     }
 
     public static long localPassable0, localPassable1;

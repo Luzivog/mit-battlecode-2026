@@ -8,43 +8,46 @@ DS:
   `~/battlecode26-data/theory/critic/`.
 
 "pp" means percentage points of win rate against awubot, under official conditions, both seats. Effects are given on
-the 43 official maps, the only pool with a loss table so far (DS§1.1). On those maps, flipping one map's losing seat is
-+1 game of 86 (+1.16 pp). W0.3 rescales every effect to the goal pool (§1 item 4).
+the `goal` pool (official + visible tournament maps, engine 1.2.6), weighted by W0.3's per-cell loss classes (DS§1.1).
+A package that lifts our per-game win probability on a class holding a share w of the cells from 0.5 to s adds
+w·(s − 0.5) to the goal score (§5).
 
 ## 0. Summary
 
-- **Before any wave-1 verdict:** W0.0 (gain tests paired against frozen main) and W0.1 (how often games flip, and the
-  bytecode tax) must exist. Both are track E's (§3).
-- **Gates.** S1 (never die to our own code) merges first: it is certain and cheap, and it touches the assert lines four
-  other packages edit. RB (reclaim king bytecode, an enabler) merges before KL and K1, which add king code.
-- **Wave 1, in merge order:** S1, RB, KL, CT, CW, E1, K1, CB, PT. Built in parallel on disjoint code (§2), merged
-  one at a time, each rebased and re-tested on the current main (§1 item 6).
-  - Expected: **about 69% against awubot (range 61–77%)**. This is a planning number until W0.1 measures f₀₂ (pairs
-    lost 0–2) and W0.3 measures the class frequencies (§5).
-- **Wave 2:** E3, KB, E2, K2, K3, CX, CC+CK. Each starts when its lane's predecessor has merged.
-  - Expected: **about 84% (range 75–93%)**. 90% needs f₂₀ ≥ 0.82 with f₀₂ ≤ 0.02: every loss class converting at
-    about 0.8 or more, COMBAT included (§5).
-- **Wave 3** opens on the class with the largest residual (§6). Reaching 90% probably needs it.
-- **Weakest assumption.** That consistent micro edges (CT, CW, CB, CX) win both seats on the maps decided by close
-  combat: 15 of the 43 official maps, plus the combat part of 6 more. Nothing measured supports it. The only
-  perturbation data shows chaos and possibly a bytecode tax (DS§2.6). If it fails, wave 2 ends near 75–80%.
+- **Wave 0 is done** (§3; docs/evaluation.md "The tests", "Pools", "Calibration"). Two measurements change the plan:
+  - **Chaos.** A change that only moves bytecode flips about 47% of cells, with no measurable net cost (W0.1). Most
+    games are close: small perturbations turn them into coin flips. A single flipped cell means nothing, a test below
+    δ = 0.05 on `goal` costs ≥ ~1,500 cells, and **90% needs games that are no longer close** (§5).
+  - **A measured lever.** A rat cap 4 lower scored 0.86 of games on maps with ≤ 4 mines and 0.33 on maps with ≥ 8
+    (quick, 74 cells; §4.1 E2). E2 moves into wave 1 with that arm, gated on the mine count.
+- **Loss classes on `goal`** (W0.3: 285 cells, 3 seed passes, 1.2.6; DS§1.1): COMBAT 34%, POINTS 25%, STARVE 22%,
+  CAT 12%, COMBAT+starve 7%, SELF 1%. Each class is a list pool of its cells (§1 item 5).
+- **Gates.** S1 (never die to our own code) merges first; RB (king bytecode) before KL and K1.
+- **Wave 1, in merge order:** S1, RB, E2, KL, CT, CW, E1, K1, CB, PT. Built in parallel on disjoint code (§2), merged
+  one at a time, each rebased and re-tested on the current main (§1 item 6). Expected: **about 70% against awubot
+  (range 59–78%)**.
+- **Wave 2:** E3, KB, K2, K3, CX, CC+CK, and E2's later arms. Expected: **about 79% (range 67–90%)**.
+- **90% needs a per-game win probability near 0.9 in every class**, the high column of §5: games we win whatever the
+  noise. Packages are ranked by the size of their effect, not their number. Wave 3 is probably needed (§6).
+- **Weakest assumption.** That the combat packages (CT, CW, CB, CX) lift the COMBAT cells (34% of `goal`) from coin
+  flips to 0.8–0.9. Nothing measured supports it yet. If COMBAT stays near 0.65, wave 2 ends near 75%.
 
-| rank | id | package | expected effect (pp, official 43) | depends on | lane |
+| rank | id | package | expected effect (pp on `goal`) | depends on | lane |
 |---|---|---|---|---|---|
-| 1 | S1 | Never die to our own code | certain on the ≥ 26-mine maps (sieveofriches in the goal pool; bridges, bridgesCatless, quadrants team-made); elsewhere positive sign, size unmeasured | – | safety |
+| 1 | S1 | Never die to our own code | certain on sieveofriches (its 3 SELF cells: +0.5) and the overflow team maps; elsewhere positive sign, size unmeasured | – | safety |
 | 2 | RB | Reclaim king bytecode (enabler) | none by itself; frees king bytecode for KL and K1 | S1 | bytecode |
-| 3 | KL | King lock-in: relax the existing coordinator's gates first, budding only if that fails | +3 to +7 (bound +9.3) | S1, RB | kings |
-| 4 | CT | Trap the approach band | +3 to +8 | S1 | traps |
-| 5 | CW | Cat-aware, value-gated throws; hold and bite | +3 to +6 | S1 | throws |
-| 6 | E1 | One spend gate on every global spend | +1 to +4 | KL, CT (it rewires their gates) | economy |
-| 7 | K1 | King steps out of a cat's lane (B3 included) | +1 to +3; large on `L-cat` | S1, RB | cats |
-| 8 | CB | Minimal-cheese bites (B6, B10 included) | +1 to +3 | S1 | bites |
-| 9 | PT | Endgame conversion, including cat-bite cheese | +1 to +3 after KL | CB (`BabyRat.attack`) | points |
-| 10 | E3 | Territory: miners by deficit, exploration that ends | +2 to +6 | S1, payload schema (§2.1) | territory |
-| 11 | KB | Early second king (dose on the round) | +2 to +6, sign uncertain | KL | kings |
-| 12 | E2 | Army from income and attrition | +2 to +5 | E1 | economy |
+| 3 | E2 | Army size by mine count (arm 1: rat cap 4 lower on ≤ 4-mine maps), then from income and attrition | +4 to +8 (arm 1 measured on quick, extrapolated) | S1 | economy |
+| 4 | KL | King lock-in: relax the existing coordinator's gates first, budding only if that fails | +2 to +6 | S1, RB | kings |
+| 5 | CT | Trap the approach band | +3 to +8 | S1 | traps |
+| 6 | CW | Cat-aware, value-gated throws; hold and bite | +3 to +6 | S1 | throws |
+| 7 | E1 | One spend gate on every global spend | +1 to +3 | E2, KL, CT (it rewires their gates) | economy |
+| 8 | K1 | King steps out of a cat's lane (B3 included) | +1 to +4 | S1, RB | cats |
+| 9 | CB | Minimal-cheese bites (B6, B10 included) | +1 to +3 | S1 | bites |
+| 10 | PT | Endgame conversion, including cat-bite cheese | +1 to +2 after KL | CB (`BabyRat.attack`) | points |
+| 11 | E3 | Territory: miners by deficit, exploration that ends | +2 to +6 | S1, payload schema (§2.1) | territory |
+| 12 | KB | Early second king (dose on the round) | +2 to +6, sign uncertain | KL | kings |
 | 13 | K2 | Cat-lane memory and a safe king site | +1 to +3 | K1 | cats |
-| 14 | K3 | Rats defend the king from cats | ≈ 0 on official maps; tminusten, attack_on_cat and sunandmoon on the goal pool | K1, PT, CW | cats |
+| 14 | K3 | Rats defend the king from cats | +0.5 to +2 | K1, PT, CW | cats |
 | 15 | CX | Complete threat model and trap avoidance | 0 to +5, sign uncertain | CT | traps |
 | 16 | CC+CK | Carrier discipline, king assault and throw shield (one bundle) | +2 to +6 | CW, K1 | throws |
 | – | PC, XA, IS, CH, BL, QD, JS, AB | wave 3 (§4.3) | – | – | – |
@@ -65,8 +68,13 @@ the 43 official maps, the only pool with a loss table so far (DS§1.1). On those
      - **Harm test:** H1 = 0.5 − δ_h/2; it must end on H0.
    - Why: once main is above 50% against awubot, a branch built on it inherits that edge. A null package after S1 alone
      (+2.2 pp on `tune`) would pass a gain test against 50% with probability 0.57 at δ = 0.04 (A, Wald OC).
-   - **Expected games.** Under H1, n ≈ 5.6·r/δ² (A, Gaussian SPRT). r is the share of games whose result differs
-     between branch and main, measured by W0.1. At δ = 0.04: r = 0.1 → 350 games, r = 0.3 → 1,050.
+   - **Expected cells.** Any change that moves bytecode flips about 47% of cells (W0.1), so most cells split or flip
+     whatever a package does. `tools/games simulate` at a 0.5 split (docs/evaluation.md "Measured", mean–p90 at the H0
+     point): δ = 0.10 needs 67–131 cells, δ = 0.05 needs 261–545. Cells grow as 1/δ², so δ = 0.03 needs about
+     720–1,500 (A).
+   - **So the smallest δ worth running on `goal` is 0.05.** A package expected below +5 pp on `goal` is tested on its
+     loss-class pool, where its effect is concentrated, at δ ≥ 0.08. It is accepted on that gain plus a harm test on
+     `goal` at δ_h = 0.05 (item 7).
 4. **The 90% metric** is challenger's win rate against awubot on the **`goal` pool**, both seats, over seed passes
    starting with pass 0 (the official seeds, TG `cell_seed`), on 1.2.6.
    - `goal` = the 43 official maps plus the 52 visible tournament maps (TG `--pool official,tournament`).
@@ -74,20 +82,26 @@ the 43 official maps, the only pool with a loss table so far (DS§1.1). On those
    - Team-made maps (TG `TEAM_MADE`, 25) are a separate robustness check: no significant regression. They are not
      part of the goal.
 5. **Pools, in the order a package uses them.**
-   - **First gain pool: the package's loss-class pool**, as a `map:` list.
-     - Interim lists, from DS§1.1 (1.2.5 mirror, official maps):
-       - `L-starve`: the 8 STARVE maps and the 6 COMBAT+starve maps.
-       - `L-cat`: dirtfulcat, dirtpassageway, keepout, plus the 9 visible CATPATH maps (TG class pool `cat`).
-       - `L-points`: the 11 POINTS maps plus groveisbeingdesecrated, t_minus_five_minutes, fullofsecrets and rose.
-         The last four are visible tournament maps that ended on points or in cooperation (T3§3.4).
-       - `L-late`: the 9 r2000 POINTS maps plus the 9 maps with kills after r990 (DS§1.1).
-       - `L-combat`: the 15 COMBAT maps.
-       - `MP-combat`: the 8 COMBAT maps with ≤ 4 mines (averyfineline, DefaultSmall, canyoudig, tiny, starvation,
-         trapped, whatsthecatdoin, jail).
-     - W0.3 replaces the interim lists with per-cell classes on the goal pool.
-     - The tool's feature pools (`cat` = CATPATH, `starve` = MINEPOOR, `faceoff`) are not loss classes. `starve` holds
-       only 4 of the 8 STARVE maps but 8 of the 15 COMBAT maps, and `cat` holds none of the 3 CAT maps. Use them only
-       where a package names them.
+   - **First gain pool: the package's loss-class pool.** These are list pools of W0.3 cells (`map:seed`, engine 1.2.6;
+     DS§1.1) in `~/battlecode26-data/games/pools/`:
+
+     | pool | cells | maps | what |
+     |---|---|---|---|
+     | `L-combat` | 96 | 49 | COMBAT: bites and throws; starvation < 200 HP and < 25% |
+     | `L-starve` | 81 | 45 | STARVE (62) and COMBAT+starve (19) |
+     | `L-points` | 72 | 33 | POINTS: 62 reach r1000, 10 are cooperation endings before r1000 |
+     | `L-late` | 101 | 45 | points cells that reach r1000 plus kills after r990: what a lock-in by r1195 can reach |
+     | `L-cat` | 33 | 19 | CAT: scratches ≥ 300 HP or ≥ 40% of the losing kings' HP |
+     | `MP-combat` | 31 | 17 | COMBAT cells on maps with ≤ 4 mines |
+     | `L-self` | 3 | 1 | SELF: the losing kings removed by their own code (sieveofriches, the ≥ 26-mine assert) |
+     | `mines-le4`, `mines-5to7`, `mines-ge8` | – | 25 / 19 / 51 | `goal` maps by mine count (T4 `maps.tsv`) |
+
+     - A `map:seed` entry plays its W0.3 seed in pass 0, so pass 0 replays the cells where main lost that way; later
+       passes play derived seeds (docs/evaluation.md "Seeds and cells").
+     - Classes move with the seed and the engine. 55 of the 95 maps keep one class in all 3 cells, and 20 of the 43
+       official pass-0 cells keep their 1.2.5 class. Re-classify main after each wave (§5.2).
+     - The tool's feature pools are not loss classes, except where a mechanism follows the feature: E2's arm 1 follows
+       the mine count, so it uses `mines-le4` and `mines-ge8`.
    - **Then one confirmatory gain test on `goal`, on a fresh seed base.**
    - **Holdout hygiene.** Every pool is built from TG `pools.visible()` only. The lens tables report results on some
      sealed maps, so holdout results are slightly optimistic. Never tune a constant on those games.
@@ -104,7 +118,8 @@ the 43 official maps, the only pool with a loss table so far (DS§1.1). On those
      (A, Wald OC).
 8. **Read the mechanism, not just the totals.** Every package names a diagnostic (§4). If it does not move, the result
    is noise whatever the totals say.
-   - Read the flipped pairs; only flips beyond W0.1's background count.
+   - W0.1's background is about 47% of cells flipping under any bytecode change. Read class totals, flips clustered
+     on a map or a class, and the diagnostic, never single cells.
    - Tools, under `~/battlecode26-data/theory/`, all of which read replays (W0.4):
      - `t3/Coop2.java`: final D, kings, cheese, cat damage, raw held, formation rounds.
      - `t4/kcause.py`, `t4/src/KingTrace.java`: king HP by source.
@@ -192,7 +207,7 @@ marked → (sequence: the later one starts from main after the earlier merged).
 | new `robot/rat/BudStrategy.java`, `robot/king/KingBudStrategy.java` | KL arm B → KB |
 | new `robot/rat/CatDefenseStrategy.java` | K3 |
 | `robot/king/RatKingStrategy.java` | KL arm B (:24-29) |
-| `robot/king/KingSpawningStrategy.java` | S1 (:90 turn) · E1 (:69 gate) → E2 (:21-73) · E3 (:93 payload) |
+| `robot/king/KingSpawningStrategy.java` | S1 (:90 turn) · E2 (:21-73) → E1 (:69 gate) · E3 (:93 payload) |
 | `robot/king/KingFormationCoordinatorStrategy.java` | KL (:141-151 aborts, :181-204 gates, :241 floor) → E1 (:187-188 cheese gate) |
 | `robot/king/RatKing.java` | E1 (king digs :58, :68, :159, :224) |
 | `robot/king/KingMiningStrategy.java.jinja2` | K1 → K2 |
@@ -209,30 +224,30 @@ marked → (sequence: the later one starts from main after the earlier merged).
 Hidden coupling: CW's carrying branch calls `TryTrap` and `TryAttack` unchanged, as black boxes. Their behaviour
 changes when CT or CB merge, so CW re-tests after rebasing (§1 item 6).
 
-## 3. Wave 0: no bot change (owners: track E and the integrator)
+## 3. Wave 0: done
 
-- **W0.0 Paired test mode.** Gain and harm tests of a branch against a frozen snapshot of main, on the same cells,
-  pentanomial bounds as in §1 item 3. It needs a snapshot package, because two `challenger` packages cannot share a
-  name in one build. **Wave-1 verdicts wait for it.**
-- **W0.1 Null calibration, before any wave-1 verdict.** Two arms against main, on `goal`:
-  - A near-zero-cost random perturbation: write 0 instead of `Rng.mcg() & 8191` at `KingSpawningStrategy.java:93`. The
-    payload is discarded (`BabyRat.java:26`) and `myIndex` is never read, so only the kings' random stream moves.
-  - A dummy loop of about 200 bytecodes per rat turn: the bytecode tax.
+- **W0.0 Paired tests.** `tools/games ab challenger awubot` is a gain test against main by default, `--test harm` a
+  harm test, `--ref none` plain mode for progress rows; `tools/games gauntlet` is paired with main's games
+  (docs/evaluation.md "The tests").
+- **W0.1 Null calibration** (docs/evaluation.md "Calibration", engine 1.2.6, plain mode against awubot):
+  - RNG only (discarded spawn payload set to 0), `goal`: 4 / 276 / 5 cells won both / split / lost both: 3.2% flips.
+  - Dead loop of about 235 bytecodes a rat turn, `goal`: 60 / 152 / 73: 46.7% flips, net −4.6% (p = 0.30).
+  - About 150 bytecodes a turn for every robot, `full` pass 0: 39.2% flips, net +4.2% (p = 0.56).
 
-  Report the flip rate r (2–0 plus 0–2) and the net shift separately. r sets the test cost (§1 item 3); the net shift
-  of the second arm prices bytecode (DS§2.6).
-- **W0.2 Pools.** `goal`, the interim loss-class lists of §1 item 5 (from `pools.visible()` only), and `overflow`
-  (≥ 26 mines). T4's classifier sits next to `tools/games` (T4 WP5).
-- **W0.3 Baseline loss table on `goal`.**
-  - The run (track E): the challenger–awubot mirror on `goal`, ≥ 3 seed passes, engine 1.2.6, replays kept.
-  - The classification (a plan step for whoever runs it once E's run lands): classify every (map, seed) cell as DS§1.1
-    does (`synthesis/losstable.py` with `kcause.py` and `Coop2.java`), not one class per map. Classes move with the seed
-    (T3§3.1: TheHeist and pipes ended on points in 4 of 4 games, sittingducks in 2 of 4) and with the engine (DS§10).
-  - Rebuild the `L-*` pools as `map:` lists of the cells' maps. Recompute §5 with class frequencies.
-  - Run `critic/Starve.java` on the STARVE cells to rank the spend channels, before E1 picks H.
-- **W0.4 Replays for diagnostics.** The tool keeps replays only with `--replays losses|all`, and cached games have none
-  (TG `play.py`). Either track E adds a "replays for this run" option, or each package reads its diagnostics from a
-  separate replay pass on a fixed subset of cells.
+  So r ≈ 0.47 for any change that moves bytecode, and no net bytecode cost is measurable. Consequences: §1 item 3,
+  §5, DS§2.6.
+- **W0.2 Pools.** `goal`, `teammade`, the feature pools, `points` (visible maps only) and list pools
+  (docs/evaluation.md "Pools").
+- **W0.3 Baseline loss table.**
+  - The run: main (= awubot) against awubot on `goal`, 3 passes, 285 cells, every cell split, replays kept
+    (docs/evaluation.md "W0.3 data": run `1118-222544-ab-6dea`).
+  - Every cell is classified (`synthesis/w03_classify.py` → `synthesis/w03_cells.tsv`; DS§1.1), and the list pools
+    of §1 item 5 are built from them.
+  - The spend channels of the STARVE cells are ranked (`critic/Starve.java` → `synthesis/w03_starve.txt`; §4.1 E1).
+  - Re-run it on the merged main after each wave: a plain run on `goal` with `--replays all`, then
+    `w03_classify.py RUN_DIR` (§5.2).
+- **W0.4 Replays.** `tools/games replays ID --cells changed` replays a run's games after the fact, deterministically;
+  test runs stay replay-free (docs/evaluation.md "Protocol").
 
 ## 4. Packages
 
@@ -312,6 +327,51 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
     full scan on 20 sampled turns).
 - **Size.** 60–150 lines.
 
+#### E2. Army size by mine count, then from income and attrition
+- **Arm 1 (measured; first).** Rat cap 4 lower (spawn threshold 40 → 30, and 30 → 20 on small maps;
+  `C:robot/king/KingSpawningStrategy.java:21-32`) on maps with ≤ 4 mines; unchanged elsewhere. Gate arms: ≤ 4 and ≤ 7
+  mines.
+  - **Measured** (docs/evaluation.md "Calibration", run `1118-212307-ab-71d3`, `quick`, 74 cells, cap lowered on
+    every map): 30 cells won both, 30 split, 14 lost both; score 0.608. By map, 10 games each (8 on three):
+
+    | mines | maps (score) | games won |
+    |---|---|---|
+    | ≤ 4 | evileye 0.9, whereisthecheese 1.0, tiny 1.0, DefaultSmall 0.6, arrows 1.0, whatsthecatdoin 0.8, jail 0.7 | 60/70 = 0.86 |
+    | 5–7 | knifefight 0.6, DefaultMedium 0.7 | 13/20 = 0.65 |
+    | ≥ 8 | cheesefarm 0.12, sittingducks 0.25, pipes 0.5, TheHeist 0.1, keepout 0.5, tminusten 0.5, DefaultLarge 0.3 | 21/64 = 0.33 |
+
+  - **Mines, not area.** cheesefarm and DefaultSmall are both 900 tiles: cheesefarm (10 mines) scored 0.12,
+    DefaultSmall (4) 0.6. The champion's own small-map rule uses area (`:24-25`). T1§2.5 predicts the split: the army a
+    team can sustain grows with income, so a fixed cap over-builds where income is low and trades are fast, and
+    under-builds where income is high.
+  - **The gate must be observable.** Use the known mine count, doubled once the symmetry is known (every mine's mirror
+    is a mine), and the champion's cap until the estimate settles. Step 0: a probe logging the estimate and the true
+    count per round on `mines-le4` and `mines-ge8`, to find when it settles.
+- **Arm 1b.** On ≥ 8-mine maps the opposite sign: a higher cap, dose {+4, +8}. Basis: arm 1 lost those maps, and T1§2.5
+  puts the sustainable army at 20–44 rats on low-contact maps.
+- **Arm 2.** n* budget: spawn while n < n* = √((Î − 2K)/(2.5·δ̂)) (T1§2.5), or while `spendable()` − c(n) exceeds the
+  next planned king's cost; floor 8.
+  - δ̂ = deaths per rat-round, from the change in the modular `ratCounter` minus the change in n. n is known only as
+    4·⌊n/4⌋ from `getCurrentRatCost`, so over 50 rounds δ̂ carries ±4 rats of quantisation, about the size of the
+    signal: use a 200-round window, or n squeaked by rats.
+  - Rats consumed by formation are excluded (DS§8 item 8).
+  - Step 0: a probe build logs global cheese and spending every 50 rounds, to see how well Î and δ̂ can be estimated.
+- **Arm 3.** Siege spawns: a dose on the spawn cap while an enemy is in the king's vision, {global/10, global/5,
+  global/3}, in place of OBG's imported constant (global/5).
+- **Effect.** Arm 1: maps with ≤ 4 mines hold 26% of `goal`'s cells (75 of 285; `mines-le4`). At the measured 0.86,
+  discounted toward 0.75–0.8 for 10 games a map and for gate errors, that is +4 to +8 pp (A).
+  - **Flips:** the ≤ 4-mine cells: 25 STARVE, 31 COMBAT, 8 COMBAT+starve, 5 CAT, 6 POINTS (W0.3).
+- **Test.**
+  - Arm 1: gain test on `mines-le4` at δ = 0.10, harm test on `mines-ge8` at δ_h = 0.05, then the confirmatory gain
+    test on `goal` at δ = 0.05.
+  - Arms 1b–3: chosen on `mines-ge8` and `L-starve`, each confirmed on `goal`.
+  - Diagnostics: rats alive, global cheese at r200 and r500, starvation turns, per-map scores against the calibration
+    run.
+  - **Kill:** harm on `mines-ge8` (the gate leaks), or no gain on `mines-le4`.
+- **Risks.** Fewer rats on small maps is the direction food's postmortem points to (intel§4: more rats lost them small
+  maps). Gauntlet: mass spawners (SPAARK) on small maps.
+- **Size.** Arm 1: 10–40 lines (gate and estimate). Arms 2–3: 80–150.
+
 #### KL. King lock-in: ≥ 3 kings before r1201, refill after
 - **Arm A (first; rule 7: simplify before adding).** T1 E1: reuse the existing coordinator with the endgame branch
   moved earlier. In rounds [T_lock, 1195], with kings < K_target:
@@ -333,13 +393,17 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - recruits spawn without copying `trySpawn`'s direct `rc.turn` (rule 5);
   - the site avoids the king's own recent cat sightings (r² 25, 360°), until K2's shared lanes replace them.
 - **Rests on.**
-  - T3§3.2: a third king flips 10 of the 11 losing points seats. **KL reaches 8 of them:** TheHeist (r390) and
-    peaceinourtime (r451) end in cooperation before T_lock, and ZeroDay needs 4 kings against 2.
-  - T3§3.5: at r1100, 9 of the 18 points seats have 1 king, so a third king needs two formations.
-  - T1 E1; R§6.
-- **Effect.** +3 to +7 pp; the bound is 8/86 = +9.3 pp (T3 P1's +11.6 counted the two early cooperation endings).
-  - **Flips:** 8 POINTS maps (averystrangespace, cheesebottles, minimaze, pipes, rift, sittingducks, uneruesansfin,
-    wallsofparadis), and part of the 9 maps with kills after r990.
+  - W0.3 (`synthesis/w03_cells.tsv` and the run's final totals): 72 POINTS cells (25% of `goal`). 62 reach r1000; 10
+    are cooperation endings before r1000 (KB's, not KL's). Kings at the end, winner against loser: 2v2 in 35 cells,
+    2v1 in 23, 1v1 in 7, 3v1 and 3v2 in 3 each, 2v3 in 1.
+  - Recomputing the engine's points with more kings for the loser (A, from each game's final cat damage, cheese
+    transferred and kings): one more king flips 29 of the 62 reachable cells, two more flip 40.
+  - Points margins on `goal` are wider than on the official 1.2.5 maps: median 15 points, 15% within 2 (T3§3.2 had 6
+    of 11 under 2).
+  - T3§3.5: at r1100, half the points seats have 1 king, so a third king needs two formations. T1 E1; R§6.
+- **Effect.** +2 to +6 pp: about 0.7 of 29–40 cells moved to ≈ 0.85 per game is +2.5 to +3.4 pp (A), plus part of the
+  39 kill cells that end after r1000.
+  - **Flips:** `L-late`.
 - **Test.**
   - Arm and T_lock chosen on `L-late` (§1 item 7), then the confirmatory gain test on `goal` at δ = 0.04.
   - Diagnostics: formation attempts and completions in [T_lock, 1195]; kings at r1200 and r2000; paired final D
@@ -417,18 +481,17 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 - **Size.** 120–250 template lines.
 
 #### E1. One spend gate on every global spend
-- **Rests on.** `critic/Starve.java` on the 1.2.5 mirror replays (reproduced on closeup and whereisthecheese). From
-  r1 to starvation, on the six STARVE losses that end before r600, the losing seats' bank went to:
-  - replacement spawns: 1,480–2,070 (closeup, ending at r1218: 4,380);
-  - rat traps: ≤ 480–900 (≤ because traps pay from raw cheese first);
-  - upkeep: 268–558.
-
-  The `cost == 10` exception spent 0–50 per loss. Today's spawn floor is 100 (`KingSpawningStrategy.java:69`), but rats
-  spend global with no floor: traps (`TryTrap.java.jinja2:64-76`), digs (`BabyRat.java:222`), king digs
-  (`RatKing.java:58,68,159,224`; `KingCombatStrategy.java.jinja2:72`). On 5 of the 8 STARVE maps the winner never ran
-  out (minimum global 52–144). A reserve flips only the 3 maps where the winner also starved (whereisthecheese,
-  corridorofdoomanddespair, arrows); the root cause elsewhere is the lost exchange and share (T1§2.8), which CT, CW and
-  E3 address.
+- **Rests on.** `critic/Starve.java` on W0.3's 62 STARVE cells (1.2.6; `synthesis/w03_starve.txt`).
+  - From r1 to starvation, the losing seat spent a median of 2,180 on spawns (52% of its spending), up to 900 on rat
+    traps (≤ 22%: traps pay from raw cheese first), 820 on upkeep (18%) and 178 on digs (4%).
+  - From the first round below 100 global to the first below 2 (global recovers above 100 inside that window):
+    spawns of cost > 10 took 17,820 over all 62 cells, traps up to 15,840, upkeep 23,238; the `cost == 10` exception
+    took 1,440 and digs 960.
+  - Today's spawn floor is 100 (`KingSpawningStrategy.java:69`), but rats spend global with no floor: traps
+    (`TryTrap.java.jinja2:64-76`), digs (`BabyRat.java:222`), king digs (`RatKing.java:58,68,159,224`;
+    `KingCombatStrategy.java.jinja2:72`).
+  - The winner also starved in 12 of the 62 cells (19%). A reserve can flip those. Elsewhere the loser starved after it
+    lost the exchange and the share (T1§2.8), which CT, CW, E2 and E3 address.
 - **Change.**
   - New `util/Economy.java` (§2.1): `reserve()` = max(100, 2K·H).
   - Every global spend checks `spendable()`: king spawns (`:69`), traps when raw cheese does not cover them (after CT,
@@ -437,18 +500,19 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - The `cost == 10` exception stays: it spent 0–50 per loss (Starve.java) and is the only way to rebuild income with
     ≤ 3 rats (T1§2.8).
   - No siege waiver below 100.
-  - Arms: H ∈ {30, 60, 120} (T1 proposed 30–60). The order and H follow W0.3's ranking of spend channels on 1.2.6.
-- **Effect.** +1 to +4 pp.
-  - **Flips:** 3 STARVE maps (about 0.8 each), and later starvation on COMBAT+starve maps. It also protects KL's and
-    CT's spending.
+  - Arms: H ∈ {30, 60, 120} (T1 proposed 30–60). The measured channels make the spawn and trap gates the two that
+    matter.
+- **Effect.** +1 to +3 pp.
+  - **Flips:** the 12 STARVE cells where both kings starved (in `L-starve`), and later starvation elsewhere. It also
+    protects E2's, KL's and CT's spending.
 - **Test.**
   - Arm chosen on `L-starve`, then the confirmatory gain test on `goal` at δ = 0.04; harm test on `MP-combat` at
     δ_h = 0.05.
   - Diagnostics: our king's starvation turns (kcause, Deep) and the round global first falls below 2 (Starve.java),
     against main's; spend by channel.
   - **Kill:** starvation turns do not fall, or harm on `MP-combat` (fewer traps and rats lose early fights).
-- **Risks.** Fewer traps when poor, against CT's gain. That is why E1 merges after CT and is measured against a main
-  that holds it. Bytecode: trivial.
+- **Risks.** Fewer traps when poor, against CT's gain. That is why E1 merges after E2, KL and CT and is measured
+  against a main that holds them. Bytecode: trivial.
 - **Size.** 40–100 lines across the gate sites.
 
 #### K1. King steps out of a cat's lane
@@ -462,8 +526,9 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
     64 of it (arm: d² 36, T5 P1b). No walk toward the centre box once any mine is known (:53-76).
 - **Rests on.** CAT class: keepout 1000 HP, dirtfulcat 420, dirtpassageway 300 (DS§1.1); 117 scratches on awubot's
   kings against 50 on the opponents' (T5 A12); 7 king deaths in 20 CATPATH games against OBG (T4§2.1).
-- **Effect.** +1 to +3 pp on the official maps; larger on `L-cat`. Pocket maps such as tminusten need K3.
-  - **Flips:** the 3 CAT maps; the cat share of tiny, cheesefarm and minimaze; tournament CATPATH maps.
+- **Effect.** +1 to +4 pp. CAT cells are 12% of `goal` (33 cells on 19 maps). The maps with all 3 cells CAT are
+  sunandmoon, tminusten, bed, EscapeTheNight and directconfrontation. Pockets such as tminusten need K3.
+  - **Flips:** `L-cat`, except the pockets.
 - **Test.**
   - Gain test on `L-cat` at δ = 0.10, then the harm test on `goal`.
   - Diagnostics: scratch HP on our kings (kcause) and king deaths during cat turns must fall; king bytecode within
@@ -505,8 +570,9 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - The king's cat bite is K1's.
 - **Rests on.** T3§3.2: cat bites flip cheesebottles and wallsofparadis; delivering raw cheese flips TheHeist; 2000 raw
   held at the TheHeist mirror ending. T3 P2, P4.
-- **Effect.** +1 to +3 pp after KL, which already takes most of the same maps.
-  - **Flips:** TheHeist (the 2 early cooperation endings are out of KL's reach), cheesebottles, wallsofparadis.
+- **Effect.** +1 to +2 pp after KL. Cat bites and raw delivery move a few points, so its reach is the 11 points cells
+  decided within 2 points (15% of `L-points`).
+  - **Flips:** points cells with small margins (`L-points`).
 - **Test.**
   - Gain test on `L-points` at δ = 0.08, plus the paired mean ΔD (Coop2).
   - **Kill:** paired mean ΔD ≤ 0.5 points, or late king-kill losses rise.
@@ -554,25 +620,6 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - Diagnostics: formation round; second king alive at r600 and r2000; deaths in r0–200; income share in r200–600.
 - **Size.** 60–150 lines on top of KL.
 
-#### E2. Army from income and attrition
-- **Change.** `KingSpawningStrategy.java`: spawn while n < n* = √((Î − 2K)/(2.5·δ̂)) (T1§2.5), or while `spendable()`
-  − c(n) exceeds the next planned king's cost. Floor 8.
-  - δ̂ = deaths per rat-round. Deaths come from the change in the modular `ratCounter` minus the change in n. n is
-    known only as 4·⌊n/4⌋ from `getCurrentRatCost`, so over 50 rounds δ̂ carries ±4 rats of quantisation, about the
-    size of the signal: use a 200-round window, or n squeaked by rats.
-  - Rats consumed by formation are excluded (DS§8 item 8).
-  - A siege-spawn arm replaces OBG's imported constant (cost ≤ global/5) with a dose on the spawn cap while an enemy is
-    in the king's vision: {global/10, global/5, global/3}.
-  - Step 0: a probe build logs global cheese and spending every 50 rounds, to see how well Î and δ̂ can be estimated
-    (DS§9).
-- **Rests on.** T1§2.5, E3.
-- **Effect.** +2 to +5 pp, on attrition maps (DefaultMedium, evileye, arrows, cheesefarm) and low-contact maps
-  (minimaze, averystrangespace, wallsofparadis, ZeroDay).
-- **Test.**
-  - Arm chosen on `L-starve`, then the confirmatory test on `goal`; harm on `MP-combat`.
-  - Diagnostics: idle bank, rats alive, deaths per rat-round.
-- **Size.** 80–150 lines.
-
 #### K2. Cat-lane memory and a safe king site
 - **Change.**
   - Header-2 squeak "cat sighting" (cat id, location, facing, round) replaces the panic squeak. A rat relays a sighting
@@ -602,9 +649,7 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - The cat-gate radius at `CombatStrategy.java.jinja2:455` changes after PT's edit.
 - **Rests on.** T4 WP3; the tminusten geometry (DS§8 item 2); OBG dealt 7,500–8,000 cat damage by r100 on tminusten
   (T4§2.1).
-- **Effect.**
-  - About 0 on the official maps (only peaceinourtime is a CATPATH map there).
-  - On `goal`: tminusten, attack_on_cat and sunandmoon in both seats, about +1.5 pp (3 pairs of 95).
+- **Effect.** +0.5 to +2 pp: the pocket CAT cells of `goal` (tminusten 3, sunandmoon 3, attack_on_cat 1; W0.3).
 - **Test.**
   - Gain test on the pocket maps of `L-cat` at δ = 0.10.
   - Diagnostics: our king alive at r110 on tminusten; cat damage by r150.
@@ -669,65 +714,87 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 
 ## 5. Order to 90%
 
-### 5.1 Loss model
+### 5.1 Loss model on `goal`
 
-From DS§1.1 (43 official maps, 1.2.5 mirror). W0.3 replaces map counts with per-cell class frequencies on `goal`.
+**The measured chaos changes the model.** A change that only moves bytecode flips about 47% of cells (W0.1), so on
+most cells each game is close to a coin flip once the bots differ at all. Model the goal score as
 
-| class | maps | wave-1 owners (primary → residual) | wave-2 owners |
-|---|---|---|---|
-| POINTS | 11 | KL (8 reachable) → PT (TheHeist) | KB (peaceinourtime, TheHeist), PC |
-| STARVE | 8 | E1 (the 3 maps where both kings starved) → CT, CW | E3 (the 4 maps with 6–10 mines), E2 |
-| COMBAT+starve | 6 | CT, CW → E1 | E3, E2, CX |
-| CAT | 3 | K1 | K2, K3 |
-| COMBAT | 15 | CT, CW, CB | E3, CX, CC+CK, KB |
-| self-inflicted (sieveofriches in `goal`; overflow team maps) | – | S1 | K3 (tminusten) |
+    score = Σ_c w_c · s_c
 
-The game win rate is 0.5 + 0.5·(f₂₀ − f₀₂), where f₂₀ and f₀₂ are the shares of map pairs won 2–0 and lost 0–2.
-**90% needs f₂₀ − f₀₂ ≥ 0.8:** 34–35 of 43 maps won in both seats.
+where w_c is the class's share of `goal`'s cells (W0.3) and s_c our per-game win probability on that class's cells:
+0.5 today, in every class. A package that converts a share p of a class's losing cells into wins at per-game
+probability s_win lifts s_c by about p·(s_win − 0.5).
 
-To avoid double counting, each class's conversion p is credited to its primary owner; residual owners act only on what
-is left: p = 1 − (1 − p₁)(1 − p₂). f₀₂ is 0.045 in wave 1 and 0.02 in wave 2: a guess that W0.1 replaces. A measurable
-bytecode tax would raise it.
+The share of cells lost in both seats follows: about (1 − s)² when the two games of a cell are independent. It is 9% at
+s = 0.7 and 1% at s = 0.9. So f₀₂ ≤ 0.02 holds only once s ≥ 0.86: it is a consequence of a large edge, not a separate
+assumption.
 
-| class (n) | p after wave 1 (low / mid / high) | p after wave 2 (low / mid / high) |
-|---|---|---|
-| POINTS (11) | 0.40 / 0.55 / 0.70 | 0.60 / 0.75 / 0.90 |
-| STARVE (8) | 0.20 / 0.35 / 0.50 | 0.45 / 0.65 / 0.85 |
-| COMBAT+starve (6) | 0.30 / 0.42 / 0.60 | 0.50 / 0.70 / 0.85 |
-| CAT (3) | 0.30 / 0.55 / 0.70 | 0.55 / 0.75 / 0.90 |
-| COMBAT (15) | 0.20 / 0.35 / 0.50 | 0.50 / 0.70 / 0.90 |
-| f₂₀ | 0.27 / 0.42 / 0.58 | 0.52 / 0.71 / 0.88 |
-| win rate | **61% / 69% / 77%** | **75% / 84% / 93%** |
+| class | cells (w) | wave-1 owners | wave-2 owners | s after wave 1 (low / mid / high) | s after wave 2 (low / mid / high) |
+|---|---|---|---|---|---|
+| COMBAT | 96 (0.337) | CT, CW, CB; E2 on its 31 cells with ≤ 4 mines | E3, CX, CC+CK, KB | 0.58 / 0.70 / 0.78 | 0.65 / 0.78 / 0.90 |
+| POINTS | 72 (0.253) | KL (29–40 of the 62 that reach r1000), PT | KB (the 10 early cooperation endings), PC | 0.60 / 0.68 / 0.76 | 0.65 / 0.76 / 0.88 |
+| STARVE | 62 (0.218) | E2 (25 cells with ≤ 4 mines), E1 (12 where both starved), CT, CW | E3 (25 cells with ≥ 8 mines), E2's later arms | 0.60 / 0.70 / 0.80 | 0.68 / 0.80 / 0.90 |
+| CAT | 33 (0.116) | K1 | K2, K3 (pockets) | 0.58 / 0.68 / 0.78 | 0.70 / 0.82 / 0.92 |
+| COMBAT+starve | 19 (0.067) | E2 (8 with ≤ 4 mines), CT, CW, E1 | E3, CX | 0.58 / 0.68 / 0.78 | 0.65 / 0.78 / 0.90 |
+| SELF | 3 (0.011) | S1 | – | 0.85 / 0.95 / 1.00 | 0.90 / 0.97 / 1.00 |
+| **score** | 285 | | | **59% / 70% / 78%** | **67% / 79% / 90%** |
 
-Mid-column arithmetic, wave 1: (11·0.55 + 8·0.35 + 6·0.42 + 3·0.55 + 15·0.35)/43 = 18.3/43 = 0.425, so
-0.5 + 0.5·(0.425 − 0.045) = 0.69. Wave 2: (11·0.75 + 8·0.65 + 6·0.70 + 3·0.75 + 15·0.70)/43 = 30.4/43 = 0.707, so 0.84.
+Mid-column arithmetic:
+- Wave 1: 0.337·0.70 + 0.253·0.68 + 0.218·0.70 + 0.116·0.68 + 0.067·0.68 + 0.011·0.95 = 0.696.
+- Wave 2: 0.337·0.78 + 0.253·0.76 + 0.218·0.80 + 0.116·0.82 + 0.067·0.78 + 0.011·0.97 = 0.788.
 
-What the p values rest on:
-- POINTS, wave 1: KL reaches 8 of 11 (§4.1) at a formation reliability of about 0.7, plus PT on TheHeist.
-- STARVE, wave 1: E1 flips at most the 3 both-starve maps (about 0.8 each); the exchange packages act on the rest.
-- CAT: the share of scratch damage that comes before the king could step out.
-- COMBAT: no measurement; DS§2.6.
+What the s values rest on:
+- **COMBAT and STARVE, wave 1.** E2's measured 0.86 on ≤ 4-mine maps (§4.1), discounted to about 0.8, covers 32% of
+  the COMBAT cells and 40% of the STARVE cells. E1 adds the 12 both-starve cells. The unmeasured combat packages are
+  assumed to reach 0.6–0.7 on the rest.
+- **POINTS, wave 1.** KL converts about 0.7 of 29–40 cells to about 0.85 per game; PT reaches the cells within 2
+  points (§4.1).
+- **CAT.** The share of scratch damage that comes before the king could step out; pockets wait for K3.
+- **The wave-2 high column is a target, not a forecast.** Nothing measured yet shows any class at 0.9.
 
-**90% needs f₂₀ ≥ 0.82 with f₀₂ = 0.02**: every class at about 0.8 or above, between the mid and high columns.
-With POINTS at 0.9 and STARVE, COMBAT+starve and CAT at 0.8, COMBAT needs 0.78 (A). POINTS is capped near 10/11
-(ZeroDay needs 4 kings against 2).
+**90% needs Σ w_c s_c ≥ 0.9.** With SELF at 1.0, that is a weighted mean s of about 0.9 over the other 99% of cells:
+every class at about 0.9, which is the wave-2 high column. A game at s = 0.9 is one we win whatever the noise. **That is
+a strength gap, not a pile of small edges**:
+- in Elo terms 0.70 is +147, 0.79 +230 and 0.90 +382 (A: 400·log10(s/(1 − s)));
+- the measured rat-cap arm alone was +76 on `quick` (score 0.608).
 
-### 5.2 Merge order and why
+### 5.2 What the chaos implies for order and δ
+
+1. **Rank by size of effect.** A +2 pp package moves one class's s by about 0.06–0.09. The 0.9 target needs packages
+   that move a class by 0.2–0.4: S1 on SELF, E2 on mine-poor cells, KL on late points cells, and whatever the combat
+   packages prove on COMBAT.
+2. **δ.** On `goal` only δ ≥ 0.05 (§1 item 3). Small packages: a gain test on their loss-class pool at δ = 0.08–0.10,
+   plus a harm test on `goal`. Bundle same-class small changes (§1 item 7).
+3. **Cumulative harm.** A harm test at δ_h = 0.05 passes a −2 pp change most of the time. After each merge the
+   integrator re-measures main in plain mode on `goal`, at least 2 passes (190 cells, 380 games: a 95% CI of about
+   ±5 pp). If main falls below the previous merge by more than that, bisect the merges with gain tests between
+   adjacent mains.
+4. **Re-classify after each wave.** As the bot changes, the losing cells change class. Re-run W0.3's classification on
+   the merged main (§3) and recompute this table with the measured s_c per class, not these guesses.
+5. **Prefer structural levers awubot cannot adapt to**: army size by mines, kings by r1201, a spend gate, cat safety,
+   traps it walks into. They change many engagements per game in the same direction, which is what moves a class past
+   the noise (DS§2.6).
+
+### 5.3 Merge order and why
 
 1. **S1.** Certain, cheap, and it edits the assert lines that CT, CW, CB and TryPosition's owners also touch.
 2. **RB.** Certain-sign; king bytecode before KL and K1 add king code (§1 item 9).
-3. **KL.** The largest, best-founded effect. Arm A is small and reuses existing code.
-4. **CT, then CW.** The largest measured combat asymmetry, then the largest unmeasured one. Same class, so expect
+3. **E2 arm 1.** The only measured lever (+4 to +8 pp). It edits `KingSpawningStrategy.java:21-73` before E1's gate at
+   `:69`.
+4. **KL.** The largest founded effect on POINTS. Arm A is small and reuses existing code.
+5. **CT, then CW.** The largest measured combat asymmetry, then the largest unmeasured one. Same class, so expect
    sub-additivity.
-5. **E1.** It gates the spending of KL and CT, so it merges after them and is measured against a main that holds both.
-6. **K1.** Concentrated on `L-cat`, cheap to confirm there.
-7. **CB, then PT.** Small effects; their certain-sign parts land first (§1 item 7).
-8. **Wave 2,** each package as its lane frees up. Inside a class, the larger expected effect first: E3 before E2; CX
-   and CC+CK after CT and CW.
-9. **After each merge** the integrator re-measures main against awubot on `goal`, the holdout and the gauntlet, and
-   records the numbers in docs/progress.md. Every later gain test is paired against that new main (§1 item 3).
+6. **E1.** It gates the spending of E2, KL and CT, so it merges after them and is measured against a main that holds
+   all three.
+7. **K1.** Concentrated on `L-cat`, cheap to confirm there.
+8. **CB, then PT.** Small effects: class-pool gains plus a harm test on `goal` (§5.2 item 2); their certain-sign parts
+   land first (§1 item 7).
+9. **Wave 2,** each package as its lane frees up. Inside a class, the larger expected effect first: E3 before E2's later
+   arms; CX and CC+CK after CT and CW.
+10. **After each merge**, the plain re-measure of §5.2 item 3, recorded in docs/progress.md. Every later gain test is
+    paired against that new main (§1 item 3). **After each wave**, the re-classification of §5.2 item 4.
 
-### 5.3 Parallel lanes
+### 5.4 Parallel lanes
 
 All lanes start once S1 is on main. CW waits for S1 only because they share TryThrow.
 
@@ -735,27 +802,26 @@ All lanes start once S1 is on main. CW waits for S1 only because they share TryT
 |---|---|---|
 | safety | S1 | – (merge first) |
 | bytecode | RB | every other lane; merge before KL and K1 |
+| economy | E2 arm 1 → E1 (after KL and CT merged) → E2's later arms | every other lane; E1 rewires the gates that are in main |
 | kings | KL → KB | every other lane (payload schema §2.1) |
 | traps | CT → CX | every other lane |
 | throws | CW → CC+CK (also waits for K1) | every other lane |
-| economy | E1 (after KL and CT merged) → E2 | every other lane; E1 rewires the gates that are in main |
 | bites | CB → PT's cat case | every other lane |
 | points | PT → PC | every other lane; K3 waits for PT |
 | cats | K1 → K2 → K3 | every other lane |
 | territory | E3 | every other lane (payload schema §2.1) |
 
-At most 9 lanes run in parallel in wave 1. Merges are always serial.
+At most 10 lanes run in parallel in wave 1. Merges are always serial.
 
 ## 6. If a wave stalls
 
-1. **W0.1 shows a large flip rate or a bytecode tax.**
-   - If r ≥ 0.3, single-map reads are noise: judge only class totals and diagnostics, and raise δ for small packages.
-   - If the 200-bytecode arm loses measurably, every package's bytecode delta counts against it: move RB's further items
-     (cheese-list rewrite on change only, arch§8) into wave 1, and prefer deletions.
-2. **Wave 1 below 61% on `goal`.** Read the per-merge re-measures for 0–2 pairs, and revert or ablate the merge that
+1. **W0.1 measured r ≈ 0.47 and no net bytecode cost** (§3). Single-cell and single-map reads are noise: judge class
+   totals and diagnostics, and test small packages on their class pools (§5.2). RB's further items (cheese-list rewrite
+   on change only, arch§8) stay in wave 3 unless a later measurement shows a cost.
+2. **Wave 1 below 59% on `goal`.** Read the per-merge re-measures for 0–2 pairs, and revert or ablate the merge that
    introduced them. Check each class's diagnostic: a mechanism that did not fire is a bug, not a dead idea.
-3. **Wave 1 in its 61–77% range.** This is expected; wave 1 does not reach 90% by itself. Start wave 2.
-4. **Wave 2 below 90%.** Recompute §5.1 from W0.3's cells and open the class with the largest residual:
+3. **Wave 1 in its 59–78% range.** This is expected; wave 1 does not reach 90% by itself. Start wave 2.
+4. **Wave 2 below 90%.** Re-classify main (§5.2 item 4) and open the class with the lowest measured s_c:
    - COMBAT: QD, then JS, then OBG micro components (`MicroManager`'s safety tiers that count numbers) as an
      alternative arm to CX.
    - POINTS or cooperation: PC, BL.

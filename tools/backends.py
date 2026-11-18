@@ -407,10 +407,35 @@ class CpuCluster:
     node: dict[str, Limit]  # MaxTRESPN: the most one job may take on one node (node_cpu, node_mem MB)
     submit: Limit
     jobs: list[SlurmJob]
+    takes_jobs: bool = True  # its controller can save a batch job's script (takes_jobs)
+
+
+# cpucluster1's login node is its Slurm controller, which saves every batch job's script and environment into its
+# StateSaveLocation; with that filesystem full every sbatch fails ("I/O error writing script/environment to file",
+# job_mgr.c's _copy_job_desc_to_file). Measured failing at 0, 15 and 53 MB free (18 Nov); a script is a few KB, but
+# the controller rewrites its job_state file there too, so a GB is the bar.
+STATE_FREE_MIN_KB = 1 << 20
+# Added to SLURM_READ on cpucluster1: this host, the controller's, the StateSaveLocation and its free KB there
+STATESAVE_READ = r"""echo ==statesave; cfg=$(scontrol show config); d=$(printf '%s
+' "$cfg" | sed -n 's/^StateSaveLocation *= *//p')
+h=$(printf '%s
+' "$cfg" | sed -n 's/^SlurmctldHost\[0\] *= *\([^( ]*\).*/\1/p')
+printf '%s %s %s %s
+' "$(hostname -s)" "${h:--}" "${d:--}" "$(df -Pk "$d" 2>/dev/null | awk 'NR==2 {print $4}')"
+"""
+CPU_READ = SLURM_READ.replace("echo ==end", STATESAVE_READ + "echo ==end")
+
+
+def takes_jobs(lines: list[str]) -> bool:
+    """Whether cpucluster1 can take a batch job, from CPU_READ's statesave line: not when its controller is this
+    login node and the StateSaveLocation there has less than STATE_FREE_MIN_KB free. Where that can't be read (another
+    controller host, no df), sbatch decides."""
+    f = " ".join(lines).split()
+    return not (len(f) == 4 and f[0] == f[1] and f[3].isdigit() and int(f[3]) < STATE_FREE_MIN_KB)
 
 
 def parse_cpucluster(text: str) -> CpuCluster:
-    """SLURM_READ on cpucluster1. Every partition shares one QoS, so our caps are one number each."""
+    """CPU_READ on cpucluster1. Every partition shares one QoS, so our caps are one number each."""
     s = sections(text)
     if "end" not in s:
         raise Refused("cpucluster1's Slurm read was cut short")
@@ -440,11 +465,12 @@ def parse_cpucluster(text: str) -> CpuCluster:
                                             sum(n.idle for n in ns), int(kv.get("DefMemPerCPU", "0")) or 1)
     return CpuCluster(partitions, nodes, ours.get("cpu", Limit(None, 0)), ours.get("mem", Limit(None, 0)),
                       {k: v for k, v in ours.items() if k in ("node_cpu", "node_mem")},
-                      ours.get("submit", Limit(None, 0)), parse_jobs(s.get("jobs", [])))
+                      ours.get("submit", Limit(None, 0)), parse_jobs(s.get("jobs", [])),
+                      takes_jobs(s.get("statesave", [])))
 
 
 def read_cpucluster() -> CpuCluster:
-    return parse_cpucluster(login(SLURM_READ, hosts=(CPU_HOST,)))
+    return parse_cpucluster(login(CPU_READ, hosts=(CPU_HOST,)))
 
 
 def cpu_free(c: CpuCluster, n: CpuNode, mb_per_cpu: int) -> int:

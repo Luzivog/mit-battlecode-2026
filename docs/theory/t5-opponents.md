@@ -138,7 +138,7 @@ output in `mapstats.txt`). The B agents can reuse them to read flipped games.
 |---|---|---|---|
 | rat trap | 20 cheese, action cooldown 15 | 50, and the movement cooldown is **set** to 30 | triggered on entering any tile of its 3×3 (rules.md §10) |
 | bite | 0 (awubot pays 2 for +2 when it has ≥ 300 cheese) | 10–12 per action cooldown of 10 | – |
-| thrown-rat collision | 20 action cooldown, after a grab | up to 46 to **both** the flier and the robot hit | rules.md §9 |
+| thrown-rat collision | 20 action cooldown, after a grab | up to 42 to **both** the flier and the robot hit | rules.md §9 |
 | rat (to the enemy) | 40–50 cheese at 12–16 rats | 100 HP of target | i.e. 0.4–0.5 cheese per HP |
 
 What a trap buys (arith):
@@ -150,7 +150,7 @@ What a trap buys (arith):
   - The stun keeps the victim in place for its next 2 turns.
   - 50 damage flips the HP order that decides who may grab whom (rules.md §8, combat.md §0.2). A trapped
     100→50 HP awubot rat can be grabbed from the front by any of our rats with more than 50 HP, then thrown for
-    up to 46 more.
+    up to 42 more.
 
 **Hit rate** (obs, D1). Traps walked into ÷ traps placed:
 

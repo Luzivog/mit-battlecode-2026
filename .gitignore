@@ -214,3 +214,5 @@ runs/
 
 # native engine build outputs
 engine/build/
+# tools/games: what the Imperial backend ships to the nodes
+.bcgames-ship/

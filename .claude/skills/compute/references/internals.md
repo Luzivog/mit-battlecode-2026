@@ -120,9 +120,21 @@ tools/compute wait RUN --json      # in the background; exit 0 when every task e
 - **cpucluster1** (`--where cpucluster1`): login node `cpucluster1.doc.ic.ac.uk`, its own Slurm (partitions amd24,
   amd48, amd96; 7 AMD EPYC nodes). Our QoS: 288 CPUs, 512,000 MB, 32 CPUs and 192,000 MB a job a node, 200 jobs.
   Its lua wants `--ntasks=1` stated. A job asks `--mem-per-cpu` (the task's memory), not the 4,000 MB default, so our
-  memory cap doesn't bind first. **On 18 Nov 2026 it refused every submission**: `sbatch: error: Batch job
-  submission failed: I/O error writing script/environment to file`; its controller (the login node) had `/var` 100%
-  full (26 GB, 53 MB free). Only DoC can clear it.
+  memory cap doesn't bind first.
+  - **It counts only while it can take jobs.** Its login node is its Slurm controller, which saves every batch job's
+    script and environment into its StateSaveLocation (`/var/spool/slurm/shared`); with that filesystem full, every
+    sbatch fails "Batch job submission failed: I/O error writing script/environment to file" (Slurm 25.05.1's
+    `job_mgr.c`, `_copy_job_desc_to_file`, which `--test-only` skips, so the probe passes and the submit fails). On
+    18 Nov 2026 `/var` was full for hours: 53, 15 and 0 MB free (bytes, not inodes: 38% used). So cpucluster1's read
+    (`backends.CPU_READ`, the same login) ends with this host, the controller's, the StateSaveLocation and its free KB
+    (`df -Pk`), and `takes_jobs` is false while the controller is this host and has under 1 GB free there
+    (`STATE_FREE_MIN_KB`). Then `status` (text and JSON) and placement leave it out without a word: no row, no note,
+    `task_slots_now` 0. An unreachable login node is left out the same way. When DoC clears it, the next read counts
+    it again. Asked for alone by name (`tools/run --where cpucluster1`, `tools/compute run --where cpucluster1`), it
+    is not gated: the submit goes to sbatch, whose own refusal the agent reads.
+  - A job without a batch script (`srun`, `salloc`) skips that write, but cpucluster1's job_submit.lua answers every
+    such job "Interactive jobs restricted to one hour, use sbatch afte testing your scripts": DoC's rule, so its jobs
+    go by `sbatch` only.
 - **local** (tests only, when `BC26_LOCAL_REMOTE` is set): every login runs here with bash in that folder, and a job
   is `job.sh` run here under `taskset -c 0,1`.
 

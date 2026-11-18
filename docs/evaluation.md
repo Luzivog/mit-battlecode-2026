@@ -244,9 +244,13 @@ Error rates measured in the same runs: P(H1) at the H0 point 0.02-0.07, at the H
   exclude a tax of a few points.
 - **Robots killed by their own exception** move with bytecode too (145 vs 183 in the 235-bytecode arm), because
   awubot's crashes depend on timing.
-- **The gauntlet's reference scores** (the first gauntlet; OBG and GST on official + team-made maps, the rest one pass
-  of `quick`). awubot scores 0.488 against `opp_obg` (301 cells), 0.731 against `opp_gst` (206), and 0.69-0.97
-  against the other eleven (16 cells each). Challenger's games all equalled awubot's.
+- **Gauntlet baseline** (`tools/games gauntlet`, harm tests against main, 2,564 games, 1,320 played remotely in
+  19 min). It passes against all 13 opponents: challenger equals main.
+  - Main's challenger (= awubot) scores 0.521 against `opp_obg` (119 cells of `goal`) and 0.668 against `opp_gst`
+    (173 cells).
+  - Against the rest, two passes of `quick`: `opp_spaark` 0.77, `opp_cerr` 0.80, `opp_parmesan` 0.78,
+    `opp_gravy` 0.82, `opp_goobie` 0.81, `opp_powerpuff` 0.83, `opp_food` 0.91, `awubot_quals` 0.86,
+    `awubot_us` 0.75, `awubot_mystery` 0.88, `awubot_sus` 0.72.
 
 **W0.3 data** (challenger@main = awubot, `goal`, 3 passes, 285 cells, 570 games, replays kept):
 `~/battlecode26-data/games/runs/1118-222544-ab-6dea/`.

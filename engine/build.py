@@ -34,8 +34,10 @@ JAR_SHA256 = {"1.2.6": "ea722532f6d523241ff4f708078563de2a010a39d7d524c66ae1890a
               "1.2.5": "b9f39d19a2a0bccd35540039747bacd0412b6016b2ef64c39846395989f20488"}
 ENTRY = ("bcx/NativeMain.play(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZI"
          "Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
-CXXFLAGS = ["-std=c++20", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-fno-rtti",
-            "-fno-exceptions", "-w"]
+# -ffp-exception-behavior=strict: no compile-time folding of an FP operation that can raise (clang folds
+# -inf*0 to +NaN; the CPU, so the JVM, gives -NaN)
+CXXFLAGS = ["-std=c++20", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",
+            "-fno-rtti", "-fno-exceptions", "-w"]
 
 
 def sh(cmd, **kw):

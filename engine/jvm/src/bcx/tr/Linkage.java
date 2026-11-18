@@ -95,7 +95,7 @@ final class Linkage implements Opcodes {
     }
 
     boolean classAccessible(Cls from, Cls c) {
-        if (c.mod == from.mod) return true; // the same loader; javac-compiled code is consistent within it
+        if (c.mod == from.mod || from.synthetic) return true; // the same loader; javac-compiled code is consistent within it
         if ((c.node.access & ACC_PUBLIC) == 0) return false;
         return packageExported(c.pkg());
     }
@@ -104,6 +104,7 @@ final class Linkage implements Opcodes {
 
     boolean memberAccessible(Cls from, Cls declaring, int access) {
         if (from == declaring) return true;
+        if (from.synthetic) return true; // the JDK's spun lambda classes are hidden nestmates of their caller
         if ((access & ACC_PUBLIC) != 0) return true;
         if ((access & ACC_PRIVATE) != 0) return isNestmate(from, declaring);
         if (samePackage(from, declaring)) return true;

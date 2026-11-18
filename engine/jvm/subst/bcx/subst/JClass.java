@@ -27,6 +27,8 @@ public final class JClass implements java.io.Serializable, java.lang.reflect.Typ
     /** The enum's constants from its values(), cached per robot for a robot's class (as each robot has its own Class). */
     native Object[] getEnumConstantsShared();
     static native JClass getPrimitiveClass(String name);
+    /** A system class by binary name, initialized when asked (JDK code uses it to run a static initializer). */
+    public static native JClass forName(String name, boolean initialize, ClassLoader loader) throws ClassNotFoundException;
     public native JClass arrayType();
     /** Only what Unsafe.objectFieldOffset needs (java.util.Random's static initializer). */
     public native java.lang.reflect.Field getDeclaredField(String name) throws NoSuchFieldException;

@@ -3,7 +3,7 @@ package bcxtest;
 import java.util.*;
 
 public class Hello {
-    static native void print(String s);
+    static void print(String s) { Out.print(s); }
 
     interface Shape { double area(); default String kind() { return "shape"; } }
     record Rect(int w, int h) implements Shape { public double area() { return w * h; } }

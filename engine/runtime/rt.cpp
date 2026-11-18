@@ -228,9 +228,19 @@ void rt_no_receiver_fail(int s) {
 }
 
 // ---- RobotMonitor (engine/src/main/battlecode/instrumenter/inject/RobotMonitor.java)
-static void mon_flags() { g_mon_slow = g_mon.should_die || g_mon.debug_level != 0 || g_mon.to_remove != 0; }
+// BCX_TRACE=FILE logs every incrementBytecodes (robot, n, left, toRemove, debugLevel), as a debugging copy of
+// RobotMonitor can on the official engine, to find the first differing count
+FILE* g_bc_trace;
+static long g_bc_trace_n;
+static void mon_flags() { g_mon_slow = g_mon.should_die || g_mon.debug_level != 0 || g_mon.to_remove != 0 || g_bc_trace; }
 
 void rt_bc_slow(jint n) {
+    if (g_bc_trace && ++g_bc_trace_n <= 20000000)
+    {
+        fprintf(g_bc_trace, "%d %d %d %d %d\n", g_mon.seed, n, g_mon.left, g_mon.to_remove, g_mon.debug_level);
+        static long stop = getenv("BCX_TRACE_STOP") ? atol(getenv("BCX_TRACE_STOP")) : -1;
+        if (g_bc_trace_n == stop) __builtin_debugtrap();
+    }
     if (g_mon.should_die) sched_robot_die();
     if (g_mon.debug_level == 0) {
         int64_t t = (int64_t)g_mon.left - n;

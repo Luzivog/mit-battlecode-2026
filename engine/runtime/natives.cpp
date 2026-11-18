@@ -363,12 +363,15 @@ jdouble rt_hs_cos(jdouble x) { return bcx_hs_cos(x); }
 jdouble rt_hs_tan(jdouble x) { return bcx_hs_tan(x); }
 
 // ---- java.lang.ref.Reference: referents are ordinary (strong) fields for this GC
+#ifdef HAS_c0_java_lang_ref_Reference
 Obj* rt_Reference_get0(Obj* self) { return ((c0_java_lang_ref_Reference*)self)->f_referent; }
 jboolean rt_Reference_refersTo0(Obj* self, Obj* o) { return ((c0_java_lang_ref_Reference*)self)->f_referent == o; }
 void rt_Reference_clear0(Obj* self) { ((c0_java_lang_ref_Reference*)self)->f_referent = nullptr; }
+#endif
 void rt_Unsafe_copyMemory0(Obj*, Obj* src, jlong so, Obj* dst, jlong d, jlong n) { memmove((char*)dst + d, (char*)src + so, (size_t)n); }
 
 // ---- the reflection java.util.Random's static initializer uses (getDeclaredField, objectFieldOffset)
+#ifdef HAS_c0_java_lang_reflect_Field
 Obj* rt_Class_getDeclaredField(Obj* self, Obj* name) {
     if (!name) { rt_throw_npe(); return nullptr; }
     std::string n = utf8(name);
@@ -384,6 +387,7 @@ jlong rt_Unsafe_objectFieldOffset0(Obj*, Obj* field) {
     std::string n = utf8(f->f_name);
     return rt_field_offset(KL(f->f_clazz), n.c_str());
 }
+#endif
 void rt_Unsafe_copySwapMemory0(Obj*, Obj* src, jlong so, Obj* dst, jlong d, jlong n, jlong es) {
     char* s = (char*)src + so;
     char* t = (char*)dst + d;
@@ -401,4 +405,19 @@ void rt_describe_exception(Obj* e, char* buf, size_t cap) {
     std::string m = java_name(e->klass);
     if (t->f_detailMessage) m += ": " + utf8(t->f_detailMessage);
     snprintf(buf, cap, "%s", m.c_str());
+}
+
+Obj* rt_Class_forName(Obj* name, jboolean init, Obj*) {
+    if (!name) { rt_throw_npe(); return nullptr; }
+    std::string n = utf8(name);
+    for (char& c : n) if (c == '.') c = '/';
+    for (int i = 0; i < g_n_klasses; i++) {
+        Klass* k = g_all_klasses[i];
+        if (k->module == 0 && n == k->name) {
+            if (init && k->init) { k->init(); if (g_exc) return nullptr; }
+            return rt_mirror(k);
+        }
+    }
+    rt_throw_new_internal(rt_cstring(("bcx: Class.forName of a class not in this build: " + n).c_str()));
+    return nullptr;
 }

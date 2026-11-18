@@ -132,6 +132,7 @@ final class Indy implements Opcodes {
         if (alt) {
             int flags = (Integer) id.bsmArgs[3];
             int ai = 4;
+            if ((flags & 1) != 0 && !ifaces.contains("java/io/Serializable")) ifaces.add("java/io/Serializable"); // FLAG_SERIALIZABLE
             if ((flags & 2) != 0) { // FLAG_MARKERS
                 int n = (Integer) id.bsmArgs[ai++];
                 for (int i = 0; i < n; i++) ifaces.add(((Type) id.bsmArgs[ai++]).getInternalName());

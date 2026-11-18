@@ -133,6 +133,19 @@ final class Glue {
             b.append(" }\n");
         }
         b.append("  return -1;\n}\n");
+        // StreamMethods.toList's reflective toArray()
+        b.append("static void* find_toArray(Klass* k) {\n");
+        for (Cls c : e.layout.order) {
+            if (!c.instantiated) continue;
+            Mth ta = c.resolveMethod("toArray", "()[Ljava/lang/Object;", false);
+            if (ta == null || ta.isStatic() || (ta.node.access & org.objectweb.asm.Opcodes.ACC_PUBLIC) == 0) continue;
+            Mth sel = c.select(ta);
+            if (sel == null || sel.isAbstract() || !sel.reachable) continue;
+            b.append("  if (k == &").append(e.klass(c)).append(") return (void*)&").append(Emit.fn(sel)).append(";\n");
+        }
+        b.append("  return nullptr;\n}\n");
+        b.append("jboolean rt_has_toArray(Obj* o) { if (!o) { rt_throw_npe(); return 0; } return find_toArray(o->klass) != nullptr; }\n");
+        b.append("Obj* rt_invoke_toArray(Obj* o) { return ((Obj * (*)(Obj*)) find_toArray(o->klass))(o); }\n");
         // methods cut from the program
         for (Mth m : e.natives.cutsReached)
             b.append(Layout.proto(m, m.nativeImpl)).append(" { rt_fatal(\"cut method reached: %s\", ").append(Names.cstr(m.toString())).append("); }\n");

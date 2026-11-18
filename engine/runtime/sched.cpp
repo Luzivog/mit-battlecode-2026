@@ -55,6 +55,8 @@ static void GC_CALLBACK push_stacks() {
 }
 
 void sched_init() {
+    extern FILE* g_bc_trace;
+    if (const char* f = getenv("BCX_TRACE")) g_bc_trace = fopen(f, "w");
     GC_get_my_stackbottom(&g_main_base);
     g_prev_push = GC_get_push_other_roots();
     GC_set_push_other_roots(push_stacks);
@@ -76,7 +78,8 @@ static void enter(Robot* r) {
     g_cur = r;
     r->running = true;
     g_mon = r->mon;
-    g_mon_slow = g_mon.should_die || g_mon.debug_level != 0 || g_mon.to_remove != 0;
+    extern FILE* g_bc_trace;
+    g_mon_slow = g_mon.should_die || g_mon.debug_level != 0 || g_mon.to_remove != 0 || g_bc_trace;
     g_S = r->statics;
     GC_stack_base sb;
     sb.mem_base = r->stack_hi;
@@ -196,6 +199,8 @@ jboolean sched_terminated(jint id) {
 }
 
 void sched_match_ended() {
+    extern FILE* g_bc_trace;
+    if (g_bc_trace) fflush(g_bc_trace);
     for (auto& kv : g_robots) {
         Robot* r = kv.second;
         if (!r) continue;

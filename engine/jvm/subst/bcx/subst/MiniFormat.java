@@ -57,6 +57,12 @@ final class MiniFormat {
                     if (conv == 'S') s = upper(s);
                     pad(out, s, flags, width);
                     break;
+                case 'h': case 'H':
+                    s = arg == null ? "null" : Integer.toHexString(arg.hashCode());
+                    if (prec >= 0 && prec < s.length()) s = s.substring(0, prec);
+                    if (conv == 'H') s = upper(s);
+                    pad(out, s, flags, width);
+                    break;
                 case 'b': case 'B':
                     s = arg == null ? "false" : arg instanceof Boolean bb ? bb.toString() : "true";
                     if (prec >= 0 && prec < s.length()) s = s.substring(0, prec);
@@ -94,6 +100,16 @@ final class MiniFormat {
                     if (!(arg instanceof Double || arg instanceof Float)) unsupported(fmt, start, i);
                     fixed(out, ((Number) arg).doubleValue(), flags, width, prec < 0 ? 6 : prec);
                     break;
+                case 'g': case 'G':
+                    if (arg == null) { pad(out, conv == 'G' ? "NULL" : "null", flags, width); break; }
+                    if (!(arg instanceof Double || arg instanceof Float)) unsupported(fmt, start, i);
+                    general(out, ((Number) arg).doubleValue(), flags, width, prec, conv == 'G');
+                    break;
+                case 'e': case 'E':
+                    if (arg == null) { pad(out, conv == 'E' ? "NULL" : "null", flags, width); break; }
+                    if (!(arg instanceof Double || arg instanceof Float)) unsupported(fmt, start, i);
+                    scientific(out, ((Number) arg).doubleValue(), flags, width, prec < 0 ? 6 : prec, conv == 'E');
+                    break;
                 default:
                     unsupported(fmt, start, i);
             }
@@ -108,6 +124,74 @@ final class MiniFormat {
             if (cs[k] >= 'a' && cs[k] <= 'z') cs[k] -= 32;
         }
         return new String(cs);
+    }
+
+    /** Formatter.addZeros: zeros (and a dot if needed) so the fraction has prec digits. */
+    private static void addZeros(StringBuilder sb, int prec) {
+        int len = sb.length(), i;
+        for (i = 0; i < len; i++) if (sb.charAt(i) == '.') break;
+        boolean needDot = i == len;
+        int outPrec = len - i - (needDot ? 0 : 1);
+        if (outPrec == prec) return;
+        if (needDot) sb.append('.');
+        for (int k = 0; k < prec - outPrec; k++) sb.append('0');
+    }
+
+    private static void general(StringBuilder out, double d, String flags, int width, int precision, boolean upper) {
+        if (Double.isNaN(d)) { pad(out, upper ? "NAN" : "NaN", flags, width); return; }
+        boolean neg = Double.compare(d, 0.0) == -1;
+        double v = Math.abs(d);
+        if (Double.isInfinite(v)) { signed(out, neg, upper ? "INFINITY" : "Infinity", flags.replace("0", ""), width); return; }
+        int prec = precision == -1 ? 6 : precision == 0 ? 1 : precision;
+        char[] exp;
+        StringBuilder mant = new StringBuilder();
+        int expRounded;
+        if (v == 0.0) { exp = null; mant.append('0'); expRounded = 0; }
+        else {
+            jdk.internal.math.FormattedFPDecimal fd = jdk.internal.math.FormattedFPDecimal.valueOf(v, prec, jdk.internal.math.FormattedFPDecimal.GENERAL);
+            exp = fd.getExponent();
+            mant.append(fd.getMantissa());
+            expRounded = fd.getExponentRounded();
+        }
+        if (exp != null) prec -= 1;
+        else prec -= expRounded + 1;
+        addZeros(mant, prec);
+        if (flags.indexOf('#') >= 0 && prec == 0) mant.append('.');
+        String m = mant.toString();
+        if (flags.indexOf(',') >= 0) {
+            int dot = m.indexOf('.');
+            m = group(dot < 0 ? m : m.substring(0, dot)) + (dot < 0 ? "" : m.substring(dot));
+        }
+        String tail = exp == null ? "" : (upper ? "E" : "e") + new String(exp);
+        int w = width < 0 ? -1 : width - tail.length();
+        StringBuilder b = new StringBuilder();
+        signed(b, neg, m, flags, w);
+        String s = b.toString() + tail;
+        if (flags.indexOf('-') >= 0 && width > s.length()) { StringBuilder p = new StringBuilder(s); while (p.length() < width) p.append(' '); s = p.toString(); }
+        out.append(s);
+    }
+
+    private static void scientific(StringBuilder out, double d, String flags, int width, int prec, boolean upper) {
+        if (Double.isNaN(d)) { pad(out, upper ? "NAN" : "NaN", flags, width); return; }
+        boolean neg = Double.compare(d, 0.0) == -1;
+        double v = Math.abs(d);
+        if (Double.isInfinite(v)) { signed(out, neg, upper ? "INFINITY" : "Infinity", flags.replace("0", ""), width); return; }
+        jdk.internal.math.FormattedFPDecimal fd = jdk.internal.math.FormattedFPDecimal.valueOf(v, prec, jdk.internal.math.FormattedFPDecimal.SCIENTIFIC);
+        String m = new String(fd.getMantissa());
+        int dot = m.indexOf('.');
+        String ip = dot < 0 ? m : m.substring(0, dot);
+        String fp = dot < 0 ? "" : m.substring(dot + 1);
+        while (fp.length() < prec) fp += '0';
+        char[] exp = v == 0.0 ? new char[]{'+', '0', '0'} : fd.getExponent();
+        String tail = (upper ? "E" : "e") + new String(exp);
+        String body = (prec == 0 ? ip : ip + "." + fp);
+        // the exponent counts toward the width; zero padding goes between the sign and the mantissa
+        int w = width < 0 ? -1 : width - tail.length();
+        StringBuilder b = new StringBuilder();
+        signed(b, neg, body, flags, w);
+        String s = b.toString() + tail;
+        if (flags.indexOf('-') >= 0 && width > s.length()) { StringBuilder p = new StringBuilder(s); while (p.length() < width) p.append(' '); s = p.toString(); }
+        out.append(s);
     }
 
     private static void unsupported(String fmt, int s, int e) {
@@ -161,7 +245,7 @@ final class MiniFormat {
         String fp = dot < 0 ? "" : m.substring(dot + 1);
         while (fp.length() < prec) fp += '0';
         if (flags.indexOf(',') >= 0) ip = group(ip);
-        String body = prec == 0 ? ip : ip + "." + fp;
+        String body = prec == 0 ? (flags.indexOf('#') >= 0 ? ip + "." : ip) : ip + "." + fp;
         signed(out, neg, body, flags, width);
     }
 }

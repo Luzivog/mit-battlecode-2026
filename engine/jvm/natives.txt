@@ -110,7 +110,6 @@ sys bcx/NativeIO writeFile (Ljava/lang/String;[B)V rt_io_writeFile
 sys bcx/NativeIO exists (Ljava/lang/String;)Z rt_io_exists
 sys bcx/NativeIO bundledMaps ()Ljava/lang/String; rt_io_bundledMaps
 sys java/util/zip/GZIPOutputStream gzip0 ([B)[B rt_gzip
-sys bcxtest/Hello print (Ljava/lang/String;)V rt_test_print
 
 # ---- VM internals touched by static initializers
 patch jdk/internal/util/Preconditions bcx/subst/Preconditions_p
@@ -213,7 +212,15 @@ cut instrumented/java/util/concurrent/atomic/AtomicBoolean <clinit> ()V
 cut java/text/BreakIterator getWordInstance (Ljava/util/Locale;)Ljava/text/BreakIterator;
 patch java/util/Locale bcx/subst/Locale_p
 patch sun/nio/cs/StandardCharsets bcx/subst/StdCharsets_p
-cut battlecode/instrumenter/inject/StreamMethods toList (Ljava/lang/Object;)Ljava/util/List;
 cut java/text/Normalizer normalize (Ljava/lang/CharSequence;Ljava/text/Normalizer$Form;)Ljava/lang/String;
 patch jdk/internal/util/StaticProperty bcx/subst/StaticProperty_p
 cut jdk/internal/icu/impl/ICUBinary getRequiredData (Ljava/lang/String;)Ljava/nio/ByteBuffer;
+patch battlecode/instrumenter/inject/StreamMethods bcx/subst/StreamMethods_p
+sys battlecode/instrumenter/inject/StreamMethods hasToArray0 (Ljava/lang/Object;)Z rt_has_toArray
+sys battlecode/instrumenter/inject/StreamMethods invokeToArray0 (Ljava/lang/Object;)[Ljava/lang/Object; rt_invoke_toArray
+sys bcxtest/Out print (Ljava/lang/String;)V rt_test_print
+cut java/util/concurrent/ForkJoinPool <clinit> ()V
+cutclass java/util/concurrent/ForkJoinPool
+cut java/util/concurrent/atomic/AtomicBoolean <clinit> ()V
+cut java/util/stream/DistinctOps$1 opEvaluateParallel (Ljava/util/stream/PipelineHelper;Ljava/util/Spliterator;Ljava/util/function/IntFunction;)Ljava/util/stream/Node;
+sys java/lang/Class forName (Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class; rt_Class_forName init:java/util/ImmutableCollections$Access

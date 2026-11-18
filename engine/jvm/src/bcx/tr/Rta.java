@@ -50,6 +50,12 @@ public final class Rta implements Opcodes {
         if (c.isInterface() || c.isAbstract()) return;
         c.instantiated = true;
         instantiated.add(c);
+        // StreamMethods.toList calls a public toArray() reflectively on whatever it gets
+        Mth ta = c.resolveMethod("toArray", "()[Ljava/lang/Object;", false);
+        if (ta != null && !ta.isStatic() && (ta.node.access & ACC_PUBLIC) != 0) {
+            Mth sel = c.select(ta);
+            if (sel != null && !sel.isAbstract()) reach(sel);
+        }
         if (c.name.equals(System.getenv("BCX_WHY"))) System.err.println("WHY " + c + " instantiated in " + current + chain(current));
         List<Cls> sups = new ArrayList<>();
         for (Cls s = c; s != null; s = s.superCls()) sups.add(s);

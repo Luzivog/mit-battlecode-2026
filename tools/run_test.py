@@ -155,14 +155,14 @@ def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]
     subprocess.run(["touch", "-d", "10 days ago", str(root / "jobs" / "running" / "exit")], check=True)
     ages: list[tuple[str, str | None, str | None]] = [("closed", "10 days ago", None), ("open", None, "1 day ago"),
                                                       ("forgotten", None, "40 days ago")]
-    for name, closed_age, age in ages:
-        d = root / "runs" / f"run-1118-000000-{name}"
+    for run_name, closed_age, run_age in ages:
+        d = root / "runs" / f"run-1118-000000-{run_name}"
         (d / "done").mkdir(parents=True)
         if closed_age:
             (d / "closed").touch()
             subprocess.run(["touch", "-d", closed_age, str(d / "closed")], check=True)
-        if age:
-            subprocess.run(["touch", "-d", age, str(d), str(d / "done")], check=True)
+        if run_age:
+            subprocess.run(["touch", "-d", run_age, str(d), str(d / "done")], check=True)
     p = tool(repo, env, "compute", "sweep")
     assert p.returncode == 0 and p.stdout.startswith("1 jobs and 2 runs deleted"), p.stdout + p.stderr
     assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "running"]

@@ -141,7 +141,7 @@ public class KingCombatStrategy extends Strategy {
             }
         }
         // A cat threatens the king only through its forward lane (laneCross). Leaving the lane comes first, getting
-        // closer to an exit that stays on the map second, moving away along the lane last. Other cats are ignored.
+        // closer to an exit the king can walk to second, moving away along the lane last. Other cats are ignored.
         boolean inLane = false;
         for(int idx = 0; idx < RobotTracker.numCats; idx++) {
             var cat = RobotTracker.sortedCats[idx];
@@ -156,8 +156,8 @@ public class KingCombatStrategy extends Strategy {
                 step = 4;
             }
             int nPlus = (w + 1 - c + step - 1) / step, nMinus = (c + w + 1 + step - 1) / step;
-            boolean plusOpen = isKingCentreOnMap(myLocX + nPlus * fy, myLocY - nPlus * fx);
-            boolean minusOpen = isKingCentreOnMap(myLocX - nMinus * fy, myLocY + nMinus * fx);
+            boolean plusOpen = isWalkable(fy, -fx, nPlus);
+            boolean minusOpen = isWalkable(-fy, fx, nMinus);
             int d = laneMargin(c, w, plusOpen, minusOpen);
             {% for i in range(8) %}
             {% set mx = dir_dx[directions[i]] %}
@@ -249,8 +249,12 @@ public class KingCombatStrategy extends Strategy {
         return d;
     }
 
-    private static boolean isKingCentreOnMap(int x, int y) {
-        return x >= 1 && y >= 1 && x <= mapWidth - 2 && y <= mapHeight - 2;
+    // Whether every 3x3 on n king steps of (dx, dy) is known and passable.
+    private static boolean isWalkable(int dx, int dy, int n) {
+        for(int k = 1; k <= n; k++) {
+            if(!CellTracker.isPassable3x3(new MapLocation(myLocX + k * dx, myLocY + k * dy))) return false;
+        }
+        return true;
     }
 
     public static boolean entersCatLane(Direction dir) {

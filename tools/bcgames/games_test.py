@@ -1,4 +1,4 @@
-"""Sequential-test bookkeeping on synthetic results. python3 -m unittest discover -s tools -p '*_test.py'"""
+"""Sequential-test bookkeeping on synthetic results. python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'"""
 import unittest
 
 from bcgames import games

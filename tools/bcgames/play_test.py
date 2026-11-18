@@ -1,4 +1,4 @@
-"""The runner on the real engine (a few short games). python3 -m unittest discover -s tools -p '*_test.py'
+"""The runner on the real engine (a few short games). python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'
 
 Uses a scratch data dir (BCGAMES_DATA is set before importing), so it never touches the shared cache.
 """

@@ -27,7 +27,7 @@ import threading
 import time
 from pathlib import Path
 
-from . import play, pools, stats, store
+from . import imperial, play, pools, stats, store
 
 RUNS = store.DATA / "runs"
 EXIT = {"H1": 0, "H0": 3, "inconclusive": 4, "running": 5, "error": 1}
@@ -284,7 +284,10 @@ def drive(d: Path) -> int:
     replay_dir = d / "replays" if p.get("replays", "none") != "none" else None
     if replay_dir:
         replay_dir.mkdir(exist_ok=True)
-    runner = play.Runner(p["workers"], d, p["timeout"])
+    if p.get("remote"):
+        runner = imperial.ImperialRunner(d, p.get("where"), p["timeout"])
+    else:
+        runner = play.Runner(p["workers"], d, p["timeout"])
     for ref, (jar, h) in meta.get("bots", {}).items():  # the builds made at submission
         runner.resolver.bots[ref] = (Path(jar), h)
     cond = threading.Condition()  # re-entrant
@@ -327,8 +330,9 @@ def drive(d: Path) -> int:
             state["error"] = error
         write_json(d / "state.json", state)
 
-    queue_cap = 2 * p["workers"]          # games waiting or playing
-    ahead_cap = 4 * p["workers"]          # games of a test beyond its scored prefix
+    # Games waiting or playing, and games of a test beyond its scored prefix. Remote: --workers games in flight.
+    queue_cap = p["workers"] if p.get("remote") else 2 * p["workers"]
+    ahead_cap = p["workers"] if p.get("remote") else 4 * p["workers"]
     try:
         while True:
             with cond:
@@ -492,8 +496,6 @@ def start(kind: str, params: dict, fg: bool) -> int:
     sealed = any(pools.resolve(params[k])[1] for k in ("pool", "main_pool", "rest_pool") if k in params)
     if sealed and os.environ.get("BCGAMES_INTEGRATOR") != "1":
         raise store.SetupError("the holdout pool is for the integrator only (BCGAMES_INTEGRATOR=1)")
-    if params.get("remote"):
-        raise store.SetupError("--remote: track C's Imperial runner is not on main yet; run locally")
     run_id = time.strftime("%m%d-%H%M%S") + f"-{kind}-{os.urandom(2).hex()}"
     d = (SEALED_RUNS if sealed else RUNS) / run_id
     d.mkdir(parents=True)
@@ -715,14 +717,19 @@ def main(argv=None) -> int:
         sp.add_argument("--alpha", type=float, default=0.05)
         sp.add_argument("--beta", type=float, default=0.05)
         sp.add_argument("--max-cells", type=int, default=None,
-                        help="cap, then the verdict is inconclusive (default 400; smoke pool: one pass)")
+                        help="cap, then the verdict is inconclusive (default 4/delta^2: 400 at 0.10, 1600 at 0.05, "
+                             "above the simulated p90; smoke pool: one pass)")
         sp.add_argument("--seed-base", type=int, default=0,
                         help="0: pass 0 plays the official seeds, later passes derived seeds; N: all derived from N")
-        sp.add_argument("--workers", type=int, default=8)
-        sp.add_argument("--timeout", type=float, default=play.DEFAULT_TIMEOUT, help="seconds per game")
+        sp.add_argument("--workers", type=int, default=None,
+                        help="local: parallel JVMs (default 8); --remote: games in flight (default 256)")
+        sp.add_argument("--timeout", type=float, default=None,
+                        help=f"seconds per game (default {play.DEFAULT_TIMEOUT:.0f}; --remote 3600)")
         sp.add_argument("--replays", choices=["none", "losses", "all"], default="none",
                         help="write replays of games played (losses: games A lost); any game: tools/games replay")
-        sp.add_argument("--remote", action="store_true", help="play on Imperial (track C)")
+        sp.add_argument("--remote", action="store_true",
+                        help="play on DoC's machines through tools/run (the compute skill); the cache is shared")
+        sp.add_argument("--where", help="--remote backends, e.g. condor,slurm (default: tools/run's)")
         sp.add_argument("--fg", action="store_true", help="run in the foreground and print the report")
 
     sp = sub.add_parser("ab", help="sequential paired test: is A stronger than B?")
@@ -775,20 +782,23 @@ def main(argv=None) -> int:
     sp.add_argument("id")
     args = ap.parse_args(argv)
 
+    if getattr(args, "remote", None) is not None:
+        args.workers = args.workers or (256 if args.remote else 8)
+        args.timeout = args.timeout or (3600 if args.remote else play.DEFAULT_TIMEOUT)
     try:
         if args.cmd == "ab":
             params = {k: getattr(args, k) for k in ("a", "b", "pool", "engine", "delta", "alpha", "beta",
                                                       "min_cells", "seed_base", "workers", "timeout", "replays",
-                                                      "remote")}
-            params["max_cells"] = args.max_cells or (0 if args.pool == "smoke" else 400)
+                                                      "remote", "where")}
+            params["max_cells"] = args.max_cells or (0 if args.pool == "smoke" else round(4 / args.delta ** 2))
             return start("ab", params, args.fg)
         if args.cmd == "gauntlet":
             opps = [o for o in args.opponents.split(",") if o]
             params = {"a": args.a, "ref": args.ref, "opponents": opps, "main": args.main.split(","),
                       "main_pool": args.main_pool, "rest_pool": args.rest_pool, "rest_passes": args.rest_passes,
                       "engine": args.engine, "delta": args.delta, "alpha": args.alpha, "beta": args.beta,
-                      "max_cells": args.max_cells or 400, "seed_base": args.seed_base, "workers": args.workers,
-                      "timeout": args.timeout, "replays": args.replays, "remote": args.remote}
+                      "max_cells": args.max_cells or round(4 / args.delta ** 2), "seed_base": args.seed_base, "workers": args.workers,
+                      "timeout": args.timeout, "replays": args.replays, "remote": args.remote, "where": args.where}
             return start("gauntlet", params, args.fg)
         if args.cmd == "_drive":
             return drive(run_dir(args.id))

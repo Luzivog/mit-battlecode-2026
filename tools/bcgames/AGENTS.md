@@ -7,20 +7,25 @@ How to use them: `docs/evaluation.md`. This file is for changing them.
 | file | what |
 |---|---|
 | `java/bcplay/Play.java` | the game loop: `Server.run`/`runMatch` for one map, many games per JVM, one JSON line per game |
-| `java/bcplay/MapInfo.java` | what the engine loads from map files (counts and part hashes), to compare maps by content |
+| `java/bcplay/MapInfo.java` | what the engine loads from map files (counts, part hashes, the layout), to compare and class maps |
+| `java/bcplay/JdkPrint.java` | the fingerprint of the JDK library code bots run (part of the game key) |
 | `store.py` | data dir, engine jars (sha256-pinned), bot builds (javac alone, deterministic jar, class hash), map seed variants, the SQLite cache, game keys |
 | `play.py` | specs to jobs, worker JVMs (timeouts, restarts), `tools/play` |
 | `stats.py` | GSPRT (multinomial, fishtest's MLE form), Elo, LOS, bootstrap over maps, SPRT simulation |
 | `pools.py` | map pools; the holdout list lives only in `~/battlecode26-data/games/SEALED-TEST-DO-NOT-READ/` |
+| `mapclass.py` | T4's map classes (docs/theory/t4-maps.md §3), reproduced exactly on all 150 maps, stdlib only |
+| `imperial.py` | the `--remote` backend: batches through track C's `tools/run`, ships `.bcgames-ship/` |
 | `games.py` | runs: paired tests, scheduling, reports, `tools/games` |
-| `*_test.py` | `python3 -m unittest discover -s tools -p '*_test.py'` (`play_test.py` plays real games: a few minutes) |
+| `*_test.py` | `python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'` (`play_test.py` plays real games: a few minutes) |
 
 Python is stdlib only (it runs on remote nodes too). Data: `~/battlecode26-data/games/` (`BCGAMES_DATA` overrides).
 
 ## Invariants
 
-1. **A game is a pure function of its key**: runner source, JDK runtime version, engine jar, both bots' class hashes
-   and packages, map file hash, seed (`store.game_key`). JVM flags, load and games-per-JVM are not in the key because
+1. **A game is a pure function of its key**: `Play.java`'s hash, the JDK fingerprint, engine jar, both bots' class
+   hashes and packages, map file hash, seed (`store.game_key`). The JDK fingerprint (`JdkPrint`) hashes the JDK
+   classes the instrumenter copies for bots. Ubuntu's 21.0.13 and DoC's Temurin 21.0.13+9 print the same, so the
+   local and remote caches are one. JVM flags, load and games-per-JVM are not in the key because
    they change nothing (docs/testing.md "Runner": byte-identical replays). Anything that can change a game goes into
    the key; anything else stays out of it.
 2. **The engine is the unmodified official jar.** `Play.java` calls the engine's own classes in `Server`'s order. The

@@ -90,13 +90,35 @@ def engine_jar(version: str) -> Path:
     return jar
 
 
-def java_version() -> str:
-    """The JDK's runtime version. Part of every game key: bots' java.util classes are instrumented from this JDK."""
+def _java_props() -> dict[str, str]:
     proc = subprocess.run(["java", "-XshowSettings:properties", "-version"], capture_output=True, text=True)
+    props = {}
     for line in proc.stderr.splitlines():
-        if line.strip().startswith("java.runtime.version ="):
-            return line.split("=", 1)[1].strip()
-    raise SetupError("cannot read the java version (is a JDK 21 on PATH?)")
+        k, sep, v = line.strip().partition("=")
+        if sep:
+            props[k.strip()] = v.strip()
+    if "java.home" not in props:
+        raise SetupError("cannot run java (is a JDK 21 on PATH?)")
+    return props
+
+
+def jdk_fingerprint() -> str:
+    """The JDK as games see it (bcplay.JdkPrint): part of every game key, because bots' java.util classes are
+    instrumented from the running JDK. Ubuntu's OpenJDK 21.0.13 and Temurin 21.0.13+9 (DoC's nodes) print the same.
+    Cached per JDK install."""
+    props = _java_props()
+    ident = sha256_bytes((props["java.home"] + "|" + props.get("java.runtime.version", "")).encode())[:16]
+    cache = DATA / "jdk" / f"{ident}.txt"
+    if cache.exists():
+        return cache.read_text().strip()
+    runner_dir, _ = runner_classes()
+    proc = subprocess.run(["java", "-cp", f"{engine_jar(DEFAULT_ENGINE)}{os.pathsep}{runner_dir}", "bcplay.JdkPrint"],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise SetupError("bcplay.JdkPrint failed: " + proc.stderr[-500:])
+    fp = proc.stdout.split()[0]
+    _atomic_write(cache, fp.encode())
+    return fp
 
 
 def runner_classes() -> tuple[Path, str]:

@@ -95,7 +95,7 @@ class Resolver:
 
     def __init__(self):
         self.runner_dir, runner = store.runner_classes()
-        self.runner = f"{runner}/{store.java_version()}"
+        self.runner = f"{runner}/{store.jdk_fingerprint()}"
         self.bots: dict[str, tuple[Path, str]] = {}
         self.maps: dict[str, str] = {}
         self.lock = threading.Lock()

@@ -211,3 +211,6 @@ __pycache__/
 *.pyc
 submission.zip
 runs/
+
+# tools/games: what the Imperial backend ships to the nodes
+.bcgames-ship/

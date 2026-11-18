@@ -18,6 +18,7 @@ Code and its invariants: `tools/bcgames/AGENTS.md`.
 | challenger against every sparring bot, beside awubot's own score | `tools/games gauntlet` |
 | runs, stop one, pools, SPRT sample sizes | `tools/games list`, `stop ID`, `pools [-v]`, `simulate` |
 | play any games from a spec file | `tools/play SPECS.jsonl OUTDIR [--workers N] [--engine 1.2.6\|1.2.5] [--replays none\|losses\|all]` |
+| the same on DoC's machines (compute skill) | add `--remote [--where condor,slurm]` to `ab` or `gauntlet` |
 
 In Claude Code: run `tools/games ab ...`, then `tools/games wait ID` with the Bash tool's `run_in_background: true`.
 You are woken when the test stops, and the exit code is the verdict:
@@ -31,8 +32,9 @@ You are woken when the test stops, and the exit code is the verdict:
 | 1 / 2 | error / usage | |
 
 Options of `ab` and `gauntlet`: `--pool` (below), `--delta` (default 0.10), `--alpha`, `--beta` (0.05), `--min-cells`
-(default one pass over the pool), `--max-cells` (400; smoke: one pass), `--seed-base` (below), `--engine` (1.2.6),
-`--workers` (8, the cap on this shared box), `--replays losses|all`, `--fg` (foreground, prints the report).
+(default one pass over the pool), `--max-cells` (4/δ²: 400 at δ 0.10, 1600 at 0.05; smoke: one pass), `--seed-base` (below), `--engine` (1.2.6),
+`--workers` (8, the cap on this shared box), `--replays losses|all`, `--fg` (foreground, prints the report),
+`--remote` (below).
 A bot is a package under `src/` (compiled alone, like a submission) or `pkg@REV`, the package at a git revision,
 e.g. `tools/games ab challenger challenger@main`. The bots are compiled when you start the test. Later edits don't
 reach a running test.
@@ -98,6 +100,20 @@ H0 "A is worse than the reference by δ" against H1 "A is not worse".
   `opp_powerpuff`, `opp_food`, then `awubot_quals`, `awubot_us`, `awubot_mystery`, `awubot_sus`.
 
 The reference's games come from the cache after the first gauntlet, so only A's games are played.
+
+## Local and remote
+
+- **Local** (default): `--workers` JVMs, each playing many games. Every run on this host shares `BCGAMES_SLOTS` (8)
+  games at once, so parallel runs from several agents queue for those 8 slots instead of overloading the box.
+- **`--remote`** plays on DoC's machines through track C's `tools/run` (`.claude/skills/compute/`).
+  - Read the compute skill first. Condor needs Bitwarden unlocked; cpucluster1 refuses jobs at times.
+  - `--workers` becomes the games in flight (default 256), sent in batches every 30 s. Each task plays 3 games
+    with `tools/play`.
+  - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. Ubuntu's 21.0.13 here
+    prints the same JDK fingerprint, so remote and local games share one cache.
+  - A test reads each task's results as they come back, and cancels the rest of the run when it stops.
+  - A game runs 3-6x slower on a DoC CPU, but Condor offers ~2,500 at once. Use it for `full`, the gauntlet and the
+    holdout.
 
 ## Pools
 

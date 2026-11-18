@@ -79,7 +79,7 @@ final class MiniFormat {
                 case 'd':
                     if (arg == null) { pad(out, "null", flags, width); break; }
                     if (!(arg instanceof Integer || arg instanceof Long || arg instanceof Short || arg instanceof Byte))
-                        unsupported(fmt, start, i);
+                        mismatch(conv, arg, fmt, start, i);
                     integer(out, ((Number) arg).longValue(), flags, width);
                     break;
                 case 'x': case 'X': case 'o':
@@ -97,17 +97,33 @@ final class MiniFormat {
                     break;
                 case 'f':
                     if (arg == null) { pad(out, "null", flags, width); break; }
-                    if (!(arg instanceof Double || arg instanceof Float)) unsupported(fmt, start, i);
+                    if (!(arg instanceof Double || arg instanceof Float)) mismatch(conv, arg, fmt, start, i);
                     fixed(out, ((Number) arg).doubleValue(), flags, width, prec < 0 ? 6 : prec);
                     break;
+                case 'a': case 'A': {
+                    if (arg == null) { pad(out, conv == 'A' ? "NULL" : "null", flags, width); break; }
+                    if (!(arg instanceof Double || arg instanceof Float)) mismatch(conv, arg, fmt, start, i);
+                    if (prec >= 0) unsupported(fmt, start, i);
+                    double d = ((Number) arg).doubleValue();
+                    if (Double.isNaN(d)) { pad(out, conv == 'A' ? "NAN" : "NaN", flags, width); break; }
+                    boolean neg = Double.compare(d, 0.0) == -1;
+                    double av = Math.abs(d);
+                    if (Double.isInfinite(av)) { signed(out, neg, conv == 'A' ? "INFINITY" : "Infinity", flags, width); break; }
+                    String hs = Double.toHexString(av).substring(2);
+                    int p = hs.indexOf('p');
+                    String body = (conv == 'A' ? "0X" + upper(hs.substring(0, p)) + "P" : "0x" + hs.substring(0, p) + "p") + hs.substring(p + 1);
+                    if (flags.indexOf('0') >= 0) unsupported(fmt, start, i);
+                    signed(out, neg, body, flags, width);
+                    break;
+                }
                 case 'g': case 'G':
                     if (arg == null) { pad(out, conv == 'G' ? "NULL" : "null", flags, width); break; }
-                    if (!(arg instanceof Double || arg instanceof Float)) unsupported(fmt, start, i);
+                    if (!(arg instanceof Double || arg instanceof Float)) mismatch(conv, arg, fmt, start, i);
                     general(out, ((Number) arg).doubleValue(), flags, width, prec, conv == 'G');
                     break;
                 case 'e': case 'E':
                     if (arg == null) { pad(out, conv == 'E' ? "NULL" : "null", flags, width); break; }
-                    if (!(arg instanceof Double || arg instanceof Float)) unsupported(fmt, start, i);
+                    if (!(arg instanceof Double || arg instanceof Float)) mismatch(conv, arg, fmt, start, i);
                     scientific(out, ((Number) arg).doubleValue(), flags, width, prec < 0 ? 6 : prec, conv == 'E');
                     break;
                 default:
@@ -192,6 +208,12 @@ final class MiniFormat {
         String s = b.toString() + tail;
         if (flags.indexOf('-') >= 0 && width > s.length()) { StringBuilder p = new StringBuilder(s); while (p.length() < width) p.append(' '); s = p.toString(); }
         out.append(s);
+    }
+
+    /** java.util.Formatter's error for an argument of the wrong type (BigInteger/BigDecimal are not supported here). */
+    private static void mismatch(char conv, Object arg, String fmt, int s, int e) {
+        if (arg instanceof java.math.BigInteger || arg instanceof java.math.BigDecimal) unsupported(fmt, s, e);
+        throw new java.util.IllegalFormatConversionException(conv, arg.getClass());
     }
 
     private static void unsupported(String fmt, int s, int e) {

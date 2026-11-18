@@ -6,7 +6,7 @@ public class Formats {
         double[] ds = {0, -0.0, 1, -1, 0.5, 0.05, 0.005, 123.456, -9.995, 1e-5, 1e7, 1.23456789e10, 99.9999, 0.00012345,
                 Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.MIN_VALUE, Double.MAX_VALUE, 2.5, 3.5};
         String[] fs = {"%f", "%.2f", "%5.2f", "%-8.3f|", "%08.2f", "%+.1f", "% .0f", "%,.2f", "%e", "%.3e", "%12.4E", "%g",
-                "%.3g", "%10.2g", "%G", "%.0e", "%#.0f", "%(.2f"};
+                "%.3g", "%10.2g", "%G", "%.0e", "%#.0f", "%(.2f", "%a", "%A", "%20a", "%-20a|"};
         for (String f : fs) {
             StringBuilder b = new StringBuilder(f + ":");
             for (double d : ds) {

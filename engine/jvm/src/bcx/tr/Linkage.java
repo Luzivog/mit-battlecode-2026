@@ -61,6 +61,11 @@ final class Linkage implements Opcodes {
             errors.put(in, new String[]{"java/lang/NoClassDefFoundError", name});
             return null;
         }
+        String vf = verifyLoadFailure(c);
+        if (vf != null) {
+            errors.put(in, new String[]{"java/lang/IncompatibleClassChangeError", vf});
+            return null;
+        }
         String sealed = sealedViolation(c);
         if (sealed != null) {
             errors.put(in, new String[]{"java/lang/IncompatibleClassChangeError", "class " + c.name.replace('/', '.')
@@ -73,6 +78,42 @@ final class Linkage implements Opcodes {
             return null;
         }
         return c;
+    }
+
+    /**
+     * HotSpot's verifier, linking c, loads a class D created by one of c's methods when it checks D against the
+     * method's class-typed (not interface) return type; if D cannot load (a sealed parent that does not list it),
+     * linking c fails with D's error. This models that one case (java.util.EnumSet.noneOf's RegularEnumSet).
+     */
+    private final Map<Cls, Optional<String>> verifyCache = new HashMap<>();
+
+    String verifyLoadFailure(Cls c) {
+        Optional<String> o = verifyCache.get(c);
+        if (o != null) return o.orElse(null);
+        verifyCache.put(c, Optional.empty());
+        String found = null;
+        for (MethodNode m : c.node.methods) {
+            Type rt = Type.getReturnType(m.desc);
+            if (rt.getSort() != Type.OBJECT) continue;
+            Cls ret;
+            try { ret = pool.ref(c.mod, rt.getInternalName()); } catch (TranslateException e) { continue; }
+            if (ret.isInterface()) continue;
+            for (AbstractInsnNode in : m.instructions) {
+                if (in.getOpcode() != NEW) continue;
+                String dn = ((TypeInsnNode) in).desc;
+                if (dn.equals(ret.name)) continue;
+                Cls d;
+                try { d = pool.ref(c.mod, dn); } catch (TranslateException e) { continue; }
+                String sv = sealedViolation(d);
+                if (sv != null && d.isSubclassOf(ret)) {
+                    found = "class " + d.name.replace('/', '.') + " cannot inherit from sealed class " + sv.replace('/', '.');
+                    break;
+                }
+            }
+            if (found != null) break;
+        }
+        verifyCache.put(c, Optional.ofNullable(found));
+        return found;
     }
 
     /** Loading a class loads its superclass and superinterfaces: a failure there is the reference's failure. */

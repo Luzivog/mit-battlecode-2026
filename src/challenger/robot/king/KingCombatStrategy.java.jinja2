@@ -113,8 +113,8 @@ public class KingCombatStrategy extends Strategy {
         {{ processCell(-2, -1, [5, 6]) }}
         {{ processCell(-2, 0, [5, 6, 7]) }}
         {{ processCell(-2, 1, [6, 7]) }}
-        {{ processCell(2, -2, [7]) }}
-        {{ processCell(1, -2, [7, 0]) }}
+        {{ processCell(-2, 2, [7]) }}
+        {{ processCell(-1, 2, [7, 0]) }}
         for(int idx = 0; idx < RobotTracker.numEnemies; idx++) {
             var robot = RobotTracker.sortedEnemies[idx];
             if(robot == null) continue;
@@ -140,38 +140,53 @@ public class KingCombatStrategy extends Strategy {
                 }
             }
         }
+        // A cat threatens the king only through its forward lane (laneCross). Leaving the lane comes first, getting
+        // closer to an exit that stays on the map second, moving away along the lane last. Other cats are ignored.
+        boolean inLane = false;
         for(int idx = 0; idx < RobotTracker.numCats; idx++) {
-            var robot = RobotTracker.sortedCats[idx];
-            if(robot == null) continue;
-            var weight = 5;
-            var dir = myLoc.directionTo(robot.location);
-            switch(dir.ordinal()) {
-                {% for i in range(8) %}
-                case {{i}} -> {
-                    score{{i}}           -= weight * 3;
-                    score{{(i + 6) % 8}} += weight;
-                    score{{(i + 2) % 8}} += weight;
-                    score{{(i + 3) % 8}} += weight + 1;
-                    score{{(i + 4) % 8}} += weight + 1;
-                    score{{(i + 5) % 8}} += weight + 1;
-                }
-                {% endfor %}
-                default -> {
-                    assert false : "unexpected direction";
-                }
+            var cat = RobotTracker.sortedCats[idx];
+            int c = laneCross(myLocX, myLocY, cat);
+            if(c == NOT_IN_LANE) continue;
+            inLane = true;
+            int fx = cat.direction.dx, fy = cat.direction.dy;
+            // c grows by `step` per king step along (fy, -fx); the lane ends at |c| > w.
+            int w = 3, step = 2;
+            if(fx * fy != 0) {
+                w = 6;
+                step = 4;
             }
+            int nPlus = (w + 1 - c + step - 1) / step, nMinus = (c + w + 1 + step - 1) / step;
+            boolean plusOpen = isKingCentreOnMap(myLocX + nPlus * fy, myLocY - nPlus * fx);
+            boolean minusOpen = isKingCentreOnMap(myLocX - nMinus * fy, myLocY + nMinus * fx);
+            int d = laneMargin(c, w, plusOpen, minusOpen);
+            {% for i in range(8) %}
+            {% set mx = dir_dx[directions[i]] %}
+            {% set my = dir_dy[directions[i]] %}
+            {
+                int c2 = c{% if mx %} {{ '+' if mx > 0 else '-' }} 2 * fy{% endif %}{% if my %} {{ '-' if my > 0 else '+' }} 2 * fx{% endif %};
+                if(c2 > w || c2 < -w) score{{i}} += 30;
+                else {
+                    int d2 = laneMargin(c2, w, plusOpen, minusOpen);
+                    if(d2 < d) score{{i}} += 15;
+                    else if(d2 > d) score{{i}} -= 15;
+                }
+                score{{i}} += {% if mx %}{{ '' if mx > 0 else '-' }}fx{% endif %}{% if mx and my %} {{ '+' if my > 0 else '-' }} {% elif my %}{{ '' if my > 0 else '-' }}{% endif %}{% if my %}fy{% endif %};
+            }
+            {% endfor %}
         }
-        int best = -1;
-        var move = Direction.CENTER;
-        {% for i in range(8) %}
-        if(score{{i}} > best) {
-            best = score{{i}};
-            move = {{directions[i]}};
+        if(RobotTracker.numEnemies > 0 || inLane) {
+            int best = -1;
+            var move = Direction.CENTER;
+            {% for i in range(8) %}
+            if(score{{i}} > best) {
+                best = score{{i}};
+                move = {{directions[i]}};
+            }
+            {% endfor %}
+            // indicate("evading " + move);
+            digDirtInDirection(move);
+            if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         }
-        {% endfor %}
-        // indicate("evading " + move);
-        digDirtInDirection(move);
-        if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         if (RobotTracker.numCats > 0) {
             placeDefensiveDirt();
         } else {
@@ -191,8 +206,57 @@ public class KingCombatStrategy extends Strategy {
             }
             if(bestEnemy != null) {
                 rc.attack(bestEnemy.location);
+            } else if(RobotTracker.numCats > 0) {
+                biteCat(RobotTracker.sortedCats[0]);
             }
         }
         return true;
+    }
+
+    // A bite on a cat costs no cheese and is no backstab (rules §2, §7); it adds cat damage.
+    private static void biteCat(RobotInfo cat) throws GameActionException {
+        {% for dx, dy in [(0, 0), (1, 0), (0, 1), (1, 1)] %}
+        {
+            var loc = cat.location.translate({{dx}}, {{dy}});
+            if(rc.canAttack(loc)) {
+                rc.attack(loc);
+                return;
+            }
+        }
+        {% endfor %}
+    }
+
+    static final int NOT_IN_LANE = 1000;
+
+    // Rules §12: an EXPLORE cat walks its 2x2 along its facing, and a king in the way blocks it and is scratched every
+    // 3 rounds. With r = 2·(king centre − cat centre), the king's 3x3 centred at (x, y) meets that forward lane iff
+    // r · facing > 0 and |r × facing| ≤ 3 (cardinal facing) or ≤ 6 (diagonal). Returns r × facing, else NOT_IN_LANE.
+    static int laneCross(int x, int y, RobotInfo cat) {
+        int fx = cat.direction.dx, fy = cat.direction.dy;
+        int rx = 2 * (x - cat.location.x) - 1, ry = 2 * (y - cat.location.y) - 1;
+        if(rx * fx + ry * fy <= 0) return NOT_IN_LANE;
+        int c = rx * fy - ry * fx;
+        int w = fx * fy == 0 ? 3 : 6;
+        return c > w || c < -w ? NOT_IN_LANE : c;
+    }
+
+    // Distance (in units of c) to the nearest lane edge whose side is open, or 1000 if neither is.
+    private static int laneMargin(int c, int w, boolean plusOpen, boolean minusOpen) {
+        int d = 1000;
+        if(plusOpen) d = w + 1 - c;
+        if(minusOpen && c + w + 1 < d) d = c + w + 1;
+        return d;
+    }
+
+    private static boolean isKingCentreOnMap(int x, int y) {
+        return x >= 1 && y >= 1 && x <= mapWidth - 2 && y <= mapHeight - 2;
+    }
+
+    public static boolean entersCatLane(Direction dir) {
+        int x = myLocX + dir.dx, y = myLocY + dir.dy;
+        for(int idx = RobotTracker.numCats; --idx >= 0; ) {
+            if(laneCross(x, y, RobotTracker.sortedCats[idx]) != NOT_IN_LANE) return true;
+        }
+        return false;
     }
 }

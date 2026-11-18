@@ -127,7 +127,7 @@ public class KingMiningStrategy extends Strategy {
                     Direction dir = Pathfinder.getMove(nearestCheese);
                     // indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
                     digDirtInDirection(dir);
-                    if (rc.canMove(dir)) {
+                    if (rc.canMove(dir) && !KingCombatStrategy.entersCatLane(dir)) {
                         RatKing.rawMove(dir);
                     }
                 }
@@ -213,7 +213,7 @@ public class KingMiningStrategy extends Strategy {
             if(rc.isMovementReady()) {
                 Direction dir = Pathfinder.getMove(resetLoc);
                 digDirtInDirection(dir);
-                if (rc.canMove(dir)) {
+                if (rc.canMove(dir) && !KingCombatStrategy.entersCatLane(dir)) {
                     RatKing.rawMove(dir);
                 }
             }
@@ -260,7 +260,7 @@ public class KingMiningStrategy extends Strategy {
             if(dir != Direction.CENTER) {
                 stuckTurns = 0;
                 digDirtInDirection(dir);
-                if(rc.canMove(dir)) {
+                if(rc.canMove(dir) && !KingCombatStrategy.entersCatLane(dir)) {
                     RatKing.rawMove(dir);
                     if(pending5x5 && CellTracker.isPassable5x5(myLoc)) {
                         RatKing.is5x5 = true;

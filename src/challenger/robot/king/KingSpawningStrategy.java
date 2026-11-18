@@ -87,7 +87,8 @@ public class KingSpawningStrategy extends Strategy {
             }
         }
         if (best != null) {
-            rc.turn(best.directionTo(target));
+            Direction facing = best.directionTo(target);
+            if (facing != Direction.CENTER && rc.canTurn()) RatKing.turn(facing);
             rc.buildRat(best);
             RobotTracker.addAlly(best);
             GlobalArray.registerSpawnedRat(best, Rng.mcg() & ((1 << 13) - 1));

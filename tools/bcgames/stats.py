@@ -19,7 +19,7 @@ def _mle(probs: list[float], scores: tuple[float, ...], s: float) -> list[float]
         return sum(p * (a - s) / (1 + t * (a - s)) for a, p in zip(scores, probs))
 
     lo, hi = lo_t + 1e-12 * (abs(lo_t) + 1), hi_t - 1e-12 * (abs(hi_t) + 1)
-    for _ in range(200):  # f is decreasing in t
+    for _ in range(64):  # f is decreasing in t; 64 halvings of a width-O(1) interval reach float precision
         mid = (lo + hi) / 2
         if f(mid) > 0:
             lo = mid

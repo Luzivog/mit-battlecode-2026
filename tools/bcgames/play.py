@@ -18,9 +18,12 @@ and at the end), backend, key, runner, cached, error, replay.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import queue
+import random
+import socket
 import subprocess
 import sys
 import threading
@@ -44,6 +47,38 @@ PROPS = {
     "bc.server.validate-maps": "true",
 }
 DEFAULT_TIMEOUT = 1800  # seconds per game; the slowest official games take ~150 s alone
+
+
+class Slots:
+    """A machine-wide cap on games played at once, shared by every tools/play and tools/games process of this host
+    (lock files under the data dir, one per slot). BCGAMES_SLOTS sets the cap (default 8, this shared box's share);
+    0 turns it off."""
+
+    def __init__(self):
+        self.n = int(os.environ.get("BCGAMES_SLOTS", "8"))
+        self.dir = store.DATA / "slots" / socket.gethostname()
+        if self.n:
+            self.dir.mkdir(parents=True, exist_ok=True)
+
+    def acquire(self, stop: threading.Event):
+        if not self.n:
+            return None
+        while not stop.is_set():
+            for i in random.sample(range(self.n), self.n):
+                f = open(self.dir / f"slot-{i}", "w")
+                try:
+                    fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    return f
+                except OSError:
+                    f.close()
+            stop.wait(0.5)
+        return None
+
+    @staticmethod
+    def release(f) -> None:
+        if f is not None:
+            fcntl.flock(f, fcntl.LOCK_UN)
+            f.close()
 
 
 @dataclass
@@ -162,6 +197,8 @@ class Pool:
         self.threads: list[threading.Thread] = []
         self.workers: list[Worker] = []
         self.closed = False
+        self.stopping = threading.Event()
+        self.slots = Slots()
         logdir.mkdir(parents=True, exist_ok=True)
 
     def submit(self, job: Job, on_result) -> None:
@@ -182,11 +219,17 @@ class Pool:
             if item is None or self.closed:
                 break
             job, on_result = item
+            slot = self.slots.acquire(self.stopping)
+            if self.closed:
+                Slots.release(slot)
+                break
             try:
                 res = w.play(job, self.timeout)
             except Exception as e:  # noqa: BLE001 - reported as the game's error
                 w.stop()
                 res = {"error": f"runner: {e}"}
+            finally:
+                Slots.release(slot)
             if not self.closed:
                 on_result(job, res)
         w.stop()
@@ -194,6 +237,7 @@ class Pool:
     def close(self, wait: bool = True) -> None:
         if not wait:
             self.closed = True
+            self.stopping.set()
             for w in self.workers:
                 w.stop()
         for q in self.queues.values():
@@ -260,7 +304,8 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("specs", help="JSONL spec file ('-' = stdin)")
     ap.add_argument("outdir", help="writes results.jsonl, logs/ and replays/ here")
-    ap.add_argument("--workers", type=int, default=8, help="parallel JVMs (default 8: the shared-box cap)")
+    ap.add_argument("--workers", type=int, default=8,
+                    help="parallel JVMs (default 8); all runs on this host share BCGAMES_SLOTS games at once (8)")
     ap.add_argument("--engine", choices=sorted(store.ENGINES), help="engine for specs that don't name one")
     ap.add_argument("--replays", choices=["none", "losses", "all"], default="none",
                     help="write replays (losses = games team B won: put the bot you study as A)")

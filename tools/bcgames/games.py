@@ -312,7 +312,12 @@ def drive(d: Path) -> int:
                 inflight["n"] -= 1
             cond.notify_all()
 
+    last_save = {"t": 0.0}
+
     def save_state(status: str, error: str | None = None) -> None:
+        if status == "running" and time.time() - last_save["t"] < 2:
+            return
+        last_save["t"] = time.time()
         wall = time.time() - t0
         state = {"status": status, "updated": time.time(), "wall_s": round(wall), "played": counts["played"],
                  "cached": counts["cached"], "inflight": inflight["n"],

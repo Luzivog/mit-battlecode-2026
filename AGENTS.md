@@ -65,4 +65,5 @@ uv venv -q --allow-existing .venv && uv pip install -q -p .venv -r requirements.
 git diff --quiet caterpillow-final -- src/awubot && echo baseline intact
 ```
 
-Judging a change: `docs/evaluation.md` (`tools/games`). Until it lands, `docs/testing.md` §0 (`autoscrims/ABtest.py`).
+Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot` prints an ID; run `tools/games wait ID` in
+the background (its exit code is the verdict), then `tools/games show ID` and `tools/games diff OLD NEW`.

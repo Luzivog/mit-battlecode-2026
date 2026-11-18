@@ -51,47 +51,47 @@ sys java/lang/Class arrayType ()Ljava/lang/Class; rt_Class_arrayType
 sys java/lang/reflect/Array newArray (Ljava/lang/Class;I)Ljava/lang/Object; rt_Array_newArray
 
 # ---- numbers and math (Math's intrinsics are HotSpot's stubs: hsmath.c)
-sys java/lang/Float floatToRawIntBits (F)I rt_Float_floatToRawIntBits
-sys java/lang/Float intBitsToFloat (I)F rt_Float_intBitsToFloat
-sys java/lang/Double doubleToRawLongBits (D)J rt_Double_doubleToRawLongBits
-sys java/lang/Double longBitsToDouble (J)D rt_Double_longBitsToDouble
-sys java/lang/StrictMath sqrt (D)D rt_sqrt
-sys java/lang/Math sqrt (D)D rt_sqrt
-sys java/lang/Math pow (DD)D rt_hs_pow
-sys java/lang/Math exp (D)D rt_hs_exp
-sys java/lang/Math log (D)D rt_hs_log
-sys java/lang/Math log10 (D)D rt_hs_log10
-sys java/lang/Math sin (D)D rt_hs_sin
-sys java/lang/Math cos (D)D rt_hs_cos
-sys java/lang/Math tan (D)D rt_hs_tan
+sys java/lang/Float floatToRawIntBits (F)I rt_Float_floatToRawIntBits nothrow
+sys java/lang/Float intBitsToFloat (I)F rt_Float_intBitsToFloat nothrow
+sys java/lang/Double doubleToRawLongBits (D)J rt_Double_doubleToRawLongBits nothrow
+sys java/lang/Double longBitsToDouble (J)D rt_Double_longBitsToDouble nothrow
+sys java/lang/StrictMath sqrt (D)D rt_sqrt nothrow
+sys java/lang/Math sqrt (D)D rt_sqrt nothrow
+sys java/lang/Math pow (DD)D rt_hs_pow nothrow
+sys java/lang/Math exp (D)D rt_hs_exp nothrow
+sys java/lang/Math log (D)D rt_hs_log nothrow
+sys java/lang/Math log10 (D)D rt_hs_log10 nothrow
+sys java/lang/Math sin (D)D rt_hs_sin nothrow
+sys java/lang/Math cos (D)D rt_hs_cos nothrow
+sys java/lang/Math tan (D)D rt_hs_tan nothrow
 
 # ---- strings
 sys java/lang/String intern ()Ljava/lang/String; rt_String_intern
-sys java/lang/StringUTF16 isBigEndian ()Z rt_false
+sys java/lang/StringUTF16 isBigEndian ()Z rt_false nothrow
 
 # ---- throwables: no stack traces
 sys java/lang/Throwable fillInStackTrace (I)Ljava/lang/Throwable; rt_Throwable_fillInStackTrace
 sys java/lang/NullPointerException getExtendedNPEMessage ()Ljava/lang/String; rt_null_string
 
 # ---- the engine's per-robot classes, in every team module
-bot battlecode/instrumenter/inject/RobotMonitor incrementBytecodes (I)V rt_bc_inc
-bot battlecode/instrumenter/inject/RobotMonitor incrementBytecodesWithoutInterrupt (I)V rt_bc_defer
-bot battlecode/instrumenter/inject/RobotMonitor sanitizeArrayIndex (I)I rt_bc_sanitize
-bot battlecode/instrumenter/inject/RobotMonitor calculateMultiArrayCost ([I)I rt_bc_multi_cost
-bot battlecode/instrumenter/inject/RobotMonitor incrementDebugLevel ()V rt_debug_inc
-bot battlecode/instrumenter/inject/RobotMonitor decrementDebugLevel ()V rt_debug_dec
-bot battlecode/instrumenter/inject/RobotMonitor getRandomSeed ()J rt_bc_seed
-bot battlecode/instrumenter/inject/RobotMonitor pause ()V rt_pause
-bot battlecode/instrumenter/inject/RobotMonitor getBytecodeNum ()I rt_bc_num
-bot battlecode/instrumenter/inject/RobotMonitor getBytecodesLeft ()I rt_bc_left
-bot battlecode/instrumenter/inject/RobotMonitor enterMethod (Ljava/lang/String;)V rt_monitor_str
-bot battlecode/instrumenter/inject/RobotMonitor exitMethod (Ljava/lang/String;)V rt_monitor_str
-bot battlecode/common/Clock yield ()V rt_pause
-bot battlecode/common/Clock getBytecodesLeft ()I rt_bc_left
-bot battlecode/common/Clock getBytecodeNum ()I rt_bc_num
-bot battlecode/common/Clock getTimeLeft ()J rt_time_left
-bot battlecode/common/Clock getTimeElapsed ()J rt_time_elapsed
-bot battlecode/instrumenter/inject/ObjectMethods <clinit> ()V rt_monitor_noop
+bot battlecode/instrumenter/inject/RobotMonitor incrementBytecodes (I)V rt_bc_inc nothrow
+bot battlecode/instrumenter/inject/RobotMonitor incrementBytecodesWithoutInterrupt (I)V rt_bc_defer nothrow
+bot battlecode/instrumenter/inject/RobotMonitor sanitizeArrayIndex (I)I rt_bc_sanitize nothrow
+bot battlecode/instrumenter/inject/RobotMonitor calculateMultiArrayCost ([I)I rt_bc_multi_cost nothrow
+bot battlecode/instrumenter/inject/RobotMonitor incrementDebugLevel ()V rt_debug_inc nothrow
+bot battlecode/instrumenter/inject/RobotMonitor decrementDebugLevel ()V rt_debug_dec nothrow
+bot battlecode/instrumenter/inject/RobotMonitor getRandomSeed ()J rt_bc_seed nothrow
+bot battlecode/instrumenter/inject/RobotMonitor pause ()V rt_pause nothrow
+bot battlecode/instrumenter/inject/RobotMonitor getBytecodeNum ()I rt_bc_num nothrow
+bot battlecode/instrumenter/inject/RobotMonitor getBytecodesLeft ()I rt_bc_left nothrow
+bot battlecode/instrumenter/inject/RobotMonitor enterMethod (Ljava/lang/String;)V rt_monitor_str nothrow
+bot battlecode/instrumenter/inject/RobotMonitor exitMethod (Ljava/lang/String;)V rt_monitor_str nothrow
+bot battlecode/common/Clock yield ()V rt_pause nothrow
+bot battlecode/common/Clock getBytecodesLeft ()I rt_bc_left nothrow
+bot battlecode/common/Clock getBytecodeNum ()I rt_bc_num nothrow
+bot battlecode/common/Clock getTimeLeft ()J rt_time_left nothrow
+bot battlecode/common/Clock getTimeElapsed ()J rt_time_elapsed nothrow
+bot battlecode/instrumenter/inject/ObjectMethods <clinit> ()V rt_monitor_noop nothrow
 bot battlecode/instrumenter/inject/ObjectMethods hashCode (Ljava/lang/Object;)I rt_OM_hashCode m:java/lang/Object.hashCode()I
 bot battlecode/instrumenter/inject/ObjectMethods toString (Ljava/lang/Object;)Ljava/lang/String; rt_OM_toString m:java/lang/Object.toString()Ljava/lang/String; m:java/lang/Integer.toString(I)Ljava/lang/String;
 bot battlecode/instrumenter/inject/ObjectMethods identityHashCode (Ljava/lang/Object;)I rt_OM_identityHashCode
@@ -116,16 +116,16 @@ sys bcxtest/Hello print (Ljava/lang/String;)V rt_test_print
 patch jdk/internal/util/Preconditions bcx/subst/Preconditions_p
 patch java/util/Arrays$LegacyMergeSort bcx/subst/LegacyMergeSort_p
 patch jdk/internal/misc/VM bcx/subst/VM_p
-sys jdk/internal/misc/VM initialize ()V rt_noop
-sys jdk/internal/misc/CDS isDumpingClassList0 ()Z rt_false
-sys jdk/internal/misc/CDS isDumpingArchive0 ()Z rt_false
-sys jdk/internal/misc/CDS isSharingEnabled0 ()Z rt_false
+sys jdk/internal/misc/VM initialize ()V rt_noop nothrow
+sys jdk/internal/misc/CDS isDumpingClassList0 ()Z rt_false nothrow
+sys jdk/internal/misc/CDS isDumpingArchive0 ()Z rt_false nothrow
+sys jdk/internal/misc/CDS isSharingEnabled0 ()Z rt_false nothrow
 sys jdk/internal/misc/CDS initializeFromArchive (Ljava/lang/Class;)V rt_noop1
-sys jdk/internal/misc/CDS getRandomSeedForDumping ()J rt_zero_long
-sys java/util/concurrent/atomic/AtomicLong VMSupportsCS8 ()Z rt_true
+sys jdk/internal/misc/CDS getRandomSeedForDumping ()J rt_zero_long nothrow
+sys java/util/concurrent/atomic/AtomicLong VMSupportsCS8 ()Z rt_true nothrow
 
 # ---- jdk.internal.misc.Unsafe on translated objects (field offsets from the layouts)
-sys jdk/internal/misc/Unsafe registerNatives ()V rt_noop
+sys jdk/internal/misc/Unsafe registerNatives ()V rt_noop nothrow
 sys jdk/internal/misc/Unsafe arrayBaseOffset0 (Ljava/lang/Class;)I rt_Unsafe_arrayBaseOffset0
 sys jdk/internal/misc/Unsafe arrayIndexScale0 (Ljava/lang/Class;)I rt_Unsafe_arrayIndexScale0
 sys jdk/internal/misc/Unsafe addressSize0 ()I rt_Unsafe_addressSize0
@@ -180,12 +180,12 @@ sys java/lang/ref/Reference get0 ()Ljava/lang/Object; rt_Reference_get0
 sys java/lang/ref/Reference refersTo0 (Ljava/lang/Object;)Z rt_Reference_refersTo0
 sys java/lang/ref/PhantomReference refersTo0 (Ljava/lang/Object;)Z rt_Reference_refersTo0
 sys java/lang/ref/Reference clear0 ()V rt_Reference_clear0
-sys java/lang/ref/Reference hasReferencePendingList ()Z rt_false
+sys java/lang/ref/Reference hasReferencePendingList ()Z rt_false nothrow
 patch jdk/internal/util/random/RandomSupport bcx/subst/RandomSupport_p
 patch battlecode/server/ErrorReporter bcx/subst/ErrorReporter_p
 patch java/util/DualPivotQuicksort bcx/subst/DualPivotQuicksort_p
 patch java/util/Tripwire bcx/subst/Tripwire_p
-sys jdk/internal/misc/ScopedMemoryAccess registerNatives ()V rt_noop
+sys jdk/internal/misc/ScopedMemoryAccess registerNatives ()V rt_noop nothrow
 sys jdk/internal/misc/Unsafe copyMemory0 (Ljava/lang/Object;JLjava/lang/Object;JJ)V rt_Unsafe_copyMemory0
 subst java/lang/ThreadLocal bcx/subst/JThreadLocal
 patch java/nio/charset/StandardCharsets bcx/subst/StandardCharsets_p

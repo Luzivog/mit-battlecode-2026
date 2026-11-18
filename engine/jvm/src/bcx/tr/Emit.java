@@ -30,11 +30,28 @@ final class Emit implements Opcodes {
         this.natives = natives;
         // init indices: classes whose initialization does something (or whose supers' does)
         for (Cls c : layout.order) {
-            if (!c.initReachable) continue;
+            if (!c.initReachable || !needsInit(c, new HashMap<>())) continue;
             List<Cls> l = initOrder.computeIfAbsent(c.mod, k -> new ArrayList<>());
             c.initIndex = l.size();
             l.add(c);
         }
+    }
+
+    /** Initialization does something: a <clinit>, constant fields, or a super(interface) that needs it. */
+    static boolean needsInit(Cls c, Map<Cls, Boolean> memo) {
+        Boolean b = memo.get(c);
+        if (b != null) return b;
+        memo.put(c, false);
+        boolean r = false;
+        Mth cl = c.own("<clinit>", "()V");
+        if (cl != null && cl.reachable && !"rt_monitor_noop".equals(cl.nativeImpl)) r = true;
+        for (Fld f : c.fields.values()) if (f.isStatic() && f.node.value != null) r = true;
+        if (!c.isInterface()) {
+            if (c.superCls() != null && c.superCls().initReachable && needsInit(c.superCls(), memo)) r = true;
+            for (Cls i : c.allInterfaces()) if (i.initReachable && Rta.hasDefaults(i) && needsInit(i, memo)) r = true;
+        }
+        memo.put(c, r);
+        return r;
     }
 
     int str(String s) { return strings.computeIfAbsent(s, k -> strings.size()); }
@@ -120,23 +137,23 @@ final class Emit implements Opcodes {
                 }
             }
         }
-        g.line(assign + call + "; " + g.chk());
+        Mth tgt = op == INVOKESTATIC ? r : null;
+        boolean nothrow = tgt != null && tgt.nothrow;
+        g.line(assign + call + ";" + (nothrow ? "" : " " + g.chk()));
     }
 
     // ---------------- files
     void write(Path out, int filesHint) throws IOException {
         Files.createDirectories(out);
         // generate method bodies first (collects strings and array klasses)
-        Map<Cls, StringBuilder> bodies = new LinkedHashMap<>();
+        List<String> bodies = new ArrayList<>();
         for (Cls c : layout.order) {
-            StringBuilder sb = new StringBuilder();
             for (Mth m : c.methods.values()) {
                 if (!m.reachable || m.isAbstract() || m.nativeImpl != null) continue;
-                sb.append(new Gen(this, m).gen()).append('\n');
+                bodies.add(new Gen(this, m).gen() + "\n");
                 m.emitted = true;
                 emitted.add(m);
             }
-            if (sb.length() > 0) bodies.put(c, sb);
         }
         for (String a : rta.arrayTypes) {
             Type t = Type.getType(a);
@@ -148,8 +165,8 @@ final class Emit implements Opcodes {
         // method files: pack classes into files of bounded size
         List<StringBuilder> files = new ArrayList<>();
         StringBuilder curf = null;
-        long limit = 400_000;
-        for (StringBuilder sb : bodies.values()) {
+        long limit = 1_000_000;
+        for (String sb : bodies) {
             if (curf == null || curf.length() + sb.length() > limit) { curf = new StringBuilder(); files.add(curf); }
             curf.append(sb);
         }

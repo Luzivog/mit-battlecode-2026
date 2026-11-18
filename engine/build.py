@@ -27,6 +27,8 @@ OUT = ENGINE / "build"
 MAVEN = "https://repo1.maven.org/maven2/org/ow2/asm"
 ASM = ["asm-commons", "asm-analysis", "asm-util", "asm-tree"]
 GC_VERSION = "8.2.8"
+# robots run on their own stacks: the collector must not clear below the stack it believes in
+GC_CFLAGS = "-O2 -fPIC -DALWAYS_SMALL_CLEAR_STACK"
 GC_SHA256 = "7649020621cb26325e1fb5c8742590d92fb48ce5c259b502faf7d9fb5dabb160"
 JAR_SHA256 = {"1.2.6": "ea722532f6d523241ff4f708078563de2a010a39d7d524c66ae1890ab85c04ec",
               "1.2.5": "b9f39d19a2a0bccd35540039747bacd0412b6016b2ef64c39846395989f20488"}
@@ -66,7 +68,8 @@ def deps(versions):
     for a in ASM:
         fetch(f"{MAVEN}/{a}/9.7/{a}-9.7.jar", JARS / f"{a}-9.7.jar")
     gc = DEPS / "gc-install" / "lib" / "libgc.a"
-    if not gc.exists():
+    stamp = DEPS / "gc-install" / "flags"
+    if not gc.exists() or not stamp.exists() or stamp.read_text() != GC_CFLAGS:
         tar = DEPS / f"gc-{GC_VERSION}.tar.gz"
         fetch(f"https://github.com/ivmai/bdwgc/releases/download/v{GC_VERSION}/gc-{GC_VERSION}.tar.gz", tar, GC_SHA256)
         src = DEPS / "src"
@@ -79,9 +82,10 @@ def deps(versions):
             f"-DCMAKE_INSTALL_PREFIX={DEPS / 'gc-install'}", "-DBUILD_SHARED_LIBS=OFF", "-Denable_threads=OFF",
             "-Denable_cplusplus=OFF", "-Dbuild_cord=OFF", "-Denable_docs=OFF", "-Denable_parallel_mark=OFF",
             "-Denable_gcj_support=OFF", "-Denable_java_finalization=OFF", "-Denable_disclaim=OFF",
-            "-Denable_large_config=ON", "-Dbuild_tests=OFF", "-DCMAKE_C_FLAGS=-O2 -fPIC"], cwd=bdir,
+            "-Denable_large_config=ON", "-Dbuild_tests=OFF", f"-DCMAKE_C_FLAGS={GC_CFLAGS}"], cwd=bdir,
            stdout=subprocess.DEVNULL)
         sh(["ninja", "install"], cwd=bdir, stdout=subprocess.DEVNULL)
+        stamp.write_text(GC_CFLAGS)
 
 
 def translator(version: str) -> str:

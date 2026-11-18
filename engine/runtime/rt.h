@@ -29,6 +29,10 @@ struct ArrHdr : Obj {
     jint length;
     jint pad;
 };
+// generated code: exception check, null check, class initialization check
+#define CK(X) if (UNLIKELY(g_exc != nullptr)) goto X
+#define NN(v, X) if (UNLIKELY((v) == nullptr)) { rt_throw_npe(); goto X; }
+#define INIT(st, fn, X) if (UNLIKELY((st) != 2)) { fn(); CK(X); }
 #define ALEN(a) (((ArrHdr*)(a))->length)
 #define ADATA(T, a) ((T*)((char*)(a) + sizeof(ArrHdr)))
 

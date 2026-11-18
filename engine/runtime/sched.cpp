@@ -55,7 +55,7 @@ static void GC_CALLBACK push_stacks() {
 }
 
 void sched_init() {
-    GC_get_stack_base(&g_main_base);
+    GC_get_my_stackbottom(&g_main_base);
     g_prev_push = GC_get_push_other_roots();
     GC_set_push_other_roots(push_stacks);
 }

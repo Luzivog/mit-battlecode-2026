@@ -147,9 +147,9 @@ final class Gen implements Opcodes {
         return lab;
     }
 
-    String chk() { return "if (UNLIKELY(g_exc != nullptr)) goto " + xl() + ";"; }
+    String chk() { return "CK(" + xl() + ");"; }
 
-    void nullchk(String v) { line("if (UNLIKELY(" + v + " == nullptr)) { rt_throw_npe(); goto " + xl() + "; }"); }
+    void nullchk(String v) { line("NN(" + v + ", " + xl() + ");"); }
 
     // ---------------- class initialization
     /** Emit the JVM's initialization check for class c, unless it is already known done here. */
@@ -159,7 +159,7 @@ final class Gen implements Opcodes {
         String st;
         if (c.mod.perRobot) { needS = true; st = "S->init[" + c.initIndex + "]"; }
         else st = "g_init0[" + c.initIndex + "]";
-        line("if (UNLIKELY(" + st + " != 2)) { " + E.initFn(c) + "(); " + chk() + " }");
+        line("INIT(" + st + ", " + E.initFn(c) + ", " + xl() + ");");
     }
 
     String staticRef(Fld f) {

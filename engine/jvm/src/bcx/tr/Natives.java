@@ -20,7 +20,12 @@ final class Natives {
         final String cfun;
         final List<String> deps;
         String cut;   // a method cut from the program: reaching it at run time is fatal
-        Impl(String cfun, List<String> deps) { this.cfun = cfun; this.deps = deps; }
+        final boolean nothrow;  // never leaves an exception pending: no check after the call
+        Impl(String cfun, List<String> deps) {
+            this.cfun = cfun;
+            this.nothrow = deps.contains("nothrow");
+            this.deps = deps.stream().filter(d -> !d.equals("nothrow")).toList();
+        }
     }
 
     private final Map<String, Impl> sys = new HashMap<>(), bot = new HashMap<>();

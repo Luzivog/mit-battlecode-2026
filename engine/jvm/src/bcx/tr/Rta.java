@@ -109,6 +109,7 @@ public final class Rta implements Opcodes {
         if (ni == null && m.isNative()) { problems.add("native without implementation: " + m + chain(m)); return; }
         if (ni != null) {
             m.nativeImpl = ni.cfun;
+            m.nothrow = ni.nothrow;
             if (ni.cut != null) natives.cutsReached.add(m);
             for (String dep : ni.deps) natives.reachDep(this, m.owner.mod, dep);
             return;

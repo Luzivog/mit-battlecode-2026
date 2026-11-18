@@ -185,6 +185,7 @@ public final class Cls {
         public boolean reachable;
         public boolean emitted;
         public String nativeImpl;       // C++ function implementing a native/substituted method
+        public boolean nothrow;         // the native never leaves an exception pending
         public int vslot = -1;
         public Mth from;               // the method that first made this one reachable (for reports)
         Mth(Cls owner, MethodNode node) {

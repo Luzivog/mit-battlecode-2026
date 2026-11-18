@@ -235,10 +235,13 @@ def submit_condor(jobs: list[tuple[Job, dict[str, bytes], str]], shared: dict[st
     login(f"mkdir -p {REMOTE_JOBS} && mkdir -m 700 {' '.join(j.dir for j, _, _ in jobs)} && "
           f"tar -xf - -C {REMOTE_JOBS}{links}", tar, SLURM_HOSTS)
     subs = " ".join(f"{j.dir}/job.sub" for j, _, _ in jobs)
-    out = submit_host(f"for f in {subs}; do {{ if o=$(condor_submit -terse \"$f\" 2>&1); then echo \"C ${{o%%.*}}\"; "
-                      f"else echo \"F $(printf %s \"$o\" | tr '\\n' ' ' | cut -c1-300)\"; fi; }} > \"$f.said\" & "
-                      f"[ \"$(jobs -pr | wc -l)\" -lt 8 ] || wait -n; done; wait; "
-                      f"for f in {subs}; do cat \"$f.said\"; rm -f \"$f.said\"; done")
+    try:
+        out = submit_host(f"for f in {subs}; do {{ if o=$(condor_submit -terse \"$f\" 2>&1); then echo \"C ${{o%%.*}}\"; "
+                          f"else echo \"F $(printf %s \"$o\" | tr '\\n' ' ' | cut -c1-300)\"; fi; }} > \"$f.said\" & "
+                          f"[ \"$(jobs -pr | wc -l)\" -lt 8 ] || wait -n; done; wait; "
+                          f"for f in {subs}; do cat \"$f.said\"; rm -f \"$f.said\"; done")
+    except Refused as e:
+        return reconcile(jobs, str(e))
     said = [line.split(" ", 1) for line in out.splitlines() if line[:2] in ("C ", "F ")]
     if len(said) != len(jobs):
         raise Refused(f"condor_submit answered {len(said)} of {len(jobs)} jobs: {out.strip()[-300:]}")
@@ -252,6 +255,21 @@ def submit_condor(jobs: list[tuple[Job, dict[str, bytes], str]], shared: dict[st
     ok = [(j, c) for (j, _, _), c in zip(jobs, got, strict=True) if c is not None]
     if ok:
         login(" && ".join(f"echo {SUBMIT} {c} > {j.dir}/backend-id" for j, c in ok), hosts=SLURM_HOSTS)
+    return got
+
+
+def reconcile(jobs: list[tuple[Job, dict[str, bytes], str]], why: str) -> list[str | None]:
+    """After a submit whose answer was lost (WHY): each job Condor holds gets its backend-id, read from the queue
+    through a login node; every other folder is removed, its job never queued."""
+    say(f"compute: condor_submit's answer was lost ({why}); reading the queue")
+    q = login(f"{CONDOR}; condor_q -name {SUBMIT} \"$USER\" -af JobBatchName ClusterId", hosts=SLURM_HOSTS)
+    queued = {f[0].removeprefix("bc26-"): f[1] for f in (line.split() for line in q.splitlines()) if len(f) == 2}
+    got = [queued.get(j.id) for j, _, _ in jobs]
+    cmds = [f"echo {SUBMIT} {c} > {j.dir}/backend-id" if c else f"rm -rf {j.dir}" for (j, _, _), c in
+            zip(jobs, got, strict=True)]
+    login(" && ".join(cmds), hosts=SLURM_HOSTS)
+    for (j, _, _), c in zip(jobs, got, strict=True):
+        say(f"compute: {j.id}: " + (f"Condor job {c}" if c else "never queued; its folder removed"))
     return got
 
 
@@ -330,7 +348,7 @@ def submit(j: Job, files: dict[str, bytes], p: Place) -> str:
     if p.where == "condor":
         got = submit_condor([(j, files, B.condor_sub(j.dir, j.id, p.cpus, p.mem_mb, None, p.time_s))])[0]
         if got is None:
-            raise Refused("condor_submit failed")
+            raise Refused("condor_submit failed (above)")
         return got
     return submit_local(j, files)
 

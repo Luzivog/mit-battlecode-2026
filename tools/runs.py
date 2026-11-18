@@ -424,7 +424,14 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                 close(rid, [p for p in pr.pieces if p not in finals])
             return summarize(s, out, finals)
         alive = [p for p in pr.pieces if p not in finals]
-        broken = [p for p, f in finals.items() if f.exit not in (None, 0, 75)]
+        held = [p for p, f in finals.items() if f.phase == "held"]
+        if held and not alive:  # never routed around: the run stays open, and its follower stops, saying why
+            J.say(f"run {rid}: no piece runs and {len(held)} held: " + "; ".join(J.describe(p, finals[p]) for p in held)
+                  + f". Report it; `tools/compute wait {rid}` follows the run again")
+            summary = summarize(s, out, finals)
+            summary["exit"] = J.HELD
+            return summary
+        broken = [p for p, f in finals.items() if f.exit not in (None, 0, 75) and f.phase != "held"]
         if broken and not alive:  # a piece that failed (not one lost) would fail again: the run stops, its log shown
             p = broken[0]
             tail = J.read_log(J.job(p), 0).decode(errors="replace").splitlines()[-15:]

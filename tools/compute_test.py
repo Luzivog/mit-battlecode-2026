@@ -149,3 +149,24 @@ def test_a_lost_connection_records_nothing(tmp_path: Path) -> None:
     with pytest.raises(remote.Refused, match="exit 255"):
         remote.kerberos_login(lambda: b"pw\n", lambda pw: ok(255, b"ssh: connect"), (tmp_path / "a", tmp_path / "b"))
     assert not (tmp_path / "a").exists()
+
+
+@pytest.mark.parametrize("said,tries", [(b"Connection timed out during banner exchange", 3),
+                                        (b"kex_exchange_identification: read: Connection reset by peer", 3),
+                                        (b"client_loop: send disconnect: Broken pipe", 1)])
+def test_the_submit_host_is_tried_again_only_before_a_connection(said: bytes, tries: int) -> None:
+    calls: list[list[str]] = []
+
+    def run(argv: list[str]) -> subprocess.CompletedProcess[bytes]:
+        calls.append(argv)
+        return ok(255, said)
+
+    p = remote.ssh_submit("condor_submit x", sleep=lambda s: None, run=run)
+    assert p.returncode == 255 and len(calls) == tries  # a command that may have run is never run twice
+    assert all(c[-2] == remote.SUBMIT for c in calls)
+
+
+def test_the_submit_host_answer_is_taken_at_once() -> None:
+    answers = [ok(255, b"Connection timed out during banner exchange"), ok(0)]
+    p = remote.ssh_submit("true", sleep=lambda s: None, run=lambda argv: answers.pop(0))
+    assert p.returncode == 0 and not answers

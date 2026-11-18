@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 import tempfile
+import time
 from collections.abc import Callable
 from pathlib import Path
 
@@ -150,12 +151,33 @@ def kerberos_login(password: Callable[[], bytes] = bitwarden_password,
         raise Refused(f"kinit on {SUBMIT}: exit {k.returncode}: {said[-300:]}")
 
 
+# ssh's words for a connection that failed before any command ran (SUBMIT's banner exchange timed out at times on 18
+# Nov): only such a failure is tried again, since a command that may have run (a condor_submit) must not run twice
+NOT_CONNECTED = re.compile(r"banner exchange|kex_exchange_identification|Connection timed out|Connection refused|"
+                           r"Could not resolve hostname|Connection closed by .* port 22$")
+SUBMIT_TRIES, SUBMIT_PAUSE_S = 3, 10.0
+
+
+def ssh_submit(cmd: str, sleep: Callable[[float], None] = time.sleep,
+               run: Callable[[list[str]], subprocess.CompletedProcess[bytes]] | None = None
+               ) -> subprocess.CompletedProcess[bytes]:
+    """CMD on SUBMIT, tried again (SUBMIT_TRIES in all) while ssh fails before connecting."""
+    go = run or (lambda argv: subprocess.run(argv, capture_output=True))
+    for k in range(SUBMIT_TRIES):
+        p = go(ssh_argv(SUBMIT, cmd))
+        said = p.stderr.decode(errors=ESC).strip()
+        if p.returncode != 255 or not NOT_CONNECTED.search(said) or k == SUBMIT_TRIES - 1:
+            return p
+        sleep(SUBMIT_PAUSE_S)
+    raise AssertionError("unreachable")
+
+
 def submit_host(cmd: str, ticket: bool = True) -> str:
     """One condor command on SUBMIT; with TICKET, after making sure it holds a Kerberos ticket (a submit or a removal
     needs one; a read doesn't)."""
-    if ticket and subprocess.run(ssh_argv(SUBMIT, "klist -s"), capture_output=True).returncode:
+    if ticket and ssh_submit("klist -s").returncode:
         kerberos_login()
-    p = subprocess.run(ssh_argv(SUBMIT, f"{UMASK}{CONDOR}; {cmd}"), capture_output=True)
+    p = ssh_submit(f"{UMASK}{CONDOR}; {cmd}")
     if p.returncode:
         raise Refused(f"{SUBMIT}: {cmd.split()[0]}: exit {p.returncode}: {p.stderr.decode(errors=ESC).strip()[-500:]}")
     return p.stdout.decode(errors=ESC)

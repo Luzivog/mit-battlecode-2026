@@ -81,7 +81,7 @@ public class RobotPlayer {
 
                 GlobalArray.postTick();
                 Game.postTick();
-            } catch (Exception e) {
+            } catch (Throwable t) {
             } finally {// println
                 Clock.yield();
             }

@@ -264,8 +264,7 @@ static int usage() {
 int main(int argc, char** argv) {
     if (argc < 4 || strcmp(argv[1], "play")) return usage();
     Opts o;
-    const char* specs_path = argv[2];
-    o.outdir = argv[3];
+    const char* specs_path = nullptr;
     {   // the repo root: BCX_ROOT, else the checkout this binary was built in (engine/build/bcx)
         std::string exe(argv[0]);
         char rp0[4096];
@@ -273,14 +272,17 @@ int main(int argc, char** argv) {
         size_t sl = exe.rfind('/');
         o.root = getenv("BCX_ROOT") ? getenv("BCX_ROOT") : (sl == std::string::npos ? std::string(".") : exe.substr(0, sl) + "/../..");
     }
-    for (int i = 4; i < argc; i++) {
+    for (int i = 2; i < argc; i++) {   // options anywhere
         if (!strcmp(argv[i], "-j") && i + 1 < argc) o.jobs = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--dump")) o.dump = true;
         else if (!strcmp(argv[i], "--no-replay")) o.replay = false;
         else if (!strcmp(argv[i], "--root") && i + 1 < argc) o.root = argv[++i];
         else if (!strcmp(argv[i], "--stdout")) g_print_stdout = true;
+        else if (argv[i][0] != '-' && !specs_path) specs_path = argv[i];
+        else if (argv[i][0] != '-' && o.outdir.empty()) o.outdir = argv[i];
         else return usage();
     }
+    if (!specs_path || o.outdir.empty()) return usage();
     if (const char* bm = getenv("BCX_BUNDLED_MAPS")) g_bundled_maps = bm;
     else {
         std::string exe(argv[0]);

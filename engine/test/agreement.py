@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Agreement of the native engine with the reference (engine/AGENTS.md, "Exactness").
 
-    engine/test/agreement.py [--quick|--full] [--native CMD] [--java CMD] [-j N] [--specs FILE] [--filter RE]
+    engine/test/agreement.py [--quick|--full] [--native CMD] [--java CMD] [-j N] [--specs FILE] [--filter RE] [--prune]
 
 Plays the corpus (corpus.py; --specs FILE instead) on both backends and compares every game: the result (winner
 unless the win type is WON_BY_DUBIOUS_REASONS, win type, round, seed, hash), hashes.txt line by line (first
@@ -11,7 +11,8 @@ spec in spec order and writes OUTDIR/<id>/{hashes.txt,replay.bc26}. A first word
 The reference (--java, default engine/play_java.py) results are cached in --java-cache, keyed by the spec, the jar,
 RefMain's sources (play_java.REFERENCE_SOURCES) and the class files of both packages: only new or changed games
 are replayed.
-Exit 0 only when every game agrees.
+Writes OUT/summary.json and OUT/rows.jsonl (one line a game: id, ok, the three comparisons, round, both cpu_s);
+--prune deletes both backends' files of every game that agrees. Exit 0 only when every game agrees.
 """
 
 import argparse
@@ -20,6 +21,7 @@ import hashlib
 import json
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -235,6 +237,7 @@ def main():
     ap.add_argument("--out", type=Path, help="output dir (default refruns/agreement/<time>)")
     ap.add_argument("--java-cache", type=Path, default=CACHE_DEFAULT, help=f"reference results (default {CACHE_DEFAULT})")
     ap.add_argument("--no-cache", action="store_true", help="replay every reference game")
+    ap.add_argument("--prune", action="store_true", help="delete the files of every game that agrees")
     args = ap.parse_args()
 
     if args.specs:
@@ -287,6 +290,14 @@ def main():
           + (f"; cpu java {cj:.1f} s, native {cn:.1f} s, ratio {cj / cn:.1f}x" if cn > 0 else ""))
     (out / "summary.json").write_text(json.dumps({"games": len(rows), "agree": len(rows) - bad, "rows": [
         {"id": ids[i], **rows[i], "java": rj[i], "native": rn[i]} for i in range(len(rows))]}, indent=1) + "\n")
+    (out / "rows.jsonl").write_text("".join(json.dumps(
+        {"id": ids[i], **rows[i], "round": rj[i].get("round"), "win_type": rj[i].get("win_type"),
+         "java_cpu_s": rj[i].get("cpu_s"), "native_cpu_s": rn[i].get("cpu_s")}) + "\n" for i in range(len(rows))))
+    if args.prune:
+        for i, s in enumerate(specs):
+            if rows[i]["ok"]:
+                for d in (game_dir(args.java_cache.resolve(), s, i), game_dir(out / "native", s, i)):
+                    shutil.rmtree(d, ignore_errors=True)
     sys.exit(0 if bad == 0 else 1)
 
 

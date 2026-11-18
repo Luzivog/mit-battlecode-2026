@@ -100,12 +100,16 @@ def java_version() -> str:
 
 
 def runner_classes() -> tuple[Path, str]:
-    """Compiles tools/bcgames/java once per source version. Returns (class dir, runner version)."""
+    """Compiles tools/bcgames/java once per source version. Returns (class dir, runner version).
+
+    The runner version, part of every game key, hashes only Play.java: the game loop. MapInfo changes don't touch
+    game results.
+    """
     sources = sorted(JAVA_DIR.rglob("*.java"))
     h = hashlib.sha256()
     for s in sources:
         h.update(s.relative_to(JAVA_DIR).as_posix().encode() + b"\0" + s.read_bytes() + b"\0")
-    version = h.hexdigest()[:12]
+    version = sha256_file(JAVA_DIR / "bcplay" / "Play.java")[:12]
 
     def build(tmp: Path) -> None:
         proc = subprocess.run(["javac", "-nowarn", "-d", str(tmp), "-cp", str(engine_jar(DEFAULT_ENGINE))]
@@ -113,7 +117,7 @@ def runner_classes() -> tuple[Path, str]:
         if proc.returncode != 0:
             raise SetupError("javac bcplay failed:\n" + proc.stderr[-3000:])
 
-    return _atomic_dir(DATA / "runner" / version, build), version
+    return _atomic_dir(DATA / "runner" / h.hexdigest()[:12], build), version
 
 
 # ------------------------------------------------------------------------------------------------------------- bots

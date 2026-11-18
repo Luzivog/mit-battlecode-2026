@@ -58,10 +58,29 @@ POOLS = {
                "pathfinding test", "5t4rv4t10n_1337"],
 }
 HOLDOUT_FILE = store.DATA / "SEALED-TEST-DO-NOT-READ" / "holdout.json"
+# Degenerate team-made maps, only in STRESS (and in the class pools they fall in).
+DEGENERATE = ["troll1", "troll2", "coop", "pathfinding test"]
+# Map-class pools (docs/theory/t4-maps.md §3), computed by mapclass.py over every visible map, so a new map in
+# maps/ is classed the same way. Judge a change that targets a class on its pool first, then on `full`.
+CLASS_POOLS = {"cat": "CATPATH", "starve": "MINEPOOR", "choke": "CHOKE", "faceoff": "FACEOFF",
+               "nocontact": "NOCONTACT", "dirt": "DIRT", "overflow": None, "open": "OPEN"}
+OVERFLOW_MINES = 26  # awubot destroys its kings once it knows 26 mines (docs/theory/t4-maps.md §3)
 
 
 def holdout() -> list[str]:
     return json.loads(HOLDOUT_FILE.read_text())["maps"]
+
+
+def visible() -> list[str]:
+    return OFFICIAL + TEAM_MADE + TOURNAMENT + DEGENERATE
+
+
+def class_pool(name: str) -> list[str]:
+    from . import mapclass
+    cls = mapclass.classify(visible())
+    if name == "overflow":
+        return [m for m in visible() if cls[m]["mines"] >= OVERFLOW_MINES]
+    return [m for m in visible() if CLASS_POOLS[name] in cls[m]["classes"]]
 
 
 def resolve(spec: str) -> tuple[list[str], bool]:
@@ -77,8 +96,11 @@ def resolve(spec: str) -> tuple[list[str], bool]:
                 sealed = True
             elif name in POOLS:
                 maps += POOLS[name]
+            elif name in CLASS_POOLS:
+                maps += class_pool(name)
             else:
-                raise store.SetupError(f"unknown pool {name!r} (pools: {', '.join(list(POOLS) + ['holdout'])}; "
+                raise store.SetupError(f"unknown pool {name!r} (pools: {', '.join(list(POOLS) + list(CLASS_POOLS))}, "
+                                       f"holdout; "
                                        f"or map:NAME1,NAME2)")
     seen = set()
     maps = [m for m in maps if not (m in seen or seen.add(m))]

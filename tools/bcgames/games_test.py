@@ -5,7 +5,7 @@ from bcgames import games
 
 
 def result(spec, winner, rounds=100, **metrics):
-    team = {"cheese_transferred": 0, "cat_damage": 0, "rats": 0, "kings": 1, "cheese": 0, "crashed": 0}
+    team = {"points": 0, "cheese_transferred": 0, "cat_damage": 0, "rats": 0, "kings": 1, "cheese": 0, "crashed": 0}
     team.update(metrics)
     r = dict(spec)
     r.update({"winner": winner, "win_type": "KILL_ALL_RAT_KINGS", "round": rounds, "A": dict(team),

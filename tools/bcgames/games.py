@@ -181,6 +181,18 @@ class Test:
                         "better_cells": sum(1 for _, d in diffs if d > 0),
                         "worse_cells": sum(1 for _, d in diffs if d < 0)})
         games = [g for c in sc for g in c["games"].values() if g["role"] == "o"]
+        # Points margin (ours - theirs, as the engine scores round 2000), averaged per cell: T3's diagnostic.
+        def margin(g):
+            other = "B" if g["seat"] == "A" else "A"
+            return g[g["seat"]]["points"] - g[other]["points"]
+        cell_margin = [(c["map"], sum(margin(g) for g in c["games"].values() if g["role"] == "o") / 2) for c in sc]
+        plo, phi = stats.bootstrap_by_map(cell_margin)
+        long = [margin(g) for g in games if g["round"] >= 2000]
+        out["points_margin"] = round(sum(m for _, m in cell_margin) / len(cell_margin), 2)
+        out["points_margin_ci"] = [round(plo, 2), round(phi, 2)] if plo == plo else None
+        out["points_margin_r2000"] = [round(sum(long) / len(long), 2), len(long)] if long else None
+        out["games_won"] = sum(1 for g in games if g["winner"] == g["seat"])
+        out["games_lost"] = len(games) - out["games_won"]
         out["identical"] = self.identical(sc)
         out["mean_rounds"] = round(sum(g["round"] for g in games) / len(games))
         crashed = {self.ours: 0, self.theirs: 0}
@@ -433,11 +445,17 @@ def report_test(t: dict, kind: str, p: dict) -> list[str]:
         L.append(f"  cells {t['cells']}: {t['ours']} better {t['better_cells']}, worse {t['worse_cells']}; "
                  f"diff counts -1..+1: {c}" + (f"; {t['errors']} failed" if t["errors"] else ""))
     ci = t.get("elo_ci")
-    L.append(f"  score {t['score']:.3f} [{t['score_ci'][0]:.3f}, {t['score_ci'][1]:.3f}]  Elo {t['elo']:+d}"
+    L.append(f"  games {t['games_won']}-{t['games_lost']}  score {t['score']:.3f} "
+             f"[{t['score_ci'][0]:.3f}, {t['score_ci'][1]:.3f}]  Elo {t['elo']:+d}"
              + (f" [{ci[0]:+d}, {ci[1]:+d}]" if ci else "") + f"  LOS {pct(t['los'])}  (95% CI, bootstrap over maps)")
     if kind != "ab":
         L.append(f"  {t['ref']} on the same cells: {t['ref_score']:.3f}; diff {t['diff']:+.3f} "
                  f"[{t['diff_ci'][0]:+.3f}, {t['diff_ci'][1]:+.3f}]")
+    pm = t["points_margin_ci"]
+    r2 = t["points_margin_r2000"]
+    L.append(f"  points margin per game (ours - theirs, engine scoring): {t['points_margin']:+.1f}"
+             + (f" [{pm[0]:+.1f}, {pm[1]:+.1f}]" if pm else "")
+             + (f"; in the {r2[1]} games that reached round 2000: {r2[0]:+.1f}" if r2 else ""))
     if t["identical"]:
         L.append("  no behaviour change: " + ("every game equals its mirror" if kind == "ab" else
                                               f"every game equals {t['ref']}'s"))
@@ -653,7 +671,8 @@ def cmd_diff(args) -> int:
 
 
 def cmd_pools(args) -> int:
-    for name, maps in pools.POOLS.items():
+    every = list(pools.POOLS.items()) + [(n, pools.class_pool(n)) for n in pools.CLASS_POOLS]
+    for name, maps in every:
         print(f"{name:11s} {len(maps):3d}  " + ", ".join(maps if args.v else maps[:8] + (["..."] if len(maps) > 8 else [])))
     try:
         print(f"holdout     {len(pools.holdout()):3d}  sealed (integrator only)")

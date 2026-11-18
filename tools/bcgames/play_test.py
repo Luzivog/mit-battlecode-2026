@@ -2,8 +2,10 @@
 
 Uses a scratch data dir (BCGAMES_DATA is set before importing), so it never touches the shared cache.
 """
+import atexit
 import json
 import os
+import shutil
 import struct
 import subprocess
 import sys
@@ -12,6 +14,7 @@ import unittest
 from pathlib import Path
 
 TMP = tempfile.mkdtemp(prefix="bcgames-test-")
+atexit.register(shutil.rmtree, TMP, True)
 os.environ["BCGAMES_DATA"] = TMP
 # Engine jars are 10 MB downloads: reuse the shared ones when present.
 _shared = Path("~/battlecode26-data/games/engines").expanduser()
@@ -29,7 +32,8 @@ def run_play(specs, *args):
     spec_file.write_text("".join(json.dumps(s) + "\n" for s in specs))
     proc = subprocess.run([sys.executable, str(TOOLS / "play"), str(spec_file), str(out / "o"), *args],
                           capture_output=True, text=True, env=dict(os.environ))
-    results = [json.loads(l) for l in open(out / "o" / "results.jsonl")] if (out / "o" / "results.jsonl").exists() else []
+    path = out / "o" / "results.jsonl"
+    results = [json.loads(l) for l in path.read_text().splitlines()] if path.exists() else []
     return proc, {r["id"]: r for r in results}, out / "o"
 
 
@@ -65,6 +69,7 @@ class PlayTest(unittest.TestCase):
         self.assertEqual((c["A"]["crashed"], c["B"]["crashed"]), (1, 0))
         self.assertEqual(c["seed"], 36)  # tiny's embedded seed
         self.assertEqual((s["winner"], s["seed"], s["A"]["crashed"]), ("A", 5, 0))
+        self.assertEqual(c["series"]["A"][-1], [0, 0, 0, 0])  # at the end: no cheese, rats, kings or cat damage
         self.assertFalse(c["cached"])
         proc, res2, _ = run_play(specs)
         self.assertTrue(res2["c"]["cached"] and res2["s"]["cached"])

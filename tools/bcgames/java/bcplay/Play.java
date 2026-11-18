@@ -42,6 +42,7 @@ import java.util.Random;
  * stdout: one JSON object per game. Engine and robot console output goes to stderr.
  */
 public final class Play {
+    private static final int SERIES_EVERY = 100; // rounds between samples of the per-team series (and the end)
     private static final long CAT_RNG_SEED = 1092; // battlecode.world.InternalRobot: new Random(1092)
     // One game at a time per JVM, so the process's CPU time over a game is that game's (JIT and GC included).
     private static final com.sun.management.OperatingSystemMXBean OS =
@@ -91,6 +92,7 @@ public final class Play {
         gameMaker.makeGameHeader();
         CrossPlay crossPlay = new CrossPlay();
         GameWorld world;
+        StringBuilder[] series = {new StringBuilder(), new StringBuilder()};
         try {
             TeamControlProvider prov = new TeamControlProvider();
             OutputStream robotOut = gameMaker.getMatchMaker().getOut();
@@ -103,7 +105,9 @@ public final class Play {
             LiveMap map = GameMapIO.loadMap(mapName, new File(mapDir), false);
             world = new GameWorld(map, prov, gameMaker.getMatchMaker());
             if (validate) world.getGameMap().assertIsValid();
-            while (world.runRound() != GameState.DONE) { }
+            while (world.runRound() != GameState.DONE) {
+                if (world.getCurrentRound() % SERIES_EVERY == 0) sample(world, series);
+            }
         } finally {
             crossPlay.cleanup();
             System.out.flush();
@@ -117,18 +121,30 @@ public final class Play {
         long wallMs = (System.nanoTime() - start) / 1_000_000;
         double cpuS = (OS.getProcessCpuTime() - cpu0) / 1e9;
 
+        // The result is read before the points: setWinnerIfMorePoints (below) may overwrite the winner.
+        String winType = world.getGameStats().getDominationFactor().name();
+        int round = world.getCurrentRound();
+        boolean cooperation = world.isCooperation();
         TeamInfo ti = world.getTeamInfo();
+        // Each team's points as the engine computes them at round 2000 (GameWorld.setWinnerIfMorePoints adds them
+        // to TeamInfo; the delta is this evaluation). The world is discarded after this.
+        int[] points0 = {ti.getPoints(Team.A), ti.getPoints(Team.B)};
+        world.setWinnerIfMorePoints();
+        int[] points = {ti.getPoints(Team.A) - points0[0], ti.getPoints(Team.B) - points0[1]};
+
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"winner\":\"").append(winner.name()).append('"');
         sb.append(",\"winner_pkg\":").append(quote(winner == Team.A ? teamA : teamB));
-        sb.append(",\"win_type\":\"").append(world.getGameStats().getDominationFactor().name()).append('"');
-        sb.append(",\"round\":").append(world.getCurrentRound());
+        sb.append(",\"win_type\":\"").append(winType).append('"');
+        sb.append(",\"round\":").append(round);
+        sb.append(",\"cooperation\":").append(cooperation);
         sb.append(",\"wall_ms\":").append(wallMs);
-        sb.append(",\"cpu_s\":").append(String.format("%.2f", cpuS));
+        sb.append(",\"cpu_s\":").append(String.format(java.util.Locale.ROOT, "%.2f", cpuS));
         sb.append(",\"digest\":\"").append(sha256(replay).substring(0, 16)).append('"');
         for (Team t : new Team[]{Team.A, Team.B}) {
             sb.append(",\"").append(t.name()).append("\":{");
-            sb.append("\"cheese_transferred\":").append(ti.getCheeseTransferred(t));
+            sb.append("\"points\":").append(points[t.ordinal()]);
+            sb.append(",\"cheese_transferred\":").append(ti.getCheeseTransferred(t));
             sb.append(",\"cat_damage\":").append(ti.getDamageToCats(t));
             sb.append(",\"rats\":").append(ti.getNumBabyRats(t));
             sb.append(",\"kings\":").append(ti.getNumRatKings(t));
@@ -138,8 +154,23 @@ public final class Play {
         }
         sb.append(",\"engine_errors\":").append(scanner.crashed[2]);
         sb.append(",\"cat_rng_draws\":").append(catRng.draws);
+        sample(world, series);
+        sb.append(",\"series\":{\"every\":").append(SERIES_EVERY).append(",\"fields\":")
+                .append("[\"cheese_transferred\",\"rats\",\"kings\",\"cat_damage\"]")
+                .append(",\"A\":[").append(series[0]).append("],\"B\":[").append(series[1]).append("]}");
         sb.append('}');
         return sb.toString();
+    }
+
+    /** Appends each team's [cheese transferred, rats, kings, cat damage] now (read-only). */
+    static void sample(GameWorld world, StringBuilder[] series) {
+        TeamInfo ti = world.getTeamInfo();
+        for (Team t : new Team[]{Team.A, Team.B}) {
+            StringBuilder s = series[t.ordinal()];
+            s.append(s.length() > 0 ? "," : "").append('[').append(ti.getCheeseTransferred(t)).append(',')
+                    .append(ti.getNumBabyRats(t)).append(',').append(ti.getNumRatKings(t)).append(',')
+                    .append(ti.getDamageToCats(t)).append(']');
+        }
     }
 
     /** The cat RNG, counting draws: a game that never draws from it doesn't depend on its starting state. */

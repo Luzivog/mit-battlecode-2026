@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 /**
  * Prints one JSON line per map file: what the engine loads from it (GameMapIO.loadMap), as counts and as hashes of
- * each part, so two files can be compared by content rather than by bytes.
+ * each part, so two files can be compared by content rather than by bytes, and the map itself for mapclass.py:
+ * grid rows (y = 0 first; '#' wall, 'M' mine, 'd' dirt, 'c' cheese, '.'), bodies, cat waypoints.
  * Usage: java -cp ENGINE.jar:. bcplay.MapInfo FILE.map26...
  */
 public final class MapInfo {
@@ -53,8 +54,41 @@ public final class MapInfo {
                     + ",\"h_walls\":\"" + h(m.getWallArray()) + "\",\"h_dirt\":\"" + h(m.getDirtArray())
                     + "\",\"h_mines\":\"" + h(m.getCheeseMineArray()) + "\",\"h_cheese\":\"" + h(m.getCheeseArray())
                     + "\",\"h_cats\":\"" + h(cats.toString()) + "\",\"h_bodies\":\"" + h(bodies.toString())
-                    + "\",\"h_bodies_noteam\":\"" + h(bodiesNoTeam.toString()) + "\"}");
+                    + "\",\"h_bodies_noteam\":\"" + h(bodiesNoTeam.toString()) + "\"," + layout(m) + "}");
         }
+    }
+
+    static String layout(LiveMap m) {
+        int w = m.getWidth(), hgt = m.getHeight();
+        StringBuilder sb = new StringBuilder("\"grid\":[");
+        for (int y = 0; y < hgt; y++) {
+            sb.append(y > 0 ? ",\"" : "\"");
+            for (int x = 0; x < w; x++) {
+                int i = x + y * w;
+                sb.append(m.getWallArray()[i] ? '#' : m.getCheeseMineArray()[i] ? 'M' : m.getDirtArray()[i] ? 'd'
+                        : m.getCheeseArray()[i] > 0 ? 'c' : '.');
+            }
+            sb.append('"');
+        }
+        sb.append("],\"body_list\":[");
+        RobotInfo[] bs = m.getInitialBodies();
+        for (int k = 0; k < bs.length; k++) {
+            RobotInfo r = bs[k];
+            sb.append(k > 0 ? "," : "").append("{\"id\":").append(r.ID).append(",\"team\":\"").append(r.team)
+                    .append("\",\"type\":\"").append(r.type).append("\",\"x\":").append(r.location.x)
+                    .append(",\"y\":").append(r.location.y).append('}');
+        }
+        sb.append("],\"cat_waypoints\":[");
+        ArrayList<Integer> ids = m.getCatWaypointIDs();
+        for (int k = 0; k < ids.size(); k++) {
+            sb.append(k > 0 ? "," : "").append("{\"id\":").append(ids.get(k)).append(",\"wp\":[");
+            int[] wp = m.getCatWaypoints().get(k);
+            for (int j = 0; j < wp.length; j++) {
+                sb.append(j > 0 ? "," : "").append('[').append(wp[j] % w).append(',').append(wp[j] / w).append(']');
+            }
+            sb.append("]}");
+        }
+        return sb.append(']').toString();
     }
 
     static String h(boolean[] a) throws Exception {

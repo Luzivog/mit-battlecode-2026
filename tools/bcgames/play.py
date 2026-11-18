@@ -11,7 +11,8 @@ Spec (one JSON object per line; the fields of engine/AGENTS.md):
   other fields are copied to the result
 Result (one JSON object per line, in completion order): the spec's fields plus winner ("A"/"B"), winner_pkg,
 win_type, round, wall_ms, cpu_s, digest (sha256 of the replay bytes), per team A/B {cheese_transferred, cat_damage,
-rats, kings, cheese, crashed}, engine_errors, cat_rng_draws, backend, key, runner, cached, error, replay.
+rats, kings, cheese, crashed}, engine_errors, cat_rng_draws, series (each team's [cheese_transferred, rats, kings, cat_damage] every 100 rounds
+and at the end), backend, key, runner, cached, error, replay.
 "crashed": robots the engine destroyed because their code threw (an uncaught Error) or returned from run().
 """
 from __future__ import annotations

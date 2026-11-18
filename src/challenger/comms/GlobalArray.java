@@ -105,7 +105,7 @@ public class GlobalArray {
         writeSharedArray(RAT_SPAWN_INFO + kingId * 2, (hi << 7) | marker);
         writeSharedArray(RAT_SPAWN_INFO + kingId * 2 + 1, lo);
         // println("registered spawned rat at " + loc + " with payload " + payload + " into slots " + (RAT_SPAWN_INFO + kingId * 2) + " and " + (RAT_SPAWN_INFO + kingId * 2 + 1));
-        ratCounter++;
+        ratCounter = (ratCounter + 1) & 1023;
     }
 
     public static void expandKing() throws GameActionException {

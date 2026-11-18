@@ -147,7 +147,7 @@ def build(version: str, bots, jobs: int, opt: str):
     vc = gen / "version.cpp"
     text = f'extern "C" const char bcx_engine_version[] = "{version}";\n'
     text += 'extern "C" const char* const bcx_bot_hashes[] = {' + ", ".join(
-        f'"{b}", "{classes_hash(classes, b)}"' for b in bots) + ", nullptr};\n'
+        f'"{b}", "{classes_hash(classes, b)}"' for b in bots) + ', nullptr};\n'
     if not vc.exists() or vc.read_text() != text:
         vc.write_text(text)
     rt = ENGINE / "runtime"
@@ -159,7 +159,7 @@ def build(version: str, bots, jobs: int, opt: str):
     lines = [f"cxxflags = {' '.join(CXXFLAGS)} {opt} {inc}",
              "rule cxx\n  command = clang++ $cxxflags -MMD -MF $out.d -c $in -o $out\n  depfile = $out.d\n  deps = gcc",
              "rule cc\n  command = clang -O2 -ffp-contract=off -fno-fast-math -msse4.1 -c $in -o $out",
-             f"rule link\n  command = clang++ -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
+             f"rule link\n  command = clang++ -static -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
     objs = []
     for s in srcs:
         o = gen / "obj" / (s.stem + ("_rt" if s.parent == rt else "") + ".o")

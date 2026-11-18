@@ -49,8 +49,22 @@ final class Linkage implements Opcodes {
         Cls c;
         try {
             c = pool.ref(mod, name);
+            loadSupers(c, new HashSet<>());
         } catch (TranslateException e) {
+            // the official instrumenter refusing a class: its InstrumentationException reaches the bot
+            for (Throwable t = e; t != null; t = t.getCause()) {
+                if (t instanceof battlecode.instrumenter.InstrumentationException ie) {
+                    errors.put(in, new String[]{"battlecode/instrumenter/InstrumentationException", ie.type.name() + ":" + t.getMessage().substring(ie.type.name().length() + 1)});
+                    return null;
+                }
+            }
             errors.put(in, new String[]{"java/lang/NoClassDefFoundError", name});
+            return null;
+        }
+        String sealed = sealedViolation(c);
+        if (sealed != null) {
+            errors.put(in, new String[]{"java/lang/IncompatibleClassChangeError", "class " + c.name.replace('/', '.')
+                    + " cannot inherit from sealed class " + sealed.replace('/', '.')});
             return null;
         }
         if (!classAccessible(from, c)) {
@@ -59,6 +73,25 @@ final class Linkage implements Opcodes {
             return null;
         }
         return c;
+    }
+
+    /** Loading a class loads its superclass and superinterfaces: a failure there is the reference's failure. */
+    private static void loadSupers(Cls c, Set<Cls> seen) {
+        if (!seen.add(c)) return;
+        if (c.superCls() != null) loadSupers(c.superCls(), seen);
+        for (Cls i : c.interfaces()) loadSupers(i, seen);
+    }
+
+    /** A class whose superclass or superinterface is sealed without listing it fails to load (JVMS 5.3.5). */
+    static String sealedViolation(Cls c) {
+        List<Cls> sups = new ArrayList<>();
+        if (c.superCls() != null) sups.add(c.superCls());
+        sups.addAll(c.interfaces());
+        for (Cls s : sups) {
+            List<String> p = s.node.permittedSubclasses;
+            if (p != null && !p.contains(c.name)) return s.name;
+        }
+        return null;
     }
 
     boolean classAccessible(Cls from, Cls c) {

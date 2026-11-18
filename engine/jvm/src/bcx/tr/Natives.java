@@ -75,7 +75,13 @@ final class Natives {
 
     Impl lookup(Mth m) {
         String key = m.owner.name + "." + m.name + m.desc;
-        return (m.owner.mod.perRobot ? bot : sys).get(key);
+        if (!m.owner.mod.perRobot) return sys.get(key);
+        Impl i = bot.get(key);
+        if (i == null && m.owner.name.startsWith("instrumented/")) {
+            Impl c = sys.get(key);
+            if (c != null && c.cut != null) i = c;   // a cut of an instrumented JDK path applies in every team
+        }
+        return i;
     }
 
     boolean isIntrinsicCall(Pool.Module mod, MethodInsnNode mi) { return false; }

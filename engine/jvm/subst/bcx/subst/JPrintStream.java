@@ -9,7 +9,7 @@ import java.io.OutputStream;
 public class JPrintStream extends java.io.FilterOutputStream implements Appendable, java.io.Closeable {
     private final int fd;
 
-    static JPrintStream make(int fd) { return new JPrintStream(fd); }
+    public static JPrintStream make(int fd) { return new JPrintStream(fd); }
 
     private JPrintStream(int fd) { super(null); this.fd = fd; }
     public JPrintStream(OutputStream out) { super(out); this.fd = -1; }

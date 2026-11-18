@@ -391,3 +391,14 @@ void rt_Unsafe_copySwapMemory0(Obj*, Obj* src, jlong so, Obj* dst, jlong d, jlon
     for (jlong i = 0; i < n; i += es)
         for (jlong k = 0; k < es; k++) t[i + k] = tmp[i + es - 1 - k];
 }
+// Math.fma: exactly rounded, as the spec, HotSpot's intrinsic and the BigDecimal fallback all are
+jdouble rt_fma(jdouble a, jdouble b, jdouble c) { return __builtin_fma(a, b, c); }
+jfloat rt_fmaf(jfloat a, jfloat b, jfloat c) { return __builtin_fmaf(a, b, c); }
+
+// "Class: message" of a throwable, for diagnostics (BCX_ROBOT_ERRORS)
+void rt_describe_exception(Obj* e, char* buf, size_t cap) {
+    c0_java_lang_Throwable* t = (c0_java_lang_Throwable*)e;
+    std::string m = java_name(e->klass);
+    if (t->f_detailMessage) m += ": " + utf8(t->f_detailMessage);
+    snprintf(buf, cap, "%s", m.c_str());
+}

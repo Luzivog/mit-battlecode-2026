@@ -59,10 +59,12 @@ public final class Cls {
 
     private void link() {
         if (linked) return;
+        Cls s = node.superName == null ? null : pool.ref(mod, node.superName);
+        List<Cls> is = new ArrayList<>();
+        for (String i : node.interfaces) is.add(pool.ref(mod, i));
+        superCls = s;
+        ifaces = is;
         linked = true;
-        superCls = node.superName == null ? null : pool.ref(mod, node.superName);
-        ifaces = new ArrayList<>();
-        for (String i : node.interfaces) ifaces.add(pool.ref(mod, i));
     }
 
     public boolean isSubclassOf(Cls t) {

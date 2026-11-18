@@ -80,7 +80,37 @@ A result is one JSON object a line, in spec order:
 
 ## Build, play, test
 
-Filled in as they land.
+```sh
+./gradlew classes                                  # the bots' class files (build/classes)
+.venv/bin/python engine/build.py                   # engine/build/bcx: engine 1.2.6 and every bot package
+.venv/bin/python engine/build.py --engine 1.2.5    # engine/build/bcx-1.2.5
+.venv/bin/python engine/build.py --bots awubot,opp_obg   # only these bots (faster)
+engine/build/bcx play SPECS.jsonl OUTDIR [-j N] [--no-replay] [--dump]   # native games
+.venv/bin/python engine/play_java.py SPECS.jsonl OUTDIR [-j N] [--dump]  # the same games on the official jar
+.venv/bin/python engine/test/agreement.py --quick  # both engines, compared (--full: the whole corpus)
+```
+
+- `bcx play` writes `OUTDIR/<id or index>/result.json`, `hashes.txt`, `replay.bc26` (`--dump`: `dump.txt`) and prints
+  the result lines in spec order. Each game runs in a forked process, so every static starts fresh. It refuses a
+  spec whose bot class files differ from the ones compiled in (rebuild).
+- `build.py` fetches the jars and bdwgc once into `~/battlecode26-data/engine/`, compiles `engine/jvm`, translates
+  into `~/battlecode26-data/engine/build/gen-VERSION/` and compiles with ninja (`-j`, default 8). Generated files
+  are rewritten only when they change, so a rebuild recompiles only what moved. Needs clang, ninja, cmake, a JDK 21,
+  zlib. Every bot of the corpus compiled is a few minutes of 8 cores; one bot changed, about a minute.
+
+### How the translation works (what to read before changing it)
+
+- `jvm/src/bcx/tr/`: `Pool` (where classes come from: a team's classes through the official instrumenter, the
+  JDK, the jar, substitutes), `Rta` (reachability), `Linkage` (the JVM's linkage errors a robot can hit), `Layout`
+  (vtables, itables, devirtualization), `Indy` (invokedynamic lowered to plain bytecode), `Gen` (one method to C++),
+  `Emit` and `Glue` (the program). `natives.txt` lists everything not translated: C++ natives
+  (`runtime/natives.cpp`), whole-class substitutes and method patches (`jvm/subst/`), cut paths (reaching one is
+  fatal at run time, never silent).
+- `runtime/`: `rt.h`/`rt.cpp` (objects, type checks, Java arithmetic, the bytecode monitor: RobotMonitor line for
+  line), `sched.cpp` (robots as coroutines: SandboxedRobotPlayer and PlayerControlProvider), `natives.cpp`,
+  `hsmath.c` (HotSpot's Math stubs), `main.cpp` (the CLI).
+- The robot's bytecode counting, preemption points and per-robot statics come from the official instrumenter's own
+  output; nothing about counting is re-implemented except RobotMonitor itself.
 
 ## Speed
 

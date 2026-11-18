@@ -152,10 +152,24 @@ bool rt_store_ok(Obj* arr, Obj* v) {
     return rt_instanceof(v, c);
 }
 
+// a receiver that does not implement the interface: every entry throws IncompatibleClassChangeError (the call's
+// arguments are ignored and its result is never read, since an exception is pending)
+static Klass* g_icce_k;
+static Klass* g_icce_i;
+static void icce_stub() {
+    std::string m = "Class " + std::string(g_icce_k->name) + " does not implement the requested interface " + g_icce_i->name;
+    for (char& c : m) if (c == '/') c = '.';
+    rt_throw_new_icce(rt_cstring(m.c_str()));
+}
+static void* g_icce_table[1024];
+
 void** rt_itable(Klass* k, Klass* iface) {
     for (int i = 0; i < k->n_ifaces; i++)
         if (k->ifaces[i] == iface) return k->itables[i];
-    rt_fatal("%s does not implement %s", k->name, iface->name);
+    g_icce_k = k;
+    g_icce_i = iface;
+    if (!g_icce_table[0]) for (auto& e : g_icce_table) e = (void*)&icce_stub;
+    return g_icce_table;
 }
 
 // ---- exceptions with messages built here

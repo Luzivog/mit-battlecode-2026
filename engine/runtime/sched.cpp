@@ -114,6 +114,12 @@ static void robot_main() {
     else g_mon.left = g_mon.limit;
     if (r->mod->init_robot_player) r->mod->init_robot_player();
     if (!g_exc) r->mod->run(r->rc);
+    if (g_exc && getenv("BCX_ROBOT_ERRORS")) {
+        extern void rt_describe_exception(Obj* e, char* buf, size_t cap);
+        char b[1024];
+        rt_describe_exception(g_exc, b, sizeof b);
+        fprintf(stderr, "[robot %d] run() ended by %s\n", r->id, b);
+    }
     g_exc = nullptr;
     r->terminated = true;
     leave();

@@ -27,6 +27,55 @@ extern std::string g_bundled_maps;
 extern bool g_print_stdout;
 void rt_io_set_outputs(FILE* hashes, FILE* dump);
 extern "C" const char bcx_engine_version[];
+extern "C" const char* const bcx_bot_hashes[];
+
+// FNV-1a 64 over a package's class files (relative path, NUL, bytes, NUL), sorted by path: build.py's classes_hash
+#include <dirent.h>
+#include <algorithm>
+static void list_classes(const std::string& root, const std::string& rel, std::vector<std::string>& out) {
+    DIR* d = opendir((root + "/" + rel).c_str());
+    if (!d) return;
+    while (dirent* e = readdir(d)) {
+        std::string n = e->d_name;
+        if (n == "." || n == "..") continue;
+        std::string r = rel.empty() ? n : rel + "/" + n;
+        struct stat st;
+        if (stat((root + "/" + r).c_str(), &st) != 0) continue;
+        if (S_ISDIR(st.st_mode)) list_classes(root, r, out);
+        else if (n.size() > 6 && n.compare(n.size() - 6, 6, ".class") == 0) out.push_back(r);
+    }
+    closedir(d);
+}
+static std::string classes_hash(const std::string& classes, const std::string& pkg) {
+    std::string root = classes + "/" + pkg;
+    std::vector<std::string> files;
+    list_classes(root, "", files);
+    std::sort(files.begin(), files.end());
+    uint64_t h = 0xcbf29ce484222325ull;
+    auto mix = [&](const char* p, size_t n) { for (size_t i = 0; i < n; i++) { h ^= (unsigned char)p[i]; h *= 0x100000001b3ull; } };
+    for (auto& f : files) {
+        mix(f.data(), f.size());
+        mix("", 1);
+        FILE* fp = fopen((root + "/" + f).c_str(), "rb");
+        char buf[1 << 16];
+        size_t k;
+        while (fp && (k = fread(buf, 1, sizeof buf, fp)) > 0) mix(buf, k);
+        if (fp) fclose(fp);
+        mix("", 1);
+    }
+    char out[17];
+    snprintf(out, sizeof out, "%016llx", (unsigned long long)h);
+    return out;
+}
+static std::string check_bot(const std::string& pkg, const std::string& classes) {
+    for (const char* const* b = bcx_bot_hashes; *b; b += 2) {
+        if (pkg != b[0]) continue;
+        std::string h = classes_hash(classes, pkg);
+        if (h != b[1]) return "the build's " + pkg + " differs from " + classes + "/" + pkg + " (rebuild: engine/build.py)";
+        return "";
+    }
+    return "this build has no bot " + pkg + " (rebuild: engine/build.py)";
+}
 
 // ---- a flat JSON object parser (strings, integers, null, booleans): enough for specs
 struct Val {
@@ -161,6 +210,15 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     std::string ca = res(field("classes_a") ? field("classes_a")->s : classes);
     std::string cb = res(field("classes_b") ? field("classes_b")->s : classes);
     std::string replay = o.replay ? gdir + "/replay.bc26" : "";
+    for (auto [pkg, cl] : {std::pair(field("a")->s, ca), std::pair(field("b")->s, cb)}) {
+        std::string e = check_bot(pkg, cl);
+        if (!e.empty()) {
+            if (has_seed) add("seed", std::to_string(seed));
+            add("error", json_str(e));
+            add("backend", "\"native\"");
+            return out;
+        }
+    }
 
     FILE* hashes = fopen((gdir + "/hashes.txt").c_str(), "w");
     FILE* dump = o.dump ? fopen((gdir + "/dump.txt").c_str(), "w") : nullptr;
@@ -208,7 +266,13 @@ int main(int argc, char** argv) {
     Opts o;
     const char* specs_path = argv[2];
     o.outdir = argv[3];
-    o.root = getenv("BCX_ROOT") ? getenv("BCX_ROOT") : ".";
+    {   // the repo root: BCX_ROOT, else the checkout this binary was built in (engine/build/bcx)
+        std::string exe(argv[0]);
+        char rp0[4096];
+        if (realpath(exe.c_str(), rp0)) exe = rp0;
+        size_t sl = exe.rfind('/');
+        o.root = getenv("BCX_ROOT") ? getenv("BCX_ROOT") : (sl == std::string::npos ? std::string(".") : exe.substr(0, sl) + "/../..");
+    }
     for (int i = 4; i < argc; i++) {
         if (!strcmp(argv[i], "-j") && i + 1 < argc) o.jobs = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--dump")) o.dump = true;
@@ -258,6 +322,9 @@ int main(int argc, char** argv) {
             else {
                 GC_set_all_interior_pointers(1);
                 GC_INIT();
+                // a game's live data is small next to what it allocates: collect rarely
+                GC_set_free_space_divisor(1);
+                GC_expand_hp((size_t)256 << 20);
                 sched_init();
                 rt_link_arrays();
                 rt_init_strings();

@@ -45,6 +45,13 @@ final class Glue {
         rta.init(eiie);
         rta.reach(eiie.own("<init>", "(Ljava/lang/Throwable;)V"));
         rta.use(pool.get(pool.sys, "java/lang/Error"));
+        if (!pool.teams.isEmpty()) {
+            Cls ie = pool.get(pool.sys, "battlecode/instrumenter/InstrumentationException");
+            rta.instantiate(ie);
+            rta.init(ie);
+            rta.reach(ie.own("<init>", "(Lbattlecode/instrumenter/InstrumentationException$Type;Ljava/lang/String;)V"));
+            rta.init(pool.get(pool.sys, "battlecode/instrumenter/InstrumentationException$Type"));
+        }
         rta.arrayTypes.add("[B");
     }
 
@@ -82,6 +89,19 @@ final class Glue {
         if (eiie.initIndex >= 0) b.append("  if (g_init0[").append(eiie.initIndex).append("] != 2) { ").append(e.initFn(eiie)).append("(); if (g_exc) return; }\n");
         b.append("  Obj* w = rt_new(&").append(e.klass(eiie)).append(");\n  ").append(Emit.fn(eiie.own("<init>", "(Ljava/lang/Throwable;)V")))
                 .append("(w, ex);\n  if (!g_exc) g_exc = w;\n}\n");
+        // a class the official instrumenter refuses: InstrumentationException(type, message) at the reference
+        b.append("void rt_throw_instr(int type, Obj* msg) {\n");
+        Cls ie = pool.find(pool.sys, "battlecode/instrumenter/InstrumentationException");
+        if (ie != null && ie.id >= 0) {
+            Cls ty = pool.find(pool.sys, "battlecode/instrumenter/InstrumentationException$Type");
+            b.append("  ").append(e.initFn(ty)).append("(); if (g_exc) return;\n");
+            if (ie.initIndex >= 0) b.append("  ").append(e.initFn(ie)).append("(); if (g_exc) return;\n");
+            b.append("  Obj* t = type == 0 ? s_").append(ty.cname).append(".f_ILLEGAL : s_").append(ty.cname).append(".f_MISSING;\n");
+            b.append("  Obj* x = rt_new(&").append(e.klass(ie)).append(");\n  ")
+                    .append(Emit.fn(ie.own("<init>", "(Lbattlecode/instrumenter/InstrumentationException$Type;Ljava/lang/String;)V")))
+                    .append("(x, t, msg);\n  if (!g_exc) g_exc = x;\n");
+        } else b.append("  rt_fatal(\"InstrumentationException without a team\");\n");
+        b.append("}\n");
         // the classes the VM initializes before any code runs (instances made natively, no `new`)
         b.append("void rt_init_core() {\n");
         for (String cn : new String[]{"java/lang/Object", "java/lang/String", "java/lang/Class"}) {

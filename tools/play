@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""Play Battlecode games from a JSONL spec file. See tools/play --help and docs/evaluation.md."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bcgames.play import main  # noqa: E402
+
+sys.exit(main())

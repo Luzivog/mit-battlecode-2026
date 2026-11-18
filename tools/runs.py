@@ -141,7 +141,7 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
                 out += f.result()
             except Refused as e:
                 notes.append(f"{w}: unreadable: {e}")
-    return sorted([o for o in out if o.slots >= 1], key=lambda o: (-o.slots, ORDER.index(o.where)))
+    return sorted([o for o in out if o.slots >= 1], key=lambda o: (-o.slots, -o.cpus, ORDER.index(o.where)))
 
 
 def choose(found: list[Offer], need: int, max_cpus: int | None) -> list[Offer]:
@@ -438,7 +438,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             left = s.tasks - len(have)
             unclaimed = s.tasks - len(pr.done | pr.claimed)
             from tools.piece import STALE_S
-            if unclaimed > 0 or now - dead_since > STALE_S + 60:
+            if unclaimed > 0 or now - dead_since > (0 if LOCAL else STALE_S + 60):
                 if pr.rounds >= MAX_ROUNDS:
                     J.say(f"run {rid}: every piece ended with {left} tasks left, after {pr.rounds} rounds of "
                           "replacements: closing it")

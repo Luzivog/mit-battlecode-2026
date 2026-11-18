@@ -95,7 +95,7 @@ mkfifo "$scratch/fifo" || setup_ "mkfifo"
 {
 	head -c "$LOG_CAP"
 	n=$(wc -c)
-	[ "$n" = 0 ] || echo "== log cut at $LOG_CAP bytes: $n more dropped"
+	[ "$n" = 0 ] || printf '\n== log cut at %s bytes: %s more dropped\n' "$LOG_CAP" "$n"
 } <"$scratch/fifo" & cap=$!
 sig= pid=
 trap 'sig=USR1; kill -USR1 $pid 2>/dev/null' USR1

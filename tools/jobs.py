@@ -36,8 +36,10 @@ WHERES = (*B.WHERES, *(("local",) if LOCAL else ()))  # local: tests only, a job
 ID_TAIL = r"-\d{4}-\d{6}-[0-9a-f]{4}"
 JOB_ID = rf"({'|'.join(WHERES)}){ID_TAIL}"
 HELD, ENDED_UNRECORDED = 3, 4  # wait's and logs -f's codes for a held job and one that ended with no exit file
-POLL_S = 30  # between two reads of a job being waited for: light on the login nodes
-GONE_GRACE_S = 120  # a job its backend no longer lists, whose exit file a login node may not see yet (NFS caching)
+# between two reads of a job being waited for: light on the login nodes (BC26_POLL_S: tests' stand-in remote only)
+POLL_S = float(os.environ.get("BC26_POLL_S", "30")) if LOCAL else 30.0
+# a job its backend no longer lists, whose exit file a login node may not see yet (NFS caching); none here in tests
+GONE_GRACE_S = 0 if LOCAL else 120
 INPUTS = ("code.bundle", "with.tgz")
 LOG_CAP = 64 << 20  # bytes of a job's output kept in its log: a job's writes on the volume are bounded
 START_LINE = re.compile(r"^== .* start on ", re.M)

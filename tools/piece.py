@@ -63,7 +63,7 @@ class Piece:
         else:
             self.task_cpus, self.task_mem = self.meta["task_cpus"], self.meta["task_mem_mb"]
             self.slots = max(1, min(cpus // self.task_cpus, mem // self.task_mem))
-        self.running: dict[int, tuple[subprocess.Popen[bytes], float, Path]] = {}
+        self.running: dict[int, tuple[subprocess.Popen[bytes], float, Path, float]] = {}
         self.stopping = ""
         for d in ("claims", "done", "lost"):
             (run / d).mkdir(exist_ok=True)
@@ -149,13 +149,13 @@ class Piece:
         except OSError as e:
             log.write(f"piece: {e}\n".encode())
             log.close()
-            self.finish(n, 127, 0, 0.0, here)
+            self.finish(n, 127, 0, 0.0, here, time.time())
             return
         log.close()
-        self.running[n] = (p, time.monotonic(), here)
+        self.running[n] = (p, time.monotonic(), here, time.time())
         self.say(f"task {n}: started (start {self.starts(n) + 1})")
 
-    def finish(self, n: int, code: int, peak: int, secs: float, here: Path) -> None:
+    def finish(self, n: int, code: int, peak: int, secs: float, here: Path, began: float) -> None:
         log = here / "log"
         data = log.read_bytes() if log.exists() else b""
         if len(data) > LOG_BYTES:
@@ -168,7 +168,8 @@ class Piece:
                 f.write(b"\npiece: its OUT held %d bytes, over the %d a task may send back: dropped\n" % (size, OUT_CAP))
             code = code or 254
         result = {"task": n, "code": code, "peak": peak, "host": self.host, "s": round(secs, 3), "piece": self.me,
-                  "start": self.starts(n) + 1}
+                  "start": self.starts(n) + 1, "began": round(began, 3), "ended": round(time.time(), 3),
+                  "slots": self.slots}
         (here / "result.json").write_text(json.dumps(result) + "\n")
         tmp = self.scratch / f"{n}.tar"
         with tarfile.open(tmp, "w") as tar:
@@ -186,16 +187,16 @@ class Piece:
         here = self.scratch / str(n)
         (here / "out").mkdir(parents=True, exist_ok=True)
         (here / "log").write_text(f"piece: task {n} lost its machine at each of its {MAX_STARTS} starts\n")
-        self.finish(n, LOST, 0, 0.0, here)
+        self.finish(n, LOST, 0, 0.0, here, time.time())
 
     def reap(self) -> None:
-        for n, (p, began, here) in list(self.running.items()):
+        for n, (p, began, here, wall) in list(self.running.items()):
             got = os.wait4(p.pid, os.WNOHANG)
             if got[0] == 0:
                 continue
             del self.running[n]
             p.returncode = os.waitstatus_to_exitcode(got[1])
-            self.finish(n, p.returncode, got[2].ru_maxrss * 1024, time.monotonic() - began, here)
+            self.finish(n, p.returncode, got[2].ru_maxrss * 1024, time.monotonic() - began, here, wall)
 
     def beat(self) -> None:
         for n in self.running:
@@ -229,15 +230,15 @@ class Piece:
                 last_beat = time.monotonic()
         if self.running:
             self.say(f"stopping ({self.stopping or 'the run is closed'}): {len(self.running)} tasks stopped")
-            for p, _, _ in self.running.values():
+            for p, _, _, _ in self.running.values():
                 try:
                     os.killpg(p.pid, signal.SIGTERM)
                 except ProcessLookupError:
                     pass
             end = time.monotonic() + 10
-            while any(p.poll() is None for p, _, _ in self.running.values()) and time.monotonic() < end:
+            while any(p.poll() is None for p, _, _, _ in self.running.values()) and time.monotonic() < end:
                 time.sleep(0.2)
-            for n, (p, _, _) in self.running.items():
+            for n, (p, _, _, _) in self.running.items():
                 try:
                     os.killpg(p.pid, signal.SIGKILL)
                 except ProcessLookupError:

@@ -213,7 +213,7 @@ def submit_slurm(j: Job, files: dict[str, bytes], slot: B.CpuSlot, time_s: int) 
 
 
 def submit_cpucluster(j: Job, files: dict[str, bytes], part: str, cpus: int, mb_per_cpu: int, time_s: int) -> str:
-    args = ["-p", part, f"--cpus-per-task={cpus}", f"--mem-per-cpu={mb_per_cpu}M",
+    args = ["-p", part, "--ntasks=1", f"--cpus-per-task={cpus}", f"--mem-per-cpu={mb_per_cpu}M",
             *B.checkpointed(checked_time(time_s, "cpucluster1"))]
     sid = sbatch(j, files, args, (CPU_HOST,))
     say(f"compute: {j.id}: cpucluster1 job {sid} on {part}: {cpus} CPUs, {mb_per_cpu} MB a CPU")

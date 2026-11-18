@@ -235,21 +235,14 @@ def piece_files(s: Settings, has_with: bool) -> tuple[dict[str, bytes], dict[str
     return files, {"code.bundle": f"{d}/code.bundle", **({"with.tgz": f"{d}/with.tgz"} if has_with else {})}
 
 
-def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> list[str]:
-    """A piece for each offer TOOK (and QUEUED_CONDOR Condor pieces to wait for machines); their job ids, each
-    appended to the run's `pieces` before its submit, so a follower always knows it."""
+def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> list[tuple[str, int]]:
+    """A piece for each offer of TOOK (QUEUED_CONDOR more Condor pieces to wait for machines); (job id, its tasks at
+    once) of each one submitted, appended to the run's `pieces` once its backend took it. One whose submit failed is
+    named, and left out."""
     d = run_dir(s.id)
     has_with = login(f"test -e {d}/with.tgz && echo yes; true").strip() == "yes"
     files, shared = piece_files(s, has_with)
-    ids: list[str] = []
-
-    def links(j: J.Job) -> str:
-        return "".join(f" && ln {src} {j.dir}/{name}" for name, src in shared.items())
-
-    def note(js: list[J.Job]) -> None:
-        login(f"printf '%s\\n' {' '.join(j.id for j in js)} >> {d}/pieces")
-        ids.extend(j.id for j in js)
-
+    got: list[tuple[str, int]] = []
     condor = [o for o in took if o.where == "condor"]
     n_condor = len(condor) + queued_condor
     if n_condor:
@@ -259,57 +252,73 @@ def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> lis
             j = J.job(J.new_id("condor"))
             if j.id not in {x.id for x in js}:
                 js.append(j)
-        note(js)
         subs = [(j, files, B.condor_sub(j.dir, j.id, max(s.task_cpus, 1), min(mem, s.task_mem_mb),
                                         s.task_mem_mb if s.task_cpus else None, s.condor_time_s)) for j in js]
-        J.submit_condor(subs, shared)
+        clusters = J.submit_condor(subs, shared)
+        slots = [o.slots for o in condor] + [1] * queued_condor
+        got += [(j.id, n) for j, c, n in zip(js, clusters, slots, strict=True) if c is not None]
+        J.say(f"run {s.id}: {sum(c is not None for c in clusters)} Condor piece(s), a lab machine each"
+              + (f" ({queued_condor} to wait for a machine)" if queued_condor else ""))
     for o in took:
         if o.where == "condor":
             continue
         j = J.job(J.new_id(o.where))
-        note([j])
+        pre = "".join(f" && ln {src} {j.dir}/{name}" for name, src in shared.items())
         try:
             if o.where == "slurm":
                 assert o.slot is not None
-                J.sbatch(j, files, B.cpu_slot_args(o.slot, s.time_s), SLURM_HOSTS, pre=links(j))
+                J.sbatch(j, files, B.cpu_slot_args(o.slot, s.time_s), SLURM_HOSTS, pre=pre)
             elif o.where == "cpucluster1":
-                J.sbatch(j, files, ["-p", o.partition, f"--cpus-per-task={o.cpus}",
+                # --ntasks=1: cpucluster1's job_submit.lua refuses a job that leaves its task count unset
+                J.sbatch(j, files, ["-p", o.partition, "--ntasks=1", f"--cpus-per-task={o.cpus}",
                                     f"--mem-per-cpu={o.mem_mb // o.cpus}M", *B.checkpointed(s.time_s)],
-                         (CPU_HOST,), pre=links(j))
+                         (CPU_HOST,), pre=pre)
             else:
                 J.submit_local(j, files, shared)
-            J.say(f"run {s.id}: piece {j.id}: {o.cpus} CPUs, {o.mem_mb} MB, {o.slots} tasks at once"
-                  + (f" ({o.slot.node}, {o.slot.partition})" if o.slot else f" ({o.partition})" if o.partition else ""))
         except Refused as e:
             J.say(f"run {s.id}: piece {j.id} not submitted: {e}")
-    if n_condor:
-        J.say(f"run {s.id}: {n_condor} Condor piece{'s' * (n_condor != 1)}, a lab machine each"
-              + (f" ({queued_condor} to wait for a machine)" if queued_condor else ""))
-    return ids
+            continue
+        got.append((j.id, o.slots))
+        J.say(f"run {s.id}: piece {j.id}: {o.cpus} CPUs, {o.mem_mb} MB, {o.slots} tasks at once"
+              + (f" ({o.slot.node}, {o.slot.partition})" if o.slot else f" ({o.partition})" if o.partition else ""))
+    if got:
+        login(f"printf '%s\\n' {' '.join(i for i, _ in got)} >> {d}/pieces")
+    return got
 
 
 def place_pieces(s: Settings, need: int) -> list[str]:
-    """Pieces for NEED tasks at once on what the backends offer now; when none offers anything, QUEUED_PIECES Condor
-    pieces wait for machines (or one, for one task)."""
+    """Pieces for NEED tasks at once on what the backends offer now, best first. The GPU cluster's slots go one at a
+    time, each from a read made after the last one's submit (each changes what our caps leave). When nothing is free,
+    QUEUED_PIECES Condor pieces wait for machines. Refused when no piece could be submitted."""
     notes: list[str] = []
     found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need)
     took = choose(found, need, s.max_cpus)
-    # the GPU cluster: one slot a read (each pick changes what our caps leave), so more from fresh reads
-    while "slurm" in s.wheres and sum(o.slots for o in took) < need and any(o.where == "slurm" for o in took):
-        more = offers(("slurm",), s.task_cpus, s.task_mem_mb, s.time_s, notes, need - sum(o.slots for o in took))
-        more = [o for o in more if o.slot and o.slot.node not in {x.slot.node for x in took if x.slot}]
-        if not more or (s.max_cpus is not None and sum(o.cpus for o in took) + more[0].cpus > s.max_cpus):
-            break
-        took.append(more[0])
     for n in notes:
         J.say(f"run {s.id}: {n}")
-    queued = 0
-    if not took:
+    got = submit_pieces(s, [o for o in took if o.where != "slurm"]) if any(o.where != "slurm" for o in took) else []
+    left, cpus = need - sum(n for _, n in got), sum(o.cpus for o in took if o.where != "slurm")
+    slurm = [o for o in took if o.where == "slurm"]
+    for _ in range(8 if slurm else 0):  # at most 8 GPU-cluster pieces (multigpu allows 8 jobs)
+        if left <= 0 or not slurm:
+            break
+        o = slurm.pop()
+        if s.max_cpus is not None and cpus + o.cpus > s.max_cpus:
+            break
+        one = submit_pieces(s, [o])
+        got += one
+        left -= sum(n for _, n in one)
+        cpus += o.cpus
+        if one and left > 0:
+            slurm = offers(("slurm",), s.task_cpus, s.task_mem_mb, s.time_s, [], left)[:1]
+    if not got:
         if "condor" not in s.wheres:
-            raise Refused(f"no backend of {', '.join(s.wheres)} can start a piece now (`tools/compute status`)")
+            raise Refused(f"no piece could start on {', '.join(s.wheres)} now (`tools/compute status`)")
         queued = min(QUEUED_PIECES, need)
-        J.say(f"run {s.id}: no backend has a free machine now: {queued} Condor piece(s) wait in its queue")
-    return submit_pieces(s, took, queued)
+        J.say(f"run {s.id}: no backend took a piece now: {queued} Condor piece(s) wait in its queue")
+        got = submit_pieces(s, [], queued)
+        if not got:
+            raise Refused("no piece could be submitted (the reasons are above)")
+    return [i for i, _ in got]
 
 
 # ---- following a run ----
@@ -414,6 +423,14 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                 close(rid, [p for p in pr.pieces if p not in finals])
             return summarize(s, out, finals)
         alive = [p for p in pr.pieces if p not in finals]
+        broken = [p for p, f in finals.items() if f.exit not in (None, 0, 75)]
+        if broken and not alive:  # a piece that failed (not one lost) would fail again: the run stops, its log shown
+            p = broken[0]
+            tail = J.read_log(J.job(p), 0).decode(errors="replace").splitlines()[-15:]
+            J.say(f"run {rid}: piece {J.describe(p, finals[p])}, so no piece is started again; its log ends:\n  "
+                  + "\n  ".join(tail))
+            close(rid, [])
+            return summarize(s, out, finals)
         if alive:
             dead_since = None
         else:

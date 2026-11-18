@@ -142,6 +142,8 @@ def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
     for rid in (i for i in ids if R.is_run(i)):
         summary = R.follow(rid, poll_s)
         R.report(summary, J.LOCAL_RUNS / rid)
+        print(f"{rid}: {summary['ok']} of {summary['tasks']} tasks ended 0, exit {summary['exit']}; results in "
+              f"{summary['results']}/ (N/out/, N/log, summary.json)", flush=True)
         code = summary["exit"]
         assert isinstance(code, int)
         codes[rid] = code

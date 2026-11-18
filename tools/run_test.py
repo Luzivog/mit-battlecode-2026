@@ -55,7 +55,7 @@ def test_each_spreads_tasks_and_gathers(world: tuple[Path, dict[str, str]]) -> N
     (repo / "lines.txt").write_text("".join(f"{i}\n" for i in range(7)))
     (repo / "uncommitted.txt").write_text("the working tree goes\n")
     p = tool(repo, env, "run", "--where", "local", "--each", "lines.txt", "--gather", "r.jsonl", "--json", "--",
-             "bash", "-c", 'echo "{\\"n\\": $1, \\"tree\\": \\"$(cat uncommitted.txt)\\"}" > $OUT/r.jsonl', "_", "{}")
+             "bash", "-c", 'echo "{\\"n\\": $1, \\"tree\\": \\"$(cat uncommitted.txt)\\"}" > $OUT/r.jsonl; sleep 1', "_", "{}")
     assert p.returncode == 0, p.stderr
     rid = p.stdout.splitlines()[0]
     summary = json.loads(p.stdout[p.stdout.index("{"):])
@@ -63,7 +63,8 @@ def test_each_spreads_tasks_and_gathers(world: tuple[Path, dict[str, str]]) -> N
     rows = [json.loads(x) for x in (repo / "runs" / rid / "r.jsonl").read_text().splitlines()]
     assert [r["n"] for r in rows] == list(range(7))  # gathered in task order
     assert rows[0]["tree"] == "the working tree goes"
-    assert (repo / "runs" / rid / "6" / "result.json").exists()
+    pieces = {json.loads((repo / "runs" / rid / str(n) / "result.json").read_text())["piece"] for n in range(7)}
+    assert len(pieces) >= 2  # several pieces claimed from one run
 
 
 def test_chunks_go_as_a_file(world: tuple[Path, dict[str, str]]) -> None:
@@ -129,6 +130,7 @@ def test_cancel_ends_a_run(world: tuple[Path, dict[str, str]]) -> None:
     assert p.returncode == 0 and "closed" in p.stdout, p.stderr
     p = tool(repo, env, "compute", "wait", rid, "--poll", "0.3")
     assert p.returncode == 1  # its tasks never ended
+    assert p.stdout.startswith(f"{rid}: 0 of 2 tasks ended 0, exit 1; results in ")
     assert (remote / "runs" / rid / "closed").exists()
 
 

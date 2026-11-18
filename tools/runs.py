@@ -129,8 +129,8 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
                 out.append(Offer("slurm", slots_of(x.cpus, x.mem_mb, task_cpus, task_mem_mb), x.cpus, x.mem_mb, x))
         return out[:1]  # each pick changes what the caps leave: one now, the next from a fresh read (place_pieces)
 
-    def local() -> list[Offer]:
-        return [Offer("local", slots_of(2, 4096, task_cpus, task_mem_mb), 2, 4096)]
+    def local() -> list[Offer]:  # tests: three machines of 2 CPUs
+        return [Offer("local", slots_of(2, 4096, task_cpus, task_mem_mb), 2, 4096)] * 3
 
     readers = {"condor": condor, "cpucluster1": cpucluster, "slurm": slurm, "local": local}
     out: list[Offer] = []

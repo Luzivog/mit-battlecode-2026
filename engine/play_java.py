@@ -5,8 +5,9 @@
 
 Each game writes OUTDIR/<id, else spec index>/: spec.json, result.json, hashes.txt, replay.bc26, stdout.txt
 (and dump.txt with --dump). Result lines are printed in spec order. The jar is picked by the spec's engine field
-(battlecode26-java-<engine>.jar in --jars). engine/jvm/src is compiled when its sources change, into
-~/battlecode26-data/engine/build/jvm-classes/<hash of the sources>/. Exit 0 when every game was played.
+(battlecode26-java-<engine>.jar in --jars). RefMain and what it uses from engine/jvm/src are compiled when the
+sources change, into ~/battlecode26-data/engine/build/jvm-classes/<hash of the sources>/.
+Exit 0 when every game was played.
 """
 
 import argparse
@@ -54,9 +55,12 @@ def reference_hash() -> str:
 
 
 def compile_jvm(jars: Path = JARS) -> Path:
-    """Compile engine/jvm/src (javac --release 21, against the official jar and the ASM jars) once per source hash."""
+    """Compile RefMain and what it uses from engine/jvm/src (javac --release 21 -sourcepath, against the official
+    jar and the ASM jars), once per hash of all the sources: a translator source that does not compile yet cannot
+    break the reference."""
     src = ENGINE / "jvm" / "src"
     files = sorted(src.rglob("*.java"))
+    roots = [src / f for f in REFERENCE_SOURCES]
     cp = [jars / COMPILE_JAR] + sorted(jars.glob("asm-*.jar"))
     h = hashlib.sha256()
     for f in files:
@@ -73,7 +77,8 @@ def compile_jvm(jars: Path = JARS) -> Path:
     shutil.rmtree(tmp, ignore_errors=True)
     tmp.mkdir()
     r = subprocess.run(["javac", "--release", "21", "-nowarn", "-encoding", "UTF-8",
-                        "-cp", os.pathsep.join(map(str, cp)), "-d", str(tmp)] + [str(f) for f in files],
+                        "-cp", os.pathsep.join(map(str, cp)), "-sourcepath", str(src), "-d", str(tmp)]
+                       + [str(f) for f in roots],
                        capture_output=True, text=True)
     if r.returncode != 0:
         shutil.rmtree(tmp, ignore_errors=True)

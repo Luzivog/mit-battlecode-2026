@@ -395,11 +395,16 @@ task listMaps {
 
 //////// Submitting ////////
 
+// Zips ONLY src/<team>/**/*.java (team = -Pteam, default teamA). Zipping all of src/ would ship
+// src/battlecode/** (local engine overrides), which the official `verify` step rejects as an ILLEGAL package.
 task zipForSubmit(type: Zip) {
-  description 'Produce a zip file for submission.'
+  description 'Produce a zip file for submission (package from -Pteam, default teamA).'
   group 'battlecode'
 
+  def submitTeam = (project.findProperty('team') ?: project.property('teamA')).toString()
   archiveFileName = 'submission.zip'
   destinationDirectory = project.projectDir
-  from sourceSets.main.allSource
+  from('src') {
+    include submitTeam.replace('.', '/') + '/**/*.java'
+  }
 }

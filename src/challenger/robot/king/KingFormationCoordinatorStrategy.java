@@ -256,6 +256,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private int scoreMineForFormation(MapLocation aMine) throws GameActionException {
+        if (lockIn) return -distSqToNearestKing(aMine);
+
         int myScore = 0;
 
         for (int i = 0; i < 5; i++) {
@@ -278,6 +280,16 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
 
         return myScore;
+    }
+
+    // A lock-in king must live to the end: form it where our army already is, next to our kings.
+    private int distSqToNearestKing(MapLocation aMine) throws GameActionException {
+        int myBest = Integer.MAX_VALUE;
+        for (int i = 0; i < 5; i++) {
+            MapLocation myKingLoc = GlobalArray.getRatKing(i);
+            if (myKingLoc != null) myBest = Math.min(myBest, aMine.distanceSquaredTo(myKingLoc));
+        }
+        return myBest;
     }
 
     private MapLocation findFormationSpotNearMine(MapLocation aMine) throws GameActionException {

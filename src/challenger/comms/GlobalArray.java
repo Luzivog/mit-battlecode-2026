@@ -166,6 +166,7 @@ public class GlobalArray {
             for (int i = 0; i < 5; i++) {
                 writeSharedArray(i + RAT_KING_LOC, 1023);
             }
+            ratKingsRound = -1;
             initRatKing();
         }
     }
@@ -349,6 +350,7 @@ public class GlobalArray {
                 // println("RAT KING " + j + " DIED");
                 writeSharedArray(RAT_KING_TURN_COUNTER, rc.readSharedArray(RAT_KING_TURN_COUNTER) | (0b11 << (2 * j)));
                 writeSharedArray(RAT_KING_LOC + j, 1023);
+                ratKingsRound = -1;
             }
         }
     }
@@ -442,18 +444,27 @@ public class GlobalArray {
         }
     }
 
+    // King locations, decoded once per round. Slots 2-7 change between this robot's turns, or by its own writes
+    // (init, writeMyLoc, the reaper), which clear the cache. A turn that overruns resumes in a new round.
+    private static final MapLocation[] ratKings = new MapLocation[5];
+    private static int ratKingsRound = -1;
+
     public static MapLocation getRatKing(int i) {
+        if (ratKingsRound != rc.getRoundNum()) loadRatKings();
+        return ratKings[i];
+    }
+
+    private static void loadRatKings() {
+        ratKingsRound = rc.getRoundNum();
         try {
-            int pos = rc.readSharedArray(i + RAT_KING_LOC);
-            if (pos == 1023) return null;
             int lsbs = rc.readSharedArray(RAT_KING_LSBS);
-            int myLsb = (lsbs >>> (2 * i)) & 0b11;
-            int x = ((pos & 0b11111) << 1) | (myLsb & 1);
-            int y = ((pos >>> 5) << 1) | ((myLsb >>> 1) & 1);
-            return new MapLocation(x, y);
+            for (int i = 0; i < 5; i++, lsbs >>>= 2) {
+                int pos = rc.readSharedArray(i + RAT_KING_LOC);
+                ratKings[i] = pos == 1023 ? null
+                        : new MapLocation(((pos & 0b11111) << 1) | (lsbs & 1), ((pos >>> 5) << 1) | ((lsbs >>> 1) & 1));
+            }
         } catch (GameActionException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
@@ -479,6 +490,7 @@ public class GlobalArray {
         lsbs &= ~(0b11 << (2 * kingId));
         lsbs |= myLsb << (2 * kingId);
         writeSharedArray(RAT_KING_LSBS, lsbs);
+        ratKingsRound = -1;
     }
 
     public static int findRatKingSlot() throws GameActionException {

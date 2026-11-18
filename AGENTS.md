@@ -64,6 +64,9 @@ uv venv -q --allow-existing .venv && uv pip install -q -p .venv -r requirements.
 ./gradlew build -x test                                     # compile every package
 ./gradlew run -PteamA=challenger -PteamB=awubot -Pmaps=DefaultSmall   # one game (replay in matches/)
 git diff --quiet caterpillow-final -- src/awubot && echo baseline intact
+tools/compute status                                        # free Imperial capacity per backend
+tools/run --kit -- CMD                                      # one command on a whole Imperial machine
+tools/compute wait ID --json                                # run in the background: its exit wakes you
 ```
 
 Judging a change: `docs/evaluation.md` (`tools/games`). Until it lands, `docs/testing.md` §0 (`autoscrims/ABtest.py`).

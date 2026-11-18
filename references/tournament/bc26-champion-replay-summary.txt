@@ -1,0 +1,126 @@
+### bc26sprint1_254555.bc26
+teams: 1=X7124(v4) 2=subscribe to caterpillow(experiment)
+  map=sittingducks 50x25 winner=1(X7124) by=RATKING_DESTROYED rounds=105 | end: cheeseXfer 390/150 catDmg 0/0 babies 19/23 | maxBabies 23/35
+  map=dirtfulcat 30x30 winner=1(X7124) by=RATKING_DESTROYED rounds=114 | end: cheeseXfer 340/440 catDmg 0/0 babies 23/16 | maxBabies 24/28
+  map=pipes 50x34 winner=2(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 8070/25400 catDmg 0/0 babies 24/64 | maxBabies 24/68
+  map=wallsofparadis 60x60 winner=1(X7124) by=RATKING_DESTROYED rounds=125 | end: cheeseXfer 60/120 catDmg 0/0 babies 24/35 | maxBabies 24/41
+  map=trapped 50x50 winner=1(X7124) by=RATKING_DESTROYED rounds=105 | end: cheeseXfer 120/60 catDmg 0/0 babies 22/31 | maxBabies 24/35
+### bc26sprint2_282811.bc26
+teams: 1=subscribe to caterpillow(awubot_fixratthrowing_old) 2=Slam Duck(initialplayer_now)
+  map=cheesebottles 59x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=830 | end: cheeseXfer 2780/0 catDmg 0/220 babies 16/12 | maxBabies 18/16
+  map=knifefight 40x40 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=48 | end: cheeseXfer 55/0 catDmg 0/0 babies 20/15 | maxBabies 20/16
+  map=minimaze 34x46 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 11690/6565 catDmg 30/0 babies 16/12 | maxBabies 16/16
+  map=averystrangespace 60x60 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 13475/3630 catDmg 90/0 babies 16/12 | maxBabies 16/16
+  map=tiny 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=42 | end: cheeseXfer 40/0 catDmg 0/0 babies 16/13 | maxBabies 16/16
+### bc26sprint2_282873.bc26
+teams: 1=subscribe to caterpillow(awubot_fixratthrowing_old) 2=BFS Enjoyers(three)
+  map=hatefullattice 50x41 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 31190/22295 catDmg 2940/0 babies 16/16 | maxBabies 19/20
+  map=mercifullattice 41x35 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 23030/13405 catDmg 1550/0 babies 16/16 | maxBabies 16/19
+  map=whereisthecheese 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=235 | end: cheeseXfer 365/40 catDmg 0/0 babies 4/7 | maxBabies 16/20
+  map=toomuchcheese 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=781 | end: cheeseXfer 6755/3735 catDmg 0/0 babies 16/16 | maxBabies 16/18
+  map=jail 60x40 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=233 | end: cheeseXfer 535/220 catDmg 0/0 babies 15/8 | maxBabies 17/20
+### bc26sprint2_282904.bc26
+teams: 1=subscribe to caterpillow(awubot_fixratthrowing_old) 2=SPAARK(SPAARK)
+  map=safelycontained 60x60 winner=2(SPAARK) by=MORE_POINTS rounds=2000 | end: cheeseXfer 22390/37225 catDmg 0/0 babies 16/42 | maxBabies 17/62
+  map=averystrangespace 60x60 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 13810/975 catDmg 80/20 babies 16/25 | maxBabies 16/27
+  map=corridorofdoomanddespair 20x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=392 | end: cheeseXfer 940/240 catDmg 0/10 babies 4/4 | maxBabies 16/23
+  map=canyoudig 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=226 | end: cheeseXfer 430/95 catDmg 0/340 babies 6/6 | maxBabies 16/22
+  map=tiny 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=134 | end: cheeseXfer 180/170 catDmg 0/0 babies 8/3 | maxBabies 16/20
+### bc26sprint2_282919.bc26
+teams: 1=Old But Gold(basic41) 2=subscribe to caterpillow(awubot_fixratthrowing_old)
+  map=knifefight 40x40 winner=1(Old But Gold) by=RATKING_DESTROYED rounds=186 | end: cheeseXfer 1394/120 catDmg 30/0 babies 16/3 | maxBabies 17/16
+  map=whatsthecatdoin 40x40 winner=1(Old But Gold) by=RATKING_DESTROYED rounds=566 | end: cheeseXfer 1736/930 catDmg 810/0 babies 19/4 | maxBabies 22/16
+  map=toomuchcheese 30x30 winner=1(Old But Gold) by=MORE_POINTS rounds=2000 | end: cheeseXfer 17423/15172 catDmg 6190/1450 babies 16/16 | maxBabies 26/16
+  map=uneruesansfin 60x60 winner=1(Old But Gold) by=MORE_POINTS rounds=2000 | end: cheeseXfer 9775/4578 catDmg 4830/20 babies 28/7 | maxBabies 45/16
+  map=TheHeist 60x40 winner=2(subscribe to caterpillow) by=RATKING_DESTROYED rounds=588 | end: cheeseXfer 2160/875 catDmg 840/0 babies 44/16 | maxBabies 44/16
+### bc26intlquals_302594.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=betterexamplefuncsplayer(v1)
+  map=directconfrontation 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=143 | end: cheeseXfer 660/0 catDmg 0/0 babies 16/0 | maxBabies 19/17
+  map=doyoudareenter 40x40 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=331 | end: cheeseXfer 3768/0 catDmg 0/0 babies 28/0 | maxBabies 29/35
+  map=insertmeowname 60x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=417 | end: cheeseXfer 1601/0 catDmg 0/0 babies 17/13 | maxBabies 17/34
+  map=pocketsofcheese 40x45 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=248 | end: cheeseXfer 1955/0 catDmg 0/0 babies 16/0 | maxBabies 19/32
+  map=hellofromtheotherside 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=290 | end: cheeseXfer 2708/0 catDmg 0/0 babies 16/0 | maxBabies 16/18
+### bc26intlquals_302626.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=dumb_team(examplefuncsplayer)
+  map=gelcatinouscube 37x43 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=701 | end: cheeseXfer 5200/893 catDmg 324/520 babies 23/4 | maxBabies 23/18
+  map=dangerouscrossing 50x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=297 | end: cheeseXfer 1665/555 catDmg 0/170 babies 16/2 | maxBabies 18/17
+  map=sieveofriches 60x20 winner=2(dumb_team) by=MORE_POINTS rounds=2000 | end: cheeseXfer 30379/71631 catDmg 516/2270 babies 57/56 | maxBabies 71/57
+  map=directconfrontation 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=99 | end: cheeseXfer 378/200 catDmg 0/260 babies 17/13 | maxBabies 18/16
+  map=clockwork 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=177 | end: cheeseXfer 318/98 catDmg 0/250 babies 9/6 | maxBabies 16/16
+### bc26intlquals_302646.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=confused(nomv3)
+  map=isnotgold 36x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=1208 | end: cheeseXfer 19952/8918 catDmg 2256/1384 babies 32/0 | maxBabies 34/24
+  map=tminusten 60x50 winner=2(confused) by=RATKING_DESTROYED rounds=103 | end: cheeseXfer 380/886 catDmg 0/3216 babies 16/42 | maxBabies 16/42
+  map=holeinthewall 50x50 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=349 | end: cheeseXfer 1494/1466 catDmg 0/708 babies 16/15 | maxBabies 18/17
+  map=sieveofriches 60x20 winner=2(confused) by=RATKING_DESTROYED rounds=1770 | end: cheeseXfer 54582/50243 catDmg 4012/3988 babies 3/60 | maxBabies 78/60
+  map=pocketsofcheese 40x45 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=122 | end: cheeseXfer 35/210 catDmg 0/1848 babies 19/12 | maxBabies 21/16
+### bc26intlquals_302656.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Mango Tango(current)
+  map=neitheroptionisgood 60x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=1853 | end: cheeseXfer 17584/11732 catDmg 3252/630 babies 31/6 | maxBabies 32/16
+  map=gelcatinouscube 37x43 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=945 | end: cheeseXfer 7878/2654 catDmg 3072/580 babies 16/1 | maxBabies 19/14
+  map=isnotgold 36x60 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 22831/27197 catDmg 5950/2340 babies 16/21 | maxBabies 24/29
+  map=asabovesobelow 59x40 winner=2(Mango Tango) by=RATKING_DESTROYED rounds=159 | end: cheeseXfer 0/105 catDmg 0/90 babies 13/14 | maxBabies 19/16
+  map=kingofthehill 60x60 winner=2(Mango Tango) by=RATKING_DESTROYED rounds=1033 | end: cheeseXfer 7604/4634 catDmg 2220/0 babies 16/4 | maxBabies 20/16
+### bc26intlquals_302661.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Goobie Woobies(v45_ChickenJockey)
+  map=dangerouscrossing 50x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=209 | end: cheeseXfer 927/480 catDmg 0/200 babies 10/4 | maxBabies 17/20
+  map=asabovesobelow 59x40 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=409 | end: cheeseXfer 1611/1030 catDmg 0/550 babies 16/6 | maxBabies 16/20
+  map=tminusten 60x50 winner=2(Goobie Woobies) by=RATKING_DESTROYED rounds=104 | end: cheeseXfer 320/1280 catDmg 0/1580 babies 16/20 | maxBabies 17/20
+  map=insertmeowname 60x60 winner=2(Goobie Woobies) by=MORE_POINTS rounds=2000 | end: cheeseXfer 8149/20437 catDmg 360/5440 babies 11/16 | maxBabies 24/29
+  map=hellofromtheotherside 20x20 winner=2(Goobie Woobies) by=RATKING_DESTROYED rounds=471 | end: cheeseXfer 3709/2099 catDmg 0/1290 babies 13/8 | maxBabies 19/20
+### bc26intlquals_302662.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Mango Tango(current)
+  map=gelcatinouscube 37x43 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=603 | end: cheeseXfer 5152/714 catDmg 564/340 babies 18/1 | maxBabies 24/16
+  map=dangerouscrossing 50x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=264 | end: cheeseXfer 985/413 catDmg 0/80 babies 11/1 | maxBabies 19/16
+  map=moonlitriverpark 60x39 winner=2(Mango Tango) by=RATKING_DESTROYED rounds=1640 | end: cheeseXfer 3729/8497 catDmg 0/420 babies 4/16 | maxBabies 16/16
+  map=neitheroptionisgood 60x60 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 15500/16581 catDmg 3264/600 babies 16/16 | maxBabies 19/16
+  map=pocketsofcheese 40x45 winner=2(Mango Tango) by=RATKING_DESTROYED rounds=270 | end: cheeseXfer 474/1175 catDmg 0/120 babies 12/12 | maxBabies 21/16
+### bc26intlquals_302663.bc26
+teams: 1=Goobie Woobies(v45_ChickenJockey) 2=subscribe to caterpillow(awubot)
+  map=pipes_the_second 50x50 winner=2(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 4527/23846 catDmg 330/6132 babies 16/46 | maxBabies 27/52
+  map=isnotgold 36x60 winner=2(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 26721/23739 catDmg 5840/3888 babies 8/16 | maxBabies 20/27
+  map=sieveofriches 60x20 winner=1(Goobie Woobies) by=MORE_POINTS rounds=2000 | end: cheeseXfer 90593/32605 catDmg 6476/1524 babies 71/5 | maxBabies 106/40
+  map=gelcatinouscube 37x43 winner=2(subscribe to caterpillow) by=RATKING_DESTROYED rounds=382 | end: cheeseXfer 629/1956 catDmg 1440/0 babies 2/15 | maxBabies 20/17
+  map=asabovesobelow 59x40 winner=2(subscribe to caterpillow) by=RATKING_DESTROYED rounds=415 | end: cheeseXfer 1153/1761 catDmg 510/0 babies 5/16 | maxBabies 20/18
+### bc26intlquals_302664.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Goobie Woobies(v45_ChickenJockey)
+  map=tminusten 60x50 winner=2(Goobie Woobies) by=RATKING_DESTROYED rounds=104 | end: cheeseXfer 320/1280 catDmg 0/1580 babies 16/20 | maxBabies 17/20
+  map=holeinthewall 50x50 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=929 | end: cheeseXfer 4970/4651 catDmg 0/1440 babies 11/15 | maxBabies 16/20
+  map=pocketsofcheese 40x45 winner=2(Goobie Woobies) by=RATKING_DESTROYED rounds=293 | end: cheeseXfer 271/1057 catDmg 0/210 babies 5/11 | maxBabies 19/20
+  map=dangerouscrossing 50x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=253 | end: cheeseXfer 752/661 catDmg 0/150 babies 9/4 | maxBabies 17/20
+  map=directconfrontation 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=127 | end: cheeseXfer 280/623 catDmg 0/760 babies 12/8 | maxBabies 16/20
+### bc26final_323512.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=3MiceWalkIntoABar(sprint_1)
+  map=uneasy_alliance 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=131 | end: cheeseXfer 1178/380 catDmg 0/0 babies 15/2 | maxBabies 22/16
+  map=diamond 40x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=869 | end: cheeseXfer 7851/2601 catDmg 6060/210 babies 22/6 | maxBabies 29/20
+  map=RUN 60x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=788 | end: cheeseXfer 5732/1461 catDmg 940/100 babies 32/5 | maxBabies 33/20
+  map=AceOfSpades 45x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=874 | end: cheeseXfer 19809/4031 catDmg 3060/10 babies 86/6 | maxBabies 88/20
+  map=houseofcards 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=195 | end: cheeseXfer 555/40 catDmg 50/40 babies 12/0 | maxBabies 12/20
+### bc26final_323524.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Goobie Woobies(v52_ThisGuy)
+  map=ultimatestarvation 59x59 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=153 | end: cheeseXfer 220/20 catDmg 130/400 babies 15/11 | maxBabies 17/22
+  map=Stash 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=578 | end: cheeseXfer 2689/2981 catDmg 100/1030 babies 17/7 | maxBabies 18/20
+  map=sunandmoon 60x40 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=259 | end: cheeseXfer 1652/538 catDmg 870/1290 babies 16/3 | maxBabies 17/20
+  map=learn_your_lesson 40x40 winner=2(Goobie Woobies) by=RATKING_DESTROYED rounds=851 | end: cheeseXfer 1863/8136 catDmg 300/3830 babies 0/16 | maxBabies 16/20
+  map=t_minus_five_minutes 20x20 winner=2(Goobie Woobies) by=MORE_POINTS rounds=362 | end: cheeseXfer 1570/1500 catDmg 7760/8240 babies 12/14 | maxBabies 17/20
+### bc26final_323534.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=cerr or despair(masters)
+  map=AceOfSpades 45x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=598 | end: cheeseXfer 9004/3380 catDmg 680/810 babies 34/20 | maxBabies 40/22
+  map=fullofsecrets 40x45 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=1006 | end: cheeseXfer 2910/1815 catDmg 4000/4000 babies 30/16 | maxBabies 32/16
+  map=groveisbeingdesecrated 60x60 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=790 | end: cheeseXfer 25768/2398 catDmg 4000/4000 babies 100/10 | maxBabies 102/25
+  map=mincemeat 31x31 winner=2(cerr or despair) by=RATKING_DESTROYED rounds=442 | end: cheeseXfer 1067/1345 catDmg 200/1950 babies 3/12 | maxBabies 16/12
+  map=Excavation 39x39 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=228 | end: cheeseXfer 880/335 catDmg 0/0 babies 16/1 | maxBabies 16/14
+### bc26final_323539.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Generalized Stroke's Theorem(Version40)
+  map=rose 60x32 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 6375/4700 catDmg 4630/4000 babies 38/37 | maxBabies 46/37
+  map=where_are_you 60x60 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 49661/10907 catDmg 8370/6190 babies 57/28 | maxBabies 70/30
+  map=bed 20x20 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=199 | end: cheeseXfer 380/498 catDmg 450/1070 babies 8/0 | maxBabies 13/17
+  map=diamond 40x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=1957 | end: cheeseXfer 15688/8260 catDmg 5440/2560 babies 29/4 | maxBabies 30/22
+  map=externalsustenance 30x40 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=179 | end: cheeseXfer 312/350 catDmg 600/3820 babies 6/7 | maxBabies 16/18
+### bc26final_323541.bc26
+teams: 1=subscribe to caterpillow(awubot) 2=Generalized Stroke's Theorem(Version40)
+  map=groveisbeingdesecrated 60x60 winner=2(Generalized Stroke's Theorem) by=MORE_POINTS rounds=160 | end: cheeseXfer 180/550 catDmg 4000/4000 babies 18/17 | maxBabies 18/17
+  map=ultimatestarvation 59x59 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=144 | end: cheeseXfer 120/40 catDmg 0/130 babies 13/11 | maxBabies 16/22
+  map=attack_on_cat 50x50 winner=2(Generalized Stroke's Theorem) by=RATKING_DESTROYED rounds=452 | end: cheeseXfer 775/2728 catDmg 30/0 babies 4/16 | maxBabies 16/16
+  map=FreeTheCheese 60x60 winner=1(subscribe to caterpillow) by=MORE_POINTS rounds=2000 | end: cheeseXfer 24550/13055 catDmg 6010/3720 babies 18/16 | maxBabies 32/27
+  map=uneasy_alliance 30x30 winner=1(subscribe to caterpillow) by=RATKING_DESTROYED rounds=190 | end: cheeseXfer 1260/2200 catDmg 470/4030 babies 12/16 | maxBabies 12/18

@@ -1,0 +1,181 @@
+# Archived postmortem: Baby Ducks (2021)
+
+| Field | Value |
+|---|---|
+| Title | Battlecode 2021 Postmortem |
+| Team | Baby Ducks |
+| Year | 2021 |
+| Game | Campaign (2021) |
+| Placement | 1st overall (winner) |
+| Authors | Josh Brunner, Anthony Grebe, Jason Ye, Wesley Zhang |
+| Source | http://web.mit.edu/agrebe/www/battlecode/21/index.html |
+| Retrieved | 2026-11-18 |
+| Format | Web page, converted to Markdown (html2text) |
+| Original file | none (web source) |
+| Note | Original host returned HTTP 500 on 2026-11-18; text taken from the Wayback Machine snapshot http://web.archive.org/web/20250317055020/http://web.mit.edu/agrebe/www/battlecode/21/index.html |
+
+> **Archived copy of the authors' work.** Reproduced here unchanged in substance so this repo's agents can grep it; all rights remain with the authors (see Source). The text was machine-converted and lightly cleaned: page headers/footers, page numbers, broken hyphenation and tables of contents removed; figures replaced by `[figure omitted: <caption>]`. It is not a summary. Index and takeaways: `references/postmortems/README.md`; cross-year lessons: `docs/lessons.md`.
+
+---
+
+#  Battlecode 2021 Postmortem
+
+#  Team Baby Ducks: Josh Brunner, Anthony Grebe, Jason Ye, and Wesley Zhang
+
+## Table of Contents
+
+  1. Introduction
+  2. Units and Resources
+  3. Our Overall Strategy
+     * Enlightenment Centers
+     * Politicians
+  4. Vision and Communication
+  5. Navigation and Bytecode Limitations
+  6. Our Timeline
+     1. First Week + Sprint 1
+     2. Second Week + Sprint 2
+     3. Third Week + Quals
+     4. Last Week + Finals
+  7. Acknowledgements
+  8. Team Name
+
+## Introduction
+
+[Battlecode](<https://battlecode.org/>) is an annual programming competition run by MIT's computer science department during the month of January. Teams of 1-4 students write a computer program for an army of virtual robots that fight other teams to accumulate resources and capture buildings in a series of battles on a variety of maps. Each year's challenge features a different set of units and resouces as well as different rules of combat. The theme of the 2021 battlecode competition is a political campaign between two parties trying to win the election at all costs. To accomplish this, teams try to accumulate political influence, which is stored in the various units and used to purchase new ones. Unit costs are not fixed -- your team decides how much influence to spend on each unit spawned, and the influence spent determines that unit's conviction (its health), reflecting its loyalty to your team's cause. Teams can also bid influence to win votes in each round of the game; if neither team is eliminated, then the game is determined by result of the election.
+
+[figure omitted: The Branched Logistics Union of Electronicists (BLUE) has gained control over most of the map and is advancing on the remaining units of the Research Engineering Division (RED). BLUE's politicians, the main attacking units of the game (which look vaguely similar to chess pawns in the visualizer), are moving within attack range of RED's enlightenment center (the house-shaped building). Once within range, they will empower, converting their influence (and existence) into an attack on all units and buildings within range and thereby capturing the enlightenment center.]
+
+## Units and Resources
+
+This year's competition features only four units:
+
+  * **Enlightenment Centers** (ECs): These are the headquarters of the political organization. They are immovable buildings that are present from the beginning of the game, so they can be captured but never created or destroyed. They generate a small amount of influence passively, and they spawn additional units. At the beginning of the game, enlightenment centers can be neutral, in which case they take no actions until captured by a player.
+  * **Politicians** : A politician's conviction can be converted into a rousing speech that functions as an attack that deals damage evenly to all nearby units. Nearby enlightenment centers (neutral or enemy), as well as rival politicians, can be converted to your cause if the strength of the attack exceeds their conviction, while enemy muckrakers and slanderers are destroyed. As such, politicians are crucial both for unit-to-unit combat and for attacks on enlightenment centers.
+  * **Slanderers** : These are the main income-generating units of the game. A slanderer's lies win over the citizenry, generating income for the Enlightenment Center that spawned it for fifty turns. (The influence generated is 5% of the slanderer's cost for small-cost slanderers and then plateaus at 2% of their cost. Very expensive slanderers are simply a break-even investment, bu slanderers that cost 1000 influence or less provide a very good return on investment.) After producing this massive influence boost, slanderers are effectively useless for the next 250 turns, but 300 turns after creation they convert into politicians to reinforce your "army."
+  * **Muckrakers** : Slanderers would be completely overpowered were it not for the investigative journalism of muckrakers. A muckraker that gets close to an enemy slanderer can expose its lies, instantly destroying the slanderer. Furthermore, for fifty turns following this exposure, all politicians on the muckraker's team receive a buff to their attack proportional to the value of the exposed slanderer. This bonus can stack (so if multiple slanderers are exposed within 50 turns, politicians can receive a much larger buff, giving a substantially more powerful attack). As such, it is imperative to defend slanderers from muckraker attacks, and failing to do so will lose you not only your slanderers but also any battles with enemy politicians and (quite possibly) the game.
+
+(Muck)**r** akers, **p** oliticians, and **s** landerers form an RPS (rock-paper-scissors) triangle: politicians beat rakers, which beat slanderers, which beat politicians. The optimal strategy is therefore to build a combination of all three units so that muckrakers destroy enemy slanderers, slanderers produce income to finance your army, and politicians defend slanderers against enemy muckrakers.
+
+There is another very important, very limited resource: unit spawns. An EC can only spawn a new unit every 2-20 turns, depending on the passability of the tile where it is located. Because you cannot build more ECs, and the only way of obtaining more is by capturing either neutral or enemy ECs, unit spawns have a hard cap, and thus are very valuable. One EC will have a hard time beating five enemy ECs even if it has 10 times the influence.
+
+## Our Overall Strategy
+
+Our overall strategy was one focused on generating large amounts of influence with slanderers, and leveraging that to eventually annihilate the opponent.
+
+### Enlightenment Centers
+
+By default, our ECs build slanderers until we reach various income thresholds. As we build more slanderers, we also make sure to have a certain quota of politicians built to protect them from muckrakers. The only thing that takes precedent over building our income (besides obvious things like not building slanderers if muckrakers are around) is building one politician to attack each neutral EC, as unit spawns, and thus ECs, are very important.
+
+If we have enough income, we will start building a mix of politicians and muckrakers of different sizes in order to attack enemy ECs. The only other times we build muckrakers are if we are low on influence and saving up.
+
+Some maps are more defensive, and reward building to much higher income targets, while other maps reward smaller income and focusing on attacking with politicans and muckrakers earlier. We use our alive politicans as a simple way to dynamically approximate how high of an income we want. If we have more living politicians, that indicates they aren't exploding and taking longer to reach the enemy, so this map is probably more defensive and we adjust our target income up further.
+
+### Politicians
+
+As both influence and unit spawns are important resources, we decided to take both into account to determine when our politicians empower. We ended up using the metric of $$100\times(\text{kills}-2) + (\text{influenceDrained} - \text{convictionSpent})$$ where $\text{kills}$ counts the number of enemies killed (counting muckrakers twice and ECs ten times), and $\text{influenceDrained}$ counts the influence lost by the opponent. Our politicians would empower only if this metric was positive (outside of special cases such as protecting nearby slanderers). This roughly boils down to prioritizing multiple kills, especially ones with muckrakers, but not to the point of killing two tiny muckrakers with one huge politician.
+
+Our politicians generally hover near our base to try protect it, but if they don't see an enemy in 10 turns, they will instead charge either the nearest muckraker (as determined through communications), or the enemy base. This helps make sure our politicians don't spend too long guarding in places enemy muckrakers aren't attacking. Charging the enemy base also helps with defense, since this is the spawn point for enemy muckrakers (so they could be killed at the source).
+
+## Vision and Communication
+
+Units do not have visibility of the entire map; instead, they can only see things within about 5 tiles of them. This year, robots do not even know the size and shape of the map unless they have explored enough to find the map's edges. Additionally, all maps are offset by a large random constant in both the x- and y-directions, so a robot's absolute location gives almost no information about its position relative to the map's edges.
+
+In order to gain information about the map that they have not personally seen, robots need to communicate with each other. They do so by holding up a 24-bit color flag, which is stored in the last 24 bits of an `int`. Units can read the flags of any nearby robots as well as enlightenment centers, and enlightenment centers can read the flags of any robot. (While robots can in principle read enemy flags, these typically contain meaningless information without the enemy's source code, which is inaccessible to players.)
+
+Our team communicated three pieces of information via flags:
+
+  1. Locations of nearby enemy muckrakers, in order to warn nearby slanderers to run away and nearby politicians to defend
+  2. Locations and strength of enemy and neutral enlightenment centers, to signal for politicians and muckrakers to attack
+  3. Edges of the map
+
+Because we are very dependent on slanderers, a big part of our communication is about enemy muckraker sightings. All of our units will signal any enemy muckrakers seen to nearby units using flags, and this information will be passed on. Slanderers use this information to run away from the nearest enemy muckraker, even beyond sight range; politicians use this information to hunt down enemy muckrakers to better protect our slanderers.
+
+In Battlecode, all maps are symmetric under either vertical reflection, horizontal reflection, or 180-degree rotation. As a result, given the location of a friendly enlightenment center, knowledge of the map edges implies that a second enlightenment center (which is likely enemy-owned) must be at one of three possible locations. In the absence of spotting another enlightenment center directly, this indirect approach can be used to find a suitable target to attack.
+
+Enlightenment centers, charged with the tasks of coordinating attacks (at least among the units they spawned) can read the flags of their units and relay information about enemy centers and map edges to their units. In contrast, the locations of enemy muckrakers are only intended for nearby units, so it can be relayed robot-to-robot to nearby clusters of politicians and slanderers.
+
+## Navigation and Bytecode Limitations
+
+Each tile on the map has a passability ranging from 0.1 to 1. Performing any action while on a tile (including leaving the tile) incurs a cost inversely proportional to the passability. This means that, while any (unoccupied) tile is in theory passable, some tiles slow units 10 times more than others. When moving across the map, such tiles should be avoided if possible.
+
+The simplest navigation algorithm is one that, given a destination tile, moves in the direction of that destination, ignoring passability costs. On maps with varying passability, this will drastically slow units down.
+
+An improvement is to use a local heuristic. If the passability cost of moving straight toward a target is more than twice that of moving 45 degrees in either direction, then it's usually better to move 45 degrees away from the original target.
+
+Ideally, we would like to find the optimal path all the way to the target, but this is impossible for targets outside our robot's vision radius. In addition, robots have computational limitations that make it impossible even to process all the information they do have access to. In Java, computational effort can be quantified in terms of bytecode, which corresponds to the fundamental operations of the Java virtual machine (e.g. adding two numbers, setting a variable). The main units of the game (politicians and muckrakers) are limited to 15,000 bytecode. While this sounds like a large number of operations, it can be consumed quickly if one explores paths inefficiently. (Slanderers have smaller limits but only need to perform the simple task of fleeing muckrakers.)
+
+For more general pathing algorithms, we assume that we have a graph with vertices $V$ (each with some passability cost) and edges $E$. One vertex is the start location, and all other vertices are initialized to an upper bound of their distance to the target. (If one of the vertices is the target itself, that vertex is zero distance to the target and all other vertices can be initialized to infinity. Usually, the target is off the graph, so vertices are initialized with a conservative upper bound, taken for us to be 100 times the distance ignoring passabilities.) Given the cost of traversing the graph, pathing algorithms seek to find the path that minimizes the combined cost of traversing the graph and then getting to the target from the closest vertex.
+
+### Dijkstra's Algorithm
+
+[figure omitted: After the graph is initialized, each square (a "vertex" on the graph) has an upper bound on its distance to the target. We begin by picking the square with the smallest such distance, 2 (yellow square on left image). Assuming that the cost of moving by one square is 1 unit, the triangle inequality tells us that each of the yellow square's neighbors can have a distance to the target of at most 2 + 1. The right neighbor already has a distance less than that, so it is unchanged, but the two lower neighbors (colored blue) need their distances to be updated to reflect this new tighter bound. We then remove the upper left corner from the list of unexplored squares (coloring it pink), choose the next smallest square (now colored yellow), and repeat.]
+
+One pathing algorithm is Dijkstra's algorithm. Dijkstra's algorithm starts with the minimum-cost vertex, the one closest to the actual target. For each adjacent vertex, we now know a path that may be shorter: we can move to the minimum-cost vertex (paying the passability cost) and then to the target. If this cost is lower than the adjacent vertex's initial cost, that cost is now updated to reflect the lower-cost path. This process is called _relaxation_. The minimum-cost vertex is then removed from the set of remaining vertices and the next-smallest one is chosen. The process terminates when we reach the start vertex, and then we proceed along the chain of minimum-cost points to the target.
+
+The nontrivial part of Dijkstra's algorithm is choosing the minimum-cost point at each step. Naively, if we have $N$ vertices, this would take $O(N)$ time to traverse the list to find this minimum, so doing this for each of $N$ vertices would require $O(N^2)$ time total. Alternatively, one could sort the original set of $N$ vertices in $O(N \log N)$ time, but the list would not stay sorted as vertices' costs are updated.
+
+What we actually need is a _priority queue_ that allows for retrieval of the minimum element and updating of other elements. `java.util.PriorityQueue` provides such an implementation. Unfortunately, like [hungry bears](<http://web.mit.edu/agrebe/www/battlecode/20/bear.png>), `java.util.*` will eat your bytecode for breakfast, lunch, and dinner. (The built-in Java routines are optimized for CPU speed rather than bytecode, and this is one of the few times when these measures diverge.) We were able to achieve substantially improved bytecode efficiency by implementing a priority queue ourselves as a [min heap](<https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/lecture-videos/lecture-4-heaps-and-heap-sort/>), but searching the tiles within 2 squares of the start location still took most of the available bytecode.
+
+### Bellman-Ford Algorithm
+
+An alternative to Dijkstra's algorithm is the Bellman-Ford algorithm. Like Dijkstra's algorithm, the fundamental step is relaxing edges so that a vertex's cost is decreased if there is a shorter path that goes through any of its neighbors. Dijkstra's algorithm chooses the vertices to relax in an optimal ordering by starting with the minimum-cost one, so each edge only needs to be relaxed once. In contrast, Bellman-Ford traverses the entire graph, relaxing all the edges and updating all vertices on the graph. The cost of such a sweep over $N$ vertices is $O(N)$ (assuming the graph is sparse, as it is here). All vertices are guaranteed to converge after $N$ sweeps through the entire graph, which requires a total of $O(N^2)$ operations. This trades the need to find the minimum-distance element for an (asymptotically) much larger number of relaxations.
+
+However, the requirement of $N$ sweeps through the graph is only needed for maximally pathological graphs where the optimal path winds through the entire set of vertices. In practice, far fewer sweeps are needed for convergence in most cases, especially if a heuristic is used to guess the order in which to relax the edges. For our purposes, one or two sweeps converge to the correct answer (or at least a good enough approximate answer) in most cases encountered in this year's competition.
+
+Additionally, Bellman-Ford is a simpler algorithm, so it is easier to optimize with tricks like loop unrolling (where a loop is written out explicitly to avoid wasting operations incrementing the loop counter). In contrast, the priority queue needed to implement Dijkstra's algorithm is substantially harder to unroll or even to write out in terms of loops. (Modifying an element's distance in the priority queue requires rearranging multiple elements in the heap used to store it, which is easiest to code using recursion. Unfortunately, this incurs a penalty from the recursive function calls.) As such, while Bellman-Ford is asymptotically less efficient in the worst case, it was ultimately faster for our purposes than our implementation of Dijkstra's algorithm. This was therefore the pathing method that we ultimately used.
+
+## Our Timeline
+
+So how did we end up here?
+
+### First Week + Sprint 1
+
+Battlecode begins with a sprint tournament one week into the competition, in order to give teams a chance to test initial strategies (and to allow rebalancing of game specifications if necessary). We started out writing two separate bots — one that focused on rushing with muckrakers, and one that focused on slanderer economy — and tested both against each other extensively to improve both. Having a good rush bot to test against greatly helped us develop our defense (most notably including enemy muckraker positions in our comms), causing us to become one of the first teams at the top of the leaderboard with a slanderer-based strategy.
+
+Others soon figured out how to defend as well, and going into sprint 1, we were disfavored against rival teams Super Cow Powers and Producing Perfection. Thankfully, they faced each other in semifinals, allowing us to get second place.
+
+### Second Week + Sprint 2
+
+During the first week of competition, several of the specifications changed (and teh devs decided to host a second sprint tournament to let teams retest with updated specs). In particular, the original specs gave slanderers of any size a 2.5-fold return on investment, allowing exponential growth, and this was modified to cap the bonus influence in order to remove this exponential. But despite that change, slanderer strategies continued to dominate the leaderboard.
+
+One of the largest takeaways we had from Sprint 1 was the importance of taking neutral ECs. This was amplified by the spec-violating 0 HP neutral ECs in Sprint 1 maps, but we realized that, even accounting for that, a lot of the games we were losing were due to not being aggressive enough at capturing neutrals.
+
+Another tactic that came to prominence immediately following Sprint 1 were high-conviction muckrakers, or "buffrakers." Since a raker of any size is capable of destroying slanderers, the original assumption of most teams (including ours) was that rakers would all have 1 conviction, the minimum possible. As such, politician defenses assumed that all rakers would be small and easy to kill. Buffrakers preyed on that assumption, since these could pass through weak politician defenses. Even after teams realized this and devoted more influence to high-conviction politician defenders, buffrakers were still good mixed in with small muckrakers, since they could occasionally still slip through.
+
+So, we spent this week improving our neutral captures, implementing buffrakers, fixing bugs, and tuning various knobs with spawn order. When Sprint 2 rolled around, we didn't have too high hopes, as we hadn't been doing too well against the new top of the leaderboard. But through some luck and upsets, we again made it to finals, and again lost to Super Cow Powers.
+
+### Third Week + Quals
+
+After Sprint 2, we still weren't happy with how slowly we were taking neutral ECs. So, for quals, we fleshed out our enemy/neutral EC communications, and worked on more aggressively scouting and spawning politicians to take neutral ECs when found. We also noticed that our complete lack of pathfinding was starting to hurt us, and so implemented some basic heuristics, as detailed above.
+
+Some of the biggest changes, however, were in our politicians. We implemented the metric mentioned above for determining when a politician should empower, and made politicians generally more aggressive. Whereas before, a lot of slanderers-turned-politicians would hover around our base, "defending", now they would switch to attacking if they hadn't seen an enemy recently. This greatly helped our ability to turn an influence advantage into a unit advantage, and push through defenses.
+
+Part of that change making politicians more aggressive was driven by the spec change that happened late in the week. Originally, the buff to politician attacks resulting from muckrakers exposing slanderers was exponential in the number of slanderers exposed (so destroying a handful of slanderers could give a thousand-fold boost to attacks), but this was changed to a linear effect. Furthermore, the original specs applied the buff to politicians' transfer of influence to their own base (allowing a large buff to be converted into virtually infinite influence), but the buff to "self-empowering" was removed. This didn't affect us too much, as we hadn't been utilizing self-empowering nearly as much as other teams such as Nikola. But now that losing a couple slanderers was merely very bad instead of an instant game loss, we decided to be less airtight with our slanderer protection.
+
+At the end of week three was the qualifying tournament, where the top 12 US-based teams and top four international teams are selected for the final tournament. We were in the top 8 ranked teams in scrimmages when Quals came, so we had good seeding and therefore qualified relatively easily.
+
+### Finals
+
+Between Quals and Finals, most of our work was in improving our muckrakers, which we had mostly neglected until now, making them more effective at scouting and attacking. We also kept tuning our build order, overhauling it a bit to better take our income and units into account.
+
+The biggest change between Quals and Finals was the overhaul of the build order. The main motivation for this is our previous strategy would have us spend essentially all of our influence on 400-cost attacking units once an enemy EC was discovered. However, on defensive maps this would lead to us running out of money and eventually getting overwhelmed in the mid-game. The new build order allowed us to continue building income on these maps, and ended up being very good in Finals which had many defensive maps.
+
+The final tournament is a double-elimination tournament with the 16 teams from Quals. All teams start in the "winners' bracket," and after losing one game, they drop to the losers' bracket. Losing a second game removes them from the playoffs. At the end, one team remains in the winner's bracket and one remains in the losers' bracket, and these teams play each other in the grand finals. To become the final champion, the winners' bracket team must win one game, and the losers' bracket team must win two (since two losses are needed to defeat the formerly-undefeated winners' bracket team).
+
+The first match of Finals, we lost to wololo, the only team in Finals who used a primarily muckraker-based rush strategy. (Wololo's matches in the competition were interesting to watch, given that their strategy was markedly different from the other 15 teams.) After a set of nail-biting games (and a fair amount of luck), we managed to win six games in a row to win the losers' bracket. We then moved on to face Producing Perfection, head of the winners' bracket, in the grand finals.
+
+Much to our surprise, we beat Producing Perfection in the first match, so we were able to play a second match against them. Each match is composed of five separate battles (on five different maps), and we went 2-2 against them on the first four maps. We won the fifth map, narrowly winning the match and taking first place overall.
+
+A pretty significant factor in our wins was the new set of maps: Finals used the only maps ever made with low EC passability, and just generally had fairly slow maps. This helped immensely with our slanderer-focused strategy, making it much harder to win with early aggression.
+
+As is often the case in Battlecode, maps win games.
+
+## Acknowledgements
+
+We would like to thank teh devs for all their hard work in organizing and running Battlecode every year, and the sponsors for funding the tournaments and server costs. We would also like to thank the other teams for giving us tough competition, and in particular, we would like to give a shoutout to wololo, whose unique strategy made the tournaments more interesting.
+
+## Team Name
+
+We're called the baby ducks because that's the mascot of the MIT Independent Living Group we're all part of, [Epsilon Theta!](<https://web.mit.edu/thetans/www/>)
+
+Many years ago, Epsilon Theta's athletics chair threatened to name their intramural team the "baby ducks" unless enough people signed up. The rest of the house thought that this was a great name and declined to sign up in order to make this the team name. The name stuck and became a mascot for the house, exemplifying cuteness and child-like fun.

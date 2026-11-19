@@ -25,7 +25,7 @@ GAMES = ROOT / "tools" / "games"
 POOLS_DIR = GAMES_DATA / "pools"
 REF = "ref"  # the label of the reference's own runs in a campaign
 
-LINE = re.compile(r"^(?P<head>\s*public static final (?P<type>int|double) (?P<name>[A-Z][A-Z0-9_]*) = )"
+LINE = re.compile(r"^(?P<head>\s*public static (?:final )?(?P<type>int|double) (?P<name>[A-Z][A-Z0-9_]*) = )"
                   r"(?P<value>-?[0-9.]+)(?P<tail>; // tune: (?P<step>[0-9.]+) \[(?P<lo>-?[0-9.]+), (?P<hi>-?[0-9.]+)\]"
                   r" (?P<meaning>.*))$")
 

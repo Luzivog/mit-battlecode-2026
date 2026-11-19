@@ -46,6 +46,7 @@ public class GlobalArray {
     private static final int FORMATION_TARGET = 10;  // uses 2 slots: 10-11
     private static final int FORMATION_MINE = 12;    // uses 2 slots: 12-13
     private static final int ALIVE_RAT_COUNT = 14;
+    public static final int BOOK_MAP = 15; // the map's book id (Book.init): written once by the first king, 0 off the book
     private static final int KING_MINE_ASSIGNMENT = 16;  // 5 slots for 5 kings (indices 16-20)
 
     // layout: 

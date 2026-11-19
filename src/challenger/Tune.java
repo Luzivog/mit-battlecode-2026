@@ -37,6 +37,8 @@ public final class Tune {
 
     // Pathing (Pathfinder): rats path through dirt (and dig it) once global reaches this from r100.
     public static final int DIRT_CHEESE = 1500; // tune: 500 [500, 3000] global from which rats path through dirt
+    // The kings' bug starts left-handed (0) or right-handed (1) at every retarget (docs/theory/ms-map-seats.md).
+    public static final int KING_HAND = 0; // tune: 1 [0, 1] the kings' bug hand: 0 left, 1 right
 
     // Combat (robot/rat/combat).
     // Move scores: a tile an enemy can grab us from loses THREAT_PENALTY (CombatStrategy.getCellScoreFor); TryRatNap scores

@@ -24,10 +24,13 @@ import static challenger.robot.rat.BabyRat.*;
 occ_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }}
 {%- endmacro %}
 
-{# catMask bit of tile myLoc + (dx, dy), |dx|, |dy| <= 2: rows of 7 bits, x and y from -3 #}
-{% macro cat_bit(dx, dy) -%}
-{{ 2 ** ((dy + 3) * 7 + dx + 3) }}L
-{%- endmacro %}
+{#
+  Collision damage at flight steps 2..5 when the flier acts after the thrower (6 tiles: 42, 30, 26, 22). It is the
+  lower bound of the two turn orders (docs/rules.md §9), which the thrower cannot tell apart.
+#}
+{% set hit_damage = [42, 30, 26, 22] %}
+{# A cat on the line eats the flier, a kill (docs/theory/t2-combat.md §2.3): ranked above the enemy king's 300. #}
+{% set feed_score = 400 %}
 
 {% macro coord_x(dx) -%}
 myLocX{% if dx %} + {{ dx }}{% endif %}
@@ -67,7 +70,6 @@ public final class TryThrow {
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
-    static long catMask;
     {% for dy in range(grid_radius, -grid_radius - 1, -1) %}
     {% for dx in range(-grid_radius, grid_radius + 1) %}
     static RobotInfo {{ occ_var(dx, dy) }};
@@ -284,12 +286,14 @@ public final class TryThrow {
                 markCell(dx, dy, info);
             }
         }
-        catMask = 0;
         for (int i = RobotTracker.numCats; --i >= 0;) {
-            MapLocation l = RobotTracker.sortedCats[i].location;
-            int x = l.x - myLocX + 3;
-            int y = l.y - myLocY + 3;
-            if (x >= 0 && x <= 5 && y >= 0 && y <= 5) catMask |= 387L << (y * 7 + x);
+            RobotInfo info = RobotTracker.sortedCats[i];
+            int dx = info.location.x - myLocX;
+            int dy = info.location.y - myLocY;
+            markCell(dx, dy, info);
+            markCell(dx + 1, dy, info);
+            markCell(dx, dy + 1, info);
+            markCell(dx + 1, dy + 1, info);
         }
         if (GlobalArray.nearestRatKing != null) {
             int dx = GlobalArray.nearestRatKing.x - myLocX;
@@ -323,7 +327,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if ({{ occ_var(base_dx, base_dy) }} != null) return;
-            if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -344,7 +347,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + {{ rem * 4 }};
+                    score += {{ hit_damage[loop.index0] }};
                     break scan;
                 }
             } else {
@@ -367,17 +370,20 @@ public final class TryThrow {
                         score -= {{ rem * 2 }};
                         {% endif %}
                     }
+                } else if ({{ occ_var(dx, dy) }}.getType() == UnitType.CAT) {
+                    score += {{ feed_score }};
+                    break scan;
                 } else {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
                         {% if loop.index0 == 0 %}
-                        score += {{ 2 * (10 + 4 * rem) + 10 }};
+                        score += {{ 2 * hit_damage[0] }};
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}
-                        score += {{ (10 + rem * 4) / (10 - rem) }};
+                        score += {{ hit_damage[loop.index0] / (loop.index0 + 1) }};
                         {% endif %}
                     }
                 }
@@ -385,7 +391,7 @@ public final class TryThrow {
             {% endif %}
             if (CellTracker.isDirt({{ coord_x(dx) }}, {{ coord_y(dy) }})) {
                 {% if debug %} // println("cell is dirt"); {% endif %}
-                score += {{ rem * 4 }};
+                score += {{ hit_damage[loop.index0] }};
                 break scan;
             }
             {% endfor %}
@@ -426,7 +432,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary({{ move_dir }}, {{ throw_dir }})) return;
         if ({{ occ_var(base_dx, base_dy) }} != null) return;
-        if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         {% if debug %} // println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
@@ -446,7 +451,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + {{ rem * 4 }};
+                    score += {{ hit_damage[loop.index0] }};
                     break scan;
                 }
             } else {
@@ -469,17 +474,20 @@ public final class TryThrow {
                         score -= {{ rem * 2 }};
                         {% endif %}
                     }
+                } else if ({{ occ_var(dx, dy) }}.getType() == UnitType.CAT) {
+                    score += {{ feed_score }};
+                    break scan;
                 } else {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
                         {% if loop.index0 == 0 %}
-                        score += {{ 2 * (10 + 4 * rem) + 10 }};
+                        score += {{ 2 * hit_damage[0] }};
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}
-                        score += {{ (10 + rem * 4) / (10 - rem) }};
+                        score += {{ hit_damage[loop.index0] / (loop.index0 + 1) }};
                         {% endif %}
                     }
                 }
@@ -487,7 +495,7 @@ public final class TryThrow {
             {% endif %}
             if (CellTracker.isDirt({{ coord_x(dx) }}, {{ coord_y(dy) }})) {
                 {% if debug %} // println("cell is dirt"); {% endif %}
-                score += {{ rem * 4 }};
+                score += {{ hit_damage[loop.index0] }};
                 break scan;
             }
             {% endfor %}
@@ -529,7 +537,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if ({{ occ_var(base_dx, base_dy) }} != null) return;
-            if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -578,6 +585,8 @@ public final class TryThrow {
                         {% endif %}
                         return;
                     }
+                } else if ({{ occ_var(dx, dy) }}.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -633,7 +642,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary({{ move_dir }}, {{ throw_dir }})) return;
         if ({{ occ_var(base_dx, base_dy) }} != null) return;
-        if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         {% if debug %} println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
@@ -681,6 +689,8 @@ public final class TryThrow {
                         {% endif %}
                         return;
                     }
+                } else if ({{ occ_var(dx, dy) }}.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
                         score += 300;

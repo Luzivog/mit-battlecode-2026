@@ -37,7 +37,6 @@ public final class TryThrow {
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
-    static long catMask;
     static RobotInfo occ_m4_4;
     static RobotInfo occ_m3_4;
     static RobotInfo occ_m2_4;
@@ -3252,12 +3251,14 @@ public final class TryThrow {
                 markCell(dx, dy, info);
             }
         }
-        catMask = 0;
         for (int i = RobotTracker.numCats; --i >= 0;) {
-            MapLocation l = RobotTracker.sortedCats[i].location;
-            int x = l.x - myLocX + 3;
-            int y = l.y - myLocY + 3;
-            if (x >= 0 && x <= 5 && y >= 0 && y <= 5) catMask |= 387L << (y * 7 + x);
+            RobotInfo info = RobotTracker.sortedCats[i];
+            int dx = info.location.x - myLocX;
+            int dy = info.location.y - myLocY;
+            markCell(dx, dy, info);
+            markCell(dx + 1, dy, info);
+            markCell(dx, dy + 1, info);
+            markCell(dx + 1, dy + 1, info);
         }
         if (GlobalArray.nearestRatKing != null) {
             int dx = GlobalArray.nearestRatKing.x - myLocX;
@@ -3285,7 +3286,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
-            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3298,7 +3298,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -3314,19 +3314,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -3335,7 +3338,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -3350,17 +3353,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -3369,7 +3375,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -3377,7 +3383,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 6) {
@@ -3386,7 +3392,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -3394,7 +3400,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -3422,7 +3428,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
-            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3435,7 +3440,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -3451,19 +3456,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 4) {
@@ -3472,7 +3480,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -3487,17 +3495,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 5) {
@@ -3506,7 +3517,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -3514,7 +3525,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 6) {
@@ -3523,7 +3534,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -3531,7 +3542,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -3559,7 +3570,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
-            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3572,7 +3582,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -3588,19 +3598,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 1) {
@@ -3609,7 +3622,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -3624,17 +3637,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 1) {
@@ -3643,7 +3659,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -3658,17 +3674,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 1) {
@@ -3677,7 +3696,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -3685,7 +3704,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -3713,7 +3732,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3726,7 +3744,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -3742,19 +3760,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 2) {
@@ -3763,7 +3784,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -3778,17 +3799,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 3) {
@@ -3797,7 +3821,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -3812,17 +3836,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 4) {
@@ -3831,7 +3858,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -3839,7 +3866,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -3867,7 +3894,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3880,7 +3906,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -3896,19 +3922,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 2) {
@@ -3917,7 +3946,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -3932,17 +3961,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -3951,7 +3983,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -3966,17 +3998,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -3985,7 +4020,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4000,17 +4035,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4038,7 +4076,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4051,7 +4088,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4067,19 +4104,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 2) {
@@ -4088,7 +4128,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4103,17 +4143,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 3) {
@@ -4122,7 +4165,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4137,17 +4180,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 4) {
@@ -4156,7 +4202,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4164,7 +4210,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4192,7 +4238,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
-            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4205,7 +4250,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4221,19 +4266,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 1) {
@@ -4242,7 +4290,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4257,17 +4305,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 1) {
@@ -4276,7 +4327,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4291,17 +4342,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 1) {
@@ -4310,7 +4364,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4318,7 +4372,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4346,7 +4400,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
-            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4359,7 +4412,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4375,19 +4428,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 4) {
@@ -4396,7 +4452,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4411,17 +4467,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 5) {
@@ -4430,7 +4489,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4438,7 +4497,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 6) {
@@ -4447,7 +4506,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4455,7 +4514,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4483,7 +4542,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
-            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4496,7 +4554,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4512,19 +4570,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 4) {
@@ -4533,7 +4594,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4548,17 +4609,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_1_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 5) {
@@ -4567,7 +4631,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4575,7 +4639,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 6) {
@@ -4584,7 +4648,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4592,7 +4656,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4620,7 +4684,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_2 != null) return;
-            if ((catMask & 1099511627776L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4633,7 +4696,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4649,19 +4712,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -4670,7 +4736,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4685,17 +4751,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -4704,7 +4773,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4712,7 +4781,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY < mapHeight - 6) {
@@ -4721,7 +4790,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4729,7 +4798,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4757,7 +4826,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
-            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4770,7 +4838,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4786,19 +4854,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 1) {
@@ -4807,7 +4878,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4822,17 +4893,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 1) {
@@ -4841,7 +4915,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4849,7 +4923,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY < mapHeight - 1) {
@@ -4858,7 +4932,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -4866,7 +4940,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -4894,7 +4968,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
-            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4907,7 +4980,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -4923,19 +4996,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 2) {
@@ -4944,7 +5020,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -4959,17 +5035,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 3) {
@@ -4978,7 +5057,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -4986,7 +5065,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY >= 4) {
@@ -4995,7 +5074,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5003,7 +5082,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5031,7 +5110,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5044,7 +5122,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -5060,19 +5138,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 2) {
@@ -5081,7 +5162,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -5096,17 +5177,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_1_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 3) {
@@ -5115,7 +5199,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -5130,17 +5214,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 4) {
@@ -5149,7 +5236,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5164,17 +5251,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_1_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5202,7 +5292,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5215,7 +5304,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -5231,19 +5320,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY >= 2) {
@@ -5252,7 +5344,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -5267,17 +5359,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -5286,7 +5381,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -5301,17 +5396,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -5320,7 +5418,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5335,17 +5433,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5373,7 +5474,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5386,7 +5486,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -5402,19 +5502,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY < mapHeight - 1) {
@@ -5423,7 +5526,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -5438,17 +5541,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 1) {
@@ -5457,7 +5563,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -5472,17 +5578,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 1) {
@@ -5491,7 +5600,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5506,17 +5615,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m4_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5544,7 +5656,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
-            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5557,7 +5668,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -5573,19 +5684,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY < mapHeight - 4) {
@@ -5594,7 +5708,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -5609,17 +5723,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 5) {
@@ -5628,7 +5745,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -5636,7 +5753,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 6) {
@@ -5645,7 +5762,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5653,7 +5770,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5681,7 +5798,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
-            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5694,7 +5810,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -5710,19 +5826,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 3) {
@@ -5731,7 +5850,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -5746,17 +5865,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 4) {
@@ -5765,7 +5887,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -5780,17 +5902,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_1_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 5) {
@@ -5799,7 +5924,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5807,7 +5932,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5835,7 +5960,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
-            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5848,7 +5972,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -5864,19 +5988,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 3) {
@@ -5885,7 +6012,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -5900,17 +6027,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 4) {
@@ -5919,7 +6049,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -5927,7 +6057,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY < mapHeight - 5) {
@@ -5936,7 +6066,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -5944,7 +6074,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -5972,7 +6102,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
-            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5985,7 +6114,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6001,19 +6130,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -6022,7 +6154,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6037,17 +6169,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -6056,7 +6191,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6064,7 +6199,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6) {
@@ -6073,7 +6208,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -6081,7 +6216,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -6109,7 +6244,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
-            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6122,7 +6256,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6138,19 +6272,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 3) {
@@ -6159,7 +6296,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6174,17 +6311,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 4) {
@@ -6193,7 +6333,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6201,7 +6341,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY >= 5) {
@@ -6210,7 +6350,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -6218,7 +6358,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -6246,7 +6386,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
-            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6259,7 +6398,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6275,19 +6414,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 3) {
@@ -6296,7 +6438,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6311,17 +6453,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 4) {
@@ -6330,7 +6475,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6345,17 +6490,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_1_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 5) {
@@ -6364,7 +6512,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -6372,7 +6520,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -6400,7 +6548,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6413,7 +6560,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6429,19 +6576,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY >= 3) {
@@ -6450,7 +6600,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6465,17 +6615,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 4) {
@@ -6484,7 +6637,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6499,17 +6652,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 5) {
@@ -6518,7 +6674,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -6526,7 +6682,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -6554,7 +6710,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6567,7 +6722,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6583,19 +6738,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2) {
@@ -6604,7 +6762,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6619,17 +6777,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -6638,7 +6799,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6653,17 +6814,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -6672,7 +6836,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -6687,17 +6851,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -6725,7 +6892,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6738,7 +6904,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6754,19 +6920,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY < mapHeight - 3) {
@@ -6775,7 +6944,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6790,17 +6959,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 4) {
@@ -6809,7 +6981,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6824,17 +6996,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 5) {
@@ -6843,7 +7018,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -6851,7 +7026,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -6879,7 +7054,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6892,7 +7066,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -6908,19 +7082,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 2) {
@@ -6929,7 +7106,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -6944,17 +7121,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_1_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 3) {
@@ -6963,7 +7143,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -6978,17 +7158,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY < mapHeight - 4) {
@@ -6997,7 +7180,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7012,17 +7195,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_1_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7050,7 +7236,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
-            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7063,7 +7248,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7079,19 +7264,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 2) {
@@ -7100,7 +7288,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7115,17 +7303,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 3) {
@@ -7134,7 +7325,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -7142,7 +7333,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY < mapHeight - 4) {
@@ -7151,7 +7342,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7159,7 +7350,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7187,7 +7378,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
-            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7200,7 +7390,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7216,19 +7406,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 1) {
@@ -7237,7 +7430,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7252,17 +7445,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 1) {
@@ -7271,7 +7467,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -7279,7 +7475,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY >= 1) {
@@ -7288,7 +7484,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7296,7 +7492,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7324,7 +7520,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m2 != null) return;
-            if ((catMask & 4096L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7337,7 +7532,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7353,19 +7548,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_3_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -7374,7 +7572,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7389,17 +7587,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -7408,7 +7609,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -7416,7 +7617,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 6 && myLocY >= 6) {
@@ -7425,7 +7626,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7433,7 +7634,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 6, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7461,7 +7662,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
-            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7474,7 +7674,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7490,19 +7690,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 4) {
@@ -7511,7 +7714,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7526,17 +7729,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_1_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 5) {
@@ -7545,7 +7751,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -7553,7 +7759,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 1 && myLocY >= 6) {
@@ -7562,7 +7768,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7570,7 +7776,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7598,7 +7804,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
-            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7611,7 +7816,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7627,19 +7832,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY >= 4) {
@@ -7648,7 +7856,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7663,17 +7871,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 5) {
@@ -7682,7 +7893,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -7690,7 +7901,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 6) {
@@ -7699,7 +7910,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7707,7 +7918,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7735,7 +7946,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7748,7 +7958,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7764,19 +7974,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY >= 1) {
@@ -7785,7 +7998,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7800,17 +8013,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 1) {
@@ -7819,7 +8035,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -7834,17 +8050,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 1) {
@@ -7853,7 +8072,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -7868,17 +8087,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m4_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -7906,7 +8128,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7919,7 +8140,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -7935,19 +8156,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 2 && myLocY < mapHeight - 2) {
@@ -7956,7 +8180,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -7971,17 +8195,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -7990,7 +8217,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8005,17 +8232,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -8024,7 +8254,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8039,17 +8269,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8077,7 +8310,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8090,7 +8322,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8106,19 +8338,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 2) {
@@ -8127,7 +8362,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -8142,17 +8377,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -8161,7 +8399,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8176,17 +8414,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -8195,7 +8436,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8210,17 +8451,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8248,7 +8492,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8261,7 +8504,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8277,19 +8520,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 2) {
@@ -8298,7 +8544,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -8313,17 +8559,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 3) {
@@ -8332,7 +8581,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8347,17 +8596,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 4) {
@@ -8366,7 +8618,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8374,7 +8626,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8402,7 +8654,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
-            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8415,7 +8666,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8431,19 +8682,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 1) {
@@ -8452,7 +8706,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -8467,17 +8721,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 1) {
@@ -8486,7 +8743,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8501,17 +8758,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 1) {
@@ -8520,7 +8780,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8528,7 +8788,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8556,7 +8816,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
-            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8569,7 +8828,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8585,19 +8844,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 4) {
@@ -8606,7 +8868,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -8621,17 +8883,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 5) {
@@ -8640,7 +8905,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8648,7 +8913,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 6) {
@@ -8657,7 +8922,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8665,7 +8930,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8693,7 +8958,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
-            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8706,7 +8970,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8722,19 +8986,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -8743,7 +9010,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -8758,17 +9025,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -8777,7 +9047,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8785,7 +9055,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 6) {
@@ -8794,7 +9064,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8802,7 +9072,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8830,7 +9100,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
-            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8843,7 +9112,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8859,19 +9128,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 4) {
@@ -8880,7 +9152,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -8895,17 +9167,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 5) {
@@ -8914,7 +9189,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -8922,7 +9197,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 6) {
@@ -8931,7 +9206,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -8939,7 +9214,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -8967,7 +9242,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
-            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8980,7 +9254,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -8996,19 +9270,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 1) {
@@ -9017,7 +9294,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9032,17 +9309,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 1) {
@@ -9051,7 +9331,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -9066,17 +9346,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 1) {
@@ -9085,7 +9368,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -9093,7 +9376,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -9121,7 +9404,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9134,7 +9416,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -9150,19 +9432,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 2) {
@@ -9171,7 +9456,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9186,17 +9471,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 3) {
@@ -9205,7 +9493,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -9220,17 +9508,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 4) {
@@ -9239,7 +9530,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -9247,7 +9538,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -9275,7 +9566,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9288,7 +9578,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -9304,19 +9594,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 2) {
@@ -9325,7 +9618,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9340,17 +9633,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m1_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 3) {
@@ -9359,7 +9655,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -9374,17 +9670,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 4) {
@@ -9393,7 +9692,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -9408,17 +9707,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m1_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -9446,7 +9748,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9459,7 +9760,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -9475,19 +9776,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY < mapHeight - 2) {
@@ -9496,7 +9800,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9511,17 +9815,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -9530,7 +9837,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -9545,17 +9852,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -9564,7 +9874,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -9579,17 +9889,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -9617,7 +9930,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9630,7 +9942,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -9646,19 +9958,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY >= 1) {
@@ -9667,7 +9982,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9682,17 +9997,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 1) {
@@ -9701,7 +10019,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -9716,17 +10034,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 1) {
@@ -9735,7 +10056,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -9750,17 +10071,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_4_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -9788,7 +10112,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
-            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9801,7 +10124,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -9817,19 +10140,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY >= 4) {
@@ -9838,7 +10164,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9853,17 +10179,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 5) {
@@ -9872,7 +10201,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -9880,7 +10209,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 6) {
@@ -9889,7 +10218,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -9897,7 +10226,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -9925,7 +10254,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
-            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9938,7 +10266,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -9954,19 +10282,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 4) {
@@ -9975,7 +10306,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -9990,17 +10321,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m1_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 5) {
@@ -10009,7 +10343,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10017,7 +10351,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 6) {
@@ -10026,7 +10360,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10034,7 +10368,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10062,7 +10396,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m2 != null) return;
-            if ((catMask & 256L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10075,7 +10408,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10091,19 +10424,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_m3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -10112,7 +10448,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -10127,17 +10463,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -10146,7 +10485,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10154,7 +10493,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY >= 6) {
@@ -10163,7 +10502,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10171,7 +10510,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10199,7 +10538,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
-            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10212,7 +10550,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10228,19 +10566,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 1) {
@@ -10249,7 +10590,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -10264,17 +10605,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 1) {
@@ -10283,7 +10627,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10291,7 +10635,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY >= 1) {
@@ -10300,7 +10644,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10308,7 +10652,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10336,7 +10680,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
-            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10349,7 +10692,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10365,19 +10708,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 2) {
@@ -10386,7 +10732,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -10401,17 +10747,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 3) {
@@ -10420,7 +10769,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10428,7 +10777,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY < mapHeight - 4) {
@@ -10437,7 +10786,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10445,7 +10794,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10473,7 +10822,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
-            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10486,7 +10834,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10502,19 +10850,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 3) {
@@ -10523,7 +10874,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -10538,17 +10889,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 4) {
@@ -10557,7 +10911,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10572,17 +10926,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m1_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 5) {
@@ -10591,7 +10948,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10599,7 +10956,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10627,7 +10984,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10640,7 +10996,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10656,19 +11012,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY < mapHeight - 3) {
@@ -10677,7 +11036,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -10692,17 +11051,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 4) {
@@ -10711,7 +11073,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10726,17 +11088,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 5) {
@@ -10745,7 +11110,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10753,7 +11118,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10781,7 +11146,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10794,7 +11158,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10810,19 +11174,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2) {
@@ -10831,7 +11198,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -10846,17 +11213,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -10865,7 +11235,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -10880,17 +11250,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -10899,7 +11272,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -10914,17 +11287,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -10952,7 +11328,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10965,7 +11340,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -10981,19 +11356,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY >= 3) {
@@ -11002,7 +11380,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11017,17 +11395,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 4) {
@@ -11036,7 +11417,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11051,17 +11432,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 5) {
@@ -11070,7 +11454,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11078,7 +11462,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11106,7 +11490,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
-            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11119,7 +11502,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11135,19 +11518,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 3) {
@@ -11156,7 +11542,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11171,17 +11557,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 4) {
@@ -11190,7 +11579,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11205,17 +11594,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m1_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 5) {
@@ -11224,7 +11616,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11232,7 +11624,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11260,7 +11652,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
-            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11273,7 +11664,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11289,19 +11680,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 3) {
@@ -11310,7 +11704,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11325,17 +11719,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 4) {
@@ -11344,7 +11741,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11352,7 +11749,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY >= 5) {
@@ -11361,7 +11758,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11369,7 +11766,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11397,7 +11794,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
-            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11410,7 +11806,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11426,19 +11822,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -11447,7 +11846,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11462,17 +11861,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -11481,7 +11883,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11489,7 +11891,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6) {
@@ -11498,7 +11900,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11506,7 +11908,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11534,7 +11936,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
-            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11547,7 +11948,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11563,19 +11964,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 3) {
@@ -11584,7 +11988,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11599,17 +12003,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 4) {
@@ -11618,7 +12025,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11626,7 +12033,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY < mapHeight - 5) {
@@ -11635,7 +12042,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11643,7 +12050,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11671,7 +12078,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
-            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11684,7 +12090,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11700,19 +12106,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 4) {
@@ -11721,7 +12130,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11736,17 +12145,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m1_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 5) {
@@ -11755,7 +12167,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11763,7 +12175,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 1 && myLocY < mapHeight - 6) {
@@ -11772,7 +12184,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11780,7 +12192,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11808,7 +12220,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
-            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11821,7 +12232,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11837,19 +12248,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY < mapHeight - 4) {
@@ -11858,7 +12272,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -11873,17 +12287,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 5) {
@@ -11892,7 +12309,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -11900,7 +12317,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 6) {
@@ -11909,7 +12326,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -11917,7 +12334,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -11945,7 +12362,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11958,7 +12374,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -11974,19 +12390,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY < mapHeight - 1) {
@@ -11995,7 +12414,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12010,17 +12429,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 1) {
@@ -12029,7 +12451,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12044,17 +12466,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 1) {
@@ -12063,7 +12488,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12078,17 +12503,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_4_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -12116,7 +12544,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12129,7 +12556,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -12145,19 +12572,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_1_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_1_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 1, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 2 && myLocY >= 2) {
@@ -12166,7 +12596,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12181,17 +12611,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -12200,7 +12633,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12215,17 +12648,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -12234,7 +12670,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12249,17 +12685,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -12287,7 +12726,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12300,7 +12738,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -12316,19 +12754,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m1_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m1_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 2) {
@@ -12337,7 +12778,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12352,17 +12793,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m1_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 3) {
@@ -12371,7 +12815,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12386,17 +12830,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m1_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 1 && myLocY >= 4) {
@@ -12405,7 +12852,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12420,17 +12867,20 @@ public final class TryThrow {
                     } else {
                         score -= 12;
                     }
+                } else if (occ_m1_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m1_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 8.5;
+                        score += 5.5;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -1, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -12458,7 +12908,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
-            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12471,7 +12920,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -12487,19 +12936,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_m1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_m1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 2) {
@@ -12508,7 +12960,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12523,17 +12975,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -2)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 3) {
@@ -12542,7 +12997,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12550,7 +13005,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -3)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY >= 4) {
@@ -12559,7 +13014,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12567,7 +13022,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + -4)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -12595,7 +13050,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
-            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12608,7 +13062,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -12624,19 +13078,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_1;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 1)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 1) {
@@ -12645,7 +13102,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12660,17 +13117,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_1.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_1.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 1)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 1) {
@@ -12679,7 +13139,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12687,7 +13147,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 1)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY < mapHeight - 1) {
@@ -12696,7 +13156,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12704,7 +13164,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 1)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -12732,7 +13192,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_2 != null) return;
-            if ((catMask & 68719476736L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12745,7 +13204,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -12761,19 +13220,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m3_3;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -12782,7 +13244,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12797,17 +13259,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -12816,7 +13281,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12824,7 +13289,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 6 && myLocY < mapHeight - 6) {
@@ -12833,7 +13298,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12841,7 +13306,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -6, myLocY + 6)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -12869,7 +13334,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12882,7 +13346,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -12898,19 +13362,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -12919,7 +13386,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -12934,17 +13401,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -12953,7 +13423,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -12968,17 +13438,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -12987,7 +13460,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -12995,7 +13468,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13023,7 +13496,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
-            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13036,7 +13508,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13052,19 +13524,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -13073,7 +13548,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -13088,17 +13563,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -13107,7 +13585,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -13122,17 +13600,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -13141,7 +13622,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -13149,7 +13630,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13177,7 +13658,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13190,7 +13670,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13206,19 +13686,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -13227,7 +13710,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -13242,17 +13725,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -13261,7 +13747,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -13276,17 +13762,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -13295,7 +13784,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -13303,7 +13792,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13331,7 +13820,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
-            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13344,7 +13832,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13360,19 +13848,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -13381,7 +13872,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -13396,17 +13887,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -13415,7 +13909,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -13430,17 +13924,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -13449,7 +13946,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -13457,7 +13954,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13485,7 +13982,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13498,7 +13994,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13514,19 +14010,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -13535,7 +14034,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -13550,17 +14049,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -13569,7 +14071,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -13584,17 +14086,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -13603,7 +14108,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -13611,7 +14116,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13639,7 +14144,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
-            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13652,7 +14156,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13668,19 +14172,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -13689,7 +14196,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -13704,17 +14211,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -13723,7 +14233,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -13738,17 +14248,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -13757,7 +14270,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -13765,7 +14278,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13793,7 +14306,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13806,7 +14318,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13822,19 +14334,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -13843,7 +14358,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -13858,17 +14373,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -13877,7 +14395,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -13892,17 +14410,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -13911,7 +14432,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -13919,7 +14440,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -13947,7 +14468,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
-            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13960,7 +14480,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -13976,19 +14496,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -13997,7 +14520,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14012,17 +14535,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -14031,7 +14557,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14046,17 +14572,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -14065,7 +14594,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14073,7 +14602,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14103,7 +14632,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14115,7 +14643,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -14131,19 +14659,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -14152,7 +14683,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14167,17 +14698,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -14186,7 +14720,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14201,17 +14735,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -14220,7 +14757,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14228,7 +14765,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14250,7 +14787,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14262,7 +14798,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -14278,19 +14814,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -14299,7 +14838,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14314,17 +14853,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -14333,7 +14875,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14348,17 +14890,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -14367,7 +14912,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14375,7 +14920,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14397,7 +14942,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14409,7 +14953,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -14425,19 +14969,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -14446,7 +14993,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14461,17 +15008,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -14480,7 +15030,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14495,17 +15045,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -14514,7 +15067,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14522,7 +15075,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14544,7 +15097,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14556,7 +15108,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -14572,19 +15124,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -14593,7 +15148,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14608,17 +15163,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -14627,7 +15185,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14642,17 +15200,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -14661,7 +15222,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14669,7 +15230,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14691,7 +15252,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14703,7 +15263,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -14719,19 +15279,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -14740,7 +15303,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14755,17 +15318,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -14774,7 +15340,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14789,17 +15355,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -14808,7 +15377,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14816,7 +15385,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14838,7 +15407,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14850,7 +15418,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -14866,19 +15434,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -14887,7 +15458,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -14902,17 +15473,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -14921,7 +15495,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -14936,17 +15510,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -14955,7 +15532,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -14963,7 +15540,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -14985,7 +15562,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14997,7 +15573,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15013,19 +15589,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -15034,7 +15613,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15049,17 +15628,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -15068,7 +15650,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15083,17 +15665,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -15102,7 +15687,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15110,7 +15695,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -15132,7 +15717,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15144,7 +15728,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15160,19 +15744,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -15181,7 +15768,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15196,17 +15783,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -15215,7 +15805,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15230,17 +15820,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -15249,7 +15842,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15257,7 +15850,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -15279,7 +15872,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15291,7 +15883,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15307,19 +15899,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -15328,7 +15923,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15343,17 +15938,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -15362,7 +15960,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15377,17 +15975,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -15396,7 +15997,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15404,7 +16005,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -15426,7 +16027,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15438,7 +16038,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15454,19 +16054,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -15475,7 +16078,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15490,17 +16093,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -15509,7 +16115,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15524,17 +16130,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -15543,7 +16152,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15551,7 +16160,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -15573,7 +16182,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15585,7 +16193,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15601,19 +16209,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -15622,7 +16233,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15637,17 +16248,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -15656,7 +16270,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15671,17 +16285,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -15690,7 +16307,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15698,7 +16315,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -15720,7 +16337,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15732,7 +16348,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15748,19 +16364,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -15769,7 +16388,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15784,17 +16403,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -15803,7 +16425,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15818,17 +16440,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -15837,7 +16462,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15845,7 +16470,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -15867,7 +16492,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15879,7 +16503,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -15895,19 +16519,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -15916,7 +16543,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -15931,17 +16558,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -15950,7 +16580,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -15965,17 +16595,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -15984,7 +16617,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -15992,7 +16625,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16014,7 +16647,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16026,7 +16658,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16042,19 +16674,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -16063,7 +16698,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16078,17 +16713,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -16097,7 +16735,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16112,17 +16750,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -16131,7 +16772,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -16139,7 +16780,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16161,7 +16802,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16173,7 +16813,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16189,19 +16829,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -16210,7 +16853,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16225,17 +16868,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -16244,7 +16890,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16259,17 +16905,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -16278,7 +16927,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -16286,7 +16935,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16308,7 +16957,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16320,7 +16968,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16336,19 +16984,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -16357,7 +17008,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16372,17 +17023,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -16391,7 +17045,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16406,17 +17060,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -16425,7 +17082,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -16433,7 +17090,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16455,7 +17112,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16467,7 +17123,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16483,19 +17139,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -16504,7 +17163,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16519,17 +17178,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -16538,7 +17200,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16553,17 +17215,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -16572,7 +17237,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -16580,7 +17245,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16602,7 +17267,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16614,7 +17278,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16630,19 +17294,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -16651,7 +17318,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16666,17 +17333,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -16685,7 +17355,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16700,17 +17370,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -16719,7 +17392,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -16727,7 +17400,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16749,7 +17422,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16761,7 +17433,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16777,19 +17449,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -16798,7 +17473,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16813,17 +17488,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -16832,7 +17510,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16847,17 +17525,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -16866,7 +17547,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -16874,7 +17555,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -16896,7 +17577,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16908,7 +17588,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -16924,19 +17604,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -16945,7 +17628,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -16960,17 +17643,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -16979,7 +17665,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -16994,17 +17680,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -17013,7 +17702,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17021,7 +17710,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17043,7 +17732,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17055,7 +17743,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17071,19 +17759,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -17092,7 +17783,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17107,17 +17798,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -17126,7 +17820,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -17141,17 +17835,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -17160,7 +17857,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17168,7 +17865,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17190,7 +17887,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17202,7 +17898,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17218,19 +17914,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -17239,7 +17938,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17254,17 +17953,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -17273,7 +17975,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -17288,17 +17990,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -17307,7 +18012,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17315,7 +18020,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17337,7 +18042,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17349,7 +18053,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17365,19 +18069,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -17386,7 +18093,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17401,17 +18108,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -17420,7 +18130,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -17435,17 +18145,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -17454,7 +18167,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17462,7 +18175,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17484,7 +18197,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17496,7 +18208,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17512,19 +18224,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -17533,7 +18248,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17548,17 +18263,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -17567,7 +18285,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -17582,17 +18300,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -17601,7 +18322,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17609,7 +18330,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17631,7 +18352,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17643,7 +18363,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17659,19 +18379,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -17680,7 +18403,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17695,17 +18418,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -17714,7 +18440,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -17729,17 +18455,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -17748,7 +18477,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17756,7 +18485,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17778,7 +18507,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17790,7 +18518,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17806,19 +18534,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -17827,7 +18558,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17842,17 +18573,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -17861,7 +18595,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -17876,17 +18610,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -17895,7 +18632,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -17903,7 +18640,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -17925,7 +18662,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17937,7 +18673,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -17953,19 +18689,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -17974,7 +18713,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -17989,17 +18728,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -18008,7 +18750,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18023,17 +18765,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -18042,7 +18787,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18050,7 +18795,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18072,7 +18817,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18084,7 +18828,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18100,19 +18844,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -18121,7 +18868,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -18136,17 +18883,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -18155,7 +18905,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18170,17 +18920,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -18189,7 +18942,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18197,7 +18950,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18219,7 +18972,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18231,7 +18983,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18247,19 +18999,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -18268,7 +19023,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -18283,17 +19038,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -18302,7 +19060,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18317,17 +19075,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -18336,7 +19097,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18344,7 +19105,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18366,7 +19127,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18378,7 +19138,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18394,19 +19154,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -18415,7 +19178,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -18430,17 +19193,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -18449,7 +19215,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18464,17 +19230,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -18483,7 +19252,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18491,7 +19260,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18513,7 +19282,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18525,7 +19293,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18541,19 +19309,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -18562,7 +19333,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -18577,17 +19348,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -18596,7 +19370,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18611,17 +19385,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -18630,7 +19407,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18638,7 +19415,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18660,7 +19437,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18672,7 +19448,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18688,19 +19464,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -18709,7 +19488,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -18724,17 +19503,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -18743,7 +19525,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18758,17 +19540,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -18777,7 +19562,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18785,7 +19570,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18807,7 +19592,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18819,7 +19603,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18835,19 +19619,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -18856,7 +19643,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -18871,17 +19658,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -18890,7 +19680,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -18905,17 +19695,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -18924,7 +19717,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -18932,7 +19725,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -18954,7 +19747,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18966,7 +19758,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -18982,19 +19774,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -19003,7 +19798,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19018,17 +19813,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -19037,7 +19835,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19052,17 +19850,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -19071,7 +19872,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19079,7 +19880,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19101,7 +19902,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19113,7 +19913,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -19129,19 +19929,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -19150,7 +19953,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19165,17 +19968,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -19184,7 +19990,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19199,17 +20005,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -19218,7 +20027,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19226,7 +20035,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19248,7 +20057,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19260,7 +20068,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -19276,19 +20084,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -19297,7 +20108,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19312,17 +20123,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -19331,7 +20145,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19346,17 +20160,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -19365,7 +20182,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19373,7 +20190,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19395,7 +20212,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19407,7 +20223,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -19423,19 +20239,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -19444,7 +20263,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19459,17 +20278,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -19478,7 +20300,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19493,17 +20315,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -19512,7 +20337,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19520,7 +20345,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19542,7 +20367,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19554,7 +20378,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -19570,19 +20394,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -19591,7 +20418,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19606,17 +20433,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -19625,7 +20455,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19640,17 +20470,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -19659,7 +20492,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19667,7 +20500,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19689,7 +20522,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19701,7 +20533,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -19717,19 +20549,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -19738,7 +20573,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19753,17 +20588,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -19772,7 +20610,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19787,17 +20625,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -19806,7 +20647,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19814,7 +20655,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19836,7 +20677,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19848,7 +20688,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -19864,19 +20704,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -19885,7 +20728,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -19900,17 +20743,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -19919,7 +20765,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -19934,17 +20780,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -19953,7 +20802,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -19961,7 +20810,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -19983,7 +20832,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19995,7 +20843,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20011,19 +20859,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -20032,7 +20883,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20047,17 +20898,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -20066,7 +20920,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20081,17 +20935,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -20100,7 +20957,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20108,7 +20965,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -20130,7 +20987,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20142,7 +20998,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20158,19 +21014,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -20179,7 +21038,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20194,17 +21053,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -20213,7 +21075,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20228,17 +21090,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -20247,7 +21112,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20255,7 +21120,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -20277,7 +21142,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20289,7 +21153,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20305,19 +21169,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -20326,7 +21193,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20341,17 +21208,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -20360,7 +21230,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20375,17 +21245,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -20394,7 +21267,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20402,7 +21275,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -20424,7 +21297,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20436,7 +21308,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20452,19 +21324,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -20473,7 +21348,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20488,17 +21363,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -20507,7 +21385,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20522,17 +21400,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -20541,7 +21422,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20549,7 +21430,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -20571,7 +21452,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20583,7 +21463,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20599,19 +21479,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -20620,7 +21503,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20635,17 +21518,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -20654,7 +21540,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20669,17 +21555,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -20688,7 +21577,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20696,7 +21585,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -20718,7 +21607,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20730,7 +21618,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20746,19 +21634,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -20767,7 +21658,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20782,17 +21673,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -20801,7 +21695,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20816,17 +21710,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -20835,7 +21732,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20843,7 +21740,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -20865,7 +21762,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20877,7 +21773,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -20893,19 +21789,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -20914,7 +21813,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -20929,17 +21828,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -20948,7 +21850,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -20963,17 +21865,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -20982,7 +21887,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -20990,7 +21895,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21012,7 +21917,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21024,7 +21928,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21040,19 +21944,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -21061,7 +21968,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21076,17 +21983,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -21095,7 +22005,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21110,17 +22020,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -21129,7 +22042,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -21137,7 +22050,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21159,7 +22072,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21171,7 +22083,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21187,19 +22099,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -21208,7 +22123,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21223,17 +22138,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -21242,7 +22160,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21257,17 +22175,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -21276,7 +22197,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -21284,7 +22205,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21306,7 +22227,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21318,7 +22238,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21334,19 +22254,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -21355,7 +22278,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21370,17 +22293,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -21389,7 +22315,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21404,17 +22330,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -21423,7 +22352,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -21431,7 +22360,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21453,7 +22382,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21465,7 +22393,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21481,19 +22409,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -21502,7 +22433,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21517,17 +22448,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -21536,7 +22470,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21551,17 +22485,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -21570,7 +22507,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -21578,7 +22515,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21600,7 +22537,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21612,7 +22548,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21628,19 +22564,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -21649,7 +22588,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21664,17 +22603,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -21683,7 +22625,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21698,17 +22640,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -21717,7 +22662,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -21725,7 +22670,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21747,7 +22692,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21759,7 +22703,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21775,19 +22719,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -21796,7 +22743,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21811,17 +22758,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -21830,7 +22780,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21845,17 +22795,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -21864,7 +22817,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -21872,7 +22825,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -21894,7 +22847,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21906,7 +22858,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -21922,19 +22874,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -21943,7 +22898,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -21958,17 +22913,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -21977,7 +22935,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -21992,17 +22950,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -22011,7 +22972,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22019,7 +22980,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22041,7 +23002,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22053,7 +23013,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22069,19 +23029,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -22090,7 +23053,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22105,17 +23068,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -22124,7 +23090,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -22139,17 +23105,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -22158,7 +23127,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22166,7 +23135,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22188,7 +23157,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22200,7 +23168,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22216,19 +23184,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -22237,7 +23208,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22252,17 +23223,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -22271,7 +23245,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -22286,17 +23260,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -22305,7 +23282,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22313,7 +23290,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22335,7 +23312,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22347,7 +23323,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22363,19 +23339,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -22384,7 +23363,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22399,17 +23378,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -22418,7 +23400,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -22433,17 +23415,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -22452,7 +23437,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22460,7 +23445,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22482,7 +23467,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22494,7 +23478,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22510,19 +23494,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -22531,7 +23518,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22546,17 +23533,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -22565,7 +23555,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -22580,17 +23570,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -22599,7 +23592,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22607,7 +23600,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22629,7 +23622,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22641,7 +23633,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22657,19 +23649,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -22678,7 +23673,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22693,17 +23688,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -22712,7 +23710,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -22727,17 +23725,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -22746,7 +23747,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22754,7 +23755,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22776,7 +23777,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22788,7 +23788,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22804,19 +23804,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -22825,7 +23828,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22840,17 +23843,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -22859,7 +23865,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -22874,17 +23880,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -22893,7 +23902,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -22901,7 +23910,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -22923,7 +23932,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22935,7 +23943,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -22951,19 +23959,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -22972,7 +23983,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -22987,17 +23998,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -23006,7 +24020,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23021,17 +24035,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -23040,7 +24057,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23048,7 +24065,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23070,7 +24087,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23082,7 +24098,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23098,19 +24114,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -23119,7 +24138,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -23134,17 +24153,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -23153,7 +24175,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23168,17 +24190,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -23187,7 +24212,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23195,7 +24220,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23217,7 +24242,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23229,7 +24253,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23245,19 +24269,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -23266,7 +24293,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -23281,17 +24308,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -23300,7 +24330,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23315,17 +24345,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -23334,7 +24367,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23342,7 +24375,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23364,7 +24397,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23376,7 +24408,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23392,19 +24424,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -23413,7 +24448,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -23428,17 +24463,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -23447,7 +24485,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23462,17 +24500,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -23481,7 +24522,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23489,7 +24530,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23511,7 +24552,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23523,7 +24563,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23539,19 +24579,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY < mapHeight - 3) {
@@ -23560,7 +24603,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -23575,17 +24618,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY < mapHeight - 4) {
@@ -23594,7 +24640,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23609,17 +24655,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY < mapHeight - 5) {
@@ -23628,7 +24677,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23636,7 +24685,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23658,7 +24707,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23670,7 +24718,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23686,19 +24734,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY < mapHeight - 3) {
@@ -23707,7 +24758,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -23722,17 +24773,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY < mapHeight - 4) {
@@ -23741,7 +24795,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23756,17 +24810,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY < mapHeight - 5) {
@@ -23775,7 +24832,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23783,7 +24840,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23805,7 +24862,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23817,7 +24873,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23833,19 +24889,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3) {
@@ -23854,7 +24913,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -23869,17 +24928,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4) {
@@ -23888,7 +24950,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -23903,17 +24965,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5) {
@@ -23922,7 +24987,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -23930,7 +24995,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -23952,7 +25017,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23964,7 +25028,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -23980,19 +25044,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX < mapWidth - 3 && myLocY >= 3) {
@@ -24001,7 +25068,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -24016,17 +25083,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX < mapWidth - 4 && myLocY >= 4) {
@@ -24035,7 +25105,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -24050,17 +25120,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + 4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX < mapWidth - 5 && myLocY >= 5) {
@@ -24069,7 +25142,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -24077,7 +25150,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + 5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -24099,7 +25172,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24111,7 +25183,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -24127,19 +25199,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_0_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocY >= 3) {
@@ -24148,7 +25223,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -24163,17 +25238,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocY >= 4) {
@@ -24182,7 +25260,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -24197,17 +25275,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_0_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_0_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocY >= 5) {
@@ -24216,7 +25297,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -24224,7 +25305,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -24246,7 +25327,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24258,7 +25338,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -24274,19 +25354,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_m2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + -2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY >= 3) {
@@ -24295,7 +25378,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -24310,17 +25393,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + -3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY >= 4) {
@@ -24329,7 +25415,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -24344,17 +25430,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_m4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_m4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + -4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY >= 5) {
@@ -24363,7 +25452,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -24371,7 +25460,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + -5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -24393,7 +25482,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24405,7 +25493,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -24421,19 +25509,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_0;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3) {
@@ -24442,7 +25533,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -24457,17 +25548,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4) {
@@ -24476,7 +25570,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -24491,17 +25585,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_0.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_0.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5) {
@@ -24510,7 +25607,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -24518,7 +25615,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -24540,7 +25637,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24552,7 +25648,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 36;
+                    score += 42;
                     break scan;
                 }
             } else {
@@ -24568,19 +25664,22 @@ public final class TryThrow {
                         score -= 36;
                         break scan;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 102;
+                        score += 84;
                         enemyHit = occ_m2_2;
                         break scan;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -2, myLocY + 2)) {
-                score += 36;
+                score += 42;
                 break scan;
             }
             if (myLocX >= 3 && myLocY < mapHeight - 3) {
@@ -24589,7 +25688,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 32;
+                    score += 30;
                     break scan;
                 }
             } else {
@@ -24604,17 +25703,20 @@ public final class TryThrow {
                     } else {
                         score -= 16;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 21.0;
+                        score += 15.0;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -3, myLocY + 3)) {
-                score += 32;
+                score += 30;
                 break scan;
             }
             if (myLocX >= 4 && myLocY < mapHeight - 4) {
@@ -24623,7 +25725,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 28;
+                    score += 26;
                     break scan;
                 }
             } else {
@@ -24638,17 +25740,20 @@ public final class TryThrow {
                     } else {
                         score -= 14;
                     }
+                } else if (occ_m4_4.getType() == UnitType.CAT) {
+                    score += 400;
+                    break scan;
                 } else {
                     if (occ_m4_4.getType() == UnitType.RAT_KING) {
                         score += 300;
                         break scan;
                     } else {
-                        score += 12.666666666666666;
+                        score += 8.666666666666666;
                     }
                 }
             }
             if (CellTracker.isDirt(myLocX + -4, myLocY + 4)) {
-                score += 28;
+                score += 26;
                 break scan;
             }
             if (myLocX >= 5 && myLocY < mapHeight - 5) {
@@ -24657,7 +25762,7 @@ public final class TryThrow {
                     break scan;
                 }
                 if (c == '\2') {
-                    score += 10 + 24;
+                    score += 22;
                     break scan;
                 }
             } else {
@@ -24665,7 +25770,7 @@ public final class TryThrow {
                 break scan; 
             }
             if (CellTracker.isDirt(myLocX + -5, myLocY + 5)) {
-                score += 24;
+                score += 22;
                 break scan;
             }
         }
@@ -24696,7 +25801,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
-            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24730,6 +25834,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -24772,7 +25878,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
-            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24806,6 +25911,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -24848,7 +25955,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
-            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24882,6 +25988,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -24924,7 +26032,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24958,6 +26065,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25000,7 +26109,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25034,6 +26142,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25076,7 +26186,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25110,6 +26219,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25152,7 +26263,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
-            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25186,6 +26296,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25228,7 +26340,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
-            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25262,6 +26373,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25304,7 +26417,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
-            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25338,6 +26450,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25380,7 +26494,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_2 != null) return;
-            if ((catMask & 1099511627776L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25414,6 +26527,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25456,7 +26571,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
-            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25490,6 +26604,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25532,7 +26648,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
-            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25566,6 +26681,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25608,7 +26725,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25642,6 +26758,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25684,7 +26802,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25718,6 +26835,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25760,7 +26879,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25794,6 +26912,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25836,7 +26956,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
-            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25870,6 +26989,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25912,7 +27033,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
-            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25946,6 +27066,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -25988,7 +27110,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
-            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26022,6 +27143,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26064,7 +27187,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
-            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26098,6 +27220,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26140,7 +27264,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
-            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26174,6 +27297,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26216,7 +27341,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
-            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26250,6 +27374,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26292,7 +27418,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26326,6 +27451,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26368,7 +27495,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26402,6 +27528,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26444,7 +27572,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26478,6 +27605,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26520,7 +27649,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26554,6 +27682,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26596,7 +27726,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
-            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26630,6 +27759,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26672,7 +27803,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
-            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26706,6 +27836,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26748,7 +27880,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m2 != null) return;
-            if ((catMask & 4096L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26782,6 +27913,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_3_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26824,7 +27957,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
-            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26858,6 +27990,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26900,7 +28034,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
-            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26934,6 +28067,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -26976,7 +28111,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27010,6 +28144,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27052,7 +28188,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27086,6 +28221,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27128,7 +28265,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27162,6 +28298,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27204,7 +28342,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27238,6 +28375,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27280,7 +28419,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
-            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27314,6 +28452,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27356,7 +28496,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
-            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27390,6 +28529,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27432,7 +28573,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
-            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27466,6 +28606,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27508,7 +28650,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
-            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27542,6 +28683,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27584,7 +28727,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
-            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27618,6 +28760,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27660,7 +28804,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27694,6 +28837,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27736,7 +28881,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27770,6 +28914,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27812,7 +28958,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27846,6 +28991,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27888,7 +29035,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27922,6 +29068,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -27964,7 +29112,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
-            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27998,6 +29145,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28040,7 +29189,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
-            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28074,6 +29222,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28116,7 +29266,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m2 != null) return;
-            if ((catMask & 256L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28150,6 +29299,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_m3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_m3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28192,7 +29343,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
-            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28226,6 +29376,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28268,7 +29420,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
-            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28302,6 +29453,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28344,7 +29497,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
-            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28378,6 +29530,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28420,7 +29574,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28454,6 +29607,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28496,7 +29651,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28530,6 +29684,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28572,7 +29728,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28606,6 +29761,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28648,7 +29805,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
-            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28682,6 +29838,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28724,7 +29882,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
-            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28758,6 +29915,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28800,7 +29959,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
-            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28834,6 +29992,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28876,7 +30036,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
-            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28910,6 +30069,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -28952,7 +30113,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
-            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28986,6 +30146,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29028,7 +30190,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
-            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29062,6 +30223,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29104,7 +30267,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29138,6 +30300,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29180,7 +30344,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
-            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29214,6 +30377,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_1_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29256,7 +30421,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29290,6 +30454,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m1_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m1_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29332,7 +30498,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
-            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29366,6 +30531,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_m1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_m1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29408,7 +30575,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
-            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29442,6 +30608,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_1.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_1.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29484,7 +30652,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_2 != null) return;
-            if ((catMask & 68719476736L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29518,6 +30685,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m3_3.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m3_3.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29560,7 +30729,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
-            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29594,6 +30762,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29636,7 +30806,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
-            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29670,6 +30839,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29712,7 +30883,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
-            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29746,6 +30916,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29788,7 +30960,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
-            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29822,6 +30993,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29864,7 +31037,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
-            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29898,6 +31070,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -29940,7 +31114,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
-            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29974,6 +31147,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30016,7 +31191,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
-            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -30050,6 +31224,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30092,7 +31268,6 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
-            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -30126,6 +31301,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30163,7 +31340,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30196,6 +31372,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30232,7 +31410,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30265,6 +31442,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30301,7 +31480,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30334,6 +31512,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30370,7 +31550,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30403,6 +31582,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30439,7 +31620,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30472,6 +31652,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30508,7 +31690,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30541,6 +31722,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30577,7 +31760,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30610,6 +31792,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30646,7 +31830,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30679,6 +31862,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30715,7 +31900,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30748,6 +31932,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30784,7 +31970,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30817,6 +32002,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30853,7 +32040,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30886,6 +32072,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30922,7 +32110,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30955,6 +32142,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -30991,7 +32180,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31024,6 +32212,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31060,7 +32250,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31093,6 +32282,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31129,7 +32320,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31162,6 +32352,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31198,7 +32390,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31231,6 +32422,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31267,7 +32460,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31300,6 +32492,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31336,7 +32530,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31369,6 +32562,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31405,7 +32600,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31438,6 +32632,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31474,7 +32670,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31507,6 +32702,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31543,7 +32740,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31576,6 +32772,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31612,7 +32810,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31645,6 +32842,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31681,7 +32880,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31714,6 +32912,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31750,7 +32950,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31783,6 +32982,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31819,7 +33020,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31852,6 +33052,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31888,7 +33090,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31921,6 +33122,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -31957,7 +33160,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31990,6 +33192,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32026,7 +33230,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32059,6 +33262,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32095,7 +33300,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32128,6 +33332,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32164,7 +33370,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32197,6 +33402,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32233,7 +33440,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32266,6 +33472,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32302,7 +33510,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32335,6 +33542,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32371,7 +33580,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32404,6 +33612,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32440,7 +33650,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32473,6 +33682,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32509,7 +33720,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32542,6 +33752,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32578,7 +33790,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32611,6 +33822,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32647,7 +33860,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32680,6 +33892,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32716,7 +33930,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32749,6 +33962,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32785,7 +34000,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32818,6 +34032,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32854,7 +34070,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32887,6 +34102,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32923,7 +34140,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32956,6 +34172,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -32992,7 +34210,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33025,6 +34242,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33061,7 +34280,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33094,6 +34312,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33130,7 +34350,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33163,6 +34382,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33199,7 +34420,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33232,6 +34452,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33268,7 +34490,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33301,6 +34522,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33337,7 +34560,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33370,6 +34592,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33406,7 +34630,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33439,6 +34662,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33475,7 +34700,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33508,6 +34732,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33544,7 +34770,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33577,6 +34802,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33613,7 +34840,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33646,6 +34872,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33682,7 +34910,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33715,6 +34942,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33751,7 +34980,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33784,6 +35012,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33820,7 +35050,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33853,6 +35082,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33889,7 +35120,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33922,6 +35152,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -33958,7 +35190,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33991,6 +35222,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34027,7 +35260,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34060,6 +35292,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34096,7 +35330,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34129,6 +35362,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34165,7 +35400,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34198,6 +35432,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34234,7 +35470,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34267,6 +35502,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34303,7 +35540,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34336,6 +35572,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34372,7 +35610,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34405,6 +35642,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34441,7 +35680,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34474,6 +35712,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34510,7 +35750,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34543,6 +35782,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34579,7 +35820,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
-        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34612,6 +35852,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34648,7 +35890,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
-        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34681,6 +35922,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34717,7 +35960,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.EAST)) return;
         if (occ_1_0 != null) return;
-        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34750,6 +35992,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34786,7 +36030,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
-        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34819,6 +36062,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34855,7 +36100,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
-        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34888,6 +36132,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_0_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_0_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34924,7 +36170,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
-        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34957,6 +36202,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_m2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_m2.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -34993,7 +36240,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
-        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -35026,6 +36272,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_0.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_0.getType() == UnitType.RAT_KING) {
                         score += 300;
@@ -35062,7 +36310,6 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
-        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -35095,6 +36342,8 @@ public final class TryThrow {
                         // break scan;
                         return;
                     }
+                } else if (occ_m2_2.getType() == UnitType.CAT) {
+                    return;
                 } else {
                     if (occ_m2_2.getType() == UnitType.RAT_KING) {
                         score += 300;

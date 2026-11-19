@@ -89,9 +89,10 @@ public final class TryTrap {
     // or sideways, enters the 3×3 of the tile between us. Trap that tile whenever the cheese allows, on maps whose
     // income pays for it. Measured against main (L-combat + COMBAT+starve cells): the band traps land 1.6-2x the hits
     // they take on every map, but score +0.15 on maps with >= 8 mines and -0.19 on maps with <= 4, where the starting
-    // cheese drains into traps and the king starves.
+    // cheese drains into traps and the king starves. A known count of 5 (E2's rich threshold) can never hold on those
+    // maps and comes earliest on rich ones (gated at 8 instead, the gain on >= 8 mines fell to +0.02).
     static final int BAND_GLOBAL_CHEESE = 400;
-    static final int BAND_MIN_MINES = 8;
+    static final int BAND_MIN_MINES = 5;
     static boolean bandMap;
     static RobotInfo bandEnemy;
 

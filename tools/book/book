@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""The per-map book of challenger. See tools/book/book --help and tools/book/AGENTS.md."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mapbook import main  # noqa: E402
+
+sys.exit(main())

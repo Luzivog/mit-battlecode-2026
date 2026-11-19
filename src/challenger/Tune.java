@@ -90,5 +90,5 @@ public final class Tune {
     // 4: right for chirality 1 on VERTICAL maps; 5: right for team B on VERTICAL maps; 6: right for team B. The king
     // reads its chirality and, for chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0
     // king of team B knows the symmetry once the rats find it.
-    public static final int KING_HAND = 0;
+    public static final int KING_HAND = 0; // tune: 1 [0, 6] the kings' bug hand (above): 0 left, 1 right
 }

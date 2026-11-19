@@ -73,7 +73,7 @@ Line counts are template → output.
 | `robot/rat/combat/CombatCommon.java.jinja2` | `CombatCommon.java` | 74 → 72 | |
 | `templates/common.jinja2` | (none; shared globals) | 125 | |
 
-Every other `.java` in src/challenger is hand-written (see the module map in architecture.md).
+Every other `.java` in src/challenger is hand-written (see the module map in architecture.md), except `Book.java`: `tools/book/book gen` writes it from `book.jsonl` and sets the `final` of Tune.java's constants (tools/book/AGENTS.md); jinja.py does not touch either.
 
 ## 4. Workflow
 

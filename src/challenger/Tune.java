@@ -88,8 +88,9 @@ public final class Tune {
 
     // SQ: pairs (docs/theory/sq-pairs.md). A king makes every second newborn the follower of the rat it built at most 2
     // rounds before; the follower moves with its leader in place of its own trips (MinerStrategy.follow) until it has
-    // made SQ_PAIR_TRIPS transfers, until SQ_PAIR_ROUND, or once it has not seen the leader for 5 rounds.
+    // made SQ_PAIR_TRIPS transfers, until SQ_PAIR_ROUND, or once it has not seen the leader for SQ_PAIR_LOST rounds.
     public static final boolean SQ_PAIR = false;
     public static final int SQ_PAIR_TRIPS = 1;
     public static final int SQ_PAIR_ROUND = 2000;
+    public static final int SQ_PAIR_LOST = 8;
 }

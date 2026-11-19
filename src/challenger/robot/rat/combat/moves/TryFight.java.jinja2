@@ -63,9 +63,8 @@ public final class TryFight {
             }
         }
         // // Profiler.pop("try fight");
-        // force this strategy
-        // if (md == null) return false;
-        CombatStrategy.performMoves(md, fd);
+        // force this strategy, even with no legal move (md null): stay put and still try to bite
+        if (md != null) CombatStrategy.performMoves(md, fd);
         TryAttack.miniRun();
         // indicate("COMBAT STRAT: FIGHT");
         // try to squeeze some juice out

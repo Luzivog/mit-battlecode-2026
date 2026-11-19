@@ -79,11 +79,10 @@ main's.
   K2 D''s +0.021 on `L-cat`, CL V's +0.014 and CD (a)'s +0.017 on the class pools all sit inside their old intervals
   and regress to 0 on 1,000 fresh `goal` cells. A class pool concentrates the cells where an arm fires, so its effect
   there is diluted on `goal` by the share of games it touches (CL V: 47 of 1,000 cells changed).
-- **The E3 decoder fix is harmful**: −1.2 pp [−2.3, −0.2]. Its three positive harm reads (+0.032, +0.022, +0.021)
-  were the same 95 official cells (seed base 0, pass 0) on three mains: one read, not three. The fix lets a rat
-  register all 3 mines of a gossip squeak instead of the first; a likely path is the miners' early-exploration rule
-  (`knownMines <= 2 && time <= area/8`), which more known mines end sooner (unverified; exploration is load-bearing,
-  AB and TN).
+- **The E3 decoder fix read −1.2 pp [−2.3, −0.2]**, and its three earlier positive harm reads (+0.032, +0.022, +0.021)
+  were the same 95 official cells (seed base 0, pass 0) on three mains: one read, not three. A 3,000-cell re-test on
+  fresh seeds read −0.0018 [−0.0068, +0.0028]: the screen's loss was chance, and the fix changes nothing a robot
+  knows or chooses (docs/theory/rs-leads.md §1).
 - Five arms read above 0 (SR, PT2D, CDA, DD, PT1) and go to confirmation; their stack is screened too (§4).
 
 ## 3. Confirmations
@@ -141,9 +140,7 @@ at r2000 (73 lost → won, 49 won → lost): the cat-damage term of the score (P
 ## 5. What is left
 
 - **PT 2d at about +0.5 pp** is the only small gain on the shelf. 90% needs about +6 pp: the shelf does not hold it.
-- **The E3 decoder bug is load-bearing** (fixing it costs 1.2 pp). Why is open: if more gossiped mines end the miners'
-  early exploration sooner, then less mine gossip, or exploring longer on purpose, might gain (TN: exploration share
-  0.2 → 0.6 gained +2–3 pp). A new lead, not a shelf arm.
+- **The E3 decoder**: neutral, not load-bearing (re-test and probes, docs/theory/rs-leads.md §1).
 - **AB defdirt** read +0.018, +0.001, +0.008 on three `goal` seed bases; it costs `bed` (a pinned king's shield) in both
   RS runs. A version that keeps the dirt while a cat pins the king would be a new arm, shaped by these runs: screen
   and confirm it on fresh seed bases, never on these cells.

@@ -16,7 +16,15 @@ public final class MineEstimate {
     private MineEstimate() {
     }
 
-    private static int lastKey = -1, lastEst;
+    private static int lastKey = -1, lastEst, proven;
+
+    // Whether the estimate has reached n. Latched: once it has, one field read (the estimate never falls).
+    public static boolean reached(int n) {
+        if (proven >= n) return true;
+        int est = atLeast(n);
+        if (est > proven) proven = est;
+        return est >= n;
+    }
 
     // The estimate counted up to cap: cap means "at least cap". Recomputed only when the known mines, the symmetries
     // still possible or the cap change, and only with bytecode to spare (else n, a lower bound too).

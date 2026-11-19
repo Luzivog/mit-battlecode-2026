@@ -4,9 +4,11 @@
     tools/run [OPTIONS] --each FILE -- CMD {}     CMD once a line of FILE (or a --chunk of lines, as {file}),
                                                   as many at once as every free machine holds
 
-The working tree goes as it is, uncommitted changes included. Each task's OUT comes back to runs/RUN/N/out/, its
-output to runs/RUN/N/log. It waits until every task has ended: run it in the background; it prints the run's id
-first, and `tools/compute wait RUN` follows the run again if this process ends.
+The working tree goes as it is, uncommitted changes included, and its code and --with files go up once a content.
+Each task's OUT comes back to runs/RUN/N/out/, its output to runs/RUN/N/log. It waits until every task has ended: run
+it in the background; it prints the run's id first, and `tools/compute wait RUN` follows the run again if this
+process ends. Runs share one pool (not --whole or --max-cpus): live pieces of any run take its tasks, so it asks for
+pieces only beyond their free slots.
 """
 from __future__ import annotations
 
@@ -68,7 +70,7 @@ def main(argv: list[str] | None = None) -> int:
         print(s.id, flush=True)
         sweep_daily()
         try:
-            R.place_pieces(s, len(tasks))
+            R.place(s, len(tasks))
         except Refused:
             R.close(s.id, [])  # a run no piece serves is closed, so the sweep takes its folder
             raise

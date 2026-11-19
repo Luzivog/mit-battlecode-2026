@@ -20,10 +20,11 @@ from dataclasses import asdict
 from tools import backends as B
 from tools import jobs as J
 from tools import runs as R
-from tools.remote import LOCAL, REMOTE_JOBS, REMOTE_ROOT, REMOTE_RUNS, Refused, login
+from tools.remote import LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS, Refused, login
 
 KEEP_DAYS = 7  # an ended job's or a closed run's folder is deleted this long after its end (sweep)
 STALE_DAYS = 30  # a run nothing has touched for this long is deleted, closed or not
+CAS_KEEP_DAYS = 2  # a stored bundle or shipped file no run or job holds is deleted this long after its last use
 
 
 def size_mb(spec: str) -> int:
@@ -80,6 +81,16 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
                               "task_slots_now": sum(o.slots for o in free["cpucluster1"]),
                               "jobs": [asdict(j) for j in k.jobs if j.name.startswith("bc26-")]}
     out["task_slots_now"] = {w: sum(o.slots for o in free[w]) for w in B.WHERES}
+    try:
+        pieces, _ = R.read_pool()
+        live = [p for p in pieces if float(str(p.get("age", 1e9))) <= R.LIVE_S and isinstance(p.get("slots"), int)
+                and isinstance(p.get("running"), int)]
+        opened = login(f"ls {REMOTE_POOL}/open 2>/dev/null | wc -l").strip()
+        out["pool"] = {"pieces": len(live), "slots": sum(int(str(p["slots"])) for p in live),
+                       "running": sum(int(str(p["running"])) for p in live), "open_runs": int(opened or 0),
+                       "by_backend": {w: sum(1 for p in live if p.get("backend") == w) for w in B.WHERES}}
+    except Refused as e:
+        out["pool"] = {"error": str(e)}
     if as_json:
         print(json.dumps(out, indent=1))
         return
@@ -123,6 +134,11 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
             rows += [f"  {j.name.removeprefix('bc26-')}  {name} {j.state.lower()} {j.partition}"
                      + (f" on {j.node}" if j.node else "") + f", {j.elapsed} of {j.limit}"
                      for j in sl.jobs if j.name.startswith("bc26-")]
+    pd = out["pool"]
+    assert isinstance(pd, dict)
+    print(f"Pool: unread: {pd['error']}" if "error" in pd else
+          f"Pool: {pd['pieces']} live pieces, {pd['running']} of {pd['slots']} slots running, {pd['open_runs']} open "
+          "runs")
     print("Our jobs:" + ("\n" + "\n".join(rows) if rows else " none"))
 
 
@@ -186,8 +202,10 @@ def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
 # ---- sweep ----
 def sweep(force: bool = True) -> str:
     """Deletes our job folders ended (an exit code written) or cancelled, and our runs closed, KEEP_DAYS ago, and runs
-    nothing has touched for STALE_DAYS (no follower ever closed them): every write on the volume is bounded. Without
-    FORCE, at most once a day (`.swept`'s age): `run` and `tools/run` call it so."""
+    nothing has touched for STALE_DAYS (no follower ever closed them): every write on the volume is bounded. Stored
+    bundles and shipped files (REMOTE_CAS) no run or job links any more go CAS_KEEP_DAYS after their last use; the pool
+    forgets closed or deleted runs and pieces silent for a day. Without FORCE, at most once a day (`.swept`'s age):
+    `run` and `tools/run` call it so."""
     once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -1440 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
     cmd = (f"{once}touch {REMOTE_ROOT}/.swept; n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
            f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mtime +{KEEP_DAYS})\" ]; }} || "
@@ -196,7 +214,12 @@ def sweep(force: bool = True) -> str:
            f"m=0; for d in {REMOTE_RUNS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
            f"if {{ [ -e $d/closed ] && [ -n \"$(find $d/closed -mtime +{KEEP_DAYS})\" ]; }} || "
            f"[ -z \"$(find $d $d/done -maxdepth 0 -mtime -{STALE_DAYS})\" ]; then rm -rf $d && m=$((m+1)); fi; done; "
-           f"echo \"$n jobs and $m runs deleted\"; du -sh {REMOTE_ROOT} 2>/dev/null | cut -f1")
+           f"for f in {REMOTE_POOL}/open/*; do [ -e \"$f\" ] || continue; r={REMOTE_RUNS}/${{f##*/}}; "
+           f"{{ [ -d $r ] && [ ! -e $r/closed ]; }} || rm -f \"$f\"; done; "
+           f"find {REMOTE_POOL}/pieces -maxdepth 1 -type f -mmin +1440 -delete 2>/dev/null; "
+           f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mtime +{CAS_KEEP_DAYS} -print -delete 2>/dev/null "
+           f"| wc -l); "
+           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; du -sh {REMOTE_ROOT} 2>/dev/null | cut -f1")
     return login(cmd).strip().replace("\n", "; ") + " in use"
 
 
@@ -204,7 +227,7 @@ def sweep_daily() -> None:
     """sweep() at most once a day; a failure only said."""
     try:
         said = sweep(force=False)
-        if "deleted" in said and not said.startswith("0 jobs and 0 runs"):
+        if "deleted" in said and not said.startswith("0 jobs and 0 runs deleted, 0 stored"):
             J.say(f"compute: sweep: {said}")
     except Refused as e:
         J.say(f"compute: sweep: {e}")

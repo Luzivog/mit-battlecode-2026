@@ -25,7 +25,7 @@ from . import play, store
 SHIP = store.ROOT / ".bcgames-ship"
 FLUSH_S = 30          # a batch every 30 s at most
 POLL_S = 15           # reading finished tasks' results
-CHUNK = 3             # games a task: a few minutes on DoC, so a lost machine costs little
+CHUNK = 1             # games a task: one, so a batch ends with its longest game (a task starts in 2 s, median)
 
 
 class ImperialRunner:

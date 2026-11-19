@@ -351,16 +351,18 @@ public final class TryTrap {
     }
 
     {% for move_dir in allDirections %}
+    {# staying (CENTER) can end in any facing: it is only a turn #}
+    {% set move_facings = directions if move_dir == "Direction.CENTER" else related_map[dir_ord_map[move_dir]] %}
     private static void move{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (!CombatCommon.canMove{{ dir_short_map[move_dir] }}) return;
         curMoveLoc = myLoc.add({{ move_dir }});
-        {% for facing in related_map[dir_ord_map[move_dir]] %}
+        {% for facing in move_facings %}
         face{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}();
         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
         {% endfor %}
     }
 
-    {% for facing in related_map[dir_ord_map[move_dir]] %}
+    {% for facing in move_facings %}
     private static void face{{ dir_short_map[facing] }}{{ dir_short_map[move_dir] }}() throws GameActionException {
         if (CombatTracker.threat{{ dir_short_map[move_dir] }}{{ dir_short_map[facing] }} != 0L) return;
         int moveCost = CombatCommon.movementCost({{ move_dir }}, {{ facing }});

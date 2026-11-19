@@ -4775,8 +4775,408 @@ private static void placeSWWNW() {
     private static void moveC() throws GameActionException {
         if (!CombatCommon.canMoveC) return;
         curMoveLoc = myLoc.add(Direction.CENTER);
+        faceNC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceNEC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceEC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceSEC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceSC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceSWC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceWC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+        faceNWC();
+        if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
     }
 
+    private static void faceNC() throws GameActionException {
+        if (CombatTracker.threatCN != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTH);
+        if (moveCost == -1) return;
+        placeNNC();
+        placeNENC();
+        placeNWNC();
+    }
+
+private static void placeNNC() {
+        if (w_0_1 >= 0) {
+            double score = w_0_1;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNENC() {
+        if (w_1_1 >= 0) {
+            double score = w_1_1;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+private static void placeNWNC() {
+        if (w_m1_1 >= 0) {
+            double score = w_m1_1;
+            if (Direction.NORTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTH;
+            }
+        }
+    }
+    private static void faceNEC() throws GameActionException {
+        if (CombatTracker.threatCNE != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHEAST);
+        if (moveCost == -1) return;
+        placeNENEC();
+        placeNNEC();
+        placeENEC();
+    }
+
+private static void placeNENEC() {
+        if (w_1_1 >= 0) {
+            double score = w_1_1;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeNNEC() {
+        if (w_0_1 >= 0) {
+            double score = w_0_1;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+private static void placeENEC() {
+        if (w_1_0 >= 0) {
+            double score = w_1_0;
+            if (Direction.NORTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTHEAST;
+            }
+        }
+    }
+    private static void faceEC() throws GameActionException {
+        if (CombatTracker.threatCE != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.EAST);
+        if (moveCost == -1) return;
+        placeEEC();
+        placeNEEC();
+        placeSEEC();
+    }
+
+private static void placeEEC() {
+        if (w_1_0 >= 0) {
+            double score = w_1_0;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeNEEC() {
+        if (w_1_1 >= 0) {
+            double score = w_1_1;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHEAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+private static void placeSEEC() {
+        if (w_1_m1 >= 0) {
+            double score = w_1_m1;
+            if (Direction.EAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.EAST;
+            }
+        }
+    }
+    private static void faceSEC() throws GameActionException {
+        if (CombatTracker.threatCSE != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHEAST);
+        if (moveCost == -1) return;
+        placeSESEC();
+        placeSSEC();
+        placeESEC();
+    }
+
+private static void placeSESEC() {
+        if (w_1_m1 >= 0) {
+            double score = w_1_m1;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeSSEC() {
+        if (w_0_m1 >= 0) {
+            double score = w_0_m1;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+private static void placeESEC() {
+        if (w_1_0 >= 0) {
+            double score = w_1_0;
+            if (Direction.SOUTHEAST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.EAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTHEAST;
+            }
+        }
+    }
+    private static void faceSC() throws GameActionException {
+        if (CombatTracker.threatCS != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTH);
+        if (moveCost == -1) return;
+        placeSSC();
+        placeSESC();
+        placeSWSC();
+    }
+
+private static void placeSSC() {
+        if (w_0_m1 >= 0) {
+            double score = w_0_m1;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSESC() {
+        if (w_1_m1 >= 0) {
+            double score = w_1_m1;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHEAST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+private static void placeSWSC() {
+        if (w_m1_m1 >= 0) {
+            double score = w_m1_m1;
+            if (Direction.SOUTH != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTH;
+            }
+        }
+    }
+    private static void faceSWC() throws GameActionException {
+        if (CombatTracker.threatCSW != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHWEST);
+        if (moveCost == -1) return;
+        placeSWSWC();
+        placeSSWC();
+        placeWSWC();
+    }
+
+private static void placeSWSWC() {
+        if (w_m1_m1 >= 0) {
+            double score = w_m1_m1;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeSSWC() {
+        if (w_0_m1 >= 0) {
+            double score = w_0_m1;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTH);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+private static void placeWSWC() {
+        if (w_m1_0 >= 0) {
+            double score = w_m1_0;
+            if (Direction.SOUTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.SOUTHWEST;
+            }
+        }
+    }
+    private static void faceWC() throws GameActionException {
+        if (CombatTracker.threatCW != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.WEST);
+        if (moveCost == -1) return;
+        placeWWC();
+        placeNWWC();
+        placeSWWC();
+    }
+
+private static void placeWWC() {
+        if (w_m1_0 >= 0) {
+            double score = w_m1_0;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeNWWC() {
+        if (w_m1_1 >= 0) {
+            double score = w_m1_1;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+private static void placeSWWC() {
+        if (w_m1_m1 >= 0) {
+            double score = w_m1_m1;
+            if (Direction.WEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.SOUTHWEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.WEST;
+            }
+        }
+    }
+    private static void faceNWC() throws GameActionException {
+        if (CombatTracker.threatCNW != 0L) return;
+        int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHWEST);
+        if (moveCost == -1) return;
+        placeNWNWC();
+        placeNNWC();
+        placeWNWC();
+    }
+
+private static void placeNWNWC() {
+        if (w_m1_1 >= 0) {
+            double score = w_m1_1;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTHWEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeNNWC() {
+        if (w_0_1 >= 0) {
+            double score = w_0_1;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.NORTH);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
+private static void placeWNWC() {
+        if (w_m1_0 >= 0) {
+            double score = w_m1_0;
+            if (Direction.NORTHWEST != myDir) score *= 1.1;
+            if (score > best) {
+                best = score;
+                bestPlaceLoc = curMoveLoc.add(Direction.WEST);
+                bestMoveDir = Direction.CENTER;
+                bestSecondaryMoveDir = null;
+                bestFacing = Direction.NORTHWEST;
+            }
+        }
+    }
 
     
     public static boolean miniRun() throws GameActionException {

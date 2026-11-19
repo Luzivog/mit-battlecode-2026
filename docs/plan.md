@@ -602,8 +602,9 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 
 #### E3. Territory: miners by deficit, exploration that ends
 - **Closed** (2026-11-19): every lever lost on the ≥ 8-mine class pool (`docs/closed.md`). Against awubot, far trips
-  to enemy-side mines hold the front; its distance-weighted lottery looks near a local optimum. Only change 0, the mine
-  squeak decoder fix (it read 1 of the 3 mines a squeak packs), is kept. Drop E3's +2 to +6 pp from the wave-2
+  to enemy-side mines hold the front; its distance-weighted lottery looks near a local optimum. Change 0, the mine
+  squeak decoder fix (it read 1 of the 3 mines a squeak packs), is not merged either: no gain vs awubot and a lean
+  against us vs OBG twice. Drop E3's +2 to +6 pp from the wave-2
   forecast.
 - **Change.**
   - The king writes payload role 1 (`KingSpawningStrategy.java:93`) with the mine whose miner deficit is largest:

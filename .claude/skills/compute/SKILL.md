@@ -78,6 +78,8 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
   caps), cpucluster1 148 (288 CPUs under our cap).
 - A launch on a lab machine costs 1.5 ms (`/bin/true`; 0.2 ms here) and `java -version` 89 ms (14 ms here): DoC's
   auditd and process accounting log every exec. One JVM a game is fine; avoid scripts that fork per line.
+- The pool (19 Nov): `tools/games` refill batches started 3 s after submission (median; 20 s before it), sequential
+  tests ran in half the wall time (references/internals.md, "The pool, measured").
 
 ## Rules
 

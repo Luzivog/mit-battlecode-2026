@@ -185,22 +185,27 @@ public class CombatStrategy extends Strategy {
         }
 
         isLastMove = true;
-        if (rc.getCarrying() != null) {
-            // Profiler.push();
-            try {
-                boolean tryThrowRes = TryThrow.run();
-                if (tryThrowRes) return true;
-            } finally {
-                // Profiler.pop("try throw", 4000);
+        RobotInfo carried = rc.getCarrying();
+        if (carried != null) {
+            if (carried.getTeam() == team) {
+                if (TryThrow.run()) return true;
+            } else if (TryThrow.search()) {
+                // an enemy: throw for a collision at step 2 or better, else hold it and act with the free action
+                if (TryThrow.best >= TryThrow.STEP2_HIT || mustThrow()) {
+                    if (TryThrow.execute()) return true;
+                } else {
+                    if (TryTrap.run()) return true;
+                    if (TryAttack.run()) return true;
+                    if (TryPosition.search()) {
+                        TryPosition.execute();
+                        return true;
+                    }
+                    // nowhere safe to hold: a grab of the carrier would free the victim
+                    if (TryThrow.execute()) return true;
+                }
             }
-            // Profiler.push();
-            try {
-                boolean tryPositionRes = TryPosition.run();
-                if (tryPositionRes) return true;
-            } finally {
-                // Profiler.pop("try position", 3000);
-            }
-            return true; // bruh
+            TryPosition.run();
+            return true;
         }
 
         // Profiler.push();
@@ -246,6 +251,15 @@ public class CombatStrategy extends Strategy {
         // TODO: deal with cats (maybe naman's job?)
         // return false;
         return false;
+    }
+
+    /*
+      Throw whatever the line once the carry is 8 rounds old: the last possible throw is at grab + 10 in either turn
+      order (docs/rules.md §9), and a bite or trap with raw cheese can leave the action unready for a turn. Also throw
+      at 24 HP or less, two 12-damage bites, as the carrier's death frees the victim.
+    */
+    private static boolean mustThrow() {
+        return time - carryStartTime >= 8 || rc.getHealth() <= 24;
     }
 
     public boolean miniTick() throws GameActionException {

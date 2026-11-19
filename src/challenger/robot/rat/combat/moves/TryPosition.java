@@ -31,13 +31,22 @@ public final class TryPosition {
 
     public static boolean run() throws GameActionException {
         if (!rc.isMovementReady()) return false;
+        search();
+        return execute();
+    }
+
+    // the best (move, facing) into bestMove, bestFacing; true when it leaves me safe from a grab
+    public static boolean search() throws GameActionException {
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, Clock.getBytecodesLeft() - 1000);
-        // // Profiler.push();
         bestMove = null;
         bestFacing = null;
         bestScore = -1e9;
         selectMoves();
+        return bestScore >= 0;
+    }
+
+    public static boolean execute() throws GameActionException {
         return CombatStrategy.performMoves(bestMove, bestFacing);
     }
 

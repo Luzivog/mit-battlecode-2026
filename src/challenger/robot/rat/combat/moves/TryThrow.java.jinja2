@@ -63,9 +63,12 @@ public final class TryThrow {
     private TryThrow() {
     }
 
+    // the score of a collision at step 2 (a wall, dirt or a rat): CombatStrategy throws for at least this
+    public static final int STEP2_HIT = {{ hit_damage[0] }};
+
     static Direction md;
     static Direction td;
-    static double best;
+    public static double best;
     static double score;
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
@@ -79,6 +82,13 @@ public final class TryThrow {
     // return false if didnt throw -- some other process can figure out how to move
     // TODO: maybe weight targets based on how close they are to friendly rats? might be too effort
     public static boolean run() throws GameActionException {
+        if (!search()) return false;
+        if (best < 0 && rc.getCarrying().getTeam() == team) return false;
+        return execute();
+    }
+
+    // the best legal line into md, td, isSecondary and best; false when the action is not ready or no line is legal
+    public static boolean search() throws GameActionException {
         if (!rc.isActionReady()) return false;
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(9000, Clock.getBytecodesLeft() - 2000);
@@ -93,17 +103,11 @@ public final class TryThrow {
         } else {
             selectMoves();
         }
-        if (md == null || td == null) {
-            return false;
-        }
-        if (best < 0) {
-            // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TryThrow found no good throws (best=" + best + ")"); 
-            // debugThrowFail();
-            if (rc.getCarrying().getTeam() == team) return false;
-        }
-        // if (rc.getCarrying().getTeam() == team) {
-        //     rc.setTimelineMarker("threw ally " + myLoc, 0, 0, 255);
-        // }
+        return md != null && td != null;
+    }
+
+    // throws along the line search() found; false if the throw could not be made
+    public static boolean execute() throws GameActionException {
         if (isSecondary) {
             if (td != myDir) turn(td);
             if (!rc.canThrowRat()) return false;

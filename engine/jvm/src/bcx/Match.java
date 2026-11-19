@@ -11,10 +11,12 @@ import battlecode.world.BcxStateHash;
 import battlecode.world.DominationFactor;
 import battlecode.world.GameMapIO;
 import battlecode.world.GameWorld;
+import battlecode.world.InternalRobot;
 import battlecode.world.LiveMap;
 import battlecode.world.control.RobotControlProvider;
 
 import java.io.File;
+import java.util.Random;
 
 /**
  * The official battlecode.server.Server match loop (run() for one game, runMatch()) for exactly one game, plus the
@@ -49,15 +51,51 @@ public final class Match {
         public int seed;
         /** The chain over the round hashes: BcxStateHash.chain() fed (round, hash) per round, finished. */
         public long hash;
+        /** Draws (Random.next calls) from the cat RNG during the game. */
+        public long catDraws;
         public String error;
     }
 
     /**
-     * Plays game.getMaps()[0] as Server.run() and Server.runMatch() do. With hasSeed, the map's seed is replaced as
-     * the repo's GameMapIO override does.
+     * The engine's only state that outlives a game in a JVM: the cats' RNG, InternalRobot.rand, made new Random(1092)
+     * by InternalRobot's static initializer. Game N of an official match (one JVM, several maps) starts it where the
+     * games before left it: catSkip draws (Random.next calls) later. A plain Random, as the engine's own.
      */
-    public static Result play(Config options, GameInfo game, boolean hasSeed, int seed, Controls controls, Sink sink) {
+    static Random catRng(long skip) {
+        Random r = new Random(1092);
+        for (long i = 0; i < skip; i++) r.nextInt(); // one next(32) each
+        return r;
+    }
+
+    /** The draws between two states of a java.util.Random (its LCG steps), or -1 past max. */
+    static long draws(long from, long to, long max) {
+        long x = from;
+        for (long n = 0; n <= max; n++) {
+            if (x == to) return n;
+            x = (x * 0x5DEECE66DL + 0xBL) & ((1L << 48) - 1);
+        }
+        return -1;
+    }
+
+    /**
+     * Plays game.getMaps()[0] as Server.run() and Server.runMatch() do. With hasSeed, the map's seed is replaced as
+     * the repo's GameMapIO override does; the cat RNG starts catSkip draws after its first state (catRng).
+     */
+    public static Result play(Config options, GameInfo game, boolean hasSeed, int seed, long catSkip, Controls controls,
+            Sink sink) {
         Result res = new Result();
+        Random cats = catRng(catSkip);
+        InternalRobot.rand = cats;
+        long start = BcxStateHash.rngState(cats);
+        try {
+            return play(options, game, hasSeed, seed, controls, sink, res);
+        } finally {
+            res.catDraws = draws(start, BcxStateHash.rngState(cats), 1L << 32);
+        }
+    }
+
+    private static Result play(Config options, GameInfo game, boolean hasSeed, int seed, Controls controls, Sink sink,
+            Result res) {
         if (game.getMaps().length != 1) {
             res.error = "Match plays exactly one map";
             return res;

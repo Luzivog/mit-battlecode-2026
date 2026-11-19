@@ -66,14 +66,20 @@ case, and the same translator can translate the official engine's own classes. T
   A short list of methods tied to the VM (`System.arraycopy`, `Object.getClass`, identity hashes, `Throwable`'s
   stack traces, `Math` intrinsics) is implemented natively. `Math.pow` is HotSpot's x86-64 stub (Intel LIBM), not
   `StrictMath.pow`: the world's cheese spawn chance and some bots call it, so it is ported bit-exactly.
-- **Closed world.** A rapid type analysis from the entry points decides which methods to translate. Anything the
-  native layer lacks fails the build with its name, never at run time.
+- **Closed world.** A rapid type analysis from the entry points decides which methods to translate. A method the
+  native layer lacks fails the build with its name; a path cut on purpose (`natives.txt`: threads, reflection,
+  file systems the games never reach) is fatal when reached, never silent.
 - **Exceptions** are a pending-exception field checked after each call that can throw (no C++ unwinding), so a
   `GameActionException` costs what an ordinary return costs.
 - **Memory**: Boehm GC (bdwgc), conservative on the coroutine stacks.
-- **Builds.** The engine (world, JDK subset, runtime) is one binary per engine version. Each bot package is translated
-  and compiled once into a shared library, cached by the hash of its class files and the engine build, and loaded
-  when a game names it.
+- **Builds.** One static binary per engine version holds the engine, the JDK subset, the runtime and every bot
+  package (one closed world, so calls between them are direct). Generated C++ is rewritten only when it changes, so a
+  changed bot recompiles its own files and relinks. Each game runs in a forked process, so every static starts
+  fresh, as in a fresh JVM.
+- **JVM behaviour a bot can see** is reproduced where the corpus or the fuzz bots reach it: linkage errors from the
+  instrumenter's rewrites (`NoSuchMethodError` for `System.nanoTime`, `IllegalAccessError`, sealed-class failures at
+  link time), `InstrumentationException`s, uncaught `Error`s ending `run()` (the robot destroyed at the end of that
+  turn), HotSpot's NaN bit patterns (no constant folding of FP operations). What is not: `AGENTS.md`, "Known gaps".
 
 The reference path is the translated official code. A hand-written fast path (for example the cats' BFS tables) may
 replace a translated method only behind the differential check in `AGENTS.md`.

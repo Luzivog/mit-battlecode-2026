@@ -175,7 +175,8 @@ struct Opts {
     int jobs = 1;
 };
 
-static const char* FIELDS[] = {"a", "b", "map", "seed", "engine", "classes", "classes_a", "classes_b", "id", nullptr};
+static const char* FIELDS[] = {"a", "b", "map", "seed", "engine", "classes", "classes_a", "classes_b", "id", "cat_rng_skip",
+                               nullptr};
 
 // Plays one spec in this (child) process; writes the game's files and returns its result line.
 static std::string play_one(const Obj_& spec, const std::string& gdir, const Opts& o) {
@@ -189,6 +190,8 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     }
     std::string engine = field("engine") && field("engine")->kind == Val::STR ? field("engine")->s : "1.2.6";
     add("engine", json_str(engine));
+    const Val* skipv = field("cat_rng_skip");
+    if (skipv) add("cat_rng_skip", skipv->kind == Val::INT ? std::to_string(skipv->i) : "null");
     std::string err;
     for (auto& kv : spec) {
         bool known = false;
@@ -197,6 +200,7 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     }
     for (const char* k : {"a", "b", "map"})
         if (!field(k) || field(k)->kind != Val::STR) err = std::string("spec field ") + k + " is required (a string)";
+    if (skipv && (skipv->kind != Val::INT || skipv->i < 0)) err = "spec field cat_rng_skip must be a non-negative integer";
     if (engine != bcx_engine_version) err = "this build plays engine " + std::string(bcx_engine_version) + ", the spec asks " + engine;
     if (!err.empty()) {
         add("backend", "\"native\"");
@@ -223,12 +227,12 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     FILE* hashes = fopen((gdir + "/hashes.txt").c_str(), "w");
     FILE* dump = o.dump ? fopen((gdir + "/dump.txt").c_str(), "w") : nullptr;
     rt_io_set_outputs(hashes, dump);
-    typedef Obj* (*PlayFn)(Obj*, Obj*, Obj*, Obj*, jboolean, jint, Obj*, jboolean, Obj*, Obj*);
+    typedef Obj* (*PlayFn)(Obj*, Obj*, Obj*, Obj*, jboolean, jint, Obj*, jboolean, Obj*, Obj*, jlong);
     if (g_entry_inits[0]) g_entry_inits[0]();
     Obj* r = nullptr;
     if (!g_exc)
         r = ((PlayFn)g_entry_fns[0])(jstr(field("a")->s), jstr(field("b")->s), jstr(field("map")->s), jstr(o.root + "/maps"),
-                                      has_seed, seed, jstr(replay), o.dump, jstr(ca), jstr(cb));
+                                      has_seed, seed, jstr(replay), o.dump, jstr(ca), jstr(cb), skipv ? (jlong)skipv->i : 0);
     fclose(hashes);
     if (dump) fclose(dump);
     std::string line;
@@ -241,13 +245,15 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     if (line.rfind("ok ", 0) == 0) {
         char winner[8], wtype[64], hash[32];
         int s, round;
-        sscanf(line.c_str() + 3, "%d %7s %63s %d %31s", &s, winner, wtype, &round, hash);
+        long long draws = 0;
+        sscanf(line.c_str() + 3, "%d %7s %63s %d %31s %lld", &s, winner, wtype, &round, hash, &draws);
         add("seed", std::to_string(s));
         add("winner", json_str(winner));
         add("winner_pkg", json_str(winner[0] == 'A' ? field("a")->s : field("b")->s));
         add("win_type", json_str(wtype));
         add("round", std::to_string(round));
         add("hash", json_str(hash));
+        add("cat_rng_draws", std::to_string(draws));
     } else {
         if (has_seed) add("seed", std::to_string(seed));
         add("error", json_str(line.rfind("error ", 0) == 0 ? line.substr(6) : line));

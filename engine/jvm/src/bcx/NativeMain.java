@@ -19,9 +19,9 @@ import java.io.File;
 public final class NativeMain {
     private NativeMain() {}
 
-    /** Returns "ok SEED WINNER WIN_TYPE ROUND HASH" or "error MESSAGE". */
+    /** Returns "ok SEED WINNER WIN_TYPE ROUND HASH CAT_RNG_DRAWS" or "error MESSAGE". */
     public static String play(String a, String b, String map, String mapDir, boolean hasSeed, int seed, String replay,
-                              boolean dump, String classesA, String classesB) {
+                              boolean dump, String classesA, String classesB, long catSkip) {
         Config options = new Config(new String[0]);
         options.set("bc.engine.show-indicators", "true");
         options.set("bc.engine.enable-profiler", "false");
@@ -29,10 +29,10 @@ public final class NativeMain {
         options.set("bc.game.map-path", mapDir);
         GameInfo game = new GameInfo(a, CrossPlayLanguage.JAVA, a, classesA, b, CrossPlayLanguage.JAVA, b, classesB,
                 new String[]{map}, new File(replay), false);
-        Match.Result r = Match.play(options, game, hasSeed, seed, new Controls(), new Sink(dump));
+        Match.Result r = Match.play(options, game, hasSeed, seed, catSkip, new Controls(), new Sink(dump));
         if (r.winner == null) return "error " + (r.error != null ? r.error : "no winner");
         return "ok " + r.seed + " " + (r.winner == Team.A ? "A" : "B") + " " + r.winType.name() + " " + r.round + " "
-                + BcxStateHash.hex16(r.hash);
+                + BcxStateHash.hex16(r.hash) + " " + r.catDraws;
     }
 
     static final class Controls implements Match.Controls {

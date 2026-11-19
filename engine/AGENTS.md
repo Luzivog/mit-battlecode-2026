@@ -26,10 +26,13 @@ native build translates the same JDK's class files). It is run by `bcx.RefMain` 
 `Server`'s match loop with the official control providers, plus the state hash after each round, read-only.
 RefMain's replay must be byte-identical to `battlecode.server.Main`'s for the same game (`test/refmain_test.py`).
 
-**Conditions.** One game per fresh JVM. The official engine's cat RNG is a static `Random(1092)` that carries over
-between games in one JVM, so several maps in one JVM (`-Pmaps=a,b`) play differently from one map per JVM; the
-native engine plays one game per JVM's worth of state (every engine static starts fresh) unless a spec asks for a
-`jvm_game` index (not built: a known gap).
+**Conditions.** One game per fresh JVM. The engine's only state that outlives a game in a JVM is the cats' RNG
+(`InternalRobot.rand`, made `new Random(1092)` by its static initializer), so game N of an official match (one JVM,
+`-Pmaps=a,b,c`) starts it where the earlier games left it. Before a game both engines set it to a plain
+`new Random(1092)` stepped `cat_rng_skip` draws (`Random.next` calls; `bcx.Match.catRng`), and the result reports the
+game's draws (`cat_rng_draws`, as `tools/play` does: the LCG steps from its first to its last state). Game N of a
+match is the spec with `cat_rng_skip` = the sum of `cat_rng_draws` of games 1 to N-1 (`test/refmain_test.py` checks
+it against `battlecode.server.Main` playing two maps in one JVM). Every other static starts fresh in both engines.
 
 **Seeds.** A spec without a seed plays the map's embedded seed (official conditions). A spec with a seed plays it the
 way this repo's `src/battlecode` overrides do: the map's `LiveMap` seed is replaced at load. RefMain does this with
@@ -48,6 +51,7 @@ A spec is one JSON object a line (JSONL); unknown fields are an error.
 | `classes` | optional | the compiled classes dir; default `build/classes` of the checkout |
 | `classes_a`, `classes_b` | optional | per-team classes dir, overriding `classes` |
 | `id` | optional | copied to the result |
+| `cat_rng_skip` | optional int ≥ 0 | the cat RNG starts this many draws after its fresh state (default 0; "Conditions") |
 
 A result is one JSON object a line, in spec order:
 
@@ -60,6 +64,8 @@ A result is one JSON object a line, in spec order:
 | `win_type` | `KILL_ALL_RAT_KINGS`, `MORE_POINTS`, `MORE_ROBOTS_ALIVE`, `MORE_CHEESE`, `WON_BY_DUBIOUS_REASONS`, `RESIGNATION` |
 | `round` | the last round played |
 | `hash` | 16 hex digits: `BcxStateHash.chain()` fed each round's number then its state hash, in round order, then `finish()` (the 64-bit mixer of `BcxStateHash`, see its comment); the per-round hashes are `hashes.txt` |
+| `cat_rng_skip` | from the spec, when it has one |
+| `cat_rng_draws` | draws from the cat RNG during the game |
 | `backend` | `native` or `java` |
 | `cpu_s` | the process's CPU seconds for the game |
 | `error` | present only when the game could not be played; then no outcome fields |

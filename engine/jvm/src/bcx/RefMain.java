@@ -35,7 +35,8 @@ import java.util.Set;
  * The repo root (maps/, build/classes) is --root, default the working directory.
  */
 public final class RefMain {
-    static final Set<String> FIELDS = Set.of("a", "b", "map", "seed", "engine", "classes", "classes_a", "classes_b", "id");
+    static final Set<String> FIELDS = Set.of("a", "b", "map", "seed", "engine", "classes", "classes_a", "classes_b", "id",
+            "cat_rng_skip");
 
     public static void main(String[] args) throws Exception {
         String specArg = null;
@@ -70,6 +71,7 @@ public final class RefMain {
         }
         String engine = spec.containsKey("engine") ? String.valueOf(spec.get("engine")) : "1.2.6";
         result.put("engine", engine);
+        if (spec.containsKey("cat_rng_skip")) result.put("cat_rng_skip", spec.get("cat_rng_skip"));
 
         String err = validate(spec);
         String jarVersion = jarVersion();
@@ -88,6 +90,7 @@ public final class RefMain {
         String map = (String) spec.get("map");
         boolean hasSeed = spec.containsKey("seed");
         int seed = hasSeed ? ((Long) spec.get("seed")).intValue() : 0;
+        long catSkip = spec.containsKey("cat_rng_skip") ? (Long) spec.get("cat_rng_skip") : 0;
         String classes = spec.containsKey("classes") ? (String) spec.get("classes") : "build/classes";
         String classesA = resolve(root, spec.containsKey("classes_a") ? (String) spec.get("classes_a") : classes);
         String classesB = resolve(root, spec.containsKey("classes_b") ? (String) spec.get("classes_b") : classes);
@@ -133,7 +136,7 @@ public final class RefMain {
         FileSink sink = new FileSink(out, dump);
         Match.Result r;
         try {
-            r = Match.play(options, game, hasSeed, seed, new OfficialControls(), sink);
+            r = Match.play(options, game, hasSeed, seed, catSkip, new OfficialControls(), sink);
         } catch (Throwable t) {
             // an Error escapes Server.run too; record it instead of hanging on robot threads
             t.printStackTrace();
@@ -155,6 +158,7 @@ public final class RefMain {
             result.put("win_type", r.winType.name());
             result.put("round", r.round);
             result.put("hash", battlecode.world.BcxStateHash.hex16(r.hash));
+            result.put("cat_rng_draws", r.catDraws);
         }
         result.put("backend", "java");
         finish(out, result, code);
@@ -175,6 +179,9 @@ public final class RefMain {
             if (!(s instanceof Long) || (Long) s < Integer.MIN_VALUE || (Long) s > Integer.MAX_VALUE) {
                 return "spec field seed must be an int";
             }
+        }
+        if (spec.containsKey("cat_rng_skip") && !(spec.get("cat_rng_skip") instanceof Long l && l >= 0)) {
+            return "spec field cat_rng_skip must be a non-negative integer";
         }
         if (spec.containsKey("engine")) {
             String e = (String) spec.get("engine");

@@ -63,7 +63,7 @@ def run(args, extra):
     cmd = ["tools/run", "--kit", "--detach", "--with", str(DIST.relative_to(REPO)), "--each", str(f),
            "--chunk", str(args.chunk), "--gather", "rows.jsonl"] + extra + [
         "--", "python3", "engine/test/agreement.py", "--specs", "{file}", "--native", f"{rel} play --root .",
-        "--java", f"engine/play_java.py --jars {DIST.relative_to(REPO)}/jars", "--java-cache", "{out}/java",
+        "--java", f"engine/play_java.py --jars {DIST.relative_to(REPO)}/jars --build engine/build/jvm-classes", "--java-cache", "{out}/java",
         "--out", "{out}", "-j", "1", "--prune"]
     print(f"imperial: {len(specs)} games in {f}", flush=True)
     print(" ".join(cmd), flush=True)

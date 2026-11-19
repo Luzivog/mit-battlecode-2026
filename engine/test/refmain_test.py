@@ -6,7 +6,9 @@
 (a) the unmodified jar, map seeds: RefMain vs `java -cp JAR battlecode.server.Main` (ref.sh's flags, no websocket),
     on a short game and a long one;
 (b) a seed: RefMain with `seed` vs the repo's override (`-cp build/classes:JAR`, `-Dbc.game.seed`);
-(c) determinism: the same spec twice through RefMain gives identical hashes.txt and replay.
+(c) determinism: the same spec twice through RefMain gives identical hashes.txt and replay;
+(d) a match: Main playing MATCH's two maps in one JVM, against RefMain playing the first map, then the second with
+    cat_rng_skip = the first game's cat_rng_draws (and the second alone, which ends differently).
 Also checks RefMain's winner and round against Main's `[server] ... wins (round N)` line. Exit 0 when all pass.
 Needs `./gradlew classes` (build/classes). Games run in fresh JVMs, at most -j at once (default 3).
 """
@@ -33,6 +35,8 @@ OUT_DEFAULT = play_java.DATA / "refruns" / "refmain_test"
 SHORT = {"a": "awubot", "b": "awubot", "map": "DefaultSmall"}
 LONG = {"a": "awubot", "b": "awubot_quals", "map": "DefaultLarge"}
 SEEDED = {"a": "awubot", "b": "awubot", "map": "DefaultSmall", "seed": 347712782}
+# two maps whose second game depends on the cat RNG the first leaves (docs/evaluation.md, "Conditions")
+MATCH = {"a": "awubot", "b": "awubot", "map": "t_minus_five_minutes,sunandmoon"}
 
 
 def main_cmd(spec: dict, replay: Path, override: bool) -> list:
@@ -63,9 +67,9 @@ def run_main(spec: dict, gdir: Path, override: bool) -> dict:
     with open(gdir / "stdout.txt", "w") as log:
         p = subprocess.run(main_cmd(spec, replay, override), cwd=REPO, stdout=log, stderr=subprocess.STDOUT)
     out = (gdir / "stdout.txt").read_text()
-    m = re.search(r"\[server\]\s+(\S+) \(([AB])\) wins \(round (\d+)\)", out)
-    return {"exit": p.returncode, "winner": m.group(2) if m else None, "round": int(m.group(3)) if m else None,
-            "wall": time.time() - t}
+    ms = re.findall(r"\[server\]\s+\S+ \(([AB])\) wins \(round (\d+)\)", out)
+    return {"exit": p.returncode, "winner": ms[0][0] if ms else None, "round": int(ms[0][1]) if ms else None,
+            "matches": [(w, int(r)) for w, r in ms], "wall": time.time() - t}
 
 
 def run_ref(spec: dict, gdir: Path, classes: Path, engine: str) -> dict:
@@ -83,6 +87,16 @@ def run_ref(spec: dict, gdir: Path, classes: Path, engine: str) -> dict:
         r = {"error": "no result.json"}
     r["wall"] = time.time() - t
     return r
+
+
+def run_match_ref(gdir: Path, classes: Path, engine: str) -> dict:
+    """RefMain: MATCH's first map, its second after it (cat_rng_skip), its second alone."""
+    m1, m2 = MATCH["map"].split(",")
+    t = time.time()
+    r1 = run_ref({**MATCH, "map": m1}, gdir / "game1", classes, engine)
+    r2 = run_ref({**MATCH, "map": m2, "cat_rng_skip": r1.get("cat_rng_draws", 0)}, gdir / "game2", classes, engine)
+    r0 = run_ref({**MATCH, "map": m2}, gdir / "game2_alone", classes, engine)
+    return {"games": [r1, r2, r0], "winner": r2.get("winner"), "round": r2.get("round"), "wall": time.time() - t}
 
 
 def gunzip(p: Path):
@@ -121,6 +135,8 @@ def main():
         "short_main": lambda: run_main(SHORT, out / "short_main", False),
         "seeded_ref": lambda: run_ref(SEEDED, out / "seeded_ref", classes, e),
         "seeded_override": lambda: run_main(SEEDED, out / "seeded_override", True),
+        "match_ref": lambda: run_match_ref(out / "match_ref", classes, e),
+        "match_main": lambda: run_main(MATCH, out / "match_main", False),
     }
     if not args.quick:
         jobs["long_ref"] = lambda: run_ref(LONG, out / "long_ref", classes, e)
@@ -165,6 +181,13 @@ def main():
         r = res["long_ref"]
         check("long: both teams alive past round 300", "error" not in r and r.get("round", 0) > 300,
               f"round {r.get('round')}")
+    g1, g2, g0 = res["match_ref"]["games"]
+    mm = res["match_main"]["matches"]
+    ref_pairs = [(g.get("winner"), g.get("round")) for g in (g1, g2)]
+    check("match: games 1, 2 vs Main's two maps", ref_pairs == mm,
+          f"RefMain {ref_pairs} (skip {g2.get('cat_rng_skip')}), Main {mm}")
+    check("match: game 2 alone differs", (g0.get("winner"), g0.get("round")) != ref_pairs[1],
+          f"alone {g0.get('winner')} round {g0.get('round')}")
     s = res["seeded_ref"]
     check("seeded: plays the seed", s.get("seed") == SEEDED["seed"], f"seed {s.get('seed')}")
 

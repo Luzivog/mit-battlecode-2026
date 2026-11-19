@@ -6,7 +6,7 @@
 Each game writes OUTDIR/<id, else spec index>/: spec.json, result.json, hashes.txt, replay.bc26, stdout.txt
 (and dump.txt with --dump). Result lines are printed in spec order. The jar is picked by the spec's engine field
 (battlecode26-java-<engine>.jar in --jars). RefMain and what it uses from engine/jvm/src are compiled when the
-sources change, into ~/battlecode26-data/engine/build/jvm-classes/<hash of the sources>/.
+sources change, into --build/<hash of the sources>/ (default ~/battlecode26-data/engine/build/jvm-classes).
 Exit 0 when every game was played.
 """
 
@@ -54,7 +54,7 @@ def reference_hash() -> str:
     return h.hexdigest()[:16]
 
 
-def compile_jvm(jars: Path = JARS) -> Path:
+def compile_jvm(jars: Path = JARS, build: Path = BUILD) -> Path:
     """Compile RefMain and what it uses from engine/jvm/src (javac --release 21 -sourcepath, against the official
     jar and the ASM jars), once per hash of all the sources: a translator source that does not compile yet cannot
     break the reference."""
@@ -69,11 +69,11 @@ def compile_jvm(jars: Path = JARS) -> Path:
         h.update(j.name.encode() + b"\0")
     v = subprocess.run(["javac", "-version"], capture_output=True, text=True)
     h.update((v.stdout + v.stderr).encode())
-    out = BUILD / h.hexdigest()[:16]
+    out = build / h.hexdigest()[:16]
     if (out / ".ok").exists():
         return out
-    BUILD.mkdir(parents=True, exist_ok=True)
-    tmp = BUILD / f".tmp-{os.getpid()}-{threading.get_ident()}"
+    build.mkdir(parents=True, exist_ok=True)
+    tmp = build / f".tmp-{os.getpid()}-{threading.get_ident()}"
     shutil.rmtree(tmp, ignore_errors=True)
     tmp.mkdir()
     r = subprocess.run(["javac", "--release", "21", "-nowarn", "-encoding", "UTF-8",
@@ -140,6 +140,7 @@ def main():
     ap.add_argument("--dump", action="store_true", help="also write each round's state dump (dump.txt)")
     ap.add_argument("--root", type=Path, default=REPO, help="repo root: maps/ and build/classes (default this checkout)")
     ap.add_argument("--jars", type=Path, default=JARS, help=f"jar directory (default {JARS})")
+    ap.add_argument("--build", type=Path, default=BUILD, help=f"where RefMain is compiled (default {BUILD})")
     ap.add_argument("--java-opts", default=os.environ.get("BCX_JAVA_OPTS", DEFAULT_JAVA_OPTS))
     ap.add_argument("--timeout", type=float, default=3600, help="seconds per game before it is killed")
     args = ap.parse_args()
@@ -149,7 +150,7 @@ def main():
     outdir.mkdir(parents=True, exist_ok=True)
 
     lines = [ln for ln in args.specs.read_text().splitlines() if ln.strip()]
-    classes = compile_jvm(args.jars)
+    classes = compile_jvm(args.jars, args.build.resolve())
 
     results = [None] * len(lines)
     printed = 0

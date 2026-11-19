@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""Build the native engine: engine/build/bcx (engine 1.2.6) and, with --engine 1.2.5, engine/build/bcx-1.2.5.
+
+    engine/build.py [--engine 1.2.6|1.2.5|all] [--bots PKG,PKG|all] [-j N] [--opt -O2]
+
+Steps: fetch the jars and bdwgc once (~/battlecode26-data/engine/), compile the translator (engine/jvm), translate
+the official engine and every bot package (each package under src/ with a RobotPlayer, from build/classes: run
+./gradlew classes first) to C++ in ~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/, compile it with ninja and
+link.
+Generated files are rewritten only when they change, so a rebuild recompiles only what moved.
+"""
+import argparse
+import hashlib
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+import zipfile
+from pathlib import Path
+
+ENGINE = Path(__file__).resolve().parent
+REPO = ENGINE.parent
+DATA = Path.home() / "battlecode26-data" / "engine"
+JARS = DATA / "jars"
+DEPS = DATA / "deps"
+OUT = ENGINE / "build"
+MAVEN = "https://repo1.maven.org/maven2/org/ow2/asm"
+ASM = ["asm-commons", "asm-analysis", "asm-util", "asm-tree"]
+GC_VERSION = "8.2.8"
+# robots run on their own stacks: the collector must not clear below the stack it believes in
+GC_CFLAGS = "-O2 -fPIC -DALWAYS_SMALL_CLEAR_STACK"
+GC_SHA256 = "7649020621cb26325e1fb5c8742590d92fb48ce5c259b502faf7d9fb5dabb160"
+JAR_SHA256 = {"1.2.6": "ea722532f6d523241ff4f708078563de2a010a39d7d524c66ae1890ab85c04ec",
+              "1.2.5": "b9f39d19a2a0bccd35540039747bacd0412b6016b2ef64c39846395989f20488"}
+ENTRY = ("bcx/NativeMain.play(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZI"
+         "Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;JZ)Ljava/lang/String;")
+# -ffp-exception-behavior=strict: no compile-time folding of an FP operation that can raise (clang folds
+# -inf*0 to +NaN; the CPU, so the JVM, gives -NaN)
+CXXFLAGS = ["-std=c++20", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",
+            "-fno-rtti", "-fno-exceptions", "-w"]
+
+
+def sh(cmd, **kw):
+    r = subprocess.run(cmd, **kw)
+    if r.returncode != 0:
+        sys.exit(f"build: failed ({r.returncode}): {' '.join(map(str, cmd))}")
+    return r
+
+
+def sha256(p: Path) -> str:
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def fetch(url: str, dest: Path, digest: str = None):
+    if dest.exists() and (digest is None or sha256(dest) == digest):
+        return
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.with_suffix(".part")
+    with urllib.request.urlopen(url) as r, open(tmp, "wb") as f:
+        shutil.copyfileobj(r, f)
+    if digest and sha256(tmp) != digest:
+        sys.exit(f"build: {url} has the wrong sha256")
+    tmp.rename(dest)
+
+
+def deps(versions):
+    for v in versions:
+        fetch(f"https://releases.battlecode.org/maven/org/battlecode/battlecode26-java/{v}/battlecode26-java-{v}.jar",
+              JARS / f"battlecode26-java-{v}.jar", JAR_SHA256[v])
+    for a in ASM:
+        fetch(f"{MAVEN}/{a}/9.7/{a}-9.7.jar", JARS / f"{a}-9.7.jar")
+    gc = DEPS / "gc-install" / "lib" / "libgc.a"
+    stamp = DEPS / "gc-install" / "flags"
+    if not gc.exists() or not stamp.exists() or stamp.read_text() != GC_CFLAGS:
+        tar = DEPS / f"gc-{GC_VERSION}.tar.gz"
+        fetch(f"https://github.com/ivmai/bdwgc/releases/download/v{GC_VERSION}/gc-{GC_VERSION}.tar.gz", tar, GC_SHA256)
+        src = DEPS / "src"
+        src.mkdir(parents=True, exist_ok=True)
+        sh(["tar", "xzf", str(tar), "-C", str(src)])
+        bdir = DEPS / "gc-build"
+        shutil.rmtree(bdir, ignore_errors=True)
+        bdir.mkdir()
+        sh(["cmake", str(src / f"gc-{GC_VERSION}"), "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_C_COMPILER=clang",
+            f"-DCMAKE_INSTALL_PREFIX={DEPS / 'gc-install'}", "-DBUILD_SHARED_LIBS=OFF", "-Denable_threads=OFF",
+            "-Denable_cplusplus=OFF", "-Dbuild_cord=OFF", "-Denable_docs=OFF", "-Denable_parallel_mark=OFF",
+            "-Denable_gcj_support=OFF", "-Denable_java_finalization=OFF", "-Denable_disclaim=OFF",
+            "-Denable_large_config=ON", "-Dbuild_tests=OFF", f"-DCMAKE_C_FLAGS={GC_CFLAGS}"], cwd=bdir,
+           stdout=subprocess.DEVNULL)
+        sh(["ninja", "install"], cwd=bdir, stdout=subprocess.DEVNULL)
+        stamp.write_text(GC_CFLAGS)
+
+
+def translator(version: str) -> str:
+    """Compile engine/jvm (translator, substitutes, native-build classes) against the version's jar."""
+    jar = JARS / f"battlecode26-java-{version}.jar"
+    cp = [str(jar)] + [str(JARS / f"{a}-9.7.jar") for a in ASM]
+    src = ENGINE / "jvm"
+    files = sorted(list((src / "src" / "bcx" / "tr").rglob("*.java")) + list((src / "subst").rglob("*.java")) +
+                   [src / "src" / "bcx" / f for f in ("NativeMain.java", "NativeControlProvider.java", "NativeIO.java",
+                                                      "Match.java")] +
+                   list((src / "src" / "battlecode" / "world").glob("*.java")))
+    h = hashlib.sha256(version.encode())
+    for f in files:
+        h.update(str(f.relative_to(src)).encode() + b"\0" + f.read_bytes())
+    out = DATA / "build" / f"jvm-tr-{h.hexdigest()[:16]}"
+    if not (out / ".ok").exists():
+        shutil.rmtree(out, ignore_errors=True)
+        out.mkdir(parents=True)
+        sh(["javac", "-nowarn", "-encoding", "UTF-8",
+            "--add-exports", "java.base/jdk.internal.misc=ALL-UNNAMED",
+            "--add-exports", "java.base/jdk.internal.math=ALL-UNNAMED",
+            "--add-exports", "java.base/sun.nio.cs=ALL-UNNAMED", "--add-exports", "java.base/jdk.internal.access=ALL-UNNAMED",
+            "-d", str(out), "-cp", os.pathsep.join(cp)] + [str(f) for f in files])
+        (out / ".ok").touch()
+    return os.pathsep.join([str(out)] + cp)
+
+
+def classes_hash(classes: Path, pkg: str) -> str:
+    """FNV-1a 64 over the package's class files (relative path, NUL, bytes, NUL), sorted by path: runtime/main.cpp
+    computes the same to check a spec's classes against the build's."""
+    h = 0xcbf29ce484222325
+    root = classes / pkg
+    for f in sorted(root.rglob("*.class"), key=lambda p: str(p.relative_to(root)).encode()):
+        for chunk in (str(f.relative_to(root)).encode(), b"\0", f.read_bytes(), b"\0"):
+            for byte in chunk:
+                h = ((h ^ byte) * 0x100000001b3) & 0xFFFFFFFFFFFFFFFF
+    return f"{h:016x}"
+
+
+def bot_packages(classes: Path):
+    return sorted(p.parent.name for p in classes.glob("*/RobotPlayer.class"))
+
+
+def build(version: str, bots, jobs: int, opt: str):
+    classes = REPO / "build" / "classes"
+    if not classes.exists():
+        sys.exit("build: build/classes is missing; run ./gradlew classes first")
+    if bots == ["all"]:
+        bots = bot_packages(classes)
+    cp = translator(version)
+    # one folder per checkout: builds in two worktrees at once must not share generated files
+    gen = DATA / "build" / f"gen-{version}-{hashlib.sha256(str(REPO).encode()).hexdigest()[:8]}"
+    gen.mkdir(parents=True, exist_ok=True)
+    cmd = ["java", "-Xss64m", "-Xmx8g", "-cp", cp, "bcx.tr.Main", "--out", str(gen), "--natives",
+           str(ENGINE / "jvm" / "natives.txt"), "--entry", ENTRY]
+    for b in bots:
+        cmd += ["--team", f"{b}={classes}"]
+    print(f"build {version}: translating the engine and {len(bots)} bots", flush=True)
+    sh(cmd)
+    vc = gen / "version.cpp"
+    text = f'extern "C" const char bcx_engine_version[] = "{version}";\n'
+    text += 'extern "C" const char* const bcx_bot_hashes[] = {' + ", ".join(
+        f'"{b}", "{classes_hash(classes, b)}"' for b in bots) + ', nullptr};\n'
+    if not vc.exists() or vc.read_text() != text:
+        vc.write_text(text)
+    rt = ENGINE / "runtime"
+    gci = DEPS / "gc-install"
+    inc = f"-I{gen} -I{rt} -I{gci / 'include'}"
+    srcs = sorted(gen.glob("m*.cpp")) + [gen / "klasses.cpp", gen / "version.cpp"] + \
+        [rt / f for f in ("rt.cpp", "sched.cpp", "natives.cpp", "main.cpp")]
+    exe = OUT / ("bcx" if version == "1.2.6" else f"bcx-{version}")
+    lines = [f"cxxflags = {' '.join(CXXFLAGS)} {opt} {inc}",
+             "rule cxx\n  command = clang++ $cxxflags -MMD -MF $out.d -c $in -o $out\n  depfile = $out.d\n  deps = gcc",
+             "rule cc\n  command = clang -O2 -ffp-contract=off -fno-fast-math -msse4.1 -c $in -o $out",
+             f"rule link\n  command = clang++ -static -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
+    objs = []
+    for s in srcs:
+        o = gen / "obj" / (s.stem + ("_rt" if s.parent == rt else "") + ".o")
+        objs.append(o)
+        lines.append(f"build {o}: cxx {s}")
+    o = gen / "obj" / "hsmath.o"
+    objs.append(o)
+    lines.append(f"build {o}: cc {rt / 'hsmath.c'}")
+    lines.append(f"build {exe}: link {' '.join(map(str, objs))}")
+    (gen / "build.ninja").write_text("\n".join(lines) + "\n")
+    OUT.mkdir(exist_ok=True)
+    sh(["ninja", "-f", str(gen / "build.ninja"), "-j", str(jobs)], cwd=gen)  # its logs live in gen
+    # the jar's bundled maps, for maps not in maps/
+    md = OUT / f"maps-{version}"
+    if not md.exists():
+        tmp = OUT / f".maps-{version}.tmp"
+        shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir()
+        with zipfile.ZipFile(JARS / f"battlecode26-java-{version}.jar") as z:
+            for n in z.namelist():
+                if n.startswith("battlecode/world/resources/") and n.endswith(".map26"):
+                    (tmp / Path(n).name).write_bytes(z.read(n))
+        tmp.rename(md)
+    print(f"build {version}: {exe}")
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--engine", default="1.2.6", choices=["1.2.6", "1.2.5", "all"])
+    ap.add_argument("--bots", default="all", help="comma-separated packages, or all (default)")
+    ap.add_argument("-j", type=int, default=8)
+    ap.add_argument("--opt", default="-O2")
+    a = ap.parse_args()
+    versions = ["1.2.6", "1.2.5"] if a.engine == "all" else [a.engine]
+    deps(versions)
+    for v in versions:
+        build(v, a.bots.split(","), a.j, a.opt)
+
+
+if __name__ == "__main__":
+    main()

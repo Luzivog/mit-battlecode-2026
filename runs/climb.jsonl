@@ -10,3 +10,5 @@
 {"t": 1795075826, "score": 22.9162, "kept": true, "what": "BFS fast path walks a per-tile neighbour table (no division or bounds tests per step); no cone memo for NaN angles"}
 {"t": 1795076232, "score": 22.0986, "kept": true, "what": "fast path for BcxStateHash.bfsHash: reads the BFS tables directly instead of 2 n^2 getBfsDir calls"}
 {"t": 1795077161, "score": 21.6124, "kept": true, "what": "fast path for RobotControllerImpl.canSenseLocation: the two tests without building a GameActionException"}
+{"t": 1795078196, "score": 21.9156, "kept": false, "what": "sense memo with shape-indexed masks, box radius from ceil(sqrt(r2)) per call"}
+{"t": 1795078196, "score": 21.0248, "kept": true, "what": "InternalRobot.canSenseLocation memo: per (angle, r2, bottomLeft) shape and direction masks shared with the cone path, box radius stored per shape"}

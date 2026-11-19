@@ -233,3 +233,4 @@ sys bcx/subst/FastPath randomState (Ljava/util/Random;)J rt_fastpath_random_stat
 patch battlecode/world/GameWorld bcx/subst/GameWorld_p
 patch battlecode/world/BcxStateHash bcx/subst/BcxStateHash_p
 patch battlecode/world/RobotControllerImpl bcx/subst/RobotControllerImpl_p
+patch battlecode/world/InternalRobot bcx/subst/InternalRobot_p

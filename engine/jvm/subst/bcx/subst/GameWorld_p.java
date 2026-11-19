@@ -151,7 +151,7 @@ public final class GameWorld_p {
         MapLocation[] buf = bcxConeBuf;
         if (buf == null || buf.length < nx * ny) bcxConeBuf = buf = new MapLocation[(int) (nx * ny)];
         int n = 0;
-        if (dir == null || angle != angle) {
+        if (dir == null || angle != angle || r > 1 << 10) {
             for (int i = 0; i < nx; i++) {
                 int x = revX ? x1 - i : x0 + i;
                 for (int j = 0; j < ny; j++) {
@@ -163,7 +163,7 @@ public final class GameWorld_p {
             // the test is a function of the offset from center (the coordinates enter it as exact doubles and, for
             // offsets within r, exact ints), r2, dir and angle: each offset's answer is the test's own, remembered
             int side = 2 * r + 1;
-            byte[] mask = bcxConeMask(dir, angle, r2, side);
+            byte[] mask = bcxConeMask(dir, angle, r2, false);
             for (int i = 0; i < nx; i++) {
                 int x = revX ? x1 - i : x0 + i;
                 int row = (x - center.x + r) * side - center.y + r;
@@ -186,40 +186,59 @@ public final class GameWorld_p {
         return out;
     }
 
-    // remembered cone tests: per key (dir, angle, r2), side x side offsets, 0 unknown, 1 outside, 2 inside
-    private Direction[] bcxMaskDir;
-    private double[] bcxMaskAngle;
-    private int[] bcxMaskR2;
-    private byte[][] bcxMask;
-    private int bcxMaskN, bcxMaskLast;
+    // remembered tests center.isWithinDistanceSquared(center + offset, r2, dir, angle, bottomLeft): per shape (angle,
+    // r2, bottomLeft) and direction, side x side offsets around the center (side = 2 r + 1, r = ceil(sqrt(r2)) + 1,
+    // the cone's box), 0 unknown, 1 outside, 2 inside. Shared by the cone fast path and
+    // InternalRobot_p.canSenseLocation; bcxMaskR is the r of the last mask returned
+    private double[] bcxShapeAngle;
+    private int[] bcxShapeR2;
+    private boolean[] bcxShapeBl;
+    private int[] bcxShapeRadius;
+    private byte[][][] bcxShapeMasks;
+    private int bcxShapeN, bcxShapeLast;
+    public int bcxMaskR;
 
-    private byte[] bcxConeMask(Direction dir, double angle, int r2, int side) {
-        int last = bcxMaskLast;
-        if (last < bcxMaskN && bcxMaskDir[last] == dir && bcxMaskAngle[last] == angle && bcxMaskR2[last] == r2) return bcxMask[last];
-        for (int i = 0; i < bcxMaskN; i++)
-            if (bcxMaskDir[i] == dir && bcxMaskAngle[i] == angle && bcxMaskR2[i] == r2) {
-                bcxMaskLast = i;
-                return bcxMask[i];
-            }
-        if (bcxMaskDir == null || bcxMaskN == bcxMaskDir.length) {
-            int cap = bcxMaskDir == null ? 16 : 2 * bcxMaskN;
-            Direction[] d = new Direction[cap];
+    public byte[] bcxConeMask(Direction dir, double angle, int r2, boolean bl) {
+        int i = bcxShapeLast;
+        if (i >= bcxShapeN || bcxShapeAngle[i] != angle || bcxShapeR2[i] != r2 || bcxShapeBl[i] != bl) {
+            i = 0;
+            while (i < bcxShapeN && (bcxShapeAngle[i] != angle || bcxShapeR2[i] != r2 || bcxShapeBl[i] != bl)) i++;
+            if (i == bcxShapeN) bcxAddShape(angle, r2, bl);
+            bcxShapeLast = i;
+        }
+        int r = bcxShapeRadius[i];
+        bcxMaskR = r;
+        byte[][] masks = bcxShapeMasks[i];
+        int d = dir.ordinal();
+        byte[] m = masks[d];
+        if (m == null) masks[d] = m = new byte[(2 * r + 1) * (2 * r + 1)];
+        return m;
+    }
+
+    private void bcxAddShape(double angle, int r2, boolean bl) {
+        int n = bcxShapeN;
+        if (bcxShapeAngle == null || n == bcxShapeAngle.length) {
+            int cap = n == 0 ? 8 : 2 * n;
             double[] a = new double[cap];
             int[] q = new int[cap];
-            byte[][] m = new byte[cap][];
-            for (int i = 0; i < bcxMaskN; i++) { d[i] = bcxMaskDir[i]; a[i] = bcxMaskAngle[i]; q[i] = bcxMaskR2[i]; m[i] = bcxMask[i]; }
-            bcxMaskDir = d;
-            bcxMaskAngle = a;
-            bcxMaskR2 = q;
-            bcxMask = m;
+            boolean[] b = new boolean[cap];
+            int[] r = new int[cap];
+            byte[][][] m = new byte[cap][][];
+            for (int i = 0; i < n; i++) {
+                a[i] = bcxShapeAngle[i]; q[i] = bcxShapeR2[i]; b[i] = bcxShapeBl[i]; r[i] = bcxShapeRadius[i]; m[i] = bcxShapeMasks[i];
+            }
+            bcxShapeRadius = r;
+            bcxShapeAngle = a;
+            bcxShapeR2 = q;
+            bcxShapeBl = b;
+            bcxShapeMasks = m;
         }
-        int i = bcxMaskN++;
-        bcxMaskDir[i] = dir;
-        bcxMaskAngle[i] = angle;
-        bcxMaskR2[i] = r2;
-        bcxMask[i] = new byte[side * side];
-        bcxMaskLast = i;
-        return bcxMask[i];
+        bcxShapeAngle[n] = angle;
+        bcxShapeR2[n] = r2;
+        bcxShapeBl[n] = bl;
+        bcxShapeRadius[n] = (int) Math.ceil(Math.sqrt((double) r2)) + 1;
+        bcxShapeMasks[n] = new byte[Direction.values().length][];
+        bcxShapeN = n + 1;
     }
 
     @Orig

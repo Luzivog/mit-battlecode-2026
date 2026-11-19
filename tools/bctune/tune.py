@@ -12,7 +12,9 @@ import re
 import subprocess
 import sys
 import tempfile
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -304,8 +306,10 @@ def cmd_play(a) -> int:
     if todo and not any(r["variant"] == REF and {k: r[k] for k in key} == key
                         and run_cells(r["id"]) in ("running", a.cells) for r in c["runs"]):
         todo = [{"label": REF, "bot": ref}] + todo
-    failed = 0
-    for v in todo:
+    lock = threading.Lock()
+
+    def one(v: dict) -> bool:
+        """V built and its test started (each try a build, then tools/games ab); False when every try failed."""
         bot = v.get("bot") or f"challenger@{v['commit'][:12]}"
         cmd = [str(GAMES), "ab", bot, "awubot", "--ref", "none", "--pool", a.pool, "--seed-base", str(a.seed_base),
                "--min-cells", str(a.cells), "--max-cells", str(a.cells), "--engine", a.engine]
@@ -318,7 +322,6 @@ def cmd_play(a) -> int:
             if attempt:
                 time.sleep(30)
             if not a.local:
-                # one build at a time: the host's other build slot stays free for other agents
                 b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
                                    text=True)
                 if b.returncode != 0:
@@ -330,12 +333,18 @@ def cmd_play(a) -> int:
                 break
             print(f"{v['label']}: tools/games ab failed (try {attempt + 1}):\n{p.stderr[-1500:]}", file=sys.stderr)
         if not rid:
-            failed += 1
-            continue
-        c = load(a.name)  # another play may have written meanwhile
-        c["runs"].append(dict(key, variant=v["label"], id=rid, started=time.time()))
-        save(c)
-        print(f"{v['label']}: {bot} run {rid}", flush=True)
+            return False
+        with lock:
+            c = load(a.name)  # another play may have written meanwhile
+            c["runs"].append(dict(key, variant=v["label"], id=rid, started=time.time()))
+            save(c)
+            print(f"{v['label']}: {bot} run {rid}", flush=True)
+        return True
+
+    # BUILDS variants at once (the host builds two at once, one translating): a build's compile, link and its test's
+    # start overlap the next one's translation. Each test starts as soon as its own build is done.
+    with ThreadPoolExecutor(max(1, a.builds)) as pool:
+        failed = sum(not ok for ok in pool.map(one, todo))
     if failed:
         print(f"{failed} variants not started: run play again", file=sys.stderr)
     return 1 if failed else 0
@@ -668,7 +677,7 @@ def main(argv=None) -> int:
     sp.add_argument("--rev", help="the base (default the screen's)")
     sp.add_argument("--boot", type=int, default=2000)
     sp.set_defaults(fn=cmd_path)
-    sp = sub.add_parser("play", help="build each variant (one at a time) and start its fixed-size test")
+    sp = sub.add_parser("play", help="build the variants (two at once) and start each one's fixed-size test")
     sp.add_argument("name")
     sp.add_argument("--seed-base", type=int, required=True, help="a seed base no earlier test of these variants used")
     sp.add_argument("--pool", default="goal")
@@ -678,6 +687,8 @@ def main(argv=None) -> int:
     sp.add_argument("--local", action="store_true", help="play here (default: Imperial, --remote)")
     sp.add_argument("--where", help="Imperial backends (tools/games --where)")
     sp.add_argument("--only", help="comma-separated variant labels")
+    sp.add_argument("--builds", type=int, default=2,
+                    help="variants built at once (default 2, the host's build slots; translations go one at a time)")
     sp.set_defaults(fn=cmd_play)
     sp = sub.add_parser("wait", help="block until every run of the campaign has stopped, or with --next the next one "
                                      "(run it in the background)")

@@ -10,7 +10,7 @@ All paths are relative to `src/challenger/`. Line numbers for generated classes 
 
 1. **It is an economy + defence bot that backstabs on first contact.** No strategy code checks `rc.isCooperation()`; the only check is in cat-trap placement (`BabyRat.java:36`). Any visible enemy rat sends a rat into combat and it bites, which triggers the backstab. The first rat always walks to the map centre (`MinerStrategy.java:114`). In 19 instrumented games (18 ran to completion), the backstab came at **rounds 4–21 in 13 of them** and at round 152 in one; 5 games on 2 maps stayed cooperative to the end. Most games end by king kill (15 of the 18 completed). Points decided only the 3 games that reached round 2000.
 2. **Every baby rat runs the same `MinerStrategy`.** There are no roles: the spawn payload is random and never read. Each turn the rat checks, in order: combat, formation, go home, visible cheese, `raw>50 → home`, then travel to a mine (80%) or explore (20%). Specialisation exists only through `rc.getID()%3` (cat hunters) and `%10==7` ("troll").
-3. **Spawning is capped by rat cost, not by need.** Normally a team gets 16 rats (12 on maps of area ≤ 900 before round 400). The cap rises to 32 when global cheese ≥ `2000 − t/2`, and is removed when global cheese ≥ `3000 − 0.75t`. In contested games the bot sits at ≤ 16 rats and replaces about one dead rat every 5–6 rounds.
+3. **Spawning is capped by rat cost, not by need.** Normally a team gets 16 rats (12 on maps of area ≤ 900 before round 400), 4 fewer on mine-poor maps of area ≤ 1600 (§5.2). The cap rises to 32 when global cheese ≥ `2000 − t/2`, and is removed when global cheese ≥ `3000 − 0.75t`. In contested games the bot sits at ≤ 16 rats and replaces about one dead rat every 5–6 rounds.
 4. **More kings = the long-game lever.** A coordinator king picks a far, unassigned mine, and baby rats within 25 tiles of it converge until one of them can `becomeRatKing`. When it works, income jumps (on `far` the cheese transferred per 250 rounds went from ~1k to ~5k). It mostly fails in contested games. On maps larger than 1200 tiles it needs ≥ 20 rats, while the normal spawn cap is 16 (§6.3).
 5. **Kings mine.** A king walks toward the centre (stopping just outside a "taboo" box) until it learns of an unassigned mine. It then parks on that mine and picks up cheese inside the mine's spawn box (king pickups count as transferred cheese, see rules.md).
 
@@ -140,10 +140,11 @@ Squeak priorities (`Squeaker.postTick`): a rat that saw a cat in the last 4 roun
   - formation, 50.
 - **Observed**: in contested games, rat replacement is the dominant sink. On `sittingducks`, `ratCounter` went 16 → 149 between rounds 21 and 800 while 16–24 rats were alive. On `hatefullattice` it went 16 → 181 by round 900. In several mirror games cheese collapsed to ≈ 0 and the king died (`DefaultMedium` had 97 cheese and 4 rats at round 200; on `starvation` cheese hit 0 by round 200; on `cheesefarm` it was 8 at round 500).
 
-### 5.2 Spawning policy (`robot/king/KingSpawningStrategy.java:21-73`)
+### 5.2 Spawning policy (`robot/king/KingSpawningStrategy.java:22-124`)
 
 ```
 def = (W·H ≤ 900 and t < 400) ? 30 : 40
+if W·H ≤ 1600 and minMines < 5:       def −= 10                  // mine-poor map (E2), below
 thresh = min(global/10 + 10, def)
 if global ≥ 3000 − 0.75·t:           thresh = 1000            // "very rich": unlimited
 elif global ≥ 2000 − t/2 and t ≥ 100: thresh = 80             // threshForNumRats(32)
@@ -159,11 +160,14 @@ spawn if target != null and cost ≤ thresh and (global ≥ 100 or cost == 10)
 |---|---|---|
 | < 20 (global < 100) | 3 (cost 10 only) | broke |
 | 20–29 (global 100–199) | 4–8 | poor |
-| 30 | 12 | area ≤ 900 before round 400, or global 200–299 |
+| 20 | 8 | area ≤ 900 before round 400 on a mine-poor map |
+| 30 | 12 | area ≤ 900 before round 400, area ≤ 1600 on a mine-poor map, or global 200–299 |
 | 40 | **16** | normal |
 | 50 / 60 | 20 / 24 | cats near and no allies / king under attack |
 | 80 | 32 | global ≥ 2000 − t/2 (1950 at t=100, 1500 at t=1000, 1000 at t=2000) |
 | 1000 | unlimited | global ≥ 3000 − 0.75t (2500 at t=667, 2000 at t=1333, 1500 at t=2000). The bot then hovers at that line, turning surplus into rats (observed 144 rats at round 2000 on `mining`). |
+
+**Mine-poor maps (E2).** `minMines` is a lower bound on the map's mines: the known mines (`GlobalArray.globalCheeseMines`) plus their unknown mirrors, the smallest count over the symmetries `CellTracker` still allows (every mine's mirror is a mine). It is recomputed only when the known mines or the symmetry candidates change, and latches at 5. Offline, on all 95 goal maps, it never exceeds the true count. Every map starts mine-poor, because on those maps the bank gap builds from round 1. A probe saw rich maps latch at r51–r208. Measured against main (paired, docs/plan.md E2): +0.061 [+0.015, +0.109] on `goal` (163 cells, fresh seeds), no harm on `mines-ge8` (−0.003), no harm in the gauntlet. Before the area gate it scored +0.34 on `mines-le4` and +0.07 on `mines-5to7`. The cap 4 lower on every map scored +0.01 on `goal`: +0.23 on ≤ 4-mine maps, −0.18 on 10–12. Above 1600 tiles it gained ~0 on poor maps and leaked onto rich ones. The cap 8 lower scored −0.46 against 4 lower on `mines-le4`. Mechanism (`MP-combat`): the same spawns and deaths, but cheaper replacements. The bank at r100 is 1294 against main's 753, and starvation rounds fall from 13.4 to 3.6.
 
 The last change before submission (`e0bd796` "more aggressive spawning when rich (untested)") changed the two "rich" lines from `max(0, t−1000)` to `0.75t` and `t/2`.
 
@@ -321,15 +325,16 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 ### Kings
 | Name / expression | Value | File:line | Meaning | Sens. |
 |---|---|---|---|---|
-| `defaultThresh` | 40 | `robot/king/KingSpawningStrategy.java:23` | **normal rat cap of 16** | **H** |
-| small-map thresh | 30 if W·H ≤ 900 and t < 400 | `KingSpawningStrategy.java:24-25` | cap of 12 on small maps | M |
-| cheese-scaled thresh | `global/10 + 10` | `KingSpawningStrategy.java:27` | cap when poor | M |
-| very-rich line | `global ≥ 3000 − 3t/4` → 1000 | `KingSpawningStrategy.java:28-29` | unlimited spawn | **H** |
-| rich line | `global ≥ 2000 − t/2 && t ≥ 100` → 80 (32 rats) | `KingSpawningStrategy.java:30-31` | doubled cap | **H** |
-| `threshForNumRats(x)` | `⌊(x−1)/4⌋·10 + 10` | `KingSpawningStrategy.java:16-18` | cost of the x-th rat | – |
-| cat, no allies | +10 | `KingSpawningStrategy.java:34-35` | defend the king vs cats | M |
-| panic spawn | +10 (+10 if hp ≤ 100), ≥ 5 rounds apart, needs a visible enemy and hp loss | `KingSpawningStrategy.java:59-66` | reinforce when attacked | M |
-| spawn floor | `global ≥ 100 || cost == 10` | `KingSpawningStrategy.java:69` | starvation guard (weak) | M |
+| `defaultThresh` | 40 | `robot/king/KingSpawningStrategy.java:70` | **normal rat cap of 16** | **H** |
+| small-map thresh | 30 if W·H ≤ 900 and t < 400 | `KingSpawningStrategy.java:71-72` | cap of 12 on small maps | M |
+| mine-poor thresh | −10 if W·H ≤ 1600 and `minMines` < `RICH_MINES` = 5 | `KingSpawningStrategy.java:22-77` | cap 4 lower on mine-poor maps (§5.2, measured) | **H** |
+| cheese-scaled thresh | `global/10 + 10` | `KingSpawningStrategy.java:79` | cap when poor | M |
+| very-rich line | `global ≥ 3000 − 3t/4` → 1000 | `KingSpawningStrategy.java:80-81` | unlimited spawn | **H** |
+| rich line | `global ≥ 2000 − t/2 && t ≥ 100` → 80 (32 rats) | `KingSpawningStrategy.java:82-83` | doubled cap | **H** |
+| `threshForNumRats(x)` | `⌊(x−1)/4⌋·10 + 10` | `KingSpawningStrategy.java:18-20` | cost of the x-th rat | – |
+| cat, no allies | +10 | `KingSpawningStrategy.java:86-87` | defend the king vs cats | M |
+| panic spawn | +10 (+10 if hp ≤ 100), ≥ 5 rounds apart, needs a visible enemy and hp loss | `KingSpawningStrategy.java:111-118` | reinforce when attacked | M |
+| spawn floor | `global ≥ 100 || cost == 10` | `KingSpawningStrategy.java:121` | starvation guard (weak) | M |
 | spawn ring | Chebyshev 2, tile nearest the target | `KingSpawningStrategy.java:78-87` | spawn side | L |
 | taboo box | <40: [1/3,2/3]; <50: [3/7,4/7]; else [4/9,5/9] | `KingMiningStrategy.java.jinja2:29-44`; duplicated in `KingFormationCoordinatorStrategy.java:44-59` | king walk target; formation mine exclusion | M |
 | cheese chase box | Chebyshev ≤ 4 of the mine | `KingMiningStrategy.java.jinja2:133` | king pickup area | L |

@@ -598,8 +598,9 @@ public class GlobalArray {
         }
     }
 
+    // A dead king's slot is never cleared: its assignment counts only while the king is alive.
     public static MapLocation getKingMineAssignment(int aKingId) throws GameActionException {
-        if (aKingId >= 0 && aKingId < 5) {
+        if (aKingId >= 0 && aKingId < 5 && getRatKing(aKingId) != null) {
             int myEncoded = rc.readSharedArray(KING_MINE_ASSIGNMENT + aKingId);
             if (myEncoded == 0) return null;
             return decode2x2(myEncoded - 1);
@@ -610,6 +611,19 @@ public class GlobalArray {
     public static boolean isMineAssignedToAnyKing(MapLocation aMine) throws GameActionException {
         if (aMine == null) return false;
         for (int i = 0; i < 5; i++) {
+            MapLocation myKingMine = getKingMineAssignment(i);
+            if (myKingMine != null && myKingMine.distanceSquaredTo(aMine) < 25) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // A king choosing its own mine skips its own slot: counting it made the target flip between two visible mines
+    // every turn.
+    public static boolean isMineAssignedToOtherKing(MapLocation aMine) throws GameActionException {
+        for (int i = 0; i < 5; i++) {
+            if (i == kingId) continue;
             MapLocation myKingMine = getKingMineAssignment(i);
             if (myKingMine != null && myKingMine.distanceSquaredTo(aMine) < 25) {
                 return true;

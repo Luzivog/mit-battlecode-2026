@@ -8,3 +8,4 @@
 {"t": 1795074413, "score": 23.7906, "kept": true, "what": "cone fast path remembers each (dir, angle, r2) offset mask; rejected tiles cost a byte read, no allocation"}
 {"t": 1795075133, "score": 24.0128, "kept": false, "what": "InternalRobot.canSenseLocation memo through the cone masks (lookup costs more than the test)"}
 {"t": 1795075826, "score": 22.9162, "kept": true, "what": "BFS fast path walks a per-tile neighbour table (no division or bounds tests per step); no cone memo for NaN angles"}
+{"t": 1795076232, "score": 22.0986, "kept": true, "what": "fast path for BcxStateHash.bfsHash: reads the BFS tables directly instead of 2 n^2 getBfsDir calls"}

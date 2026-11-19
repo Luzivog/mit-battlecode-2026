@@ -229,6 +229,21 @@ public final class GameWorld_p {
     @Orig
     public LiveMap getGameMap() { return null; }
 
+    /** The BFS table of a chirality, for BcxStateHash_p. */
+    public Direction[][] bcxBfsTable(int c) { return c == 0 ? bfs_map_0 : bfs_map_1; }
+
+    /** Whether both tables are n x n with every row present, and the map is n tiles wide times high with the
+     *  index arithmetic locationToIndex uses (so getBfsDir of tiles i and j reads [i][j]). */
+    public boolean bcxBfsTablesCover(int n) {
+        if (gameMap.getWidth() * gameMap.getHeight() != n) return false;
+        for (int c = 0; c < 2; c++) {
+            Direction[][] t = bcxBfsTable(c);
+            if (t == null || t.length != n) return false;
+            for (int i = 0; i < n; i++) if (t[i] == null || t[i].length != n) return false;
+        }
+        return true;
+    }
+
     @Orig
     public void bfsFromTarget$orig(MapLocation target, int sym) {}
 

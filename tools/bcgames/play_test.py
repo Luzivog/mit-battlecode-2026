@@ -1,6 +1,8 @@
-"""The runner on the real engine (a few short games). python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'
+"""The runners on the real engines (a few short games). python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'
 
-Uses a scratch data dir (BCGAMES_DATA is set before importing), so it never touches the shared cache.
+Uses a scratch data dir (BCGAMES_DATA is set before importing), so it never touches the shared cache. The native
+tests use the shared native store (binaries are minutes to build): they play only when a binary there holds their bots
+(any tools/games run makes one), or build one with BCGAMES_TEST_BUILD=1.
 """
 import atexit
 import json
@@ -15,21 +17,26 @@ from pathlib import Path
 
 TMP = tempfile.mkdtemp(prefix="bcgames-test-")
 atexit.register(shutil.rmtree, TMP, True)
+SHARED_NATIVE = Path(os.environ.get("BCGAMES_DATA", "~/battlecode26-data/games")).expanduser() / "native"
 os.environ["BCGAMES_DATA"] = TMP
+os.environ.setdefault("BCGAMES_NATIVE_DATA", str(SHARED_NATIVE))
 # Engine jars are 10 MB downloads: reuse the shared ones when present.
 _shared = Path("~/battlecode26-data/games/engines").expanduser()
 if _shared.exists():
     os.symlink(_shared, Path(TMP) / "engines")
 
-from bcgames import play, store  # noqa: E402
+from bcgames import native, play, store  # noqa: E402
 
 TOOLS = Path(__file__).resolve().parents[1]
 
 
 def run_play(specs, *args):
+    """tools/play on SPECS; the Java engine unless ARGS name a backend."""
     out = Path(tempfile.mkdtemp(dir=TMP))
     spec_file = out / "specs.jsonl"
     spec_file.write_text("".join(json.dumps(s) + "\n" for s in specs))
+    if "--backend" not in args:
+        args = (*args, "--backend", "java")
     proc = subprocess.run([sys.executable, str(TOOLS / "play"), str(spec_file), str(out / "o"), *args],
                           capture_output=True, text=True, env=dict(os.environ))
     path = out / "o" / "results.jsonl"
@@ -101,6 +108,61 @@ class PlayTest(unittest.TestCase):
         self.assertGreater(seq["1"]["cat_rng_draws"], 0)
         self.assertGreater(seq["2"]["cat_rng_draws"], 0)
         self.assertEqual(seq["2"]["digest"], alone["2"]["digest"])
+
+
+def native_binary_for(a: str, b: str) -> bool:
+    """A binary of the shared store already holds both bots (this checkout's builds), or a build is allowed."""
+    if os.environ.get("BCGAMES_TEST_BUILD") == "1":
+        return True
+    try:
+        r = play.Resolver()
+        job = r.job({"id": "x", "a": a, "b": b, "map": "DefaultSmall"})
+        plan = native.Planner(r).plan(job)
+        eid, _ = native.snapshot(plan.version)
+        return (native.binary_dir(native.binary_key(plan.version, eid, plan.ids())) / "bcx").exists() or \
+            native.find(plan, eid) is not None
+    except Exception:  # noqa: BLE001 - no toolchain, no store: skip
+        return False
+
+
+class NativePlayTest(unittest.TestCase):
+    """The native backend plays the Java engine's games: same results, replays and digests."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not native_binary_for("awubot", "opp_food"):
+            raise unittest.SkipTest("no native binary holds awubot and opp_food (BCGAMES_TEST_BUILD=1 builds one)")
+
+    def test_native_equals_java_with_the_guard(self):
+        specs = [{"id": "s", "a": "awubot", "b": "opp_food", "map": "DefaultSmall"},
+                 {"id": "t", "a": "opp_food", "b": "awubot", "map": "tiny", "seed": 77}]
+        proc, nat, out = run_play(specs, "--backend", "native", "--guard", "1", "--replays", "all", "--no-cache")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        _, jav, jout = run_play(specs, "--replays", "all", "--no-cache")
+        for gid in ("s", "t"):
+            n, j = nat[gid], jav[gid]
+            self.assertEqual((n["backend"], j["backend"]), ("native", "java"))
+            self.assertEqual(n["guard"]["verdict"], "same")
+            self.assertTrue(n["native_build"])
+            for k in ("winner", "win_type", "round", "seed", "digest", "A", "B", "series", "cat_rng_draws", "key"):
+                self.assertEqual(n[k], j[k], k)
+            self.assertEqual(Path(n["replay"]).read_bytes(), Path(j["replay"]).read_bytes())
+
+    def test_two_builds_of_one_package_play_on_java(self):
+        specs = [{"id": "m", "a": "awubot", "b": "awubot", "classes_b": str(self.other_awubot()), "map": "tiny"}]
+        proc, res, _ = run_play(specs, "--backend", "native", "--no-cache")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertEqual(res["m"]["backend"], "java")
+
+    def other_awubot(self) -> Path:
+        """awubot's classes with one class file more: another build of the package."""
+        jar, _ = store.bot_jar("awubot")
+        d = Path(tempfile.mkdtemp(dir=TMP))
+        import zipfile
+        with zipfile.ZipFile(jar) as z:
+            z.extractall(d)
+        shutil.copy(d / "awubot" / "RobotPlayer.class", d / "awubot" / "Extra.class")
+        return d
 
 
 if __name__ == "__main__":

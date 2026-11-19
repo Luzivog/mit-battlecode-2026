@@ -1,4 +1,7 @@
-"""tools/play: play games from a JSONL spec file with the unmodified engine, many games per JVM, N JVMs.
+"""tools/play: play games from a JSONL spec file: on the native engine (engine/, the default) where it can play the
+game, else on the unmodified official engine (many games per JVM, N JVMs). Both play the same games: the native engine
+reproduces the official one exactly, and an exactness guard plays a sample of the native games on both and stops at
+any difference the known machine effects don't explain (docs/evaluation.md "Backends").
 
 Spec (one JSON object per line; the fields of engine/AGENTS.md):
   {"id": "g1", "a": "challenger", "b": "awubot", "map": "DefaultSmall", "seed": 158, "engine": "1.2.6"}
@@ -9,14 +12,18 @@ Spec (one JSON object per line; the fields of engine/AGENTS.md):
   seed        optional, default: the map's embedded seed (= the official game); another seed is a map variant
   replay      optional: true writes this game's replay to OUTDIR/replays/ (as --replays all does for every game)
   engine      optional, default 1.2.6 (official); 1.2.5 is the pinned dev engine
+  guard       optional: true plays the game on both engines and compares them (the exactness guard)
+  bcx         optional: the native binary to play it with (remote tasks; else one is built for the game's bots)
   other fields are copied to the result
 Result (one JSON object per line, in completion order): the spec's fields plus winner ("A"/"B"), winner_pkg,
 win_type, round, wall_ms, cpu_s, digest (sha256 of the replay bytes), per team A/B {cheese_transferred, cat_damage,
-rats, kings, cheese, crashed}, engine_errors, cat_rng_draws, series (each team's [cheese_transferred, rats, kings, cat_damage] every 100 rounds
-and at the end), backend, key, runner, cached, error, replay.
-"crashed": robots the engine destroyed because their code threw (an uncaught Error) or returned from run(). A thrown
-crash is attributed by the package of the trace's first frame, so in a mirror (the same package on both sides) every
-thrown crash counts for A. The native engine (engine/) counts per robot and has no such limit.
+rats, kings, cheese, crashed}, cat_rng_draws, series (each team's [cheese_transferred, rats, kings, cat_damage] every
+100 rounds and at the end), backend ("native" or "java"), key, runner, cached, error, replay; Java games add
+engine_errors, native games hash (the rounds' state hash chain) and native_build (the binary), a guarded game guard
+({verdict, digests, ...}), a game the native engine failed and Java played native_error.
+"crashed": robots the engine destroyed because their code threw (an uncaught Error) or returned from run(). The Java
+runner attributes a thrown crash by the package of the trace's first frame, so in a mirror (the same package on both
+sides) every thrown crash counts for A. The native engine counts per robot and has no such limit.
 """
 from __future__ import annotations
 
@@ -34,7 +41,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import store
+from . import native, store
 
 # JVM flags, measured (docs/testing.md "Runner"). None of them changes a game: replays are byte-identical.
 JVM_FLAGS = [
@@ -84,6 +91,24 @@ class Slots:
             f.close()
 
 
+class Gate:
+    """What a game takes before it starts, whichever engine plays it: one of the runner's N workers and one of the
+    host's slots."""
+
+    def __init__(self, n: int, slots: Slots):
+        self.sem = threading.Semaphore(n)
+        self.slots = slots
+        self.stopping = threading.Event()
+
+    def acquire(self):
+        self.sem.acquire()
+        return self.slots.acquire(self.stopping)
+
+    def release(self, token) -> None:
+        Slots.release(token)
+        self.sem.release()
+
+
 @dataclass
 class Job:
     spec: dict
@@ -130,8 +155,7 @@ class Resolver:
         key = store.game_key(self.runner, engine, a_hash, b_hash, a_pkg, b_pkg, name, self.maps[name], seed)
         line = "\t".join([str(spec["id"]), a_pkg, str(a_jar), b_pkg, str(b_jar), name,
                           str(store.map_variant(name, seed)), str(replay or "")])
-        meta = {"a_hash": a_hash, "b_hash": b_hash, "map_hash": self.maps[name], "key": key, "runner": self.runner,
-                "backend": "java"}
+        meta = {"a_hash": a_hash, "b_hash": b_hash, "map_hash": self.maps[name], "key": key, "runner": self.runner}
         return Job(spec=spec, key=key, line=line, replay=str(replay or ""), meta=meta)
 
 
@@ -192,17 +216,17 @@ class Worker:
 
 
 class Pool:
-    """N workers per engine pulling jobs from one queue. on_result(job, result) is called from worker threads."""
+    """N JVM workers per engine pulling jobs from one queue, each game through the gate. on_result(job, result) is
+    called from worker threads."""
 
     def __init__(self, workers: int, logdir: Path, runner_dir: Path, timeout: float = DEFAULT_TIMEOUT,
-                 slots: bool = True):
+                 slots: bool = True, gate: Gate | None = None):
         self.n, self.logdir, self.runner_dir, self.timeout = workers, logdir, runner_dir, timeout
         self.queues: dict[str, queue.Queue] = {}
         self.threads: list[threading.Thread] = []
         self.workers: list[Worker] = []
         self.closed = False
-        self.stopping = threading.Event()
-        self.slots = Slots() if slots else Slots(0)
+        self.gate = gate or Gate(workers, Slots() if slots else Slots(0))
         logdir.mkdir(parents=True, exist_ok=True)
 
     def submit(self, job: Job, on_result) -> None:
@@ -223,9 +247,9 @@ class Pool:
             if item is None or self.closed:
                 break
             job, on_result = item
-            slot = self.slots.acquire(self.stopping)
+            slot = self.gate.acquire()
             if self.closed:
-                Slots.release(slot)
+                self.gate.release(slot)
                 break
             try:
                 res = w.play(job, self.timeout)
@@ -233,7 +257,9 @@ class Pool:
                 w.stop()
                 res = {"error": f"runner: {e}"}
             finally:
-                Slots.release(slot)
+                self.gate.release(slot)
+            if not res.get("error"):
+                res["backend"] = "java"
             if not self.closed:
                 on_result(job, res)
         w.stop()
@@ -241,7 +267,7 @@ class Pool:
     def close(self, wait: bool = True) -> None:
         if not wait:
             self.closed = True
-            self.stopping.set()
+            self.gate.stopping.set()
             for w in self.workers:
                 w.stop()
         for q in self.queues.values():
@@ -258,19 +284,39 @@ def finish(job: Job, res: dict, cached: bool) -> dict:
     out.update({k: v for k, v in res.items() if k != "id"})
     out.update(job.meta)
     out["cached"] = cached
+    out.setdefault("backend", "java")  # results cached before the native backend are the Java engine's
     out.setdefault("error", None)
     out.setdefault("replay", None)
     return out
 
 
-class Runner:
-    """Plays jobs through the cache and a pool. Results go to callbacks; finished games go to the cache."""
+# Not part of a game's cached result: where this run put it, and this run's own guard check.
+NOT_CACHED = ("id", "replay", "guard")
 
-    def __init__(self, workers: int, outdir: Path, timeout: float = DEFAULT_TIMEOUT, use_cache: bool = True):
+
+class Runner:
+    """Plays jobs through the cache, the native engine where it can play them (backend "native") and the Java pool.
+    Results go to callbacks; finished games go to the cache, whichever engine played them (they are the same games).
+
+    The exactness guard plays a native game on Java too when its spec asks (guard: true), when it is the runner's first
+    game of its binary, or when sampled (GUARD rate, by game key), and delivers it only once compared. On a mismatch
+    the Java engine's own nondeterminism doesn't explain (native.verdict), the binary is marked bad, its results leave
+    the cache, Java's result is delivered and on_mismatch(job, guard) is called."""
+
+    def __init__(self, workers: int, outdir: Path, timeout: float = DEFAULT_TIMEOUT, use_cache: bool = True,
+                 backend: str = "native", guard: float | None = None, on_mismatch=None, slots: bool = True):
         self.resolver = Resolver()
         self.cache = store.Cache() if use_cache else None
         self.cache_lock = threading.Lock()
-        self.pool = Pool(workers, outdir / "logs", self.resolver.runner_dir, timeout)
+        self.gate = Gate(workers, Slots() if slots else Slots(0))
+        self.pool = Pool(workers, outdir / "logs", self.resolver.runner_dir, timeout, gate=self.gate)
+        self.native = (native.Backend(self.resolver, workers, outdir / "logs" / "native", timeout, self.gate)
+                       if backend == "native" else None)
+        self.guard_rate = native.GUARD_RATE if guard is None else guard
+        self.on_mismatch = on_mismatch
+        self.first: set[str] = set()   # binaries this runner has guarded a game of
+        self.mismatches: list[dict] = []
+        self.lock = threading.Lock()
 
     def cached(self, job: Job) -> dict | None:
         if self.cache is None or job.replay:
@@ -283,14 +329,84 @@ class Runner:
         def done(job: Job, res: dict) -> None:
             if job.replay and res.get("error") is None:
                 res["replay"] = job.replay
-            if self.cache is not None and res.get("error") is None:
-                keep = {k: v for k, v in res.items() if k not in ("id", "replay")}
+            if (self.cache is not None and res.get("error") is None
+                    and (res.get("guard") or {}).get("verdict") != "mismatch"):
+                keep = {k: v for k, v in res.items() if k not in NOT_CACHED}
                 with self.cache_lock:
                     self.cache.put(job.key, keep)
             callback(finish(job, res, False))
-        self.pool.submit(job, done)
+
+        def native_done(job: Job, res: dict) -> None:
+            if res.get("error"):  # the native engine couldn't play it: the Java engine does
+                err = res["error"]
+                self.pool.submit(job, lambda j, r: done(j, dict(r, native_error=err)))
+            elif self.wants_guard(job, res):
+                self.guard(job, res, done)
+            else:
+                done(job, res)
+
+        if self.native is None or not self.native.submit(job, native_done):
+            self.pool.submit(job, done)
+
+    # -------------------------------------------------------------------------------------------- exactness guard
+
+    def wants_guard(self, job: Job, res: dict) -> bool:
+        if job.spec.get("guard"):
+            return True
+        if self.guard_rate <= 0:
+            return False
+        with self.lock:
+            first = res["native_build"] not in self.first
+            self.first.add(res["native_build"])
+        return first or native.sampled(job.key, self.guard_rate)
+
+    def guard(self, job: Job, nres: dict, done) -> None:
+        """Plays JOB on Java (twice if the first run differs) and delivers the outcome with its verdict."""
+        twin = self.resolver.job(dict(job.spec), None)
+        mirror = store.parse_bot(job.spec["a"])[0] == store.parse_bot(job.spec["b"])[0]
+        g = {"native_digest": nres.get("digest"), "native_build": nres.get("native_build"), "host": socket.gethostname()}
+
+        def java1(_, r1: dict) -> None:
+            if r1.get("error"):  # nothing to compare with: the native result stands, unchecked
+                done(job, dict(nres, guard=dict(g, verdict="java-error", error=r1["error"])))
+                return
+            g.update(java_digest=r1.get("digest"), java_cpu_s=r1.get("cpu_s"))
+            if native.verdict(nres, r1, mirror=mirror) == "same":
+                done(job, dict(nres, guard=dict(g, verdict="same")))
+            else:
+                self.pool.submit(twin, lambda _, r2: java2(r1, r2))
+
+        def java2(r1: dict, r2: dict) -> None:
+            g.update(java2_digest=r2.get("digest"), java2_error=r2.get("error"))
+            v = native.verdict(nres, r1, None if r2.get("error") else r2, mirror)
+            g["verdict"] = "mismatch" if v == "pending" else v
+            if g["verdict"] == "java-nondeterministic":
+                done(job, dict(nres, guard=g))
+                return
+            self.mismatch(job, g)
+            done(job, dict(r1, backend="java", guard=g))
+
+        self.pool.submit(twin, java1)
+
+    def mismatch(self, job: Job, g: dict) -> None:
+        """A native game the Java engine doesn't play: its binary is never used again and its results leave the
+        cache."""
+        key = g.get("native_build")
+        if key:
+            native.mark_bad(key, f"game {job.spec.get('id')} ({job.key}): {json.dumps(g)}")
+            if self.cache is not None:
+                with self.cache_lock:
+                    g["purged"] = self.cache.purge_native(key)
+        with self.lock:
+            self.mismatches.append(dict(g, id=job.spec.get("id"), key=job.key))
+        print(f"tools/play: EXACTNESS GUARD: game {job.spec.get('id')} differs between the engines: {json.dumps(g)}",
+              file=sys.stderr, flush=True)
+        if self.on_mismatch:
+            self.on_mismatch(job, g)
 
     def close(self, wait: bool = True) -> None:
+        if self.native is not None:
+            self.native.close()
         self.pool.close(wait)
 
 
@@ -298,7 +414,9 @@ def describe(r: dict) -> str:
     if r.get("error"):
         return f"{r['id']}: ERROR {r['error']}"
     win = r["a"] if r["winner"] == "A" else r["b"]
-    src = "cache" if r["cached"] else f"{r['wall_ms'] / 1000:.1f}s"
+    src = "cache" if r["cached"] else f"{r['wall_ms'] / 1000:.1f}s {r.get('backend', 'java')}"
+    if r.get("guard"):
+        src += f", guard {r['guard']['verdict']}"
     return (f"{r['id']}: {r['map']} s{r['seed']} {r['a']}(A) vs {r['b']}(B) -> {win} "
             f"{r['win_type']} r{r['round']} [{src}]")
 
@@ -315,6 +433,11 @@ def main(argv=None) -> int:
                     help="write replays (losses = games team B won: put the bot you study as A)")
     ap.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT, help="seconds per game")
     ap.add_argument("--no-cache", action="store_true", help="play every game even if its result is cached")
+    ap.add_argument("--backend", choices=["native", "java"], default="native",
+                    help="native (default): the native engine where it can play the game, else Java; java: Java only")
+    ap.add_argument("--guard", type=float, default=None,
+                    help=f"share of native games also played on Java and compared (default {native.GUARD_RATE:g}, "
+                         "plus each binary's first game; 0: only specs with guard: true)")
     args = ap.parse_args(argv)
 
     t0 = time.time()
@@ -326,7 +449,8 @@ def main(argv=None) -> int:
     if replay_dir:
         replay_dir.mkdir(exist_ok=True)
     try:
-        runner = Runner(args.workers, outdir, args.timeout, use_cache=not args.no_cache)
+        runner = Runner(args.workers, outdir, args.timeout, use_cache=not args.no_cache, backend=args.backend,
+                        guard=args.guard)
         jobs = []
         for s in specs:
             if args.engine and "engine" not in s:
@@ -342,7 +466,7 @@ def main(argv=None) -> int:
     out = open(outdir / "results.jsonl", "a")
     lock = threading.Lock()
     done = threading.Event()
-    counts = {"played": 0, "cached": 0, "errors": 0, "left": len(jobs)}
+    counts = {"played": 0, "cached": 0, "errors": 0, "left": len(jobs), "native": 0, "java": 0}
 
     def record(r: dict) -> None:
         with lock:
@@ -352,6 +476,8 @@ def main(argv=None) -> int:
             out.write(json.dumps(r) + "\n")
             out.flush()
             counts["errors" if r.get("error") else "cached" if r["cached"] else "played"] += 1
+            if not r.get("error") and not r["cached"]:
+                counts[r["backend"]] += 1
             counts["left"] -= 1
             n = len(jobs) - counts["left"]
             print(f"[{n}/{len(jobs)}] {describe(r)}", file=sys.stderr, flush=True)
@@ -369,7 +495,12 @@ def main(argv=None) -> int:
     runner.close()
     wall = time.time() - t0
     rate = counts["played"] / wall * 60 if wall > 0 else 0
-    print(f"tools/play: {counts['played']} played, {counts['cached']} cached, {counts['errors']} errors in "
-          f"{wall:.0f} s ({rate:.1f} games/min, {args.workers} workers) -> {outdir / 'results.jsonl'}",
-          file=sys.stderr)
+    print(f"tools/play: {counts['played']} played ({counts['native']} native, {counts['java']} java), "
+          f"{counts['cached']} cached, {counts['errors']} errors in {wall:.0f} s ({rate:.1f} games/min, "
+          f"{args.workers} workers) -> {outdir / 'results.jsonl'}", file=sys.stderr)
+    if runner.mismatches:
+        print(f"tools/play: the exactness guard found {len(runner.mismatches)} games the engines play differently: "
+              "their native binaries are marked bad and their results left the cache. Report it (engine/AGENTS.md); "
+              "play with --backend java meanwhile.", file=sys.stderr)
+        return 3
     return 2 if counts["errors"] else 0

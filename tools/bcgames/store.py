@@ -303,6 +303,12 @@ class Cache:
         self.db.execute("INSERT OR REPLACE INTO games (key, result) VALUES (?, ?)", (key, json.dumps(result)))
         self.db.commit()
 
+    def purge_native(self, build: str) -> int:
+        """Removes every result a native binary played (native_build); returns how many."""
+        n = self.db.execute("DELETE FROM games WHERE json_extract(result, '$.native_build') = ?", (build,)).rowcount
+        self.db.commit()
+        return n
+
 
 def game_key(runner: str, engine: str, a_hash: str, b_hash: str, a_pkg: str, b_pkg: str, map_name: str,
              mhash: str, seed: int) -> str:

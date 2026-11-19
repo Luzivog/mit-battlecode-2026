@@ -30,7 +30,7 @@ import threading
 import time
 from pathlib import Path
 
-from . import imperial, play, pools, stats, store
+from . import imperial, native, play, pools, stats, store
 
 RUNS = store.DATA / "runs"
 EXIT = {"pass": 0, "fail": 3, "inconclusive": 4, "running": 5, "error": 1}
@@ -299,18 +299,24 @@ def drive(d: Path) -> int:
     replay_dir = d / "replays" if p.get("replays", "none") != "none" else None
     if replay_dir:
         replay_dir.mkdir(exist_ok=True)
-    if p.get("remote"):
-        runner = imperial.ImperialRunner(d, p.get("where"), p["timeout"])
-    else:
-        runner = play.Runner(p["workers"], d, p["timeout"])
+    cond = threading.Condition()  # re-entrant
+    stop = {"flag": False, "error": None}
+
+    def on_mismatch(job, g) -> None:  # the exactness guard: the run's results can't be trusted
+        with cond:
+            stop["error"] = (f"exactness guard: game {job.spec.get('id')} differs between the native and the Java "
+                             f"engine ({json.dumps(g)}). Its binary is marked bad and its results left the cache. "
+                             "Report it (engine/AGENTS.md); rerun with --backend java meanwhile.")
+            cond.notify_all()
+
+    runner = make_runner(d, p, on_mismatch)
     for ref, (jar, h) in meta.get("bots", {}).items():  # the builds made at submission
         runner.resolver.bots[ref] = (Path(jar), h)
-    cond = threading.Condition()  # re-entrant
     inflight = {"n": 0}
     out = open(d / "results.jsonl", "a")
     t0 = time.time()
-    counts = {"played": 0, "cached": 0}
-    stop = {"flag": False}
+    counts = {"played": 0, "cached": 0, "native": 0, "java": 0, "native_errors": 0}
+    guard = {"same": 0, "java-nondeterministic": 0, "java-error": 0, "mismatch": 0}
 
     def on_term(*_):
         stop["flag"] = True
@@ -332,6 +338,11 @@ def drive(d: Path) -> int:
             counts["cached" if r["cached"] else "played"] += 1
             if not r["cached"]:
                 inflight["n"] -= 1
+                if not r.get("error"):
+                    counts[r.get("backend", "java")] += 1
+                counts["native_errors"] += bool(r.get("native_error"))
+                if isinstance(r.get("guard"), dict):
+                    guard[r["guard"]["verdict"]] = guard.get(r["guard"]["verdict"], 0) + 1
             cond.notify_all()
 
     last_save = {"t": 0.0}
@@ -344,7 +355,9 @@ def drive(d: Path) -> int:
         state = {"status": status, "updated": time.time(), "wall_s": round(wall), "played": counts["played"],
                  "cached": counts["cached"], "inflight": inflight["n"],
                  "games_per_min": round(counts["played"] / wall * 60, 2) if wall > 0 else 0,
-                 "tests": [t.summary() for t in tests]}
+                 "backends": {"native": counts["native"], "java": counts["java"],
+                              "native_errors": counts["native_errors"]},
+                 "guard": dict(guard), "tests": [t.summary() for t in tests]}
         if error:
             state["error"] = error
         write_json(d / "state.json", state)
@@ -358,7 +371,7 @@ def drive(d: Path) -> int:
                 for t in tests:
                     t.update()
                 running = [t for t in tests if t.verdict == "running"]
-                if not running or stop["flag"]:
+                if not running or stop["flag"] or stop["error"]:
                     break
                 for t in running:
                     per_cell = 4 if t.ref else 2
@@ -385,8 +398,24 @@ def drive(d: Path) -> int:
         save_state("error", f"{type(e).__name__}: {e}")
         raise
     runner.close(wait=False)
+    if stop["error"]:
+        save_state("error", stop["error"])
+        return 1
     save_state("stopped" if stop["flag"] else "done")
     return 0
+
+
+def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False):
+    """The run's backend: local or Imperial, native (the default; runs made before it existed have no "backend") or
+    java. REPLAY: playing games again for their replays (no cache, all workers)."""
+    backend = p.get("backend", "native")
+    guard = p.get("guard")
+    if p.get("remote"):
+        return imperial.ImperialRunner(d, p.get("where"), 3600 if replay else p["timeout"], backend, guard,
+                                       on_mismatch, use_cache=p.get("cache", True))
+    return play.Runner(p["workers"], d, play.DEFAULT_TIMEOUT if replay else p["timeout"],
+                       use_cache=not replay and p.get("cache", True), backend=backend, guard=guard,
+                       on_mismatch=on_mismatch)
 
 
 def test_outcome(t: dict, kind: str) -> str:
@@ -429,7 +458,8 @@ def cmd_retry(args) -> int:
     failed = [r for r in last.values() if r.get("error")]
     print(f"{len(failed)} failed games to play again", file=sys.stderr)
     if failed:
-        runner = imperial.ImperialRunner(d, args.where, 3600) if args.remote else play.Runner(args.workers, d)
+        runner = make_runner(d, {"remote": args.remote, "where": args.where, "workers": args.workers,
+                                 "timeout": 3600 if args.remote else play.DEFAULT_TIMEOUT, "backend": args.backend})
         for ref, (jar, h) in meta.get("bots", {}).items():
             runner.resolver.bots[ref] = (Path(jar), h)
         keep_replays = meta["params"].get("replays", "none") != "none"
@@ -500,6 +530,7 @@ def report(d: Path, show_games: bool = False) -> tuple[str, str]:
         L += report_test(t, meta["kind"], p)
     L.append(f"games: {st['played']} played, {st['cached']} from cache, {st['wall_s']} s wall, "
              f"{st['games_per_min']} games/min on {p['workers']} workers")
+    L += report_backends(st, p)
     if show_games:
         L.append("")
         L.append("games (id: map seed, A vs B -> winner type round [robots crashed A/B]):")
@@ -516,6 +547,25 @@ def report(d: Path, show_games: bool = False) -> tuple[str, str]:
                      f"[{r['A']['crashed']}/{r['B']['crashed']}]" + (f" replay {r['replay']}" if r.get("replay") else ""))
     L.append(f"exit {EXIT[verdict]} ({verdict})")
     return "\n".join(L), verdict
+
+
+def report_backends(st: dict, p: dict) -> list[str]:
+    """Which engine played the games, and the exactness guard (runs made before the native backend have neither)."""
+    be, g = st.get("backends"), st.get("guard")
+    if not be:
+        return []
+    L = [f"engines: {be['native']} games native, {be['java']} java (backend {p.get('backend', 'native')})"
+         + (f"; {be['native_errors']} native failures played on java (tools/games show ID --games)"
+            if be.get("native_errors") else "")]
+    checked = sum(g.values()) if g else 0
+    if checked:
+        bad = g.get("mismatch", 0)
+        L.append(f"exactness guard: {checked} games played on both engines: {g.get('same', 0)} identical"
+                 + (f", {g['java-nondeterministic']} where the Java engine differed from itself (explained)"
+                    if g.get("java-nondeterministic") else "")
+                 + (f", {g['java-error']} the Java engine failed" if g.get("java-error") else "")
+                 + (f", {bad} MISMATCHES" if bad else ""))
+    return L
 
 
 def report_test(t: dict, kind: str, p: dict) -> list[str]:
@@ -788,13 +838,15 @@ def cmd_replay(args) -> int:
     out = Path(args.out) if args.out else d / "replays" / f"{play.safe(rec['id'])}.bc26"
     out.parent.mkdir(parents=True, exist_ok=True)
     spec = {k: rec[k] for k in ("id", "a", "b", "map", "seed", "engine")}
-    job = resolver.job(spec, out.resolve())
-    pool = play.Pool(1, d / "logs", resolver.runner_dir, slots=False)  # one game: no need to queue for a slot
+    # one game: no need to queue for a slot
+    runner = play.Runner(1, d, use_cache=False, backend=args.backend, guard=0, slots=False)
+    runner.resolver.bots.update(resolver.bots)
+    job = runner.resolver.job(spec, out.resolve())
     done = threading.Event()
     res = {}
-    pool.submit(job, lambda j, r: (res.update(r), done.set()))
+    runner.submit(job, lambda r: (res.update(r), done.set()))
     done.wait()
-    pool.close()
+    runner.close()
     if res.get("error"):
         print(f"replay failed: {res['error']}")
         return 1
@@ -844,10 +896,8 @@ def cmd_replays(args) -> int:
     todo = [r for r in recs if not (out / f"{play.safe(r['id'])}.bc26").exists()]
     print(f"{len(recs)} games selected ({args.cells}), {len(recs) - len(todo)} already have replays, "
           f"{len(todo)} to play", file=sys.stderr)
-    if args.remote:
-        runner = imperial.ImperialRunner(d, args.where, 3600)
-    else:
-        runner = play.Runner(args.workers, d, play.DEFAULT_TIMEOUT, use_cache=False)
+    runner = make_runner(d, {"remote": args.remote, "where": args.where, "workers": args.workers,
+                             "backend": args.backend, "guard": 0}, replay=True)
     for ref, (jar, h) in meta.get("bots", {}).items():
         runner.resolver.bots[ref] = (Path(jar), h)
     index = open(out / "index.jsonl", "a")
@@ -861,7 +911,7 @@ def cmd_replays(args) -> int:
             left["bad"] += not same
             index.write(json.dumps({k: rec.get(k) for k in ("id", "test", "cell", "map", "seed", "engine", "a", "b",
                                                              "role", "seat", "winner", "win_type", "round")}
-                                   | {"replay": res.get("replay"), "same_game": same,
+                                   | {"replay": res.get("replay"), "same_game": same, "backend": res.get("backend"),
                                       "error": res.get("error")}) + "\n")
             index.flush()
             left["n"] -= 1
@@ -979,6 +1029,17 @@ def main(argv=None) -> int:
                         help="play on DoC's machines through tools/run (the compute skill); the cache is shared")
         sp.add_argument("--where", help="--remote backends, e.g. condor,slurm (default: tools/run's)")
         sp.add_argument("--fg", action="store_true", help="run in the foreground and print the report")
+        backend(sp)
+        sp.add_argument("--guard", type=float, default=None,
+                        help=f"exactness guard: share of native games also played on Java and compared (default "
+                             f"{native.GUARD_RATE:g}, plus each binary's first game)")
+        sp.add_argument("--no-cache", dest="cache", action="store_false",
+                        help="play every game even if cached (measurements); results still enter the cache")
+
+    def backend(sp):
+        sp.add_argument("--backend", choices=["native", "java"], default="native",
+                        help="native (default): the native engine (engine/) where it can play the game, else Java; "
+                             "java: the official Java engine only")
 
     sp = sub.add_parser("ab", help="sequential paired test of A against B (by default: is A better than main?)")
     sp.add_argument("a")
@@ -1021,6 +1082,7 @@ def main(argv=None) -> int:
     sp.add_argument("id")
     sp.add_argument("game", help="game id, from tools/games show ID --games")
     sp.add_argument("--out")
+    backend(sp)
     sp = sub.add_parser("replays", help="replay files for a run's games, played again deterministically")
     sp.add_argument("id")
     sp.add_argument("--cells", choices=["all", "decisive", "lost", "changed"], default="decisive",
@@ -1029,11 +1091,13 @@ def main(argv=None) -> int:
     sp.add_argument("--workers", type=int, default=8)
     sp.add_argument("--remote", action="store_true")
     sp.add_argument("--where")
+    backend(sp)
     sp = sub.add_parser("retry", help="play a finished run's failed games again and rescore it")
     sp.add_argument("id")
     sp.add_argument("--workers", type=int, default=8)
     sp.add_argument("--remote", action="store_true")
     sp.add_argument("--where")
+    backend(sp)
     sp = sub.add_parser("diff", help="games whose outcome changed between two runs")
     sp.add_argument("id1")
     sp.add_argument("id2")
@@ -1058,7 +1122,7 @@ def main(argv=None) -> int:
         if args.cmd == "ab":
             params = {k: getattr(args, k) for k in ("a", "b", "pool", "engine", "delta", "alpha", "beta",
                                                       "min_cells", "seed_base", "workers", "timeout", "replays",
-                                                      "remote", "where", "mode")}
+                                                      "remote", "where", "mode", "backend", "guard", "cache")}
             params["ref"] = default_ref(args.a, args.ref)
             params["max_cells"] = args.max_cells or (0 if args.pool == "smoke" else round(4 / args.delta ** 2))
             return start("ab", params, args.fg)
@@ -1071,7 +1135,8 @@ def main(argv=None) -> int:
                       "main_pool": args.main_pool, "rest_pool": args.rest_pool, "rest_passes": args.rest_passes,
                       "engine": args.engine, "delta": args.delta, "alpha": args.alpha, "beta": args.beta,
                       "max_cells": args.max_cells or round(4 / args.delta ** 2), "seed_base": args.seed_base, "workers": args.workers,
-                      "timeout": args.timeout, "replays": args.replays, "remote": args.remote, "where": args.where}
+                      "timeout": args.timeout, "replays": args.replays, "remote": args.remote, "where": args.where,
+                      "backend": args.backend, "guard": args.guard, "cache": args.cache}
             return start("gauntlet", params, args.fg)
         if args.cmd == "_drive":
             return drive(run_dir(args.id))

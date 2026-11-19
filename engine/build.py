@@ -2,12 +2,16 @@
 """Build the native engine: engine/build/bcx (engine 1.2.6) and, with --engine 1.2.5, engine/build/bcx-1.2.5.
 
     engine/build.py [--engine 1.2.6|1.2.5|all] [--bots PKG,PKG|all] [-j N] [--opt -O2]
+    engine/build.py --engine 1.2.6 --team PKG=CLASSES_DIR... --gen DIR --out FILE    (tools/bcgames/native.py)
 
 Steps: fetch the jars and bdwgc once (~/battlecode26-data/engine/), compile the translator (engine/jvm), translate
 the official engine and every bot package (each package under src/ with a RobotPlayer, from build/classes: run
 ./gradlew classes first) to C++ in ~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/, compile it with ninja and
 link.
 Generated files are rewritten only when they change, so a rebuild recompiles only what moved.
+--team takes each package from its own classes folder instead of build/classes, in the order given (a team's module
+index is its position, so a stable order keeps rebuilds incremental); --gen and --out name the generated-files folder
+and the binary.
 """
 import argparse
 import hashlib
@@ -105,14 +109,24 @@ def translator(version: str) -> str:
         h.update(str(f.relative_to(src)).encode() + b"\0" + f.read_bytes())
     out = DATA / "build" / f"jvm-tr-{h.hexdigest()[:16]}"
     if not (out / ".ok").exists():
-        shutil.rmtree(out, ignore_errors=True)
-        out.mkdir(parents=True)
+        # compiled aside and renamed in whole: builds of two checkouts at once may share this folder
+        tmp = out.with_name(f"{out.name}.tmp{os.getpid()}")
+        shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir(parents=True)
         sh(["javac", "-nowarn", "-encoding", "UTF-8",
             "--add-exports", "java.base/jdk.internal.misc=ALL-UNNAMED",
             "--add-exports", "java.base/jdk.internal.math=ALL-UNNAMED",
             "--add-exports", "java.base/sun.nio.cs=ALL-UNNAMED", "--add-exports", "java.base/jdk.internal.access=ALL-UNNAMED",
-            "-d", str(out), "-cp", os.pathsep.join(cp)] + [str(f) for f in files])
-        (out / ".ok").touch()
+            "-d", str(tmp), "-cp", os.pathsep.join(cp)] + [str(f) for f in files])
+        (tmp / ".ok").touch()
+        if not (out / ".ok").exists():
+            shutil.rmtree(out, ignore_errors=True)
+            try:
+                tmp.rename(out)
+            except OSError:  # another build renamed its copy in first
+                if not (out / ".ok").exists():
+                    raise
+        shutil.rmtree(tmp, ignore_errors=True)
     return os.pathsep.join([str(out)] + cp)
 
 
@@ -132,26 +146,33 @@ def bot_packages(classes: Path):
     return sorted(p.parent.name for p in classes.glob("*/RobotPlayer.class"))
 
 
-def build(version: str, bots, jobs: int, opt: str):
-    classes = REPO / "build" / "classes"
-    if not classes.exists():
-        sys.exit("build: build/classes is missing; run ./gradlew classes first")
-    if bots == ["all"]:
-        bots = bot_packages(classes)
+def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None, exe: Path = None,
+          glue_opt: str = None):
+    """TEAMS: [(package, classes dir)], default every bot of build/classes (or BOTS). GEN, EXE: the generated-files
+    folder (default one per checkout) and the binary (default engine/build/bcx[-VERSION]). GLUE_OPT: klasses.cpp's
+    optimization (default OPT): class tables, class-init wrappers and dispatch chains, no game logic; it changes with
+    any bot and takes about 4 minutes at -O2, 8 s at -O1."""
+    if teams is None:
+        classes = REPO / "build" / "classes"
+        if not classes.exists():
+            sys.exit("build: build/classes is missing; run ./gradlew classes first")
+        if bots == ["all"]:
+            bots = bot_packages(classes)
+        teams = [(b, classes) for b in bots]
     cp = translator(version)
     # one folder per checkout: builds in two worktrees at once must not share generated files
-    gen = DATA / "build" / f"gen-{version}-{hashlib.sha256(str(REPO).encode()).hexdigest()[:8]}"
+    gen = gen or DATA / "build" / f"gen-{version}-{hashlib.sha256(str(REPO).encode()).hexdigest()[:8]}"
     gen.mkdir(parents=True, exist_ok=True)
     cmd = ["java", "-Xss64m", "-Xmx8g", "-cp", cp, "bcx.tr.Main", "--out", str(gen), "--natives",
            str(ENGINE / "jvm" / "natives.txt"), "--entry", ENTRY]
-    for b in bots:
+    for b, classes in teams:
         cmd += ["--team", f"{b}={classes}"]
-    print(f"build {version}: translating the engine and {len(bots)} bots", flush=True)
+    print(f"build {version}: translating the engine and {len(teams)} bots", flush=True)
     sh(cmd)
     vc = gen / "version.cpp"
     text = f'extern "C" const char bcx_engine_version[] = "{version}";\n'
     text += 'extern "C" const char* const bcx_bot_hashes[] = {' + ", ".join(
-        f'"{b}", "{classes_hash(classes, b)}"' for b in bots) + ', nullptr};\n'
+        f'"{b}", "{classes_hash(Path(classes), b)}"' for b, classes in teams) + ', nullptr};\n'
     if not vc.exists() or vc.read_text() != text:
         vc.write_text(text)
     rt = ENGINE / "runtime"
@@ -159,22 +180,25 @@ def build(version: str, bots, jobs: int, opt: str):
     inc = f"-I{gen} -I{rt} -I{gci / 'include'}"
     srcs = sorted(gen.glob("m*.cpp")) + [gen / "klasses.cpp", gen / "version.cpp"] + \
         [rt / f for f in ("rt.cpp", "sched.cpp", "natives.cpp", "main.cpp")]
-    exe = OUT / ("bcx" if version == "1.2.6" else f"bcx-{version}")
+    exe = exe or OUT / ("bcx" if version == "1.2.6" else f"bcx-{version}")
     lines = [f"cxxflags = {' '.join(CXXFLAGS)} {opt} {inc}",
              "rule cxx\n  command = clang++ $cxxflags -MMD -MF $out.d -c $in -o $out\n  depfile = $out.d\n  deps = gcc",
+             f"rule cxxglue\n  command = clang++ {' '.join(CXXFLAGS)} {glue_opt or opt} {inc} -MMD -MF $out.d -c $in -o $out\n"
+             "  depfile = $out.d\n  deps = gcc",
              "rule cc\n  command = clang -O2 -ffp-contract=off -fno-fast-math -msse4.1 -c $in -o $out",
              f"rule link\n  command = clang++ -static -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
     objs = []
     for s in srcs:
         o = gen / "obj" / (s.stem + ("_rt" if s.parent == rt else "") + ".o")
         objs.append(o)
-        lines.append(f"build {o}: cxx {s}")
+        lines.append(f"build {o}: {'cxxglue' if s.name == 'klasses.cpp' else 'cxx'} {s}")
     o = gen / "obj" / "hsmath.o"
     objs.append(o)
     lines.append(f"build {o}: cc {rt / 'hsmath.c'}")
     lines.append(f"build {exe}: link {' '.join(map(str, objs))}")
     (gen / "build.ninja").write_text("\n".join(lines) + "\n")
     OUT.mkdir(exist_ok=True)
+    exe.parent.mkdir(parents=True, exist_ok=True)
     sh(["ninja", "-f", str(gen / "build.ninja"), "-j", str(jobs)], cwd=gen)  # its logs live in gen
     # the jar's bundled maps, for maps not in maps/
     md = OUT / f"maps-{version}"
@@ -196,11 +220,19 @@ def main():
     ap.add_argument("--bots", default="all", help="comma-separated packages, or all (default)")
     ap.add_argument("-j", type=int, default=8)
     ap.add_argument("--opt", default="-O2")
+    ap.add_argument("--glue-opt", help="klasses.cpp's optimization (default: --opt)")
+    ap.add_argument("--team", action="append", default=[], metavar="PKG=DIR",
+                    help="a bot from its own classes folder, in this order (replaces --bots and build/classes)")
+    ap.add_argument("--gen", type=Path, help="generated-files folder (default: one per checkout and version)")
+    ap.add_argument("--out", type=Path, help="the binary (default engine/build/bcx[-VERSION])")
     a = ap.parse_args()
     versions = ["1.2.6", "1.2.5"] if a.engine == "all" else [a.engine]
+    if (a.team or a.gen or a.out) and len(versions) != 1:
+        sys.exit("build: --team, --gen and --out build one engine version")
+    teams = [tuple(t.split("=", 1)) for t in a.team] or None
     deps(versions)
     for v in versions:
-        build(v, a.bots.split(","), a.j, a.opt)
+        build(v, a.bots.split(","), a.j, a.opt, teams, a.gen, a.out, a.glue_opt)
 
 
 if __name__ == "__main__":

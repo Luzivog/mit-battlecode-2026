@@ -14,6 +14,7 @@ against the other top public bots (`src/opp_*`, `docs/opponents.md`). Progress: 
 | X | fast engine: profile the official engine, port it to native code, exact agreement with the Java engine | `engine/` | done (every game of the 8,388-game corpus agrees with the official engine; 7.8× less CPU a game on DoC machines) | lead + sub-agents, xhigh |
 | XE | engine-speed eval (the `evaluation` skill): cost over a fixed game corpus, `INVALID` unless every output matches | `tools/enginebench/` | running | 1, xhigh |
 | XC | engine-speed climb | a branch | XE | 1 climber, Opus 5.5 high |
+| C2 | warm shared compute pool: pieces take tasks from any open run, submission reuses live capacity, fair across agents | `tools/compute`, `tools/run`, `tools/piece.py` | running | 1, xhigh |
 | EN | native backend for `tools/games`: games on `engine/build/bcx`, with a same-machine exactness sample on every run | `tools/bcgames/` | running | 1, xhigh |
 | T | theory: the dominant strategy from first principles, models of the top bots, gaps, work packages | `docs/theory/`, `docs/plan.md` | done (plan reviewed by a critic, fixes applied) | 5 lenses + synthesis + critic, xhigh |
 | B | bot improvement: one work package an agent, judged on Imperial, win rates reported | branches merged into main | running: wave 1 (RB, S1, K1, E2 arm 1a, S2, KL merged; CT, CW, CB in progress); wave 2 started (E3, K2) | many, xhigh |

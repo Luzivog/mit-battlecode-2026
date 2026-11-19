@@ -76,3 +76,5 @@ engine/build/bcx play SPECS.jsonl OUTDIR --no-indicators  # native games; same s
 Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot --pool POOL` (gain test: the branch against
 main, both playing awubot on the same cells) prints an ID; run `tools/games wait ID` in the background (exit 0 =
 passed), then `tools/games show ID` and `tools/games diff OLD NEW`. Add `--remote` to play on Imperial.
+Tests are the slow part of the work: run independent ones in parallel (Imperial has thousands of free slots),
+never block on one in the foreground, and ask for replays in the test (`--replays losses|all`) when you'll read them.

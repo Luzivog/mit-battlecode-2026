@@ -120,8 +120,7 @@ Arms turn one or more switches on everywhere; each is read per map-seat, paired 
 
 | `CM_CAT_HUNT_START` 500 | confirmation | RUN, 23015 | A +0.15 [+0.04, +0.26], B +0.06 (100) | `1119-232514-ab-45ee` |
 
-Running: the proposed entries in the book
-itself (`t3/cm-book-trial`, never merged) on five maps (23016, `1119-232632-ab-e89f`).
+| the 17 entries through `book.jsonl` (all but RUN) | book trial, `t3/cm-book-trial` | tminusten, peaceinourtime, sunandmoon, dirtfulcat, bed, 23016 | bed A +0.17 [+0.05, +0.28], B +0.43 [+0.29, +0.58]; tminusten A +0.52 [+0.39, +0.64], B +0.23 [+0.13, +0.34]; peaceinourtime A +0.47 [+0.32, +0.61], B unchanged (no entry); sunandmoon A +0.08 [−0.06, +0.23], B +0.25 [+0.10, +0.40]; dirtfulcat A +0.05, B +0.05 (main 0.88 there) (60) | `1119-232632-ab-e89f` |
 
 ## 5. Tools (`~/battlecode26-data/scratch/cm/`)
 

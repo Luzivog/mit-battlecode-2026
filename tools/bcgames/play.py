@@ -320,7 +320,7 @@ class Runner:
                        if backend == "native" else None)
         self.guard_rate = native.GUARD_RATE if guard is None else guard
         self.on_mismatch, self.on_guard = on_mismatch, on_guard
-        self.pending = 0               # guard checks not yet resolved (on_guard mode)
+        self.guards_pending = 0        # guard checks not yet resolved (on_guard mode)
         self.first: set[str] = set()   # binaries this runner has guarded a game of
         self.mismatches: list[dict] = []
         self.lock = threading.Lock()
@@ -370,13 +370,13 @@ class Runner:
     def guard(self, job: Job, nres: dict, done) -> None:
         """Plays JOB on Java too (twice if the first run differs). Without on_guard the outcome is delivered once
         compared, with its verdict. With on_guard the native outcome is delivered now (guard verdict "pending") and
-        on_guard(job, guard) gets the verdict later; the caller must not conclude while `pending` is above 0."""
+        on_guard(job, guard) gets the verdict later; the caller must not conclude while `guards_pending` is above 0."""
         twin = self.resolver.job(dict(job.spec), None)
         mirror = store.parse_bot(job.spec["a"])[0] == store.parse_bot(job.spec["b"])[0]
         g = {"native_digest": nres.get("digest"), "native_build": nres.get("native_build"), "host": socket.gethostname()}
         if self.on_guard is not None:
             with self.lock:
-                self.pending += 1
+                self.guards_pending += 1
             done(job, dict(nres, guard=dict(g, verdict="pending")))
 
         def resolve(res: dict) -> None:
@@ -386,7 +386,7 @@ class Runner:
                 done(job, res)
                 return
             with self.lock:
-                self.pending -= 1
+                self.guards_pending -= 1
             self.on_guard(job, g)
 
         def java1(_, r1: dict) -> None:

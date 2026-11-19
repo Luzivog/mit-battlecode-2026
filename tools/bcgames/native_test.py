@@ -193,7 +193,7 @@ class GuardFlowTest(unittest.TestCase):
         r.guard_rate, r.first, r.mismatches, r.lock = rate, set(), [], threading.Lock()
         r.seen, r.checked = [], []
         r.on_mismatch = lambda job, g: r.seen.append(g)
-        r.on_guard, r.pending = None, 0
+        r.on_guard, r.guards_pending = None, 0
         return r
 
     def play(self, r, nres, spec=None):
@@ -236,7 +236,7 @@ class GuardFlowTest(unittest.TestCase):
 
     def test_async_delivers_now_and_reports_the_verdict_after(self):
         r = self.runner([result("d2"), result("d2")])
-        r.on_guard = lambda job, g: r.checked.append((g["verdict"], r.pending))
+        r.on_guard = lambda job, g: r.checked.append((g["verdict"], r.guards_pending))
         got = self.play(r, result("d1", backend="native", native_build="b1"))
         self.assertEqual((got["backend"], got["guard"]["verdict"]), ("native", "pending"))
         self.assertEqual(r.checked, [("mismatch", 0)])

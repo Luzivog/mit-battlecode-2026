@@ -78,6 +78,11 @@ def engine_files(root: Path = ENGINE) -> list[Path]:
 _toolchain: str | None = None
 
 
+def can_build() -> bool:
+    """This host can build binaries (DoC's nodes can't: there, only specs naming a binary play natively)."""
+    return shutil.which("clang++") is not None and shutil.which("ninja") is not None and (ENGINE / "build.py").exists()
+
+
 def toolchain() -> str:
     """The JDK whose class files are translated, and the C++ compiler."""
     global _toolchain
@@ -197,6 +202,8 @@ class Planner:
             if game[0].pkg == game[1].pkg and game[0].hash != game[1].hash:
                 return None
             return Plan(version, tuple(game), tuple(game), binary=job.spec["bcx"])
+        if not can_build():
+            return None
         bots = compose(self._base(), game)
         return Plan(version, tuple(bots), tuple(sorted(set(game), key=lambda b: (b.pkg, b.hash)))) \
             if bots is not None else None

@@ -366,7 +366,7 @@ def drive(d: Path) -> int:
                  "games_per_min": round(counts["played"] / wall * 60, 2) if wall > 0 else 0,
                  "backends": {"native": counts["native"], "java": counts["java"],
                               "native_errors": counts["native_errors"]},
-                 "guard": dict(guard, pending=getattr(runner, "pending", 0)), "tests": [t.summary() for t in tests]}
+                 "guard": dict(guard, pending=getattr(runner, "guards_pending", 0)), "tests": [t.summary() for t in tests]}
         if error:
             state["error"] = error
         write_json(d / "state.json", state)
@@ -384,7 +384,7 @@ def drive(d: Path) -> int:
                 if stop["flag"] or stop["error"]:
                     break
                 if not running:
-                    if not getattr(runner, "pending", 0):
+                    if not getattr(runner, "guards_pending", 0):
                         break
                     save_state("running")  # the verdicts wait for the guard's last checks
                     cond.wait(timeout=10)

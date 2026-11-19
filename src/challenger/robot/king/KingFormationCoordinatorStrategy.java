@@ -35,6 +35,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private MapLocation targetMine = null;
     private int coordinationStartTurn = 0;
     private int kingCount = 1;
+    private int lastSeenKingCount = 1;
+    private int kings = 1;
     private boolean lockIn = false;
     private RobotInfo nearestCat = null;
 
@@ -142,7 +144,12 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        int myKingCount = GlobalArray.countRatKings();
+        // A king whose turn overran misses one liveness write and reads as dead for one round (GlobalArray
+        // updateRatKingTurnCounters): count a king as gone only when it is missing two rounds in a row.
+        int mySeenKingCount = GlobalArray.countRatKings();
+        int myKingCount = Math.max(mySeenKingCount, lastSeenKingCount);
+        lastSeenKingCount = mySeenKingCount;
+        kings = myKingCount;
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
         var req = 12;
@@ -191,19 +198,19 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     boolean danger;
     private void tryStartFormation() throws GameActionException {
         danger = false;
-        if(rc.getHealth() < 100 && GlobalArray.countRatKings() == 1) {
+        if(rc.getHealth() < 100 && kings == 1) {
             danger = true;
         } else {
             // indicate("A");
             int myGlobalCheese = rc.getGlobalCheese();
             if(myGlobalCheese < UPGRADE_COST + 100) return;
             // indicate("B");
-            int myKingCount = GlobalArray.countRatKings();
+            int myKingCount = kings;
             if (myKingCount == 5) return;
             // indicate("C");
             int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
             if(!lockIn) {
-                if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
+                if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
                 // indicate("D");
                 if(mapWidth * mapHeight > 1200) {
                     if (numRats < 20 * myKingCount) return;

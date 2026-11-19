@@ -198,7 +198,7 @@ marked → (sequence: the later one starts from main after the earlier merged).
 | `RobotTracker.java.jinja2` | S1 (:46-49, :65-140) |
 | `CellTracker.java.jinja2` | RB (`storeVisibleCellsKing` :260) · IS |
 | `comms/GlobalArray.java` | S1 (:108, :225 counter; :413-429 overflow) · RB (`getRatKing` cache) · KL or E3 (payload encoder near :86-104) · K2 (`MIN_CHEESE` :61, cat slots) · PC (slot 15) |
-| `comms/Squeaker.java` | S1 (:215-217 panic header) → K2 (header 2) · CC (header 3) |
+| `comms/Squeaker.java` | S1 (:215-217 panic header) → K2 (header 2) · CC (header 3) · E3 (:91-98, mine squeak decoder: it reads only the first of the 3 mines `squeakMine` packs) |
 | `comms/EnemyManager.java.jinja2` | S1 (`trySqueakKing` :73-87) |
 | `util/Economy.java` (new) | E1 |
 | `robot/rat/BabyRat.java` | S1 (:34-77) · CB (:179-213 `rawMove`/`turn`; :240-250 `attack`) → PT (cat case in the damage function) · E1 (:222 dig gate) · KL arm B / E3 / K3 (`init` :25-32, role switch) |

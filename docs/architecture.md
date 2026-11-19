@@ -428,7 +428,7 @@ Cheesefarm (rounds 1–570) matches these numbers to within ~15% on every row. T
 
 **Invariants (do not break)**
 1. No `rc.move`/`rc.moveForward`/`rc.turn` outside `Game.java`. Read `Game.myLoc`/`myDir`/`time`, not `rc.getLocation()`.
-2. Nothing may throw an `Error`. **No new `assert`s that can fail, and no side effects inside new `assert`s.** Treat the existing side-effecting asserts as load-bearing. Not yet done: a cheap safety net is to change `catch (Exception e)` to `catch (Throwable t)` in `RobotPlayer`. The instrumenter injects a robot-death handler into catch blocks (`InstrumentingMethodVisitor.addRobotDeathHandler`), so this should not swallow engine kills, but verify it in a match. That would turn these deaths into lost turn-tails. The real fix for the ≥ 26-mine king deaths is to cap `count` at `slots` in `GlobalArray.writeCheeseMines`.
+2. Nothing may throw an `Error`. **No new `assert`s that can fail, and no side effects inside new `assert`s.** Treat the existing side-effecting asserts as load-bearing. `RobotPlayer` catches `Throwable` (S1), so an `Error` now costs the rest of the turn instead of the robot; the engine's kill signal is re-thrown first by the handler the instrumenter injects (`InstrumentingMethodVisitor.addRobotDeathHandler`). `GlobalArray.writeCheeseMines` no longer asserts on ≥ 26 mines: the list rotates (S1).
 3. Shared-array writes only from kings, only in owned slots, values 0–1023. Spawn slots are cleared by the first king each round.
 4. One squeak per turn. All squeaking goes through `Squeaker.postTick` (EnemyManager is called from there).
 5. `BabyRat.isLastMove` must be true before the final action of the turn, otherwise you pay for useless rescans.

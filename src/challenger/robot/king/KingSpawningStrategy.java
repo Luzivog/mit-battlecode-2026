@@ -74,7 +74,7 @@ public class KingSpawningStrategy extends Strategy {
         // Measured: the lower cap gains on mine-poor maps up to 1600 tiles; beyond, it gains ~0 there and the late
         // estimate leaks it onto rich maps.
         if (mapWidth * mapHeight <= 1600 && !isRichMap()) {
-            defaultThresh -= 10;
+            defaultThresh -= 20;
         }
         int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
         if (rc.getGlobalCheese() >= 3000 - time * 3 / 4) {

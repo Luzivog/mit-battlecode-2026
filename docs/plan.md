@@ -782,6 +782,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 | JS | Joint combat search | one pass scoring nap, attack and fight per (move, facing): "move + nap + reposition", "throw then bite" | combat H12 |
 | AB | Ablations | remove champion features one at a time: anti-glorp troll, eternal exploration, ally-sacrifice gate | lessons§9 |
 
+- **MC merged** (2026-11-19, 4bd83c9): rats chase only cheese they can reach within 6 steps. Vision ignores walls and
+  dirt, and unreachable chases took 28% of rat-turns in long rich-map losses. `goal` gain +0.037 [+0.011, +0.065] on
+  fresh seeds (1119-082724-ab-c977); merge harm on current main +0.006 [−0.043, +0.056] (1119-100436-ab-7a0a).
+  Centre-mine holding is not a lever (our own rats take 80–92% of a respawn within 2 rounds); the centre share is
+  mostly a symptom of losing. Exploration pays as well as mine trips once its chases are counted.
 - **E2b closed** (2026-11-19; `docs/closed.md`): no arm that lifts the rat cap during a siege beat main on fresh seeds
   (SR on `goal` +0.013 [−0.013, +0.040]); on E2's capped maps siege spawns double starvation. The king's panic spawn
   boost is load-bearing (−0.019 [−0.038, −0.002] without it); the cat boost is neutral and stays. E2's income cap

@@ -136,6 +136,21 @@ class Render(unittest.TestCase):
         self.assertNotIn(f"case {i << 1} -> {{ // bed seat A\n                Tune.A", java)
         self.assertIn("public static MapLocation[] SITE;", java)
 
+    def test_data_shapes(self):
+        book = book_of([{"declare": "SYM2", "type": "int", "default": 0, "meaning": "m"},
+                        {"declare": "LANE", "type": "tileset", "meaning": "m"},
+                        {"map": "bed", "seat": "A", "data": "SYM2", "value": 3, "evidence": []},
+                        {"map": "bed", "seat": "A", "data": "LANE", "value": [[1, 2], [5, 2], [0, 7]],
+                         "evidence": []}])
+        self.assertEqual(mb.validate(book, {}), [])
+        m = grid_map("bed")
+        java = mb.render_book(book, {}, {"bed": {t: mb.view_of(m, t) for t in "AB"}})
+        self.assertIn("    public static int SYM2; //", java)
+        self.assertIn("                SYM2 = 3;\n                LANE = new long[Game.mapHeight];\n"
+                      "                LANE[2] = 0x22L;\n                LANE[7] = 0x1L;", java)
+        bad = book_of([{"declare": "N", "type": "int", "meaning": "m"}])
+        self.assertTrue(mb.validate(bad, {}))
+
     def test_empty_book(self):
         java = mb.render_book({"declare": {}, "entries": []}, {}, {})
         self.assertIn("default -> {\n                return 0;", java)

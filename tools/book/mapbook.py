@@ -31,7 +31,8 @@ CONFIRM_DIR = tune.DATA.parent / "book"  # ~/battlecode26-data/book: confirm run
 GAMES = TOOLS / "games"
 TUNE = TOOLS / "tune"
 SEATS = {"A": ["A"], "B": ["B"], "both": ["A", "B"]}
-DATA_TYPES = {"tiles": "MapLocation[]", "ints": "int[]"}
+# declared data: a scalar (its default off the book), a tile set (row bitmasks: bit x of NAME[y]), a tile list, ints
+DATA_TYPES = {"int": "int", "tileset": "long[]", "tiles": "MapLocation[]", "ints": "int[]"}
 VIEW_R2 = 25  # the king's vision, 360 degrees from its centre (docs/rules.md §7)
 # the engine's symmetry -> CellTracker.Symmetry's ordinal (the bot's Horizontal is x -> W-1-x, the engine's VERTICAL;
 # checked on the grids of all 150 maps)
@@ -132,6 +133,8 @@ def validate(book: dict, params: dict) -> list[str]:
                         f"and a meaning")
         if name in params:
             errs.append(f"line {d['line']}: {name} is a Tune.java constant")
+        if d.get("type") == "int" and not (isinstance(d.get("default"), int) and not isinstance(d["default"], bool)):
+            errs.append(f"line {d['line']}: an int datum needs an int default (its value off the book)")
     seen = {}
     for e in book["entries"]:
         where = f"line {e['line']}"
@@ -160,7 +163,9 @@ def validate(book: dict, params: dict) -> list[str]:
             d = book["declare"].get(name)
             if d is None:
                 errs.append(f"{where}: datum {name} is not declared")
-            elif d["type"] == "tiles" and not (isinstance(v, list) and all(
+            elif d["type"] == "int" and (isinstance(v, bool) or not isinstance(v, int) or not -2 ** 31 <= v < 2 ** 31):
+                errs.append(f"{where}: {name} takes an int")
+            elif d["type"] in ("tiles", "tileset") and not (isinstance(v, list) and all(
                     isinstance(t, list) and len(t) == 2 and all(isinstance(c, int) and 0 <= c < 60 for c in t)
                     for t in v)):
                 errs.append(f"{where}: {name} takes a list of [x, y] tiles")
@@ -249,7 +254,14 @@ def render_book(book: dict, params: dict, vs: dict) -> str:
          "    public static int seat; // 0 team A, 1 team B (set where map != 0)",
          "    public static int symmetry; // the map's CellTracker.Symmetry ordinal (1 R, 2 H: x -> W-1-x, 3 V), 0 where map is 0"]
     for name, d in sorted(book["declare"].items()):
-        L.append(f"    public static {DATA_TYPES[d['type']]} {name}; // {d['meaning']} (null off the book)")
+        if d["type"] == "int":
+            L.append(f"    public static int {name}{' = ' + str(d['default']) if d['default'] else ''}; // {d['meaning']}"
+                     f" ({d['default']} off the book)")
+        elif d["type"] == "tileset":
+            L.append(f"    public static long[] {name}; // {d['meaning']}: tile (x, y) in it iff {name} != null && "
+                     f"({name}[y] >>> x & 1) != 0 (null off the book)")
+        else:
+            L.append(f"    public static {DATA_TYPES[d['type']]} {name}; // {d['meaning']} (null off the book)")
     L += ["",
           "    public static void init() throws GameActionException {",
           "        if (Game.isRatKing && Game.time == 1) {",
@@ -304,7 +316,14 @@ def render_book(book: dict, params: dict, vs: dict) -> str:
                     L.append(f"                Tune.{e['set']} = {java_value(e['value'], params[e['set']]['type'])};")
                 else:
                     kind = book["declare"][e["data"]]["type"]
-                    L.append(f"                {e['data']} = {java_value(e['value'], kind)};")
+                    if kind == "tileset":
+                        rows: dict[int, int] = {}
+                        for x, y in e["value"]:
+                            rows[y] = rows.get(y, 0) | 1 << x
+                        L.append(f"                {e['data']} = new long[Game.mapHeight];")
+                        L += [f"                {e['data']}[{y}] = {jlong(m)};" for y, m in sorted(rows.items())]
+                    else:
+                        L.append(f"                {e['data']} = {java_value(e['value'], kind)};")
         L.append("            }")
     L += ["            default -> {", "            }", "        }", "    }", "}", ""]
     return "\n".join(L)

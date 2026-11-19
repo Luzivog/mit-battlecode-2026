@@ -55,6 +55,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private boolean coop = false;
     private boolean coopFormation = false;
     private MapLocation home = null;
+    private int coopSearchKey = -1;
     private RobotInfo nearestCat = null;
 
     private enum FormationState {
@@ -246,8 +247,15 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         if (GlobalArray.getFormationTarget() != null) return;
 
+        // A cooperation search that found no site is repeated only when its inputs grow: more known mines, fewer
+        // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).
+        int mySearchKey = coop ? Game.knownCheeseMines.size() | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8 : -1;
+        if (mySearchKey >= 0 && mySearchKey == coopSearchKey) return;
         MapLocation formationTarget = selectBestMineForFormation();
-        if (formationTarget == null) return;
+        if (formationTarget == null) {
+            coopSearchKey = mySearchKey;
+            return;
+        }
 
         targetMine = formationTarget;
         coordinationStartTurn = time;

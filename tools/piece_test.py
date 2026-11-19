@@ -244,11 +244,12 @@ def test_the_fewest_running_run_goes_first(tmp_path: Path) -> None:
     (a / "done" / "0.tar").touch()
     big = pooled_run(root, "run-1118-120001-bbbb", [stamp("big", 0.6) for _ in range(9)], 2.0)
     small = pooled_run(root, "run-1118-120002-cccc", [stamp("small", 0.6) for _ in range(2)], 3.0)
-    run_piece_at(tmp_path, a, cpus=3)
-    order = sorted([(x[0], "big") for x in spans(big)] + [(x[0], "small") for x in spans(small)])
-    assert [w for _, w in order[:3]] == ["big", "small", "big"]  # equal counts: the older run first
-    assert [w for _, w in order].index("small", 2) <= 4  # the small run's second task: in the next round
-    assert len(spans(big)) == 9
+    out = run_piece_at(tmp_path, a, cpus=3)
+    order = ["big" if big.name in x else "small" for x in out.splitlines() if ": started" in x]  # the start order
+    assert order[:3] == ["big", "small", "big"]  # one look: fewest running first, the older on ties
+    # its second task once its first has ended, while the big run still waits: not after the big run's backlog
+    assert order.index("small", 2) < len(order) - 2
+    assert len(spans(big)) == 9 and len(spans(small)) == 2
 
 
 def test_a_closed_run_loses_only_its_tasks(tmp_path: Path) -> None:

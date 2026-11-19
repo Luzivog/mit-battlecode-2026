@@ -20,7 +20,7 @@ public class MinerStrategy extends Strategy {
     private static final int[] EXPLORE_DIR_X = { 1, 1, 0, -1, -1, -1, 0, 1, 2, 1, -1, -2, -2, -1, 1, 2 };
     private static final int[] EXPLORE_DIR_Y = { 0, 1, 1,  1,  0, -1, -1, -1, 1, 2,  2,  1, -1, -2, -2, -1 };
 
-    public final FormationStrategy formationStrategy;
+    private FormationStrategy formationStrategy;
     private GoHomeStrategy goHomeStrategy;
     private CheeseStrategy cheeseStrategy;
     private TraverseStrategy goSomewhereStrategy; // either go to a mine or explore; TODO: make the mine strategy smarter

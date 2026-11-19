@@ -32,12 +32,6 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        // A danger formation (KD) beside this king: spawn into it, whatever the cap, while the bank keeps its cost.
-        MapLocation mySite = KingFormationCoordinatorStrategy.dangerSite;
-        if (mySite != null) {
-            if (rc.getGlobalCheese() - rc.getCurrentRatCost() >= 50) trySpawn(mySite);
-            return true;
-        }
         // indicate("spawned " + numSpawned);
         int defaultThresh = Tune.SPAWN_CAP;
         if (mapWidth * mapHeight <= 900 && time < 400) {

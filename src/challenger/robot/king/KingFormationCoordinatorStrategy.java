@@ -38,15 +38,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // (cooperation to r2000) no known mine was on our side under every symmetry still possible, the search found no
     // site all game, and main lost 5 of 6 games at 1 king to 2 (KF).
     private static final int COOP_ROUND = Tune.COOP_ROUND;
-    // Danger (KD): a lone king that dies loses the game (rules.md §1), a second king formed before it dies plays on.
-    // Our babies are scattered when the king dies: the 7th nearest reaches a free 3x3 beside the king about as soon as
-    // the best one anywhere, and a far mine only after the king is dead (docs/theory/kd-danger.md). So the danger site is
-    // a free 3x3 at Chebyshev distance 3 from the king (its 3x3 clear of the king's), toward our rats and away from
-    // enemies, and the rats put it before combat (FormationStrategy). A formation needs 7 babies: numRats counts them in
-    // fours, so 4 means 4 to 7, and the king's spawns toward the site fill the rest.
-    private static final int DANGER_MIN_RATS = 4;
-    private static final int DANGER_TIMEOUT = 30;
-    public static MapLocation dangerSite = null;
 
     private static int MIN_DIST_FROM_KINGS_SQ;
 
@@ -182,8 +173,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (home == null) home = myLoc;
         lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
         coop = myKingCount == 1 && time >= COOP_ROUND && time < LOCK_IN_ROUND && rc.isCooperation();
-        danger = myKingCount == 1 && isDanger();
-        int minRats = danger ? DANGER_MIN_RATS : lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
+        int minRats = lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
         if (myKingCount >= 5
             || (time > GameConstants.RAT_KING_CUTOFF_ROUND && myKingCount >= GameConstants.MAX_NUMBER_OF_RAT_KINGS_AFTER_CUTOFF)
             || numRats < minRats) {
@@ -201,17 +191,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             return true;
         }
         kingCount = myKingCount;
-
-        // A danger formation whose coordinator died (the king it was to replace) stays in the array: rats would keep
-        // leaving combat for it.
-        if (GlobalArray.getFormationTarget() != null && GlobalArray.isDangerFormation()
-            && GlobalArray.getRatKing(GlobalArray.getFormationCoordinator()) == null) {
-            GlobalArray.clearFormation();
-            state = FormationState.IDLE;
-        }
-        if (danger && state != FormationState.IDLE && dangerSite == null) {
-            abortFormation();
-        }
 
         // if (!isNormal()) {
         //     if (state == FormationState.COORDINATING) {
@@ -233,25 +212,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     boolean danger;
-
-    // Our only king is about to die.
-    private boolean isDanger() {
-        return rc.getHealth() < 100;
-    }
-
     private void tryStartFormation() throws GameActionException {
-        if (danger) {
-            if (rc.getGlobalCheese() < UPGRADE_COST) return;
-            MapLocation mySite = selectDangerSite();
-            if (mySite == null) return;
-            if (GlobalArray.getFormationTarget() != null) GlobalArray.clearFormation();
-            dangerSite = mySite;
-            targetMine = mySite;
-            coordinationStartTurn = time;
-            coopFormation = false;
-            state = FormationState.COORDINATING;
-            GlobalArray.writeFormationTarget(mySite, mySite, kingId | GlobalArray.DANGER_FORMATION);
-            return;
+        danger = false;
+        if(rc.getHealth() < 100 && kings == 1) {
+            danger = true;
         } else {
             // indicate("A");
             boolean myPreCutoff = time <= GameConstants.RAT_KING_CUTOFF_ROUND;
@@ -301,64 +265,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
 
         // indicate("FORMATION: coordinating at " + formationTarget);
-    }
-
-    // A free 3x3 beside the king (Chebyshev 3: clear of the king's own 3x3), scored by our babies within d2 8 of it,
-    // enemy babies within d2 13, cats and enemy kings overlapping or near it, and the distance to the nearest enemy.
-    private MapLocation selectDangerSite() throws GameActionException {
-        MapLocation myBest = null;
-        int myBestScore = Integer.MIN_VALUE;
-        for (int myDx = -3; myDx <= 3; myDx++) {
-            for (int myDy = -3; myDy <= 3; myDy += (myDx == -3 || myDx == 3) ? 1 : 6) {
-                MapLocation myCentre = myLoc.translate(myDx, myDy);
-                if (!isFreeDangerSite(myCentre)) continue;
-                int myScore = 0;
-                int myNearest = 64;
-                for (int i = RobotTracker.numAllies; --i >= 0; ) {
-                    RobotInfo myAlly = RobotTracker.sortedAllies[i];
-                    if (myAlly.type == UnitType.BABY_RAT && myAlly.location.distanceSquaredTo(myCentre) <= 8) myScore += 16;
-                }
-                for (int i = RobotTracker.numEnemies; --i >= 0; ) {
-                    RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
-                    int myDist = myEnemy.location.distanceSquaredTo(myCentre);
-                    if (myEnemy.type == UnitType.RAT_KING) myDist -= 8;
-                    if (myDist <= 13) myScore -= 32;
-                    if (myDist < myNearest) myNearest = myDist;
-                }
-                for (int i = RobotTracker.numCats; --i >= 0; ) {
-                    int myDist = RobotTracker.sortedCats[i].location.distanceSquaredTo(myCentre);
-                    if (myDist <= 25) myScore -= 64;
-                    if (myDist < myNearest) myNearest = myDist;
-                }
-                myScore += myNearest;
-                if (myScore > myBestScore) {
-                    myBestScore = myScore;
-                    myBest = myCentre;
-                }
-            }
-        }
-        return myBest;
-    }
-
-    // The 3x3 is on the map, every tile in sight and free of walls and dirt, and no enemy king or cat on it.
-    private boolean isFreeDangerSite(MapLocation aCentre) throws GameActionException {
-        if (aCentre.x < 1 || aCentre.y < 1 || aCentre.x >= mapWidth - 1 || aCentre.y >= mapHeight - 1) return false;
-        for (int myDx = -1; myDx <= 1; myDx++) {
-            for (int myDy = -1; myDy <= 1; myDy++) {
-                MapLocation myTile = aCentre.translate(myDx, myDy);
-                if (!rc.canSenseLocation(myTile) || !rc.sensePassability(myTile)) return false;
-            }
-        }
-        for (int i = RobotTracker.numEnemies; --i >= 0; ) {
-            RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
-            if (myEnemy.type == UnitType.RAT_KING && Math.abs(myEnemy.location.x - aCentre.x) <= 2
-                && Math.abs(myEnemy.location.y - aCentre.y) <= 2) return false;
-        }
-        for (int i = RobotTracker.numCats; --i >= 0; ) {
-            MapLocation myCat = RobotTracker.sortedCats[i].location;
-            if (myCat.x >= aCentre.x - 2 && myCat.x <= aCentre.x + 1 && myCat.y >= aCentre.y - 2 && myCat.y <= aCentre.y + 1) return false;
-        }
-        return true;
     }
 
     private MapLocation selectBestMineForFormation() throws GameActionException {
@@ -457,11 +363,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private void monitorFormation() throws GameActionException {
-        if (dangerSite != null && (time - coordinationStartTurn > DANGER_TIMEOUT
-            || (rc.canSenseLocation(dangerSite) && !isFreeDangerSite(dangerSite)))) {
-            abortFormation();
-            return;
-        }
         if (time - coordinationStartTurn > COORDINATION_TIMEOUT) {
             // indicate("FORMATION: coordination timed out");
             abortFormation();
@@ -477,7 +378,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MapLocation myCurrentTarget = GlobalArray.getFormationTarget();
         if (myCurrentTarget == null) {
             state = FormationState.IDLE;
-            dangerSite = null;
             // indicate("FORMATION: completed or cleared");
             return;
         }
@@ -500,7 +400,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         state = FormationState.IDLE;
         formationTarget = null;
         targetMine = null;
-        dangerSite = null;
         // indicate("FORMATION: aborted");
     }
 }

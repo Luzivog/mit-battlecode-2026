@@ -65,8 +65,11 @@ public final class TryAttack {
         }
         if (bestMove != null) {
             if (!CombatStrategy.performMoves(bestMove, bestFacing)) return false;
-            attack(target, bestDamage);
+            // the move hands raw cheese to a king in range (BabyRat.rawMove/turn), which spends the action first
+            if (rc.isActionReady()) attack(target, bestDamage);
         } else {
+            // the secondary bites from here, before any turn: a target outside the current cone cannot be bitten
+            if (!canSense(target.location.x - myLocX, target.location.y - myLocY, myDir)) return true;
             attack(target, bestDamage);
             CombatStrategy.performMoves(bestSecondaryMove, bestFacing);
         }

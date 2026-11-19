@@ -80,9 +80,10 @@ public final class TryRatNap {
         // println("target " + t);
         if (bestMove != null) {
             if (!CombatStrategy.performMoves(bestMove, bestFacing)) return false;
+            // the move hands raw cheese to a king in range (BabyRat.rawMove/turn), which spends the action first
             if (rc.canCarryRat(target.location)) {
                 rc.carryRat(target.location);
-            } else {
+            } else if (rc.isActionReady()) {
                 attack(target);
             }
         } else {

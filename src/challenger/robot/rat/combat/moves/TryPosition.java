@@ -57,6 +57,7 @@ public final class TryPosition {
     }
 
     public static boolean execute() throws GameActionException {
+        if (bestMove == null) return false;
         return CombatStrategy.performMoves(bestMove, bestFacing);
     }
 

@@ -318,6 +318,20 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
 | s3, seed base 61003 | `EXPLORE_P` 0.3, 0.4, 0.5, 0.6 from main, and 0.4 plus each other candidate, 7 points × 760 cells | against main: 0.3 +0.001, 0.4 +0.022 [+0.005, +0.041], 0.5 +0.016, 0.6 +0.036 [+0.015, +0.057]; added to 0.4 (paired with it): `COOP_ROUND` 50 +0.003 [−0.009, +0.020], `SPAWN_FLOOR` 50 −0.002 [−0.007, +0.003], `TRAP_RAW` 10 −0.005 [−0.017, +0.007] |
 | s4, seed base 61004 | `EXPLORE_P` 0.5, 0.6, 0.7, 0.8, 1.0, 5 points × 760 cells | 0.5 +0.020, **0.6 +0.034 [+0.011, +0.056]**, 0.7 +0.024, 0.8 +0.026, 1.0 +0.018; parabola peak 0.70; past 0.6 the 5–7-mine maps fall off (1.0: −0.016 there), ≥ 8-mine maps hold (+0.039 to +0.044) |
 
+- **Confirmation of `EXPLORE_P` 0.6** (branch `t3/tune-numeric-constants`, seed bases the search never used):
+  - `goal` gain test, δ 0.05, seed base 61005: **FAIL (H0)**, +0.019 [−0.007, +0.044] (638 cells; 106 better,
+    81 worse; `1119-130502-ab-3c03`). By richness: ≥ 8 mines +0.041 [+0.003, +0.081], 5–7 −0.011, ≤ 4 0.000.
+  - `mines-ge8` gain test, δ 0.08 (plan §1 item 3's class-pool route), seed base 61006: FAIL (H0), +0.038
+    [+0.004, +0.075] (252 cells, `1119-134907-ab-38e6`); `goal` harm test, δ 0.05: PASS, +0.037 [−0.027, +0.097]
+    (`1119-134908-ab-f997`).
+  - `teammade` (never used in tuning) gain test, δ 0.05: PASS, +0.041 [+0.003, +0.075] (303 cells,
+    `1119-130505-ab-25a1`).
+  - Gauntlet `1119-130506-gauntlet-fe4c`: OBG −0.003 [−0.050, +0.043], GST +0.025 [−0.011, +0.060], both no harm;
+    the 2-pass `quick` opponents pass or end at their 32-cell cap (parmesan −0.062 [−0.141, 0.000], food and
+    awubot_us −0.016, awubot_sus 0.000). Smoke: no robot of ours killed by its own exception.
+  - Every unbiased reading of 0.6 against main is positive (s4 +0.034, `goal` +0.019, `mines-ge8` +0.038,
+    `teammade` +0.041): about +2.7 pp on `goal`, concentrated on rich maps, which a δ 0.05 test passes about half
+    the time. s3's +0.036 was the best of four points, so it is left out.
 - One constant moved: `EXPLORE_P` 0.2 → 0.6, measured +0.036 and +0.034 against main on two seed bases. Its
   mechanism shows in the diagnostic: our share of all cheese delivered rises by 1.0 pp at r500 and 1.2 pp at r1000
   (+1.5 pp at r500 on ≥ 8-mine maps; `fit --metric share500`), the unpicked cheese of docs/theory/w1-classes.md §3.2.

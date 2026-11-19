@@ -286,7 +286,10 @@ def pin_ref(ref: str) -> str:
 
 def cmd_play(a) -> int:
     c = load(a.name)
-    ref = pin_ref(a.ref)
+    # a campaign keeps the reference its first runs at these settings pinned (main moves between plays)
+    same = [r["ref"] for r in c["runs"] if (r["pool"], r["seed_base"], r["cells"], r["engine"])
+            == (a.pool, a.seed_base, a.cells, a.engine)]
+    ref = same[0] if same and a.ref == "challenger@origin/main" else pin_ref(a.ref)
     key = {"pool": a.pool, "seed_base": a.seed_base, "cells": a.cells, "ref": ref, "engine": a.engine}
     # a variant is played again when its run stopped short of its cells (failed batches): the new run reads the
     # games already played from the cache

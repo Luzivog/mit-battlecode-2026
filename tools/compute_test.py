@@ -202,6 +202,9 @@ def fake_doc(monkeypatch: pytest.MonkeyPatch, cpucluster1: str | None) -> None:
             return ""
         return (FIX / ("condor_read.txt" if "condor_status" in cmd else "slurm_read.txt")).read_text()
     monkeypatch.setattr(B, "login", login)
+    from tools import compute, runs
+    monkeypatch.setattr(runs, "login", lambda cmd, *a, **k: "1000\n")  # the pool: no piece
+    monkeypatch.setattr(compute, "login", lambda cmd, *a, **k: "0\n")
 
 
 @pytest.mark.parametrize("read", [FULL, None])
@@ -242,3 +245,48 @@ def test_cpucluster1_asked_by_name_is_offered_as_read(monkeypatch: pytest.Monkey
     notes: list[str] = []
     runs.offers(("cpucluster1",), 1, 1700, 600, notes, 6, named=True)
     assert notes and "exit 255" in notes[0]
+
+
+def test_cpucluster1_offers_leave_room_for_our_pending_jobs(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Our cap counts running jobs only: our pending ones take their CPUs from what is offered, so concurrent runs
+    don't queue job after job behind the same free CPUs."""
+    from tools import runs
+    read = (FIX / "cpucluster1_read.txt").read_text()
+    assert B.parse_cpucluster(read).cap == B.Limit(288, 0)
+
+    def offered(pending_cpus: list[int]) -> int:
+        jobs = "".join(f"{900 + i}|PENDING|amd96|QOSMaxCpuPerUserLimit|bc26-cpucluster1-1119-0000{i:02d}-abcd||0:00|"
+                       f"4:00:00|{c}|1700M|N/A|0|N/A|1000||N/A\n" for i, c in enumerate(pending_cpus))
+        fake_doc(monkeypatch, read.replace("==jobs\n", "==jobs\n" + jobs))
+        return sum(o.cpus for o in runs.offers(("cpucluster1",), 1, 1700, 600, [], None))
+    assert offered([]) > 100
+    assert offered([200]) <= 88
+    assert offered([150, 138]) == 0
+
+
+def test_the_pooled_follower_adds_pieces_only_when_tasks_wait(monkeypatch: pytest.MonkeyPatch) -> None:
+    from tools import runs as R
+    placed: list[int] = []
+    free = {"slots": 0}
+    monkeypatch.setattr(R, "pool_free", lambda s: (free["slots"], 1))
+    monkeypatch.setattr(R, "place_pieces", lambda s, need: placed.append(need) or [])
+    monkeypatch.setattr(R, "login", lambda cmd, *a, **k: "")
+    s = R.Settings("run-1119-000000-abcd", 10, 1, 1700, ("condor",), 3600, None, None, False, ".", "c", (),
+                   True, 1, "e", 0.0, "k", "")
+    now = 10_000.0
+    pr = R.Progress(set(), {0, 1, 2, 3}, [], False, 0)  # 6 tasks unclaimed
+    queued = {"condor-1119-000000-0001": J.State("queued", "idle")}
+
+    def look(states: dict[str, J.State], **kw: object) -> bool:
+        args = dict(held=False, starting=False, now=now, placed_at=0.0, moved_at=now) | kw
+        return R.follow_pool(s, pr, list(states), states, args["held"], args["starting"], args["now"],  # type: ignore[arg-type]
+                             args["placed_at"], args["moved_at"])  # type: ignore[arg-type]
+    monkeypatch.setattr(R, "submitted", lambda jid: now - 10)
+    assert not look(queued) and not placed  # a piece of its own is coming
+    assert not look({}, held=True) and not look({}, starting=True) and not look({}, placed_at=now - 5)
+    free["slots"] = 6
+    assert look({}) and not placed  # live pieces have room for every waiting task
+    free["slots"] = 2
+    assert look({}) and placed == [4]
+    monkeypatch.setattr(R, "submitted", lambda jid: now - R.QUEUED_S - 1)
+    assert look(queued) and placed == [4, 4]  # queued too long to wait for

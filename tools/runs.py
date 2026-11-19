@@ -46,6 +46,7 @@ LIVE_S = 3 * BEAT_S  # a piece's state file older than this is a dead piece's
 GRACE_S = 20.0 if not LOCAL else 0.5  # after a placement (or the run's start), how long before pieces are added
 POOL_ROUNDS = 8  # placements a pooled run's follower may make
 STUCK_S = 90.0 if not LOCAL else 1.0  # a pooled run none of whose tasks moved for this long has stopped moving
+QUEUED_S = 120.0  # a piece queued this long no longer holds back pieces added for its run's waiting tasks
 
 
 @dataclass(frozen=True)
@@ -127,8 +128,11 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
         if not (c.takes_jobs or named):
             return []
         out: list[Offer] = []
-        cap = c.cap.cap - c.cap.used if c.cap.cap is not None else None
-        mem = c.mem.cap - c.mem.used if c.mem.cap is not None else None
+        # our pending jobs will take CPUs of our cap when they start: the cap counts only running ones, so without
+        # them each new run sees the same free CPUs and queues one more job behind the last
+        pending = sum(j.cpus for j in c.jobs if j.state == "PENDING")
+        cap = c.cap.cap - c.cap.used - pending if c.cap.cap is not None else None
+        mem = c.mem.cap - c.mem.used - pending * mb_cpu if c.mem.cap is not None else None
         left = need
         for name, n in sorted(c.nodes.items(), key=lambda x: -x[1].idle):
             if not n.usable or (left is not None and left <= 0):
@@ -560,8 +564,9 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
         held = [p for p, f in finals.items() if f.phase == "held"]
         if (len(pr.done), len(pr.claimed)) != progress:
             progress, moved_at = (len(pr.done), len(pr.claimed)), now
-        # a pooled run may go on on other runs' pieces: its own pieces' end stops it only once nothing moves
-        stuck = not s.pool or now - moved_at > STUCK_S
+        # a pooled run goes on on other runs' pieces: its own pieces' end stops it only while tasks wait unclaimed and
+        # none moved for STUCK_S
+        stuck = not s.pool or (now - moved_at > STUCK_S and s.tasks > len(pr.done | pr.claimed))
         if held and not alive and stuck:  # never routed around: the run stays open, and its follower stops, saying why
             J.say(f"run {rid}: no piece runs and {len(held)} held: " + "; ".join(J.describe(p, finals[p]) for p in held)
                   + f". Report it; `tools/compute wait {rid}` follows the run again")
@@ -579,7 +584,12 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
         if s.pool:
             starting = {p for p in alive if states.get(p) and states[p].phase == "running"} - seen_running
             seen_running |= starting
-            if follow_pool(s, pr, alive, states, bool(held), bool(starting), now, placed_at, moved_at):
+            try:
+                looked = follow_pool(s, pr, alive, states, bool(held), bool(starting), now, placed_at, moved_at)
+            except Refused as e:  # a login that failed says nothing about the run: the next poll looks again
+                J.say(f"run {rid}: {e}")
+                looked = False
+            if looked:
                 placed_at = now
                 if pr.rounds >= POOL_ROUNDS and not alive and now - moved_at > STALE_S + 60:
                     J.say(f"run {rid}: no piece took its tasks for {now - moved_at:.0f} s, after {pr.rounds} rounds "
@@ -615,12 +625,13 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
 def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J.State], held: bool, starting: bool,
                 now: float, placed_at: float, moved_at: float) -> bool:
     """A pooled run's pieces added, when its tasks wait: unclaimed, or claimed by dead pieces while none of its own
-    runs, beyond what live pieces have free. Never while one of its pieces is queued or held (a hold is reported, not
-    routed around), just started (its claims are coming), or within GRACE_S of the last placement. True when it
-    looked (the next look waits GRACE_S again)."""
+    runs, beyond what live pieces have free. Never while one of its pieces is held (a hold is reported, not routed
+    around), queued for under QUEUED_S, or just started (its claims are coming), nor within GRACE_S of the last
+    placement. True when it looked (the next look waits GRACE_S again)."""
     if held or starting or now - placed_at < GRACE_S:
         return False
-    if any(states.get(p) is None or states[p].phase in ("queued", "unknown") for p in alive):
+    if any(states.get(p) is None or (states[p].phase in ("queued", "unknown") and now - submitted(p) < QUEUED_S)
+           for p in alive):
         return False
     waiting = s.tasks - len(pr.done | pr.claimed)
     if not waiting and not alive and pr.claimed - pr.done and now - moved_at > STALE_S:
@@ -643,6 +654,14 @@ def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J
     except Refused as e:
         J.say(f"run {s.id}: {e}")
     return True
+
+
+def submitted(jid: str) -> float:
+    """When a job was submitted (its id's local time, this year)."""
+    m = re.fullmatch(rf"[a-z0-9]+-(\d\d)(\d\d)-(\d\d)(\d\d)(\d\d)-[0-9a-f]{{4}}", jid)
+    if not m:
+        return 0.0
+    return time.mktime((time.localtime().tm_year, *(int(x) for x in m.groups()), 0, 0, -1))
 
 
 def summarize(s: Settings, out: Path, finals: dict[str, J.State], pieces: list[str] | None = None

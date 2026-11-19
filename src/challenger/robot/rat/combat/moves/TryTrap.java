@@ -96,11 +96,9 @@ public final class TryTrap {
     static final int BAND_GLOBAL_CHEESE = 400;
     static RobotInfo bandEnemy;
 
-    // The nearest enemy baby rat, if it is in the band and the team is rich. Not on raw cheese alone: traps spend raw
-    // first, and with raw >= 20 as a gate the band traps starved our king on maps with <= 4 mines (measured: king
-    // starvation turns 6 -> 10 a game, score -0.19 against main there).
+    // The nearest enemy baby rat, if it is in the band and we can pay for a trap from raw cheese or a rich global.
     private static RobotInfo findBandEnemy() {
-        if (rc.getGlobalCheese() < BAND_GLOBAL_CHEESE) return null;
+        if (rc.getRawCheese() < 20 && rc.getGlobalCheese() < BAND_GLOBAL_CHEESE) return null;
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;

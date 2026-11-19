@@ -27,7 +27,8 @@ snapshot a game for another build to resume.
 ## The score
 
 **score = Σ wᵢ · instructions:uᵢ / 10⁹** over the 17 weighted scenarios: the estimated user-space instructions of
-one corpus game, in G. Main: **89.780** (89.7802 to 89.7803 over six runs).
+one corpus game, in G. Main: **11.5425** (sealed 13.4128) on openjdk 21.0.13.1. The scenario table and the
+validation readings below are from main before XC (89.780).
 
 - **Scenarios.** Each is one real game of the agreement corpus (`engine/test/corpus.py`): awubot against itself,
   its four snapshots and the nine `opp_*` bots, either seat, at the map's seed or the corpus's extra seed. It is
@@ -185,7 +186,8 @@ Every scenario uses the binary's 350 MB floor: the collector's 256 MB initial he
   which skips the pin to origin/main), against the pinned manifests.
 - **The reference.** The official engine was recorded here on 19 Nov 2026 (`engine/play_java.py`, indicators off,
   one fresh JVM per game). Without any change, the native engine agreed with it on all 19 visible and 19 sealed
-  scenarios on the first run.
+  scenarios on the first run. On openjdk 21.0.13.1 every reference replayed byte-identical; the manifests record
+  that JDK.
 - **The variants.** Each variant is a commit on branch `t3/xe-validation`, followed by its revert.
 - **Eval commits.** Variants were scored with eval cb2036f. Later eval commits (08567fa, 8d0e76d) changed output,
   error wording and the main export; they change no reading's number or verdict.
@@ -230,7 +232,8 @@ round, at about 15 instructions a step.
   runs; here it never has.
 - When the JDK, the CPU or the jar changes, the eval refuses. To recover, run `ENGINEBENCH_DESIGN=1 enginebench
   record KIND …` from a fresh `engine/play_java.py` run of the same specs, then `calibrate KIND` from two `--main`
-  runs' `last.json`, then re-pin `MANIFEST_SHA256`.
+  runs' `last.json`, then re-pin `MANIFEST_SHA256`. If the fresh run's outputs equal the references (a JDK patch
+  release did), it is enough to update the manifest's `recorded` fields and re-pin.
 - When main's `engine/` changes, run `score --main` and `ENGINEBENCH_INTEGRATOR=1 score --sealed --main` once. The
   cache is keyed by main's `engine/` tree, the manifests and the eval's code.
 - **The climb's end.** The integrator runs `score --sealed` once on the reported branch; it should improve by about

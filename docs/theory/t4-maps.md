@@ -616,7 +616,11 @@ Add `5t4rv4t10n_1337` explicitly. `cat` and `starve` overlap the planned `weak` 
 
 - **Cat lanes around walls.** All cat-lane numbers use straight segments between waypoints. The engine's cats BFS
   over walls with their 2×2 footprint (`world/GameWorld.java:223`). `catclock.py` matched tminusten (12 vs 14
-  observed), but lanes on wall-heavy maps can differ. A port of `bfsFromTarget` would settle it.
+  observed), but lanes on wall-heavy maps can differ. Settled by K2's port of `bfsFromTarget` and the EXPLORE loop
+  (`~/battlecode26-data/k2/catlanes.py`, the 19 `L-cat` maps): the BFS loop equals the straight segments on 11 maps
+  (Jaccard 1.0) and differs on wall-heavy ones (bed 0.59, closeup 0.64, shell 0.46–0.53, QueenOfHearts 0.49); mines
+  whose king 3×3 meets the lane are nearly the same count either way. From one sighting, a straight projection along
+  the cat's facing holds 81% of the tiles it covers in its next 4 steps and 55% in 10.
 - **Whether a cat in ATTACK prefers a king.** rules.md §12 says it picks the last baby rat or king in the chirality
   scan order. A king spans 3×3, so how often it ends up "last" depends on the scan; not measured.
 - **Starvation detection is a lower bound.** A bite by a rat that acts after the king in turn order lands in the

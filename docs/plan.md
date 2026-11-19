@@ -647,6 +647,12 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 - **Size.** 60–150 lines on top of KL.
 
 #### K2. Cat-lane memory and a safe king site
+- **Closed, not merged** (2026-11-19; `docs/closed.md`, branch `t3/k2-cat-lane-king-site`). Best arm D' (no
+  mining step into a known lane) passed `goal` harm twice but its `L-cat` gain test ended H0, +0.021 [−0.038, +0.075].
+  Cat-involved king deaths fell 30%, all king deaths 1%: enemies kill the kings cats no longer do. Squeak steering
+  is not a lever, so the header-2 cat sighting is not worth building, and slots 38–41 stay free. Parked kings are
+  rarely scratched; on 60+ maps a 3×3 king cannot reach any mine (2-wide gaps), which matters to every king-site
+  rule (KB, K3, formations). A straight forward lane holds for ~4 steps, not 10 (t4-maps §7).
 - **Change.**
   - Header-2 squeak "cat sighting" (cat id, location, facing, round) replaces the panic squeak. A rat relays a sighting
     only when no cat is within r² 16 of itself: in ATTACK a cat turns toward the oldest queued squeak it heard (R§12,
@@ -665,6 +671,7 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 - **Size.** 150–250 lines. Depends on K1.
 
 #### K3. Rats defend the king from cats
+- **After K2:** expect less than planned; in L-cat cells enemies, not cats, decide most king deaths.
 - **Change.** New `CatDefenseStrategy`, entered when a lane hits our king within its ETA and the king cannot clear it,
   as in the pocket of DS§8 item 2.
   - Dirt across the lane 4–6 tiles out. Two placers out-pace one digging cat (T4§2.5), but team dirt starts at 0, so

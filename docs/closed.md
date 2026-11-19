@@ -20,6 +20,10 @@ agent adds its H0s here; the integrator adds them when an agent did not. Diffs a
 | 2026-11-19 | E3 | go-home loads near home 10→25, 25→40 | `E3-ge8`, 0.10 | −0.051 [−0.114, +0.009] | |
 | 2026-11-19 | E3 | exploration ends once our side is seen | dropped before test | | the unseen-unit bag never empties; restricting to our side cuts presence as above |
 | 2026-11-19 | CW | C1 alone: throws scored by engine damage, cats as feeds | `L-combat`, 0.08 | +0.009 [−0.043, +0.064], H0 | kept only as the base of C2–C4, which gained |
+| 2026-11-19 | K2 | A: kings remember cat footprints; mine and cheese choice off them | `L-cat`, 0.08 | −0.053 [−0.119, +0.000], H0 (38 cells) | parked kings are rarely scratched (82 HP per 1000 king-rounds vs 379–557 at 2–8 tiles from a mine), so site choice alone moves little |
+| 2026-11-19 | K2 | B'+B'': kings silent while a cat hears them; cats near a king broadcast (slots 38–41), rats near one silent | `L-cat`, 0.08 | −0.033 [−0.097, +0.036], H0 | cat turns toward our squeaks that leave our king in front −80%, cone scratch only −7%, wins 92 vs 97: steering is not what scratches kings, silence costs information |
+| 2026-11-19 | K2 | D': A plus no mining step into a known lane | `L-cat`, 0.08, fresh seeds | +0.021 [−0.038, +0.075], H0 | cat-involved king deaths −30% but all king deaths −1%: enemies kill the kings the cats no longer do; one clear cluster (bed 12 better, 1 worse). `goal` harm passed twice; kept on the branch, not accepted |
+| 2026-11-19 | K2 | D2: D' plus marking 4 steps along a seen cat's facing | `L-cat`, 0.08, fresh seeds | −0.051 [−0.157, +0.042], H0 (39 cells) | cone scratch −27% (D': −12%) with no more wins |
 
 Code of the rejected arms: the packages' revert commits and side branches (`e3-c2` holds a working spawn-payload
 role switch with S2's both-or-neither write, for KB or K3 to reuse).

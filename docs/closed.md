@@ -49,6 +49,10 @@ agent adds its H0s here; the integrator adds them when an agent did not. Diffs a
 | 2026-11-19 | E1 | arm H = 120 (as above) | `L-starve`, 0.08 | −0.078 [−0.128, −0.030] (103 cells) | the army collapses: cost-10 spawns +3.5 a game, cheese transferred −240, starvation turns +3.6 on 5–7-mine maps (−2.3 on ≤ 4). Branch `t3/e1-h120` |
 | 2026-11-19 | KB | second king from round T with one king: the coordinator skips the 20-rat gate (12-rat floor), keeps the mine thresholds and the far-mine floor | `L-combat` ∪ `L-points`, 0.10 | r40 −0.025 [−0.058, +0.006]; r100 −0.033 [−0.064, −0.006]; r200 −0.018 [−0.049, +0.010]; r350 −0.017 [−0.047, +0.011]; all H0 | the second king starves: where an arm formed ≥ 50 rounds before main, it starved in 18–23 games, which we won 1 of and main 10–14; the other games +1 to +5. The rebuild, the second upkeep and the new king's digs take the bank to 0 (constrictinglattice: 1100 → 0 within 200 rounds of the formation, then the army shrinks from 16 to 2), and the first king pays upkeep first. No global gate at formation separates them (formed at ≥ 1500 global: 19 wins vs main's 25) |
 | 2026-11-19 | KS | a king proven in a pocket (3×3 flood over its sight, unseen counted open, closed by seen walls) targets only mines it can cover, else parks at the pocket centre nearest the nearest mine and claims no mine | `KS-pocket` (29 maps where a pocket was proven), 0.10, vs fix 1+2 | +0.015 [−0.045, +0.083], H0 (100 cells) | it works as built: unreachable-target king-rounds 21.5% → 3.7% on `goal`, king overruns 0.306% → 0.074% and mean king bytecode −269 on the pool; but pocket kings already die rarely (33 deaths vs 33) and parking does not raise their income (starvation-type HP 92 → 108 per 1000 pocket rounds: the parked king stops chasing cheese near the unreachable mine). Branch `t3/ks-pocket-park` |
+| 2026-11-19 | CX | B: enemies that face away threaten too (threat masks need no vision of the tile) | `L-combat`, 0.08 | −0.090 [−0.157, −0.025], H0 | "turned" grabs 2.7 → 0.9 a game but all grabs on us 63.0 → 64.7; rats cornered more, bites made up, kills unchanged: the caution costs more than the 2 grabs it saves. Branch `t3/cx-b-turned` |
+| 2026-11-19 | CX | C: suspected awubot trap tiles (enemy at Chebyshev 2 facing a strong rat: moves into the 3×3 of the tiles between lose 40) | `L-combat`, 0.08 | −0.090 [−0.143, −0.037], H0 | kill criterion: standoff turns at 2 365 → 485 a game (idle 238 → 345). Traps persist: awubot placed 57.7 → 65.7 and we still fired 97%, later (3–10 rounds 9.9 → 16.3); our grabs 67.5 → 58.9. Replays: the rule cannot beat ~4% precision (P(trap) 5.5% for an awubot rat at 2 facing a strong rat). Branch `t3/cx-c-traptiles` |
+| 2026-11-19 | CX | A: graded threat (−100, and −50 per further enemy-neighbour grab pair) + bite-then-grab split (two enemy rats within Chebyshev 2: an enemy is high if it out-HPs us after a 12 bite) | `L-combat`, 0.08; then `goal`, 0.05, seed base 7101 | +0.022 [−0.012, +0.057], H0 (340 cells); `goal` −0.007 [−0.041, +0.028], H0 (272 cells) | moved as meant at no bytecode cost (rat mean 10,935 vs 10,940, overruns 0.093% both): our rat deaths 74.2 → 70.3 a game, grabbed 65.1 → 60.5, standoff turns at 2 386 → 353; wins did not follow (the rat exchange does not decide our losses, w1-classes §0). Branch `t3/cx-a-graded-l4` |
+| 2026-11-19 | CX | A1: graded threat alone | `L-combat`, 0.08 | +0.022 [−0.017, +0.063], H0 (337 cells) | same as A: the bite-then-grab split adds nothing (offline it caught 1.1 grabs a game for 7 more cornered turns). Branch `t3/cx-a-graded-only` |
 
 Why E1 cannot gain (all three arms, paired replays): the spawn cap is already a reserve. `thresh = min(global/10 + 10, …)`
 builds a cost-c rat only with global ≥ 10·(c − 10): 100 for cost 20, 200 for 30, 300 for 40. Outside the +10 to +30
@@ -58,6 +62,16 @@ the same cells lose in every arm). The trap, dig and formation gates almost neve
 remaining starvation follows a lost income share (cheddarchokehold: 4,660 transferred against awubot's 17,770), which a
 reserve only delays. Diagnostics: `~/battlecode26-data/scratch/e1/` (`E1Stats.java`, `e1_diag.py`, `paired.py`).
 
+Why CX cannot gain (main, `L-combat` pass 0, run `1119-061110-ab-b8bb`, and the arms' paired replays): our rats are
+grabbed ~63 times a game; about half by enemies never in their cone (a threat model sees only what the rat sees), 13
+when cornered (no safe pose; grabbed 19% of such turns at one grab pair, 39% at three or four), and only 2.7 by an enemy
+that turned, 0.6 by bite-then-grab, 1 that memory would catch. 31% of grabs follow the victim firing an awubot trap, and
+we fire 98% of its ~57 traps a game, but no observable rule predicts them: P(trap on the tile between | an awubot rat at
+Chebyshev 2 facing our strong rat) is 5.5% (22% if it just advanced from 3), rules over our front tiles reach ~3–4%
+precision at 80% recall, and the awubot rat's raw cheese adds nothing. Cats: 8% scratch rate per turn inside a cat's
+cone, ~14 scratches a game in combat. Tools: `~/battlecode26-data/scratch/cx/` (`CxStats.java` + `cxdiag.py`,
+`ThreatReplica.java`, `TrapBelief.java`, `TrapSignal.java`, `CatRisk.java`).
+
 Code of the rejected arms: the packages' revert commits and side branches (`e3-c2` holds a working spawn-payload
 role switch with S2's both-or-neither write, for KB or K3 to reuse; `t3/cc-a*` hold CC+CK's arms and `t3/cc-bundle` its
-bundle).
+bundle; `t3/cx-*` hold CX's arms).

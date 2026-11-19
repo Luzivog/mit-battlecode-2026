@@ -717,6 +717,10 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 - **Size.** 150–300 lines. Depends on K1, PT and CW.
 
 #### CX. Complete threat model and trap avoidance
+- **Closed** (2026-11-19; `docs/closed.md`). Four arms H0; the graded threat moved its diagnostics (deaths 74.2 → 70.3,
+  grabs 65.1 → 60.5) with no win gain, and suspected-trap avoidance hit the kill criterion (standoffs 365 → 485, −0.090).
+  Half the grabs on our rats come from enemies never in the victim's cone, and no observable rule predicts awubot's
+  traps. `L-combat` is near its ceiling on current main (0.81–0.97) and no longer separates combat arms.
 - **Change.** `CombatTracker.java.jinja2` and `getCellScoreFor` (`CombatStrategy:366-382`). Add:
   - bite-then-grab and pincer counts (T2 L3, L4);
   - enemies facing away that can turn and grab;

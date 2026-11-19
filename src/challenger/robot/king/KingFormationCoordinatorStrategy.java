@@ -16,7 +16,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int COORDINATION_TIMEOUT = 120;
 
     // King lock-in: kings formed by RAT_KING_CUTOFF_ROUND survive to the end, after it a team with 1 king can form only
-    // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form with only the rat floor.
+    // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form without the 20-per-king rat gate and
+    // the far-mine floor.
     private static final int LOCK_IN_ROUND = 800;
     private static final int KING_TARGET = 3;
     private static final int LOCK_IN_MIN_RATS = 12;
@@ -206,15 +207,19 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             danger = true;
         } else {
             // indicate("A");
+            boolean myPreCutoff = time <= GameConstants.RAT_KING_CUTOFF_ROUND;
             int myGlobalCheese = rc.getGlobalCheese();
-            if(myGlobalCheese < (lockIn && time <= GameConstants.RAT_KING_CUTOFF_ROUND ? LOCK_IN_MIN_CHEESE : UPGRADE_COST + 100)) return;
+            if(myGlobalCheese < (lockIn && myPreCutoff ? LOCK_IN_MIN_CHEESE : UPGRADE_COST + 100)) return;
             // indicate("B");
             int myKingCount = kings;
             if (myKingCount == 5) return;
             // indicate("C");
             int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
+            // A king formed before the cutoff pays upkeep to the end, so it needs the mines to carry it: a side earns
+            // ~1.13 per mine per round against 2 per king (T1 §2.7). Measured without this gate, paired against main:
+            // lock-in won 15 fewer of 62 games on maps with <= 4 mines, and 15 more of 246 on maps with >= 16.
+            if (myPreCutoff && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
             if(!lockIn) {
-                if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
                 // indicate("D");
                 if(mapWidth * mapHeight > 1200) {
                     if (numRats < 20 * myKingCount) return;

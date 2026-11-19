@@ -2,24 +2,31 @@
 
 Package CM (wave 6, the book). Main `c6ab0ea8` / `c8c85e5` (same bot) against awubot. Source keys: `C:`
 `src/challenger/`; `D:` data and tools in `~/battlecode26-data/scratch/cm/` (§5). "Seat A/B" is our seat.
-Switches are in `C:Tune.java` under `// CM`; per-map data in `C:CatBook.java` until the book holds it.
+Switches are 0/1 (or round) tune ints in `C:Tune.java` under `// CM`; per-map data are book data (`CAT_LANE`,
+`KING2_SITE`, declared in `C:book.jsonl`).
 
 ## 0. Summary
 
-Work in progress: entries below marked *choose* have one fresh-seed read, *confirmed* two.
+Proposed book entries, each chosen on one fresh seed base and confirmed on another (switch on vs main, `map:` pool,
+both seats; diff [95%], games better/worse of the confirmation). The entry lines: `D:entries.jsonl` (`D:mkentries.py`).
 
-| map | seat | mechanism | switch | status |
-|---|---|---|---|---|
-| bed | A, B | the king leaves its cat-free corner down the cats' corridor and is pinned at (17,1)/(18,1) | `CM_LANE_MEMORY` | confirmed: A +0.25, B +0.56 |
-| dirtfulcat | A | kings mine into cat lanes | `CM_LANE_MEMORY` | confirmed: +0.15 |
-| tminusten | A, B | every centre the king can reach is on a cat loop; it is pinned at r22 and dies at r101–117 with a bank of 2,000 and 16 babies; the backstab comes before r50, so the cooperation second king never forms | `CM_KING2_ROUND` 30 + site | choose: A +0.43 to +0.48, B +0.29 to +0.32 (three arms) |
-| peaceinourtime | A | awubot kills its own cat first (r363–487); ours kills our first king near r500; our own rats, traps and king then kill the last cat at 1 king to 2, and the cooperation ending scores kings 30 | `CM_LAST_CAT_HOLD`; `CM_KING2_ROUND` 30 + box sites | choose: hold +0.22, second king +0.49 |
-| sunandmoon | A, B | the king flees along cat 6's (5's) lane from the mine into its waypoint dead end (26,28) / (26,11) | `CM_KING2_ROUND` 30 + site | choose: A +0.175, B +0.15 |
-| RUN | A | ends on points at r2000 after the backstab; cat damage share | `CM_LANE_BOOK` + `CM_LANE_FLEE` | choose: +0.225 |
-| dirtfulcat | B | as A | `CM_LANE_BOOK` + `CM_LANE_FLEE` | choose: +0.29 (lane memory alone +0.03 to +0.06) |
+| map | seat | mechanism | entry | choose | confirm |
+|---|---|---|---|---|---|
+| bed | A, B | the king leaves its cat-free corner down the cats' corridor and is pinned at (17,1)/(18,1) | `CM_LANE_MEMORY` 1 | 23004 `1119-213857-ab-1fd0`: A +0.175, B +0.55 | 23008 `1119-221505-ab-0aaa`: A +0.25 [+0.17, +0.34] (25/0), B +0.56 [+0.45, +0.67] (60/4) |
+| dirtfulcat | A | kings mine into cat lanes | `CM_LANE_MEMORY` 1 | 23004 same run: +0.11 | 23008 same run: +0.15 [+0.06, +0.24] (19/4) |
+| dirtfulcat | B | as A; memory alone +0.03 to +0.06 | `CAT_LANE`, `CM_LANE_MEMORY` 1, `CM_LANE_FLEE` 1 | 23004 `1119-213916-ab-2c3b`: +0.29 | 23010 `1119-230504-ab-5b8e`: +0.21 [+0.11, +0.31] (25/4) |
+| tminusten | A, B | every centre the king can reach is on a cat loop; it is pinned at r22 and dies at r101–117 with a bank of 2,000 and 16 babies; the backstab comes before r50, so the cooperation second king never forms | `CM_KING2_ROUND` 30, `KING2_SITE` A (12,15), B (12,34) | 23007 `1119-223519-ab-64a3`: A +0.475, B +0.30 | 23009 `1119-225939-ab-b3f0`: A +0.475 [+0.37, +0.59] (38/0), B +0.21 [+0.12, +0.30] (17/0) |
+| peaceinourtime | A | awubot kills its own cat first (r363–487); ours kills our first king near r500; our own rats, traps and king then kill the last cat at 1 king to 2, and the cooperation ending scores kings 30 | `CM_KING2_ROUND` 30, `KING2_SITE` (11,31), (14,34), `CM_LAST_CAT_HOLD` 1 | 23009 `1119-230006-ab-646c`: +0.44; the hold over the second king alone on the same cells +0.075 [+0.01, +0.14] (7/1) | 23013 `1119-231831-ab-eddf`: +0.45 [+0.34, +0.56] (49/4) |
+| sunandmoon | A, B | the king flees along cat 6's (5's) lane from the mine into its waypoint dead end (26,28) / (26,11) | `CM_KING2_ROUND` 30, `KING2_SITE` A (19,23), B (19,16), `CAT_LANE`, `CM_LANE_MEMORY` 1, `CM_LANE_FLEE` 1 | 23009 `1119-225957-ab-2215`: A +0.19, B +0.36 (the lanes over the second king alone: B +0.125 [+0.02, +0.23]) | 23012 `1119-231544-ab-1b88`: A +0.21 [+0.10, +0.32] (29/8), B +0.17 [+0.06, +0.29] (27/10) |
+| RUN | A | ends on points at r2000 after the backstab; cat damage counts 30 | `CM_CAT_HUNT_START` 500 | 23014 `1119-231919-ab-a923`: +0.21 [+0.10, +0.32] (800: +0.10) | pending (23015) |
 
-peaceinourtime B loses with the second king (−0.16) and every map with the lane book loses peaceinourtime (−0.25 A,
-−0.15 B): those stay off.
+Off: peaceinourtime B loses with the second king (−0.11 to −0.18 in every run) and both seats with the lane book
+(−0.25 A, −0.15 B); the lane book does not confirm on RUN A (+0.225 on 23004, +0.07 [−0.04, +0.18] on 23010); on
+tminusten it changes no game over the second king alone.
+
+Bytecode: the book's round-1 scan (1,913) fits the round-1 king turn on these maps (main's peak 15,973 on sunandmoon
+B, 15,940 dirtfulcat; plus the lane table's setting and copy, ~700); off the book the switches cost a king 2
+bytecodes once (the `Book.CAT_LANE` null test at its init).
 
 ## 1. Baseline
 
@@ -37,15 +44,18 @@ CLPin (CL's tools):
 
 ## 2. Switches
 
-Each default leaves main's executed bytecode unchanged: `D:bccmp.sh REF` builds REF and the branch with gradle and
-diffs `javap -c` of every class; the only differences are added fields and methods never called. javac drops code
-under a false compile-time constant in `if (C)` and `C ? a : b`, but `x || (C && y)` leaves a `goto`, so guards are
-written as ternaries; a field initialiser runs in `<clinit>` and is avoided.
+Each default leaves main's executed bytecode unchanged but for the `Book.CAT_LANE` test at a king's init:
+`D:bccmp.sh REF` builds REF and the branch with gradle and diffs `javap -c` of every class. javac drops code under a
+false compile-time constant in `if (C)` and `C ? a : b`, but `x || (C && y)` leaves a `goto`, so guards are written as
+ternaries or `C != 0 &&`; a field initialiser runs in `<clinit>` and is avoided. A booked constant is no longer final
+(tools/book/AGENTS.md), so each use is one read; a constant derived from another in `Tune`'s own initialiser would
+keep its default (Book.apply writes after `Tune` loads), so there is none. Default harm check against main: `goal`,
+100 cells, seed base 23011, 0 cells changed (`1119-230524-ab-8623`).
 
 - `CM_LANE_MEMORY` (K2 D', `t3/rs-k2d`): `C:CatLanes` remembers every tile a cat's 2×2 was seen on; the king's mining
   takes no step that puts more of them under its 3×3, skips mines with a footprint in their 5×5 and cheese on one.
-- `CM_LANE_BOOK`: `CatLanes` starts with the map's full cat loops (§3) at the king's init; lane memory's mining rules
-  apply (`CM_LANE_KNOWN`).
+- Lane data (`CAT_LANE`, a book tileset): where the book sets it, `CatLanes` starts with the map's full cat loops (§3)
+  at the king's init; with `CM_LANE_MEMORY` the mining rules use them from round 1.
 - `CM_LANE_FLEE`: with a cat in view and lanes known, each of the king's 8 flee moves loses 4 per loop tile its step
   adds under the 3×3.
 - `CM_KING2_ROUND` (2000 = off): from that round, with one king, form a second as the cooperation rule does (no rat
@@ -53,12 +63,11 @@ written as ternaries; a field initialiser runs in `<clinit>` and is avoided.
   of our kings within d² 8; without a site, main's mine choice. A backstab does not abort it.
 - `CM_LAST_CAT_HOLD` (PC1 A2, `t3/pc1-last-cat`): in cooperation with one king, no bite, king bite or new cat trap
   that leaves a cat at or below the damage our cat traps could deal; rats defuse their own traps around such a cat.
-- `CM_DEFDIRT_PIN` (RS DP): the king's defensive dirt only while pinned. On main it reads nothing clear on bed,
-  dirtfulcat, sunandmoon, tminusten (`1119-214426-ab-7f77`, stopped at 64 cells a map-seat); no entry.
+- `CM_CAT_HUNT_START` (main 1300): the round PT 2d's late cat hunt starts.
 
 ## 3. Per-map data the book must carry
 
-**Cat lanes** (`CM_LANE_BOOK`, `CatBook.lanes()`). Per map one `long` per row y (bit x set = tile (x, y)), `H` longs:
+**Cat lanes** (book data `CAT_LANE`, a tileset). In the bot one `long` per row y (bit x set = tile (x, y)), `H` longs:
 8·H bytes, at most 480 bytes (60 rows, `where_are_you`). A tile is set when any cat's 2×2 body covers it at some
 point of its EXPLORE loop, computed from the map file alone (`D:mkbook.py`, using CL's `traps.py` `cat_loop`):
 - the cat starts at its body in the map file; its reference corner is the bottom-left tile for chirality 0 and the
@@ -72,7 +81,7 @@ mushroom, …); `cat_loop` stops there, and those maps need the partial loop or 
 tiles on average. 17 map sizes are shared by more than one map, so a key needs more than W×H (MB's map
 identification).
 
-**Second-king sites** (`CM_KING2_ROUND`, `CatBook.king2Sites()`). Per map and seat, a list of 3×3 centres in order of
+**Second-king sites** (`CM_KING2_ROUND`, book data `KING2_SITE`, a tiles list). Per map and seat, a list of 3×3 centres in order of
 preference: the 3×3 off every loop tile above and free of walls and dirt, near a mine on our side
 (`D:sites.py MAP X Y` lists the nearest such centres). Seat B is seat A's mirror. Tested:
 - tminusten A (12,15), B (12,34); (12,13)/(12,36) read the same but touch cat 6's loop at row 12;
@@ -101,14 +110,22 @@ Arms turn one or more switches on everywhere; each is read per map-seat, paired 
 | `COOP_ROUND` 30 / 50 | tools/tune `cm1` | 6 maps, 23003 | 30: tminusten A +0.175, B +0.11; 50: nothing outside peaceinourtime (80) | `1119-215158-ab-20ea`, `1119-214446-ab-3a31` vs `1119-213437-ab-97ce` |
 | `LOCK_IN_ROUND` 300 / 450 | tools/tune `cm1` | 6 maps, 23003 | 300: peaceinourtime A −0.05; 450: nothing (80) | `1119-220628-ab-4ca0`, `1119-215922-ab-2080` |
 
-Running: combinations on fresh base 23009 (t1: second king alone; t2: + lane book and flee on tminusten, sunandmoon;
-p2: + last-cat hold on peaceinourtime), the lane book and flee on dirtfulcat and RUN (23010), and the default harm check
-on `goal` (23011).
+| second king + lanes + flee | `t2` | tminusten, sunandmoon, 23009 | tminusten A +0.475, B +0.21 (no game differs from the second king alone); sunandmoon A +0.19 [+0.06, +0.32], B +0.36 [+0.23, +0.49] (80) | `1119-225957-ab-2215` |
+| second king alone | `t1` | tminusten, peaceinourtime, sunandmoon, 23009 | tminusten A +0.475, B +0.21; peaceinourtime A +0.36 [+0.22, +0.50], B −0.11; sunandmoon A +0.125, B +0.24 (80) | `1119-225939-ab-b3f0` |
+| second king + last-cat hold | `p2` | peaceinourtime, 23009 | A +0.44 [+0.31, +0.57], B −0.175 (80) | `1119-230006-ab-646c` |
+| lanes + flee | confirmation | dirtfulcat, RUN, 23010 | dirtfulcat B +0.21 [+0.11, +0.31], A +0.06; RUN A +0.07, B +0.01 (100) | `1119-230504-ab-5b8e` |
+| `t2` | confirmation | sunandmoon, 23012 | A +0.21 [+0.10, +0.32], B +0.17 [+0.06, +0.29] (100) | `1119-231544-ab-1b88` |
+| `p2` | confirmation | peaceinourtime, 23013 | A +0.45 [+0.34, +0.56], B −0.14 (100) | `1119-231831-ab-eddf` |
+| `CM_CAT_HUNT_START` 800 / 500 | | RUN, 23014 | 800: A +0.10, B +0.04; 500: A +0.21 [+0.10, +0.32], B +0.06 (100) | `1119-231913-ab-b159`, `1119-231919-ab-a923` |
+
+Running: `CM_CAT_HUNT_START` 500 confirmation on RUN (23015, `1119-232514-ab-45ee`); the proposed entries in the book
+itself (`t3/cm-book-trial`, never merged) on five maps (23016, `1119-232632-ab-e89f`).
 
 ## 5. Tools (`~/battlecode26-data/scratch/cm/`)
 
 - `runs.txt` (every run: name, commit, ref, ID), `status.sh [running|done]`.
 - `msdiff.py RUN` (paired run per map-seat), `msdiff.py --pair ARM REF` (tools/tune's variant and ref runs).
 - `classify.py KD.jsonl [CL.jsonl]` (loss classes from KDStats rows), `base_kd.jsonl`, `base_cl.jsonl` (the baseline).
-- `mkbook.py OUT.java MAP...` (lane tables), `sites.py MAP X Y [N]` (formation sites off every loop), `bccmp.sh REF`.
-- Branches: `t3/cm-cat-maps` (switches, CatBook), `t3/cm-arm-*` (switches on), `t3/cm-oracle` (probe, never merge).
+- `mkentries.py OUT.jsonl` (the proposed entries, lanes from the map files), `mkbook.py OUT.java MAP...` (the probe's lane tables), `sites.py MAP X Y [N]` (formation sites off every loop), `bccmp.sh REF`.
+- Branches: `t3/cm-cat-maps` (switches, declarations), `t3/cm-arm-*` (switches on), `t3/cm-oracle` (probe, never merge),
+  `t3/cm-book-trial` (the entries in the book, never merge).

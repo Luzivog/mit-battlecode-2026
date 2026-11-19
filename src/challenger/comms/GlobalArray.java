@@ -30,7 +30,8 @@ public class GlobalArray {
       9: formation coordinator king ID
       10-11: formation target location (exact, 2 slots)
       12-13: formation mine location (exact, 2 slots)
-      14-15: unused
+      14: alive rat count
+      15: our first king's start (encode2x2 + 1; util/CentreMines)
       16-20: king mine assignments (5 slots for 5 kings)
       21-31: rat spawn roles
       32-37: map chunk comms (two chunks, 3 slots each)
@@ -175,6 +176,7 @@ public class GlobalArray {
             }
             ratKingsRound = -1;
             initRatKing();
+            challenger.util.CentreMines.writeHome(myLoc);
         }
     }
 

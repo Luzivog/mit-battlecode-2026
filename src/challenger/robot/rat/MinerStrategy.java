@@ -24,6 +24,7 @@ public class MinerStrategy extends Strategy {
     private GoHomeStrategy goHomeStrategy;
     private CheeseStrategy cheeseStrategy;
     private TraverseStrategy goSomewhereStrategy; // either go to a mine or explore; TODO: make the mine strategy smarter
+    private CentreTrapStrategy centreTrapStrategy;
 
     private FastIndexedIntSet bannedMines;
 
@@ -31,6 +32,7 @@ public class MinerStrategy extends Strategy {
         formationStrategy = new FormationStrategy();
         goHomeStrategy = new GoHomeStrategy();
         cheeseStrategy = new CheeseStrategy();
+        centreTrapStrategy = new CentreTrapStrategy();
         bannedMines = new FastIndexedIntSet();
     }
 
@@ -48,6 +50,8 @@ public class MinerStrategy extends Strategy {
         }
 
         if(tryStrategy(formationStrategy)) return true;
+
+        if(tryStrategy(centreTrapStrategy)) return true;
 
         if(tryStrategy(goHomeStrategy)) return true;
 

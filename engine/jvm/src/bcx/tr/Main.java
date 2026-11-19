@@ -11,8 +11,8 @@ import java.util.*;
  * <pre>
  * java bcx.tr.Main --out DIR --natives natives.txt [--team PKG=CLASSES_DIR]... --entry CLASS.NAME+DESC... [--debug-methods]
  * </pre>
- * Writes DIR/types.h, DIR/klasses.cpp, DIR/m*.cpp and DIR/report.txt. Exits 1 if anything reachable can't be
- * translated, naming it.
+ * Writes DIR/types.h, DIR/types_TEAM.h, DIR/klasses.cpp, DIR/m_MODULE_N.cpp and DIR/report.txt. Exits 1 if anything
+ * reachable can't be translated, naming it.
  */
 public final class Main {
     public static void main(String[] a) throws Exception {

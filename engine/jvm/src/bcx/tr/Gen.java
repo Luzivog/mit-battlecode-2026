@@ -172,6 +172,10 @@ final class Gen implements Opcodes {
         int op = in.getOpcode();
         String[] le = E.rta.link.errors.get(in);
         if (le != null) {
+            if (le[0].equals("fatal")) {
+                line("rt_fatal(\"%s\", " + Names.cstr(le[1]) + ");");
+                return;
+            }
             if (le[0].equals("battlecode/instrumenter/InstrumentationException")) {
                 String[] tm = le[1].split(":", 2);
                 line("rt_throw_instr(" + (tm[0].equals("ILLEGAL") ? 0 : 1) + ", rt_cstring(" + Names.cstr(tm[1]) + ")); goto " + xl() + ";");

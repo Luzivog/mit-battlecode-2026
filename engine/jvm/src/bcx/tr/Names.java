@@ -50,7 +50,17 @@ final class Rename {
     }
 }
 
-final class TranslateException extends RuntimeException {
+class TranslateException extends RuntimeException {
     TranslateException(String m) { super(m); }
     TranslateException(String m, Throwable c) { super(m, c); }
+}
+
+/**
+ * A team's own class that the official instrumenter refuses. The official engine then marks the whole team broken
+ * (TeamClassLoaderFactory.hasError): every later class load of every robot of the team fails. Not modelled: reaching
+ * it ends the native game with an error.
+ */
+final class TeamClassRefused extends TranslateException {
+    final String cls;
+    TeamClassRefused(String cls, String m, Throwable c) { super(m, c); this.cls = cls; }
 }

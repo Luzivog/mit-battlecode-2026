@@ -136,9 +136,9 @@ public final class Pool {
             if (!m.perRobot || ALWAYS_REDEFINE.contains(name)) applyPatches(cn);
             if (completes.contains(name)) complete(cn);
             return cn;
-        } catch (RuntimeException e) {
-            throw new TranslateException("loading " + m + ":" + name + ": " + e, e);
         } catch (Exception e) {
+            if (e instanceof battlecode.instrumenter.InstrumentationException && m.perRobot && m.factory.hasTeamClass(name))
+                throw new TeamClassRefused(name, "loading " + m + ":" + name + ": " + e, e);
             throw new TranslateException("loading " + m + ":" + name + ": " + e, e);
         }
     }

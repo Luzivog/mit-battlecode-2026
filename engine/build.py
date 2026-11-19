@@ -173,7 +173,7 @@ def build(version: str, bots, jobs: int, opt: str):
     lines.append(f"build {exe}: link {' '.join(map(str, objs))}")
     (gen / "build.ninja").write_text("\n".join(lines) + "\n")
     OUT.mkdir(exist_ok=True)
-    sh(["ninja", "-f", str(gen / "build.ninja"), "-j", str(jobs)])
+    sh(["ninja", "-f", str(gen / "build.ninja"), "-j", str(jobs)], cwd=gen)  # its logs live in gen
     # the jar's bundled maps, for maps not in maps/
     md = OUT / f"maps-{version}"
     if not md.exists():

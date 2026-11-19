@@ -51,6 +51,15 @@ final class Linkage implements Opcodes {
             c = pool.ref(mod, name);
             loadSupers(c, new HashSet<>());
         } catch (TranslateException e) {
+            for (Throwable t = e; t != null; t = t.getCause()) {
+                if (t instanceof TeamClassRefused r) {
+                    System.err.println("translate: " + mod + ": the instrumenter refuses team class " + r.cls
+                            + "; a robot reaching it ends the native game (TeamClassLoaderFactory.hasError is not modelled)");
+                    errors.put(in, new String[]{"fatal", "team class " + r.cls + " refused by the instrumenter: the official"
+                            + " engine marks the team broken (TeamClassLoaderFactory.hasError), not modelled"});
+                    return null;
+                }
+            }
             // the official instrumenter refusing a class: its InstrumentationException reaches the bot
             for (Throwable t = e; t != null; t = t.getCause()) {
                 if (t instanceof battlecode.instrumenter.InstrumentationException ie) {

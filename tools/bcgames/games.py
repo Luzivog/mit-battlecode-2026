@@ -10,6 +10,7 @@
   tools/games diff ID1 ID2                   games whose result changed between two runs
   tools/games replay ID GAME                 replay one game of a run, with a replay file
   tools/games replays ID [--cells ...]       replay files for a run's cells, after the fact
+  tools/games build [BOT...]                 build the native binaries tests of these bots need, ahead of the tests
   tools/games list | stop ID | pools | simulate
 
 Exit codes of wait/show/ab --fg: 0 passed (gain test: H1, better; harm test and gauntlet: H0, no harm), 3 failed
@@ -991,6 +992,31 @@ def cmd_diff(args) -> int:
     return 0
 
 
+def cmd_build(args) -> int:
+    """Builds now the native binaries tests of these bots will need (each with the sparring bots), so the tests find
+    them ready: after a merge, `tools/games build challenger@origin/main`; while working, `tools/games build`."""
+    resolver = play.Resolver()
+    planner = native.Planner(resolver)
+    code = 0
+    for ref in args.bots:
+        ref = pin(ref)
+        job = resolver.job({"id": "build", "a": ref, "b": "awubot", "map": "DefaultSmall", "engine": args.engine})
+        plan = planner.plan(job)
+        if plan is None:
+            print(f"{ref}: the native engine can't play it here (no toolchain, or another build of awubot)")
+            code = 1
+            continue
+        try:
+            key, path = native.build(plan)
+        except native.BuildError as e:
+            print(f"{ref}: build failed: {e}")
+            code = 1
+            continue
+        print(f"{ref}: binary {key} ({path})" + (f", on the volume: {imperial.ship_binary(key, path)}"
+                                                  if args.remote else ""))
+    return code
+
+
 def cmd_pools(args) -> int:
     every = list(pools.POOLS.items()) + [("points", pools.resolve("points")[0])]
     every += [(n, pools.class_pool(n)) for n in pools.CLASS_POOLS]
@@ -1120,6 +1146,10 @@ def main(argv=None) -> int:
     sp.add_argument("id1")
     sp.add_argument("id2")
     sp.add_argument("--all", action="store_true", help="also games with the same winner but another ending")
+    sp = sub.add_parser("build", help="build the native binaries of these bots now (default: challenger and main's)")
+    sp.add_argument("bots", nargs="*", default=["challenger", "challenger@origin/main"])
+    sp.add_argument("--engine", choices=sorted(store.ENGINES), default=store.DEFAULT_ENGINE)
+    sp.add_argument("--remote", action="store_true", help="also put them on the volume for --remote runs")
     sp = sub.add_parser("pools", help="list map pools")
     sp.add_argument("-v", action="store_true")
     sp = sub.add_parser("simulate", help="SPRT cells needed, from the trinomial model")
@@ -1159,7 +1189,7 @@ def main(argv=None) -> int:
         if args.cmd == "_drive":
             return drive(run_dir(args.id))
         return {"wait": cmd_wait, "show": cmd_show, "list": cmd_list, "stop": cmd_stop, "replay": cmd_replay,
-                "replays": cmd_replays, "retry": cmd_retry,
+                "replays": cmd_replays, "retry": cmd_retry, "build": cmd_build,
                 "diff": cmd_diff, "pools": cmd_pools, "simulate": cmd_simulate}[args.cmd](args)
     except store.SetupError as e:
         print(f"tools/games: {e}", file=sys.stderr)

@@ -49,7 +49,8 @@ tools/compute wait "$RUN" --json          # run_in_background; exit = the run's 
 
 ## Games at scale
 
-`tools/play` (docs/evaluation.md) plays a JSONL of games with one JVM a game; on Imperial it runs as
+`tools/play` (docs/evaluation.md) plays a JSONL of games: here on the native engine where it can, else one JVM a game;
+on a node (no toolchain) only specs naming a native binary (`bcx`) play natively. On Imperial it runs as
 `tools/run --kit --each SPECS.jsonl --chunk K --gather results.jsonl -- tools/play {file} {out} --workers 1`, and the
 results come back as `runs/RUN/results.jsonl` in SPECS's order. The exact interface (what a task gets, how SPECS is
 cut, what comes back, how a lost machine is handled): references/internals.md, "The games interface".

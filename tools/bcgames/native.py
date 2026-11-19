@@ -46,7 +46,7 @@ JOBS = int(os.environ.get("BCGAMES_NATIVE_JOBS", "8"))      # compile jobs a bui
 # klasses.cpp (class tables, class-init wrappers, dispatch chains: no game logic) changes with any bot and is one
 # file: about 240 s at -O2, 8 s at -O1, the rest of a challenger rebuild about 90 s
 GLUE_OPT = "-O1"
-NICE = 10
+NICE = 5  # builds sit on a test's critical path: below games, not far below
 KEEP = 24              # binaries kept (the most recently used); one used in the last KEEP_S seconds is never removed
 KEEP_S = 6 * 3600
 RETRY_FAILED_S = 3600  # a failed build is tried again after this long

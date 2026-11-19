@@ -65,9 +65,9 @@ public final class TryRatNap {
                         info = RobotTracker.sortedAllies[j];
                         t = info.location;
                         if (chebyshevDistance(myLoc, t) > 2) continue;
-                        if (info.getHealth() > 22) continue;
+                        if (info.getHealth() > challenger.Tune.RATNAP_ALLY_HP) continue;
                         if (info.getType() != UnitType.BABY_RAT) continue;
-                        weight = 10;
+                        weight = challenger.Tune.RATNAP_ALLY_W;
                         selectMoves();
                         if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
                     }
@@ -176,7 +176,7 @@ public final class TryRatNap {
         int moveCost = CombatCommon.movementCost(moveDir, facing);
         if (moveCost == -1) return;
         if (info.getTeam() == team && CombatTracker.hasAnyThreat(moveDir)) return;
-        double score = weight + 5;
+        double score = weight + challenger.Tune.RATNAP_BACK;
         if (moveCost == 0) score -= CombatCommon.strafeCost();
         score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         if (score <= 0.5) return;

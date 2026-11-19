@@ -157,7 +157,7 @@ public class CombatStrategy extends Strategy {
                 if (TryThrow.run()) return true;
             } else if (TryThrow.search()) {
                 // an enemy: throw for a collision at step 2 or better, else hold it and act with the free action
-                if (TryThrow.best >= TryThrow.STEP2_HIT || mustThrow()) {
+                if (TryThrow.best >= challenger.Tune.THROW_HOLD || mustThrow()) {
                     if (TryThrow.execute()) return true;
                 } else {
                     if (TryTrap.run()) return true;
@@ -234,7 +234,7 @@ public class CombatStrategy extends Strategy {
     }
 
     private static boolean mustThrow() {
-        return time - carryStartTime >= 8 || rc.getHealth() <= 24;
+        return time - carryStartTime >= challenger.Tune.CARRY_AGE || rc.getHealth() <= challenger.Tune.CARRY_HP;
     }
 
     public boolean miniTick() throws GameActionException {
@@ -356,14 +356,14 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
-            if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= 36) return true;
+            if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= challenger.Tune.CAT_DEF_DSQ) return true;
             if (isCatHuntOn()) return true;
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;
         if (enemy.getHealth() - getBiteDamage() <= rc.getHealth()) return true;
         if (!canSense(enemy.location, myLoc, enemy.direction)) return true;
-        if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= 36) return true;
+        if (GlobalArray.nearestRatKing != null && GlobalArray.nearestRatKing.distanceSquaredTo(myLoc) <= challenger.Tune.KING_DEF_DSQ) return true;
         if (RobotTracker.numAllies > RobotTracker.numEnemies) return true;
         return false;
     }

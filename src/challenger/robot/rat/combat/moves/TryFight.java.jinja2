@@ -126,17 +126,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, {{ face_dir }});
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, {{ face_dir }});
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, {{ face_dir }});
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if ({{ face_dir }} != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;

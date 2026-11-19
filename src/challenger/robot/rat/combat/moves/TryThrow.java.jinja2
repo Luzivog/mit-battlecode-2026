@@ -396,15 +396,15 @@ public final class TryThrow {
                         {% endif %}
                     }
                 } else if ({{ occ_var(dx, dy) }}.getType() == UnitType.CAT) {
-                    score += {{ feed_score }};
+                    score += challenger.Tune.THROW_FEED;
                     break scan;
                 } else {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
-                        score += 300;
+                        score += challenger.Tune.THROW_KING;
                         break scan;
                     } else {
                         {% if loop.index0 == 0 %}
-                        score += {{ 2 * hit_damage[0] }};
+                        score += challenger.Tune.THROW_RAT2;
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}
@@ -505,15 +505,15 @@ public final class TryThrow {
                         {% endif %}
                     }
                 } else if ({{ occ_var(dx, dy) }}.getType() == UnitType.CAT) {
-                    score += {{ feed_score }};
+                    score += challenger.Tune.THROW_FEED;
                     break scan;
                 } else {
                     if ({{ occ_var(dx, dy) }}.getType() == UnitType.RAT_KING) {
-                        score += 300;
+                        score += challenger.Tune.THROW_KING;
                         break scan;
                     } else {
                         {% if loop.index0 == 0 %}
-                        score += {{ 2 * hit_damage[0] }};
+                        score += challenger.Tune.THROW_RAT2;
                         enemyHit = {{ occ_var(dx, dy) }};
                         break scan;
                         {% else %}

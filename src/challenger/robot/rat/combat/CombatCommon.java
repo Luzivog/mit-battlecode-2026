@@ -54,7 +54,7 @@ public final class CombatCommon {
     
     // TODO: tune
     public static int strafeCost() {
-        return (rc.getMovementCooldownTurns() < 2 ? 3 : 8);
+        return (rc.getMovementCooldownTurns() < 2 ? challenger.Tune.STRAFE_LO : challenger.Tune.STRAFE_HI);
     }
 
 

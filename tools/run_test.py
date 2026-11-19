@@ -269,3 +269,33 @@ def test_the_follower_adds_pieces_while_tasks_wait(world: tuple[Path, dict[str, 
     p = tool(repo, env, "compute", "wait", p.stdout.strip(), "--json", "--poll", "0.3")
     assert p.returncode == 0, p.stderr
     assert "2 tasks wait, 0 free slots on 0 live pieces: pieces added (round 1)" in p.stderr
+
+
+def test_old_run_results_are_packed(tmp_path: Path) -> None:
+    """runs.compact_local: a run unchanged for a day keeps its summary and gathered files; its per-task folders go
+    into tasks.tgz and their result.json lines into tasks.jsonl. A recent run is left as it is; at most hourly."""
+    import tarfile
+    import time
+    from tools import runs as R
+    old, new = tmp_path / "run-1118-120000-aaaa", tmp_path / "run-1119-120000-bbbb"
+    for d in (old, new):
+        for n in range(3):
+            (d / str(n) / "out").mkdir(parents=True)
+            (d / str(n) / "result.json").write_text(json.dumps({"task": n, "code": 0}))
+            (d / str(n) / "out" / "results.jsonl").write_text(f"game {n}\n")
+        (d / "summary.json").write_text("{}")
+        (d / "results.jsonl").write_text("gathered\n")
+    t = time.time() - 2 * 86400
+    for p in [old / "summary.json", *(old / str(n) for n in range(3))]:
+        os.utime(p, (t, t))
+    packed = R.compact_local(tmp_path)
+    assert [r for r, _ in packed] == [old.name]
+    assert sorted(x.name for x in old.iterdir()) == ["results.jsonl", "summary.json", "tasks.jsonl", "tasks.tgz"]
+    assert [json.loads(x)["task"] for x in (old / "tasks.jsonl").read_text().splitlines()] == [0, 1, 2]
+    with tarfile.open(old / "tasks.tgz") as tar:
+        assert tar.extractfile("2/out/results.jsonl").read() == b"game 2\n"  # type: ignore[union-attr]
+    assert (new / "0" / "result.json").exists()
+    for p in [new / "summary.json", *(new / str(n) for n in range(3))]:
+        os.utime(p, (t, t))
+    assert R.compact_local(tmp_path) == []  # within the hour
+    assert [r for r, _ in R.compact_local(tmp_path, force=True)] == [new.name]

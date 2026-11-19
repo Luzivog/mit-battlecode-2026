@@ -321,6 +321,52 @@ class RemoteGuardTest(unittest.TestCase):
         self.assertIsNone(r.cache.get(KEY))  # the binary's results purged
 
 
+class FlusherTest(unittest.TestCase):
+    """imperial.ImperialRunner._flusher: a wave of jobs goes as one batch, batches at least FLUSH_S apart, and jobs
+    waiting for their binary go once it is ready."""
+
+    def test_batches(self):
+        import time
+        from bcgames import imperial
+        old = imperial.FLUSH_S, imperial.COALESCE_S
+        imperial.FLUSH_S, imperial.COALESCE_S = 0.5, 0.05
+        self.addCleanup(lambda: (setattr(imperial, "FLUSH_S", old[0]), setattr(imperial, "COALESCE_S", old[1])))
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock, r.stopping, r.wake = threading.Lock(), threading.Event(), threading.Event()
+        r.pending, r.binaries = [], {}
+        sent = []
+        r._launch = lambda batch, is_native: sent.append((time.time(), [j.spec["id"] for j, _ in batch], is_native))
+        r._say = lambda msg: None
+        threading.Thread(target=r._flusher, daemon=True).start()
+        self.addCleanup(lambda: (r.stopping.set(), r.wake.set()))
+
+        def submit(gid, plan=None):
+            job = play.Job(spec={"id": gid}, key=KEY)
+            job.plan = plan
+            with r.lock:
+                r.pending.append((job, None))
+            r.wake.set()
+
+        t0 = time.time()
+        for g in ("a", "b", "c"):
+            submit(g)
+        time.sleep(0.2)
+        submit("d")
+        plan = native.Plan("1.2.6", ())
+        r.binaries[plan] = {"state": "building"}
+        submit("e", plan)
+        time.sleep(0.8)
+        with r.lock:
+            r.binaries[plan] = {"state": "ready", "key": "k", "remote": "/x"}
+        r.wake.set()
+        time.sleep(0.8)
+        self.assertEqual([ids for _, ids, _ in sent], [["a", "b", "c"], ["d"], ["e"]])
+        self.assertEqual([n for _, _, n in sent], [False, False, True])
+        self.assertLess(sent[0][0] - t0, 0.15)            # the first wave goes at once
+        self.assertGreaterEqual(sent[1][0] - sent[0][0], 0.45)  # then FLUSH_S apart
+        self.assertGreaterEqual(sent[2][0] - sent[1][0], 0.45)
+
+
 class FinishTest(unittest.TestCase):
     def test_backend_of_old_cache_entries_is_java(self):
         job = play.Job(spec={"id": "g"}, key="k", meta={"key": "k"})

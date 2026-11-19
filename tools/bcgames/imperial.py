@@ -106,6 +106,7 @@ class ImperialRunner:
             except (store.SetupError, native.BuildError) as e:
                 self._say(f"{job.spec.get('id')}: not native: {e}")
         job.plan = plan
+        job.queued = time.time()
         with self.lock:
             if plan is not None and plan not in self.binaries:
                 self.binaries[plan] = {"state": "building"}
@@ -239,7 +240,9 @@ class ImperialRunner:
         b["proc"] = subprocess.Popen([str(store.ROOT / "tools" / "compute"), "wait", run], cwd=store.ROOT,
                                      stdout=self.log, stderr=self.log)
         self.batches.append(b)
-        self._say(f"batch {n}: {len(batch)} {'native' if is_native else 'java'} games as run {run}")
+        waited = time.time() - min(getattr(j, "queued", time.time()) for j, _ in batch)
+        self._say(f"batch {n}: {len(batch)} {'native' if is_native else 'java'} games as run {run} "
+                  f"(oldest queued {waited:.0f} s)")
         threading.Thread(target=self._follow, args=(b,), daemon=True).start()
 
     def _follow(self, b: dict) -> None:

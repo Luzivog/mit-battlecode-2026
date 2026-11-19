@@ -31,7 +31,7 @@ Related docs: rules.md (engine truth, especially §4 cooldowns, §8 actions, §9
 | `moves/TryRatNap.java.jinja2` (230) | 1,332 | Same shape as TryAttack |
 | `moves/TryFight.java.jinja2` (160) | 1,209 | Same shape (no secondary moves) |
 | `moves/TryPosition.java.jinja2` (96) | 987 | Same shape |
-| `robot/king/KingCombatStrategy.java.jinja2` (198) | 499 | `processCell` ring, per-direction score switch |
+| `robot/king/KingCombatStrategy.java.jinja2` (278) | 664 | `processCell` ring, per-direction score switch, per-move cat-lane terms |
 
 Related helpers (internals are in architecture.md): `RobotTracker.sortedEnemies/sortedAllies/sortedCats` (nearest first by center dist², cats kept separate), `Util.canSense(dx,dy,dir)` (rat cone, r² 20), `Util.canCatSense` (cat cone r² 17, 180°, from the 2×2 centre), `Util.chebyshevDistance(loc, RobotInfo)` (aware of 3×3 kings and 2×2 cats), `Pathfinder.multisourceBfs` (`Pathfinder.java.jinja2:924`), `EnemyManager.knownEnemies` (squeaked enemies), `GlobalArray.nearestRatKing`.
 
@@ -361,24 +361,51 @@ Typical values: a safe forward approach scores 42, holding scores 10–12, a saf
 ## 9. KingCombatStrategy (`robot/king/KingCombatStrategy`)
 
 ```
-runTick(): if no visible enemies and no cats: return false
+runTick() (:81-226): if no visible enemies and no cats: return false
   score[8] = 0
   processCell ring (:102-117): if a cell on the leading edge of a 3×3 move is impassable or occupied:
                                -1000 for the moves that need it; dirt: -2
-  for each enemy (rat w=1, king w=3) and each cat (w=5):    # :118-163 (no distance weighting)
+  for each enemy (rat w=1, king w=3):                 # :118-142, no distance weighting
       d = dirTo(enemy): score[d] -= 3w; score[d±90°] += w; score[d±135°, d+180°] += w+1
-  move = argmax(score) over dirs with score > -1 (else CENTER); ties -> lowest ordinal (N first)
+  for each visible cat:                               # :143-188
+      the same shape with w=5, on dirTo(cat's bottom-left tile)
+      if the king's 3×3 is in the cat's forward lane (laneCross, :246-253), for each move:
+          +30 if it leaves the lane; else +15 / -15 if it gets nearer to / farther from an open exit
+          (laneMargin :256-261); plus (move · facing), i.e. -2..+2 along the lane
+  move = argmax(score) over dirs with score > -1 (else CENTER); ties -> lowest ordinal (N first)   # :189-201
   digDirtInDirection(move)  (uses the action!) ; rawMove if canMove
-  cats ? placeDefensiveDirt() : digSurroundingDirt()   # dirt wall toward a cat within dist² 20 /
+  cats ? placeDefensiveDirt() : digSurroundingDirt()   # :202-206: dirt toward a cat within dist² 20 /
                                                        # dig ring dirt if global cheese >= 100
-  if actionReady: bite the lowest-HP enemy within dist² 8 (10 dmg; cats not bitten)
+  if actionReady: bite the lowest-HP enemy within dist² 8, else the nearest cat (biteCat :229-239);
+                  10 damage, no cheese; a bite on a cat is no backstab
 ```
 
-**Bug (verified in generated `KingCombatStrategy.java:265-285`).** The last two `processCell` calls are `(2,-2,[7])` and `(1,-2,[7,0])`. They should be `(-2,2,[7])` and `(-1,2,[7,0])`. As a result:
-- NW is never checked against its real leading cells (−2,2) and (−1,2), and N is never checked against (−1,2).
-- Both N and NW are instead blocked whenever the south-east cells (2,−2) or (1,−2) are blocked.
+**The cat lane.** An EXPLORE cat walks its 2×2 along its facing. A king in the way blocks it; the cat scratches the
+blocking king every 3 rounds and, since a scratch counts as acting, never turns or pounces away (rules.md §12). Fleeing
+along the lane loses: the cat moves 1 tile per 2 rounds, the king 1 per 4 (theory/t4-maps.md §2.4). So the king steps
+across the lane.
+- Geometry (`laneCross`), in doubled coordinates: r = 2·(king centre − cat centre), f = the cat's facing
+  (`RobotInfo.direction`). The king is ahead iff r·f > 0. Its 3×3 meets the lane iff |r×f| ≤ w, with w = 3 for a
+  cardinal facing and 6 for a diagonal one. `laneCross` returns c = r×f, or `NOT_IN_LANE`.
+- A king step m changes c by 2·(m×f): ±2 per step across a cardinal facing, ±4 per diagonal step across a diagonal one.
+  The lane is left at |c| > w.
+- Exits: the two sides across the lane, along ±(fy, −fx). A side is open only if every 3×3 on the steps needed to
+  clear the lane is known and passable (`isWalkable`, :264-269, via `CellTracker.isPassable3x3`). When neither side is
+  open (a strip or pocket), only the along-lane term scores, which is main's flee.
+- `entersCatLane(dir)` (:271-277) is the same test for the king's position after one step; mining uses it
+  (strategy.md §6.2).
 
-The king may refuse a valid escape north or north-west, or pick a blocked N/NW move and then not move at all, since `canMove` guards the actual move.
+**Measured** (K1, against main with RB; `~/battlecode26-data/k1/k1diag.py`):
+- `L-cat`, 394 games (`1119-004136-ab-4e63`):
+  - scratch HP on our kings: lane block −37%, cone (ATTACK) +9%;
+  - king deaths with a scratch in their last 10 rounds 70 vs 132, all king deaths 199 vs 235;
+  - enemy bite HP on our kings +24%.
+- `goal`, 190 games (`1119-004140-ab-a698`): lane block −57%, cone +24%, bite HP equal.
+- Limits:
+  - On pocket maps (tminusten, bed) no exit exists, and bug-nav can walk the 3×3 king into dead ends that only 1×1 rats
+    pass.
+  - The exit side ignores enemies beyond their direction terms.
+  - A king that leaves the lane can still be scratched from the cone when the cat reaches a nearby waypoint.
 
 ---
 
@@ -499,13 +526,18 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 
 | Name | Value | Location | Sens. |
 |---|---|---|---|
-| threat weights | rat 1, king 3, cat 5 | `KingCombatStrategy:122-124,146` | M |
+| threat weights | rat 1, king 3 (the `CAT -> 5` case is dead: `sortedEnemies` holds no cats) | `KingCombatStrategy:122-124` | M |
 | direction shape | −3w toward, +w at ±90°, +(w+1) at ±135°/180° | `:130-135` | M |
+| cat flee | w = 5 in the same shape, toward the cat's bottom-left tile | `:150-155` | M |
+| cat lane width | \|r×f\| ≤ 3 (cardinal facing), ≤ 6 (diagonal), ahead r·f > 0, doubled coordinates | `:246-253` | – (rules) |
+| lane exit / nearer an open exit / farther | +30 / +15 / −15 | `:179-183` | M |
+| along the lane | + (move · facing), −2..+2 | `:185` | L |
+| open exit | every 3×3 on the steps to clear the lane known and passable | `:170-172,264-269` | L |
 | blocked / dirt | −1000 / −2 | `:92,97` | L |
-| default best | −1 (CENTER if nothing > −1) | `:164` | L |
+| default best | −1 (CENTER if nothing > −1) | `:190` | L |
 | defensive dirt | cat dist² < 20; skip if ≥ 2 dirt in 3×3; closest to cat | `:22,45,47` | M |
 | ring dig | global cheese ≥ 100 | `:71` | L |
-| king bite range | dist² ≤ 8, lowest HP | `:186-188` | L |
+| king bite range | dist² ≤ 8, lowest-HP enemy; else the nearest cat's first attackable tile | `:213-222,229-239` | L |
 | panic spawn | +10 threshold (+10 more if HP ≤ 100), every > 4 rounds | `KingSpawningStrategy.java:59-66` | M |
 | cat lure squeak | cat dist² < 25 to king | `Squeaker.java:174` | M |
 
@@ -538,7 +570,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 |---|---|---|---|
 | B1 | `TryThrow:308-315` + `:106` | Throw-target legality ignores cats (and anything else not in the occupancy grid) for non-adjacent landing cells. The failing `assert(rc.canThrowRat())` then **kills the rat** | Observed once in 12 games (DefaultMedium, r159) |
 | B2 | `TryTrap:357-361` | `moveC()` is empty (`related_map[8]`): stay-and-place is never scored | Fewer and worse traps |
-| B3 | `KingCombatStrategy:116-117` | Wrong ring cells for N/NW (should be `(-2,2)` and `(-1,2)`) | King escape errors |
+| B3 | `KingCombatStrategy:116-117` | **Fixed (K1).** The ring cells for N/NW were `(2,-2)` and `(1,-2)`; they are `(-2,2)` and `(-1,2)` | King escape errors |
 | B4 | `TryFight:70` | `md==null` → NPE | Rare, turn lost |
 | B5 | `TryAttack:169-197` | Secondary bite doesn't check that the current facing sees the target | Possible exception |
 | B6 | `TryRatNap:55` | Uses 10 instead of `getBiteDamage()` (12) | 11–12 HP enemies are grabbed instead of killed |
@@ -655,7 +687,7 @@ Each item lists the claim, then the evidence, then how to test it. The order is 
 - `scoreEnemy` is a ready hook.
 
 **H8. King micro fixes.**
-- B3, plus distance-weighted threat (currently every visible enemy counts equally, and the king sees r² 25).
+- Distance-weighted threat (every visible enemy counts equally, and the king sees r² 25). B3 is fixed (K1, §9).
 - `digDirtInDirection` spends the action before the king's bite.
 - The king doesn't bite cats.
 - Mining may move the king toward enemies when combat holds still (§3.5).

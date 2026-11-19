@@ -517,6 +517,31 @@ class ShipBinaryTest(unittest.TestCase):
         self.assertTrue(inflight.exists())  # another upload's file: left alone
 
 
+class ShipFolderTest(unittest.TestCase):
+    def test_a_test_links_its_own_ship_folder_and_removes_it_at_the_end(self):
+        from bcgames import imperial
+        imperial.SHIPS.mkdir(exist_ok=True)
+        tmp = Path(tempfile.mkdtemp(dir=imperial.SHIPS))  # the store's side of the same filesystem
+        self.addCleanup(lambda: __import__("shutil").rmtree(tmp, ignore_errors=True))
+        jar = tmp / "challenger-abc.jar"
+        jar.write_bytes(b"jar")
+        runner = tmp / "runner" / "r1"
+        runner.mkdir(parents=True)
+        (runner / "Play.class").write_bytes(b"cls")
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.ship = imperial.SHIPS / f"test-{os.getpid()}-{time.time_ns()}"
+        self.addCleanup(lambda: __import__("shutil").rmtree(r.ship, ignore_errors=True))
+        r.resolver = type("R", (), {"bots": {"challenger": (jar, "abc")}, "runner_dir": runner})()
+        r.closing, r.batches = [], []
+        jars = r._ship([play.Job(spec={"id": "g", "engine": "1.2.6"}, key=KEY)])
+        dest = store.ROOT / jars[str(jar)]
+        self.assertEqual((dest.read_bytes(), dest.stat().st_ino), (b"jar", jar.stat().st_ino))  # a link: no space
+        self.assertTrue((r.ship / "runner" / "r1" / "Play.class").exists())
+        self.assertTrue((r.ship / "engines" / store.engine_jar("1.2.6").name).exists())
+        r.drain()
+        self.assertFalse(r.ship.exists())
+
+
 class FinishTest(unittest.TestCase):
     def test_backend_of_old_cache_entries_is_java(self):
         job = play.Job(spec={"id": "g"}, key="k", meta={"key": "k"})

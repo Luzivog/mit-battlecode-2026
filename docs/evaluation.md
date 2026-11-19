@@ -137,6 +137,15 @@ the ref's own score on the same cells and the paired difference with its CI.
    `teammade` (robustness), on the sealed holdout (`BCGAMES_INTEGRATOR=1 tools/games ab challenger awubot --ref none
    --pool holdout`) and the gauntlet (`--ref awubot`). The numbers go in `docs/progress.md`. Holdout runs live under
    `SEALED-TEST-DO-NOT-READ/` and never print map names. Climbers never run or read them.
+5. **Small gains: the precision route.** A sequential test at δ 0.05 misses most real gains of 1–3 pp, and 90% needs
+   several of them stacked. A change whose effect is below δ can merge on two fixed-size paired tests against main
+   on `goal`, each on its own fresh seed base:
+   - `tools/games ab challenger awubot --pool goal --min-cells 3000 --max-cells 3000 --seed-base N --remote`
+     (6,000 games; its 95% interval on the difference is about ±1 pp);
+   - the first run (the screen) reads > 0; the second (the confirmation, a seed base no earlier run of the package
+     used) has its 95% lower bound > 0;
+   - then smoke and the gauntlet as in item 3. Report both run IDs and both intervals.
+   A smaller screen (e.g. 1,000 cells) is fine for choosing among arms; only the confirmation decides.
 
 ## Local and remote
 

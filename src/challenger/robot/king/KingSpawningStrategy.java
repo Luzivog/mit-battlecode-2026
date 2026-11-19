@@ -8,6 +8,7 @@ import static challenger.Game.*;
 import static challenger.util.Util.*;
 
 import challenger.RobotTracker;
+import challenger.Tune;
 import challenger.comms.GlobalArray;
 
 public class KingSpawningStrategy extends Strategy {
@@ -32,19 +33,19 @@ public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         // indicate("spawned " + numSpawned);
-        int defaultThresh = 40;
+        int defaultThresh = Tune.SPAWN_CAP;
         if (mapWidth * mapHeight <= 900 && time < 400) {
-            defaultThresh = 30;
+            defaultThresh = Tune.SPAWN_CAP_SMALL;
         }
         // Measured: the lower cap gains on mine-poor maps up to 1600 tiles; beyond, it gains ~0 there and the late
         // estimate leaks it onto rich maps.
         if (mapWidth * mapHeight <= 1600 && !isRichMap()) {
             defaultThresh -= 10;
         }
-        int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
-        if (rc.getGlobalCheese() >= 3000 - time * 3 / 4) {
+        int thresh = Math.min(rc.getGlobalCheese() / Tune.SPAWN_CHEESE_DIV + 10, defaultThresh);
+        if (rc.getGlobalCheese() >= Tune.SPAWN_VRICH - time * 3 / 4) {
             thresh = 1000;
-        } else if (rc.getGlobalCheese() >= 2000 - time / 2 && time >= 100) {
+        } else if (rc.getGlobalCheese() >= Tune.SPAWN_RICH - time / 2 && time >= 100) {
             thresh = threshForNumRats(32);
         }
 
@@ -70,7 +71,7 @@ public class KingSpawningStrategy extends Strategy {
             }
         }
 
-        if (target != null && rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= 100 || rc.getCurrentRatCost() == 10)) {
+        if (target != null && rc.getCurrentRatCost() <= thresh && (rc.getGlobalCheese() >= Tune.SPAWN_FLOOR || rc.getCurrentRatCost() == 10)) {
             trySpawn(target);
         }
         return true;

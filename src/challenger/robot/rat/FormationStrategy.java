@@ -8,6 +8,7 @@ import challenger.Game;
 import challenger.Pathfinder;
 import challenger.RobotPlayer;
 import challenger.RobotTracker;
+import challenger.Tune;
 import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
 import static challenger.Game.*;
@@ -18,7 +19,7 @@ import static challenger.util.Util.*;
 public class FormationStrategy extends Strategy {
     private static final int FORMATION_TIMEOUT = 120;
     private static final int MIN_ALLIES_FOR_FORMATION = 7;
-    private static final int MAX_DIST_TO_JOIN = 625;
+    private static final int MAX_DIST_TO_JOIN = Tune.JOIN_DIST * Tune.JOIN_DIST;
 
     private MapLocation formationTarget = null;
     private int formationStartTurn = 0;

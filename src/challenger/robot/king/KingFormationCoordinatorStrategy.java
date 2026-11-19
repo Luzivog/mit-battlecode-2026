@@ -5,13 +5,14 @@ import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
 import challenger.CellTracker;
 import challenger.RobotTracker;
+import challenger.Tune;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
 
 import challenger.Game;
 
 public class KingFormationCoordinatorStrategy extends Strategy {
-    private static final int[] MINE_THRESHOLDS = {3, 5, 9, 15, 10000000};
+    private static final int[] MINE_THRESHOLDS = {3, Tune.MINES_KING2, 9, 15, 10000000};
     private static final int UPGRADE_COST = 50;
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
     private static final int COORDINATION_TIMEOUT = 120;
@@ -19,13 +20,13 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // King lock-in: kings formed by RAT_KING_CUTOFF_ROUND survive to the end, after it a team with 1 king can form only
     // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form without the 20-per-king rat gate and
     // the far-mine floor.
-    private static final int LOCK_IN_ROUND = 800;
+    private static final int LOCK_IN_ROUND = Tune.LOCK_IN_ROUND;
     private static final int KING_TARGET = 3;
     private static final int LOCK_IN_MIN_RATS = 12;
     // A lock-in king pays upkeep to the end and its formation consumes ~8 rats to rebuild: before the cutoff, form only
     // with a 120-round upkeep reserve for 3 kings (720) + the formation (50) + the rebuild (~280). Measured: lock-in
     // formations started below 1000 global starved 22 of 38 games and won 5 fewer than main, above it 12 more.
-    private static final int LOCK_IN_MIN_CHEESE = 1000;
+    private static final int LOCK_IN_MIN_CHEESE = Tune.LOCK_IN_MIN_CHEESE;
     // Second king in cooperation (KB): a game that ends in cooperation scores kings at 30 (rules.md §1), so 2 kings to 1
     // is +10 points, and those endings are decided by a few points. A game still in cooperation at COOP_ROUND is
     // likely to end in it (the first backstab comes by r40 in 34 of 41 mirror games, T3 §3.1), and its bank is high.
@@ -36,7 +37,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // formation: earlier kings in contested games starve. From the lock-in round the lock-in's rules apply instead: on rose
     // (cooperation to r2000) no known mine was on our side under every symmetry still possible, the search found no
     // site all game, and main lost 5 of 6 games at 1 king to 2 (KF).
-    private static final int COOP_ROUND = 100;
+    private static final int COOP_ROUND = Tune.COOP_ROUND;
 
     private static int MIN_DIST_FROM_KINGS_SQ;
 

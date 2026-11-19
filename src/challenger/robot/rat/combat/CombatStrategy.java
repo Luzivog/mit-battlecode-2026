@@ -301,7 +301,7 @@ public class CombatStrategy extends Strategy {
     }
 
     public static int getBiteDamage() {
-        if (rc.getAllCheese() < 300) return 10;
+        if (rc.getAllCheese() < challenger.Tune.BITE_BONUS_CHEESE) return 10;
         else return 12;
     }
     

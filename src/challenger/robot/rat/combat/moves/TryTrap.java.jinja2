@@ -91,7 +91,7 @@ public final class TryTrap {
     // they take on every map, but score +0.15 on maps with >= 8 mines and -0.19 on maps with <= 4, where the starting
     // cheese drains into traps and the king starves. A known count of 5 (E2's rich threshold) can never hold on those
     // maps and comes earliest on rich ones (gated at 8 instead, the gain on >= 8 mines fell to +0.02).
-    static final int BAND_GLOBAL_CHEESE = 400;
+    static final int BAND_GLOBAL_CHEESE = challenger.Tune.BAND_GLOBAL_CHEESE;
     static final int BAND_MIN_MINES = 5;
     static boolean bandMap;
     static RobotInfo bandEnemy;

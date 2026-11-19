@@ -3,6 +3,7 @@ package challenger.robot.rat;
 import battlecode.common.*;
 import challenger.CellTracker;
 import challenger.Game;
+import challenger.Tune;
 import challenger.robot.Strategy;
 import challenger.comms.GlobalArray;
 import challenger.comms.MapManager;
@@ -52,7 +53,7 @@ public class MinerStrategy extends Strategy {
 
         if(tryStrategy(cheeseStrategy)) return true;
 
-        if (rc.getRawCheese() > 50) {
+        if (rc.getRawCheese() > Tune.IDLE_GOHOME) {
             goHomeStrategy = new GoHomeStrategy();
             goHomeStrategy.runTick();
             return true;
@@ -67,7 +68,7 @@ public class MinerStrategy extends Strategy {
                 target = pickExplorationTarget();
             } else {
                 // var p = Math.exp(-12.0 * time / (mapWidth * mapHeight));
-                var p = 0.2;
+                var p = Tune.EXPLORE_P;
                 if(Rng.mcg() < p * (1l << 31)) {
                     target = pickExplorationTarget();
                 } else {
@@ -178,12 +179,12 @@ public class MinerStrategy extends Strategy {
         int cheese = rc.getRawCheese();
         int distSq = myLoc.distanceSquaredTo(GlobalArray.nearestRatKing);
         int thresh;
-        if(distSq <= 25) thresh = 10;
-        else if(distSq <= 100) thresh = 25;
-        else if(distSq <= 225) thresh = 40;
-        else if(distSq <= 400) thresh = 60;
-        else if(distSq <= 900) thresh = 80;
-        else thresh = 105;
+        if(distSq <= 25) thresh = 10 * Tune.GOHOME_PCT / 100;
+        else if(distSq <= 100) thresh = 25 * Tune.GOHOME_PCT / 100;
+        else if(distSq <= 225) thresh = 40 * Tune.GOHOME_PCT / 100;
+        else if(distSq <= 400) thresh = 60 * Tune.GOHOME_PCT / 100;
+        else if(distSq <= 900) thresh = 80 * Tune.GOHOME_PCT / 100;
+        else thresh = 105 * Tune.GOHOME_PCT / 100;
         
         if (cheese >= thresh) return true;
         if (cheese * 2 >= thresh && cheeseStrategy.lastSeenCheese < time - 3) return true;

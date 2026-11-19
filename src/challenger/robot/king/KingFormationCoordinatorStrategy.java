@@ -33,7 +33,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // threshold: kings learn mines late (TheHeist: none known by r200). The site is a mine of its own on our side (under
     // every symmetry still possible), far from our king when one is: the far-mine floor alone picked enemy-side mines
     // behind the walls of these maps, and the formations timed out. A backstab ends the reason, so it aborts such a
-    // formation: earlier kings in contested games starve.
+    // formation: earlier kings in contested games starve. From the lock-in round the lock-in's rules apply instead: on rose
+    // (cooperation to r2000) no known mine was on our side under every symmetry still possible, the search found no
+    // site all game, and main lost 5 of 6 games at 1 king to 2 (KF).
     private static final int COOP_ROUND = 100;
 
     private static int MIN_DIST_FROM_KINGS_SQ;
@@ -169,7 +171,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         }
         if (home == null) home = myLoc;
         lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
-        coop = myKingCount == 1 && time >= COOP_ROUND && rc.isCooperation();
+        coop = myKingCount == 1 && time >= COOP_ROUND && time < LOCK_IN_ROUND && rc.isCooperation();
         int minRats = lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
         if (myKingCount >= 5
             || (time > GameConstants.RAT_KING_CUTOFF_ROUND && myKingCount >= GameConstants.MAX_NUMBER_OF_RAT_KINGS_AFTER_CUTOFF)

@@ -6,3 +6,5 @@
 {"t": 1795073273, "score": 36.6815, "kept": false, "what": "memo of MapLocation.isWithinDistanceSquared's angle half per offset/dir/angle (hit path as costly as the original; statics slowed MapLocation)"}
 {"t": 1795073679, "score": 27.8192, "kept": true, "what": "fast path for GameWorld.getAllLocationsWithinConeRadiusSquaredWithoutMap: plain loops instead of boxed Integer lists and iterators"}
 {"t": 1795074413, "score": 23.7906, "kept": true, "what": "cone fast path remembers each (dir, angle, r2) offset mask; rejected tiles cost a byte read, no allocation"}
+{"t": 1795075133, "score": 24.0128, "kept": false, "what": "InternalRobot.canSenseLocation memo through the cone masks (lookup costs more than the test)"}
+{"t": 1795075826, "score": 22.9162, "kept": true, "what": "BFS fast path walks a per-tile neighbour table (no division or bounds tests per step); no cone memo for NaN angles"}

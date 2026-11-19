@@ -18,8 +18,7 @@ public final class GameWorld_p {
 
     // per symmetry: what the map passes for a 2x2 step (the four checked tiles on the map and not walls), the step's
     // deltas and recorded directions, in the original's order; built on first use from the map the world holds
-    private boolean[][] bcxBfsPass;
-    private int[][] bcxBfsStep;
+    private int[][] bcxBfsNbr;  // per tile, its 8 steps' tiles in the original's order, -1 off the map or not passable
     private Direction[][] bcxBfsBack;
     private int[] bcxBfsQueue;
     private boolean[] bcxBfsWalls;
@@ -53,9 +52,8 @@ public final class GameWorld_p {
         Direction[][] bfs = sym == 0 ? bfs_map_0 : bfs_map_1;
         int n = w * h;
         if (bfs.length != n || walls.length != n) return false;
-        if (bcxBfsPass == null || bcxBfsWalls != walls || bcxBfsQueue.length != n) bcxBfsSetup(w, h);
-        boolean[] pass = bcxBfsPass[sym];
-        int[] step = bcxBfsStep[sym];
+        if (bcxBfsNbr == null || bcxBfsWalls != walls || bcxBfsQueue.length != n) bcxBfsSetup(w, h);
+        int[] nbr = bcxBfsNbr[sym];
         Direction[] back = bcxBfsBack[sym];
         int[] q = bcxBfsQueue;
         int t = tx + ty * w;
@@ -63,14 +61,12 @@ public final class GameWorld_p {
         q[0] = t;
         int head = 0, tail = 1;
         while (head < tail) {
-            int cur = q[head++];
-            int cx = cur % w, cy = cur / w;
+            int base = q[head++] << 3;
             for (int k = 0; k < 8; k++) {
-                int nx = cx + step[2 * k], ny = cy + step[2 * k + 1];
-                if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
-                int ni = nx + ny * w;
+                int ni = nbr[base + k];
+                if (ni < 0) continue;
                 Direction[] row = bfs[ni];
-                if (row[t] != null || !pass[ni]) continue;
+                if (row[t] != null) continue;
                 row[t] = back[k];
                 q[tail++] = ni;
             }
@@ -83,14 +79,15 @@ public final class GameWorld_p {
         Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTHEAST,
                 Direction.SOUTHEAST, Direction.SOUTHWEST, Direction.NORTHWEST};
         Direction[] checks = {Direction.CENTER, Direction.NORTH, Direction.NORTHEAST, Direction.EAST};
-        bcxBfsPass = new boolean[2][n];
-        bcxBfsStep = new int[2][16];
+        boolean[] pass = new boolean[n];
+        int[] step = new int[16];
+        bcxBfsNbr = new int[2][8 * n];
         bcxBfsBack = new Direction[2][8];
         for (int sym = 0; sym < 2; sym++) {
             for (int k = 0; k < 8; k++) {
                 Direction d = sym == 1 ? flipDirBySymmetry(dirs[k]) : dirs[k];
-                bcxBfsStep[sym][2 * k] = d.getDeltaX();
-                bcxBfsStep[sym][2 * k + 1] = d.getDeltaY();
+                step[2 * k] = d.getDeltaX();
+                step[2 * k + 1] = d.getDeltaY();
                 bcxBfsBack[sym][k] = d.opposite();
             }
             int[] c = new int[8];
@@ -106,8 +103,15 @@ public final class GameWorld_p {
                         int px = x + c[2 * j], py = y + c[2 * j + 1];
                         ok = px >= 0 && py >= 0 && px < w && py < h && !walls[px + py * w];
                     }
-                    bcxBfsPass[sym][x + y * w] = ok;
+                    pass[x + y * w] = ok;
                 }
+            int[] nbr = bcxBfsNbr[sym];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                    for (int k = 0; k < 8; k++) {
+                        int nx = x + step[2 * k], ny = y + step[2 * k + 1];
+                        nbr[8 * (x + y * w) + k] = nx >= 0 && ny >= 0 && nx < w && ny < h && pass[nx + ny * w] ? nx + ny * w : -1;
+                    }
         }
         bcxBfsQueue = new int[n];
         bcxBfsWalls = walls;
@@ -147,7 +151,7 @@ public final class GameWorld_p {
         MapLocation[] buf = bcxConeBuf;
         if (buf == null || buf.length < nx * ny) bcxConeBuf = buf = new MapLocation[(int) (nx * ny)];
         int n = 0;
-        if (dir == null) {
+        if (dir == null || angle != angle) {
             for (int i = 0; i < nx; i++) {
                 int x = revX ? x1 - i : x0 + i;
                 for (int j = 0; j < ny; j++) {

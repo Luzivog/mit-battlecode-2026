@@ -816,6 +816,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   trips that explore, gaining on ≥ 8-mine maps (our cheese share at r500 +1.5 pp there). Fresh seeds: s4 +0.034
   [+0.011, +0.056], `goal` gain at δ 0.05 H0 at +0.019 [−0.007, +0.044], `mines-ge8` +0.038 [+0.004, +0.075],
   `teammade` passed +0.041, `goal` harm after KF +0.026; gauntlet no harm. The rest are flat or did not replicate.
+- **KD closed** (2026-11-19; `docs/closed.md`, `docs/theory/kd-danger.md`): a second king formed before our only king
+  dies gains nothing measurable. Oracles that knew main's king-death round and formed 30 rounds ahead read −0.004 on
+  `goal` (beside the king or at a far site). COMBAT deaths: the new king dies 50–150 rounds later to the same army.
+  STARVE deaths: the bank is empty. CAT deaths: the far site wins 13 of 25, about +0.9 pp, too few to measure. Arms
+  N, NF, T2F, CAT, CAT2 all H0. tminusten (seat-A king walks into the cat) is a single-map king-site case.
 
 ## 5. Order to 90%
 

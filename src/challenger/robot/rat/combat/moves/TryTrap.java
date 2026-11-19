@@ -17,6 +17,7 @@ import challenger.robot.rat.combat.CombatTracker;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
 import static challenger.robot.rat.BabyRat.*;
+import challenger.util.MineEstimate;
 import challenger.util.Profiler;
 import challenger.CellTracker;
 import challenger.RobotTracker;
@@ -92,12 +93,20 @@ public final class TryTrap {
     }
 
     // The approach band (docs/theory/t2-combat.md §2.4): an enemy baby rat at Chebyshev 2 (d² 4-8) that steps toward us,
-    // or sideways, enters the 3×3 of the tile between us. Trap that tile whenever the cheese allows.
+    // or sideways, enters the 3×3 of the tile between us. Trap that tile whenever the cheese allows, on maps whose
+    // income pays for it. Measured against main (L-combat + COMBAT+starve cells): the band traps land 1.6-2x the hits
+    // they take on every map, but score +0.15 on maps with >= 8 mines and -0.19 on maps with <= 4, where the starting
+    // cheese drains into traps and the king starves.
     static final int BAND_GLOBAL_CHEESE = 400;
+    static final int BAND_MIN_MINES = 8;
+    static boolean bandMap;
     static RobotInfo bandEnemy;
 
-    // The nearest enemy baby rat, if it is in the band and we can pay for a trap from raw cheese or a rich global.
+    // The nearest enemy baby rat, if it is in the band, the map is known to hold BAND_MIN_MINES mines, and we can pay
+    // for a trap from raw cheese or a rich global.
     private static RobotInfo findBandEnemy() {
+        if (!bandMap && MineEstimate.atLeast(BAND_MIN_MINES) < BAND_MIN_MINES) return null;
+        bandMap = true;
         if (rc.getRawCheese() < 20 && rc.getGlobalCheese() < BAND_GLOBAL_CHEESE) return null;
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];

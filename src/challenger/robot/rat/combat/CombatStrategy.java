@@ -265,7 +265,9 @@ public class CombatStrategy extends Strategy {
     }
 
     public static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {
-        if (moveDir != Direction.CENTER && !CombatCommon.canMove(moveDir)) return false;
+        // The engine's answer now, not precomp's: since precomp, a rat we threw can stop in the tile ahead, and a turn
+        // that ran out of bytecode resumes in a changed world. A refused move would throw and lose the turn.
+        if (moveDir != Direction.CENTER && !rc.canMove(moveDir)) return false;
         if (moveDir == Direction.CENTER) {
             if (facing != myDir) {
                 if (!rc.canTurn()) return false;

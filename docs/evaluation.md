@@ -298,9 +298,11 @@ for c in $(cd A && find . -name '*.class'); do cmp <(javap -c -p -constants A/$c
 | a game on DoC | 15.7 CPU s (19,421 games of the first screen) | 74.5 CPU s (measured above) |
 | a 570-game variant | ~9,000 CPU s | ~42,000 CPU s |
 
-- Native wins: a minute of one build slot saves ~33,000 CPU s of Imperial a variant. `tools/tune play` builds one
-  variant at a time (the host's other build slot stays free) and starts its test as soon as its binary is ready: one
-  variant a minute.
+- Native wins: a minute of one build slot saves ~33,000 CPU s of Imperial a variant. `tools/tune play` builds two
+  variants at once (`--builds`) and starts each test as soon as its own binary is ready. The translation (38 s of a
+  variant's ~45, every package translated again) runs one at a time on the host, so the second build's compile, link
+  and test start overlap it: from one variant every 50-60 s (s1, s5: 32 variants in 32 min) to one every ~40 s.
+  The rest of the gain needs the translation to skip unchanged packages (all but challenger), not more slots.
 - Several variants in one binary would not help: each must be its own package (two builds of one package can't share
   a binary), so each compiles all ~105 of its files (the 305-363 CPU s of a code change) instead of one, and the
   translation grows with it.

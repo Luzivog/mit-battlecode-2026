@@ -519,6 +519,7 @@ def cmd_retry(args) -> int:
             runner.submit(job, lambda r, old=old: record(old, r))
         done.wait()
         runner.close(wait=not args.remote)
+        getattr(runner, "drain", lambda: None)()  # remote: its open batches cancelled
         out.close()
     rescore(d)
     text, verdict = report(d)
@@ -997,6 +998,7 @@ def cmd_replays(args) -> int:
     if todo:
         done.wait()
     runner.close(wait=not args.remote)
+    getattr(runner, "drain", lambda: None)()  # remote: its open batches cancelled
     print(f"{len(todo)} replays in {out}/ ({left['bad']} not identical to the recorded game); index: "
           f"{out / 'index.jsonl'}")
     return 1 if left["bad"] else 0

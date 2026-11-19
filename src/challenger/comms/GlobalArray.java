@@ -62,6 +62,9 @@ public class GlobalArray {
     // What the engine charges after the LSB read in writeMyLoc, through its second write: 2 writes of 50
     // (MethodCosts.txt) and the 39 instructions between (javap). With more bytecodes left, no pause falls between them.
     private static final int LOC_WRITES_COST = 2 * 50 + 39;
+    // The same for writeChunkPayload, through its third write: 3 writes of 50 and the 30 instructions from the end of
+    // its ternary, the three invokes included (javap).
+    private static final int CHUNK_WRITES_COST = 3 * 50 + 30;
     public static FastIndexedIntSet globalCheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
@@ -284,9 +287,13 @@ public class GlobalArray {
 
     private static void writeChunkPayload(int slotBase, int payload) throws GameActionException {
         int value = (payload < 0) ? MAP_CHUNK_EMPTY_FLAG : (payload & MAP_CHUNK_MASK);
-        writeSharedArray(slotBase, value & 1023);
-        writeSharedArray(slotBase + 1, (value >>> 10) & 1023);
-        writeSharedArray(slotBase + 2, (value >>> 20) & 1023);
+        // A chunk spans three slots. A turn paused between the writes would leave every robot that acts until it resumes
+        // a mix of two chunks, whose unit bits it merges for good (readMapChunks): write all three or none. The slots
+        // keep the last chunk written, which is whole.
+        if (Clock.getBytecodesLeft() <= CHUNK_WRITES_COST) return;
+        rc.writeSharedArray(slotBase, value & 1023);
+        rc.writeSharedArray(slotBase + 1, (value >>> 10) & 1023);
+        rc.writeSharedArray(slotBase + 2, (value >>> 20) & 1023);
     }
 
     private static void readMapChunks() throws GameActionException {

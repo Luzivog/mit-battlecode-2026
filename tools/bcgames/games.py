@@ -5,6 +5,7 @@
   tools/games ab challenger awubot --test harm         harm test: is the branch worse than main?
   tools/games ab X awubot --ref none         plain: X against awubot alone (the integrator's progress rows)
   tools/games wait ID                        block until it stops (run it in the background), print the report
+  tools/games wait --any ID ID...            block until the first of them stops: its report; the rest still run
   tools/games show ID [--games | --game G]   the report so far; every game; one game's timeline
   tools/games gauntlet [challenger]          harm test against each sparring bot, paired with main's own games
   tools/games diff ID1 ID2                   games whose result changed between two runs
@@ -739,25 +740,55 @@ def start(kind: str, params: dict, fg: bool) -> int:
     return 0
 
 
+def stopped(d: Path) -> str | None:
+    """None while RUN D runs; else why it stopped: its status, or "died" (its driver is gone)."""
+    st = d / "state.json"
+    if not st.exists():
+        return None
+    status = json.loads(st.read_text())["status"]
+    if status != "running":
+        return status
+    return None if alive(json.loads((d / "run.json").read_text()).get("pid")) else "died"
+
+
 def cmd_wait(args) -> int:
-    d = run_dir(args.id)
+    """One run: its report when it stops, exit its verdict. Several: --any returns when the first of them stops (at
+    once if one has), with its report; else when all have, a line each, exit 0 only if every one passed."""
+    dirs = {i: run_dir(i) for i in args.ids}
     deadline = time.time() + args.timeout if args.timeout else None
     while True:
-        st = d / "state.json"
-        meta = json.loads((d / "run.json").read_text())
-        if st.exists():
-            s = json.loads(st.read_text())
-            if s["status"] != "running":
-                break
-            if not alive(meta.get("pid")):
-                print(f"driver of {meta['id']} died; see {d / 'driver.log'}", file=sys.stderr)
-                return EXIT["error"]
-        if deadline and time.time() > deadline:
+        why = {i: stopped(d) for i, d in dirs.items()}
+        done = [i for i in args.ids if why[i]]
+        if (done and args.any) or len(done) == len(dirs) or (deadline and time.time() > deadline):
             break
         time.sleep(5)
-    text, verdict = report(d, args.games)
-    print(text)
-    return EXIT[verdict]
+    if args.any or len(dirs) == 1:
+        if not done:  # --timeout
+            text, verdict = report(dirs[args.ids[0]], args.games)
+            print(text)
+            return EXIT["running"]
+        i = done[0]
+        if why[i] == "died":
+            print(f"driver of {i} died; see {dirs[i] / 'driver.log'}", file=sys.stderr)
+            return EXIT["error"]
+        text, verdict = report(dirs[i], args.games)
+        print(text)
+        left = [x for x in args.ids if x != i and not why[x]]
+        if len(dirs) > 1:
+            print(f"stopped: {i}; " + (f"still running: {' '.join(left)}" if left else "none still running")
+                  + (f"; stopped before: {' '.join(x for x in done if x != i)}" if len(done) > 1 else ""))
+        return EXIT[verdict]
+    code = 0
+    for i in args.ids:
+        if why[i] == "died":
+            line, c = f"{i}: driver died (see {dirs[i] / 'driver.log'})", EXIT["error"]
+        else:
+            text, verdict = report(dirs[i])
+            lines = [x for x in text.splitlines() if x.strip()]
+            line, c = f"{lines[0]}\n  {lines[1].strip() if len(lines) > 1 else ''}", EXIT[verdict]
+        print(line)
+        code = code or c
+    return code
 
 
 def alive(pid) -> bool:
@@ -1125,8 +1156,12 @@ def main(argv=None) -> int:
     sp.add_argument("--rest-passes", type=int, default=2, help="passes over --rest-pool for the other opponents")
     common(sp, 0.10)
 
-    sp = sub.add_parser("wait", help="block until a run stops, then print its report")
-    sp.add_argument("id")
+    sp = sub.add_parser("wait", help="block until a run stops (or, of several, the first with --any, else all), "
+                                     "then print its report")
+    sp.add_argument("ids", nargs="+", metavar="ID")
+    sp.add_argument("--any", action="store_true",
+                    help="return when the first of the runs stops (at once if one has), with its report and exit "
+                         "code, naming the ones still running: wait again on those")
     sp.add_argument("--games", action="store_true")
     sp.add_argument("--timeout", type=float, default=0, help="give up after this many seconds (exit 5)")
     sp = sub.add_parser("show", help="print a run's report")

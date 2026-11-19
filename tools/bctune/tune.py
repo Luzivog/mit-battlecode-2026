@@ -341,13 +341,38 @@ def cmd_play(a) -> int:
     return 1 if failed else 0
 
 
+def run_line(r: dict) -> str:
+    try:
+        st = json.loads((run_dir(r["id"]) / "state.json").read_text())
+        t = st["tests"][0]
+        what = f"{t.get('cells', 0)} cells, score {t.get('score', float('nan')):.3f}"
+    except (OSError, ValueError, KeyError, IndexError):
+        what = "no state"
+    return f"{r['variant']} {r['id']} [{run_status(r['id'])}] {what}"
+
+
 def cmd_wait(a) -> int:
-    c = load(a.name)
-    ids = [r["id"] for r in c["runs"] if a.seed_base is None or r["seed_base"] == a.seed_base]
+    """Every run of the campaign stopped; with --next, the next ones: those no earlier --next call reported (at once
+    if some have stopped since), so a background `wait --next` wakes the agent at each result."""
+    seen_file = DATA / a.name / "waited.json"
+    seen = set(json.loads(seen_file.read_text())) if a.next and seen_file.exists() else set()
     while True:
-        left = [i for i in ids if run_status(i) not in ("done", "stopped", "error")]
-        if not left:
-            print(f"campaign {a.name}: {len(ids)} runs stopped")
+        c = load(a.name)  # play may add runs meanwhile
+        runs = [r for r in c["runs"] if a.seed_base is None or r["seed_base"] == a.seed_base]
+        over = [r for r in runs if run_status(r["id"]) in ("done", "stopped", "error")]
+        left = len(runs) - len(over)
+        if a.next:
+            new = [r for r in over if r["id"] not in seen]
+            if new or not left:
+                for r in new:
+                    print(run_line(r))
+                seen |= {r["id"] for r in new}
+                seen_file.write_text(json.dumps(sorted(seen)))
+                print(f"campaign {a.name}: {len(over)} of {len(runs)} runs stopped" + (
+                    f"; {left} running: `tools/tune wait {a.name} --next` again" if left else ""))
+                return 0
+        elif not left:
+            print(f"campaign {a.name}: {len(runs)} runs stopped")
             return 0
         time.sleep(a.poll)
 
@@ -654,8 +679,11 @@ def main(argv=None) -> int:
     sp.add_argument("--where", help="Imperial backends (tools/games --where)")
     sp.add_argument("--only", help="comma-separated variant labels")
     sp.set_defaults(fn=cmd_play)
-    sp = sub.add_parser("wait", help="block until every run of the campaign has stopped (run it in the background)")
+    sp = sub.add_parser("wait", help="block until every run of the campaign has stopped, or with --next the next one "
+                                     "(run it in the background)")
     sp.add_argument("name")
+    sp.add_argument("--next", action="store_true",
+                    help="return when a run stops that no earlier --next reported (at once if one has): its line")
     sp.add_argument("--seed-base", type=int)
     sp.add_argument("--poll", type=float, default=30)
     sp.set_defaults(fn=cmd_wait)

@@ -69,6 +69,9 @@ public final class TryThrow {
     static Direction md;
     static Direction td;
     public static double best;
+    // the best line thrown from where a move puts me, the throw-then-move lines left out: what a carrier lines up
+    public static Direction aimMove, aimFacing;
+    public static double aimBest;
     static double score;
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
@@ -90,20 +93,31 @@ public final class TryThrow {
     // the best legal line into md, td, isSecondary and best; false when the action is not ready or no line is legal
     public static boolean search() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        start();
+        if (rc.getCarrying().getTeam() == team) {
+            selectMovesAlly();
+        } else {
+            selectMoves(true);
+        }
+        return md != null && td != null;
+    }
+
+    // the lines of an enemy carry for a turn whose action is not ready: only aimMove, aimFacing and aimBest matter
+    public static void scan() throws GameActionException {
+        start();
+        selectMoves(false);
+    }
+
+    private static void start() throws GameActionException {
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(9000, Clock.getBytecodesLeft() - 2000);
         md = null;
         td = null;
         isSecondary = false;
         best = -1e9;
+        aimBest = -1e9;
         resetThrowGrid();
         populateThrowGrid();
-        if (rc.getCarrying().getTeam() == team) {
-            selectMovesAlly();
-        } else {
-            selectMoves();
-        }
-        return md != null && td != null;
     }
 
     // throws along the line search() found; false if the throw could not be made
@@ -121,7 +135,7 @@ public final class TryThrow {
         return true;
     }
 
-    private static void selectMoves() throws GameActionException {
+    private static void selectMoves(boolean secondary) throws GameActionException {
         switch (myDir.ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
@@ -131,12 +145,14 @@ public final class TryThrow {
                     move{{ dir_short_map[move_dir] }}();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     {% if move_dir == directions[ord] %}
+                        if (secondary) {
                         {% for dir in related_map[ord] %}
                             {% for throw_dir in related_map[ord] %}
                                 tryThrowSecondary{{ dir_short_map[dir] }}{{ dir_short_map[throw_dir] }}();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                             {% endfor %}
                         {% endfor %}
+                        }
                     {% endif %}
                 {% endfor %}
             }
@@ -414,6 +430,11 @@ public final class TryThrow {
             md = {{ move_dir }};
             td = {{ throw_dir }};
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = {{ move_dir }};
+            aimFacing = {{ throw_dir }};
         }
     }
     {% endfor %}

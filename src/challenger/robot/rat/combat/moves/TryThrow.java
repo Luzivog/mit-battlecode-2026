@@ -36,6 +36,9 @@ public final class TryThrow {
     static Direction md;
     static Direction td;
     public static double best;
+    // the best line thrown from where a move puts me, the throw-then-move lines left out: what a carrier lines up
+    public static Direction aimMove, aimFacing;
+    public static double aimBest;
     static double score;
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
@@ -133,20 +136,31 @@ public final class TryThrow {
     // the best legal line into md, td, isSecondary and best; false when the action is not ready or no line is legal
     public static boolean search() throws GameActionException {
         if (!rc.isActionReady()) return false;
+        start();
+        if (rc.getCarrying().getTeam() == team) {
+            selectMovesAlly();
+        } else {
+            selectMoves(true);
+        }
+        return md != null && td != null;
+    }
+
+    // the lines of an enemy carry for a turn whose action is not ready: only aimMove, aimFacing and aimBest matter
+    public static void scan() throws GameActionException {
+        start();
+        selectMoves(false);
+    }
+
+    private static void start() throws GameActionException {
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(9000, Clock.getBytecodesLeft() - 2000);
         md = null;
         td = null;
         isSecondary = false;
         best = -1e9;
+        aimBest = -1e9;
         resetThrowGrid();
         populateThrowGrid();
-        if (rc.getCarrying().getTeam() == team) {
-            selectMovesAlly();
-        } else {
-            selectMoves();
-        }
-        return md != null && td != null;
     }
 
     // throws along the line search() found; false if the throw could not be made
@@ -164,13 +178,14 @@ public final class TryThrow {
         return true;
     }
 
-    private static void selectMoves() throws GameActionException {
+    private static void selectMoves(boolean secondary) throws GameActionException {
         switch (myDir.ordinal()) {
             case 0 -> {
                     moveC();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveN();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondaryNN();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryNNE();
@@ -189,6 +204,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryNWNW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveS();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveNE();
@@ -209,6 +225,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveNE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondaryNENE();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryNEN();
@@ -227,6 +244,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryEE();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveSW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveE();
@@ -247,6 +265,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondaryEE();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryENE();
@@ -265,6 +284,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondarySESE();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveSE();
@@ -285,6 +305,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveSE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondarySESE();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondarySES();
@@ -303,6 +324,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryEE();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveNW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveS();
@@ -323,6 +345,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveS();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondarySS();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondarySSE();
@@ -341,6 +364,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondarySWSW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveN();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveSW();
@@ -361,6 +385,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveSW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondarySWSW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondarySWS();
@@ -379,6 +404,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryWW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveNE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveW();
@@ -399,6 +425,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondaryWW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryWNW();
@@ -417,6 +444,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondarySWSW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveNW();
@@ -437,6 +465,7 @@ public final class TryThrow {
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveNW();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        if (secondary) {
                                 tryThrowSecondaryNWNW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryNWN();
@@ -455,6 +484,7 @@ public final class TryThrow {
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                                 tryThrowSecondaryWW();
                                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                        }
                     moveSE();
                     if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                     moveN();
@@ -3420,6 +3450,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowNNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHEAST);
@@ -3561,6 +3596,11 @@ public final class TryThrow {
             md = Direction.NORTH;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowNE() throws GameActionException {
@@ -3724,6 +3764,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowNSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTHEAST);
@@ -3885,6 +3930,11 @@ public final class TryThrow {
             md = Direction.NORTH;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowNS() throws GameActionException {
@@ -4068,6 +4118,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowNSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.SOUTHWEST);
@@ -4229,6 +4284,11 @@ public final class TryThrow {
             md = Direction.NORTH;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowNW() throws GameActionException {
@@ -4392,6 +4452,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowNNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTH, Direction.NORTHWEST);
@@ -4533,6 +4598,11 @@ public final class TryThrow {
             md = Direction.NORTH;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTH;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowNEN() throws GameActionException {
@@ -4676,6 +4746,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowNENE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHEAST);
@@ -4817,6 +4892,11 @@ public final class TryThrow {
             md = Direction.NORTHEAST;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowNEE() throws GameActionException {
@@ -4960,6 +5040,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowNESE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTHEAST);
@@ -5101,6 +5186,11 @@ public final class TryThrow {
             md = Direction.NORTHEAST;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowNES() throws GameActionException {
@@ -5284,6 +5374,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowNESW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.SOUTHWEST);
@@ -5465,6 +5560,11 @@ public final class TryThrow {
             md = Direction.NORTHEAST;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowNEW() throws GameActionException {
@@ -5648,6 +5748,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowNENW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHEAST, Direction.NORTHWEST);
@@ -5789,6 +5894,11 @@ public final class TryThrow {
             md = Direction.NORTHEAST;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHEAST;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowEN() throws GameActionException {
@@ -5952,6 +6062,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowENE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHEAST);
@@ -6093,6 +6208,11 @@ public final class TryThrow {
             md = Direction.EAST;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowEE() throws GameActionException {
@@ -6236,6 +6356,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowESE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHEAST);
@@ -6377,6 +6502,11 @@ public final class TryThrow {
             md = Direction.EAST;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowES() throws GameActionException {
@@ -6540,6 +6670,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowESW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.SOUTHWEST);
@@ -6701,6 +6836,11 @@ public final class TryThrow {
             md = Direction.EAST;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowEW() throws GameActionException {
@@ -6884,6 +7024,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowENW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.EAST, Direction.NORTHWEST);
@@ -7045,6 +7190,11 @@ public final class TryThrow {
             md = Direction.EAST;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.EAST;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowSEN() throws GameActionException {
@@ -7228,6 +7378,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowSENE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTHEAST);
@@ -7369,6 +7524,11 @@ public final class TryThrow {
             md = Direction.SOUTHEAST;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowSEE() throws GameActionException {
@@ -7512,6 +7672,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowSESE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHEAST);
@@ -7653,6 +7818,11 @@ public final class TryThrow {
             md = Direction.SOUTHEAST;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowSES() throws GameActionException {
@@ -7796,6 +7966,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowSESW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.SOUTHWEST);
@@ -7937,6 +8112,11 @@ public final class TryThrow {
             md = Direction.SOUTHEAST;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowSEW() throws GameActionException {
@@ -8120,6 +8300,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowSENW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHEAST, Direction.NORTHWEST);
@@ -8301,6 +8486,11 @@ public final class TryThrow {
             md = Direction.SOUTHEAST;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHEAST;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowSN() throws GameActionException {
@@ -8484,6 +8674,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowSNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTHEAST);
@@ -8645,6 +8840,11 @@ public final class TryThrow {
             md = Direction.SOUTH;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowSE() throws GameActionException {
@@ -8808,6 +9008,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowSSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHEAST);
@@ -8949,6 +9154,11 @@ public final class TryThrow {
             md = Direction.SOUTH;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowSS() throws GameActionException {
@@ -9092,6 +9302,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowSSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.SOUTHWEST);
@@ -9233,6 +9448,11 @@ public final class TryThrow {
             md = Direction.SOUTH;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowSW() throws GameActionException {
@@ -9396,6 +9616,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowSNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTH, Direction.NORTHWEST);
@@ -9557,6 +9782,11 @@ public final class TryThrow {
             md = Direction.SOUTH;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTH;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowSWN() throws GameActionException {
@@ -9740,6 +9970,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowSWNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTHEAST);
@@ -9921,6 +10156,11 @@ public final class TryThrow {
             md = Direction.SOUTHWEST;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowSWE() throws GameActionException {
@@ -10104,6 +10344,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowSWSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHEAST);
@@ -10245,6 +10490,11 @@ public final class TryThrow {
             md = Direction.SOUTHWEST;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowSWS() throws GameActionException {
@@ -10388,6 +10638,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowSWSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.SOUTHWEST);
@@ -10529,6 +10784,11 @@ public final class TryThrow {
             md = Direction.SOUTHWEST;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowSWW() throws GameActionException {
@@ -10672,6 +10932,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowSWNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.SOUTHWEST, Direction.NORTHWEST);
@@ -10813,6 +11078,11 @@ public final class TryThrow {
             md = Direction.SOUTHWEST;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.SOUTHWEST;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowWN() throws GameActionException {
@@ -10976,6 +11246,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowWNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHEAST);
@@ -11137,6 +11412,11 @@ public final class TryThrow {
             md = Direction.WEST;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowWE() throws GameActionException {
@@ -11320,6 +11600,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowWSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHEAST);
@@ -11481,6 +11766,11 @@ public final class TryThrow {
             md = Direction.WEST;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowWS() throws GameActionException {
@@ -11644,6 +11934,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowWSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.SOUTHWEST);
@@ -11785,6 +12080,11 @@ public final class TryThrow {
             md = Direction.WEST;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowWW() throws GameActionException {
@@ -11928,6 +12228,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowWNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.WEST, Direction.NORTHWEST);
@@ -12069,6 +12374,11 @@ public final class TryThrow {
             md = Direction.WEST;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.WEST;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowNWN() throws GameActionException {
@@ -12212,6 +12522,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowNWNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHEAST);
@@ -12353,6 +12668,11 @@ public final class TryThrow {
             md = Direction.NORTHWEST;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowNWE() throws GameActionException {
@@ -12536,6 +12856,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowNWSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTHEAST);
@@ -12717,6 +13042,11 @@ public final class TryThrow {
             md = Direction.NORTHWEST;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowNWS() throws GameActionException {
@@ -12900,6 +13230,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowNWSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.SOUTHWEST);
@@ -13041,6 +13376,11 @@ public final class TryThrow {
             md = Direction.NORTHWEST;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowNWW() throws GameActionException {
@@ -13184,6 +13524,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowNWNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.NORTHWEST, Direction.NORTHWEST);
@@ -13325,6 +13670,11 @@ public final class TryThrow {
             md = Direction.NORTHWEST;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.NORTHWEST;
+            aimFacing = Direction.NORTHWEST;
         }
     }
     private static void tryThrowCN() throws GameActionException {
@@ -13488,6 +13838,11 @@ public final class TryThrow {
             td = Direction.NORTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.NORTH;
+        }
     }
     private static void tryThrowCNE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHEAST);
@@ -13649,6 +14004,11 @@ public final class TryThrow {
             md = Direction.CENTER;
             td = Direction.NORTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.NORTHEAST;
         }
     }
     private static void tryThrowCE() throws GameActionException {
@@ -13812,6 +14172,11 @@ public final class TryThrow {
             td = Direction.EAST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.EAST;
+        }
     }
     private static void tryThrowCSE() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHEAST);
@@ -13973,6 +14338,11 @@ public final class TryThrow {
             md = Direction.CENTER;
             td = Direction.SOUTHEAST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.SOUTHEAST;
         }
     }
     private static void tryThrowCS() throws GameActionException {
@@ -14136,6 +14506,11 @@ public final class TryThrow {
             td = Direction.SOUTH;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.SOUTH;
+        }
     }
     private static void tryThrowCSW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.SOUTHWEST);
@@ -14297,6 +14672,11 @@ public final class TryThrow {
             md = Direction.CENTER;
             td = Direction.SOUTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.SOUTHWEST;
         }
     }
     private static void tryThrowCW() throws GameActionException {
@@ -14460,6 +14840,11 @@ public final class TryThrow {
             td = Direction.WEST;
             isSecondary = false;
         }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.WEST;
+        }
     }
     private static void tryThrowCNW() throws GameActionException {
         int moveCost = CombatCommon.movementCost(Direction.CENTER, Direction.NORTHWEST);
@@ -14621,6 +15006,11 @@ public final class TryThrow {
             md = Direction.CENTER;
             td = Direction.NORTHWEST;
             isSecondary = false;
+        }
+        if (score > aimBest) {
+            aimBest = score;
+            aimMove = Direction.CENTER;
+            aimFacing = Direction.NORTHWEST;
         }
     }
 

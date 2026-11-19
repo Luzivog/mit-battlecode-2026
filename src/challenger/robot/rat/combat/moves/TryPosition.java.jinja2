@@ -26,6 +26,15 @@ public final class TryPosition {
     static MapLocation newLoc;
     static double score;
     static int bytecodeStart, bytecodeBudget;
+    // a (move, facing) worth aimValue for the next turn's throw; search() uses it once
+    static Direction aimMove, aimFacing;
+    static double aimValue;
+
+    public static void aim(Direction moveDir, Direction facing, double value) {
+        aimMove = moveDir;
+        aimFacing = facing;
+        aimValue = value;
+    }
 
     public static boolean run() throws GameActionException {
         if (!rc.isMovementReady()) return false;
@@ -41,6 +50,7 @@ public final class TryPosition {
         bestFacing = null;
         bestScore = -1e9;
         selectMoves();
+        aimValue = 0;
         return bestScore >= 0;
     }
 
@@ -94,6 +104,7 @@ public final class TryPosition {
         if ({{ face_dir }} != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && {{ face_dir }} == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;

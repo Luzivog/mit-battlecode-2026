@@ -196,6 +196,7 @@ public class CombatStrategy extends Strategy {
                 } else {
                     if (TryTrap.run()) return true;
                     if (TryAttack.run()) return true;
+                    aimNextThrow();
                     if (TryPosition.search()) {
                         TryPosition.execute();
                         return true;
@@ -203,6 +204,9 @@ public class CombatStrategy extends Strategy {
                     // nowhere safe to hold: a grab of the carrier would free the victim
                     if (TryThrow.execute()) return true;
                 }
+            } else if (!rc.isActionReady() && rc.isMovementReady()) {
+                TryThrow.scan();
+                aimNextThrow();
             }
             TryPosition.run();
             return true;
@@ -258,6 +262,11 @@ public class CombatStrategy extends Strategy {
       order (docs/rules.md §9), and a bite or trap with raw cheese can leave the action unready for a turn. Also throw
       at 24 HP or less, two 12-damage bites, as the carrier's death frees the victim.
     */
+    // the carrier's move lines up the best line for its next throw, when that line is worth a throw at all
+    private static void aimNextThrow() {
+        if (TryThrow.aimBest > 0) TryPosition.aim(TryThrow.aimMove, TryThrow.aimFacing, TryThrow.aimBest);
+    }
+
     private static boolean mustThrow() {
         return time - carryStartTime >= 8 || rc.getHealth() <= 24;
     }

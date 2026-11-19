@@ -218,13 +218,14 @@ def cmd_points(a) -> int:
     c = new_campaign(a.name, a.rev or "HEAD", "points")
     for spec in a.point:
         label, _, body = spec.partition(":")
+        label, _, t = label.partition("@")
         values = {}
         for item in filter(None, body.split(",")):
             k, _, v = item.partition("=")
             if k not in c["params"]:
                 raise TuneError(f"{k} is not a tuned constant")
             values[k] = (int(v) if c["params"][k]["type"] == "int" else float(v))
-        add_variant(c, label, values)
+        add_variant(c, label, values, t=float(t) if t else None)
     save(c)
     print(f"campaign {a.name}: {len(c['variants'])} variants of {c['base'][:12]}")
     return 0
@@ -410,9 +411,10 @@ def pool_maps(pool: str) -> set[str]:
 
 
 def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: int = 2000,
-                 maps: set[str] | None = None, exclude: bool = False, seed: int = 1, metric: str = "win") -> dict:
+                 maps: set[str] | None = None, exclude: bool = False, seed: int = 1, metric: str = "win",
+                 drop: set[str] = frozenset()) -> dict:
     runs = [r for r in c["runs"] if (seed_base is None or r["seed_base"] == seed_base)
-            and (pool is None or r["pool"] == pool)]
+            and (pool is None or r["pool"] == pool) and r["variant"] not in drop]
     if not runs:
         raise TuneError(f"campaign {c['name']}: no runs at seed base {seed_base}")
     keys = {(r["ref"], r["engine"]) for r in runs}
@@ -488,14 +490,14 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
             p = c["params"][name]
             out["effects"].append({"name": name, "value": p["value"], "step": step(c, name), "effect": est,
                                    "lo": lo, "hi": hi, "z": est / se})
-    ts = [variants[lab].get("t") for lab in labels]
-    if all(t is not None for t in ts) and len(set(ts)) >= 3:
-        # score along the path: quadratic in t, with the reference at t = 0
-        tx = [[0.0, 0.0]] + [[t, t * t] for t in ts]
+    on_path = [lab for lab in labels if variants[lab].get("t") is not None]
+    if len({variants[lab]["t"] for lab in on_path}) >= 3:
+        # score along the path (the variants with a position t): quadratic in t, with the reference at t = 0
+        tx = [[0.0, 0.0]] + [[variants[lab]["t"], variants[lab]["t"] ** 2] for lab in on_path]
         P = projector(tx)
         coef = []
         for i in range(3):
-            per_map = [P[i][0] * rsum[j] + sum(P[i][v + 1] * sums[labels[v]][j] for v in range(len(labels)))
+            per_map = [P[i][0] * rsum[j] + sum(P[i][v + 1] * sums[on_path[v]][j] for v in range(len(on_path)))
                        for j in range(len(mlist))]
             coef.append(ci(per_map))
         b1, b2 = coef[1][0], coef[2][0]
@@ -541,7 +543,8 @@ def cmd_fit(a) -> int:
     parts = [("all", None, False)] + ([(a.split, maps, False), (f"not {a.split}", maps, True)] if a.split else [])
     fits = []
     for title, m, ex in parts:
-        f = fit_campaign(c, a.seed_base, a.pool, a.boot, maps=m, exclude=ex, metric=a.metric)
+        f = fit_campaign(c, a.seed_base, a.pool, a.boot, maps=m, exclude=ex, metric=a.metric,
+                         drop=set(filter(None, (a.drop or "").split(","))))
         f["part"] = title
         fits.append(f)
         if not a.json:
@@ -584,7 +587,8 @@ def main(argv=None) -> int:
     sp.set_defaults(fn=cmd_screen)
     sp = sub.add_parser("points", help="variants at given values")
     sp.add_argument("name")
-    sp.add_argument("--point", action="append", required=True, metavar="LABEL:NAME=V,NAME=V")
+    sp.add_argument("--point", action="append", required=True, metavar="LABEL[@T]:NAME=V,NAME=V",
+                    help="T: the point's position on a line from the reference (t = 0), for fit's parabola")
     sp.add_argument("--rev", help="the base (default HEAD)")
     sp.set_defaults(fn=cmd_points)
     sp = sub.add_parser("path", help="variants along a screen's steepest-ascent line")
@@ -624,6 +628,7 @@ def main(argv=None) -> int:
     sp.add_argument("--metric", default="win", help="win (default, the objective) or shareN: our share of the cheese "
                     "transferred at round N, a diagnostic")
     sp.add_argument("--boot", type=int, default=2000)
+    sp.add_argument("--drop", help="comma-separated variants to leave out (a failed run)")
     sp.add_argument("--json", action="store_true")
     sp.set_defaults(fn=cmd_fit)
     sp = sub.add_parser("apply", help="write a variant's values into this checkout's Tune.java")

@@ -78,6 +78,12 @@ public class CombatStrategy extends Strategy {
         // println("-- COMBAT STRAT TICK --- starting bytecode count " + Clock.getBytecodeNum() + "\n");
 
         funnyTarget = null;
+        if (RobotTracker.numEnemies > 0 || EnemyManager.numKnownEnemies > 0) lastEnemySeen = time;
+        if (time >= CAT_HUNT_START) formationPosted = GlobalArray.getFormationTarget() != null;
+        if (RobotTracker.numCats > 0) {
+            lastCatLoc = RobotTracker.sortedCats[0].location;
+            lastCatSeen = time;
+        }
         if (rc.getCarrying() == null || rc.getCarrying().getTeam() == team) {
             // Profiler.push();
             sourceCnt = 0;
@@ -306,6 +312,39 @@ public class CombatStrategy extends Strategy {
     }
     
     /*
+      Late in a backstab game a bite on a cat is worth about 100 rat-rounds of mining (docs/theory/t3-scoring.md §1.4),
+      so from CAT_HUNT_START every rat without raw cheese takes on the cats it sees, unless it saw or heard of an enemy in
+      the last CAT_HUNT_QUIET rounds. In cooperation the last cat's death ends the game, so the hunt waits for the backstab.
+    */
+    private static final int CAT_HUNT_START = 1300;
+    private static final int CAT_HUNT_QUIET = 50;
+    private static int lastEnemySeen = -CAT_HUNT_QUIET;
+    // A cat walks a tile per 2 rounds (move cooldown 20), so after this many rounds it may have left the rat's vision
+    // radius (r² 20) around where it was last seen.
+    private static final int CAT_MEMORY = 9;
+    private static MapLocation lastCatLoc;
+    private static int lastCatSeen = -CAT_MEMORY - 1;
+
+    // A king outweighs any cat bites (docs/theory/t3-scoring.md §1.3-1.4): no hunt while a formation recruits, nor
+    // below the stock awubot keeps for its own cat fights, so hunters never starve the kings.
+    private static boolean formationPosted;
+
+    private static boolean isCatHuntOn() {
+        return time >= CAT_HUNT_START && time - lastEnemySeen >= CAT_HUNT_QUIET && rc.getRawCheese() == 0 && !rc.isCooperation()
+            && !formationPosted && rc.getGlobalCheese() > 1000;
+    }
+
+    // Where a hunting rat that lost sight of a cat looks for it, or null. A cat in view is combat's call.
+    public static MapLocation catToHunt() {
+        if (time - lastCatSeen > CAT_MEMORY || RobotTracker.numCats > 0 || !isCatHuntOn()) return null;
+        if (myLoc.distanceSquaredTo(lastCatLoc) <= 2) {
+            lastCatSeen = -CAT_MEMORY - 1;
+            return null;
+        }
+        return lastCatLoc;
+    }
+
+    /*
 
         attacking another solo rat is safe as if:
         - you end the turn with at least as much health (no ratnap)
@@ -316,6 +355,7 @@ public class CombatStrategy extends Strategy {
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
             if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= 36) return true;
+            if (isCatHuntOn()) return true;
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;

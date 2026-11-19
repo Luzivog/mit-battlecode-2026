@@ -3,7 +3,9 @@ package challenger.robot.rat;
 import battlecode.common.*;
 import challenger.CellTracker;
 import challenger.Game;
+import challenger.Pathfinder;
 import challenger.Tune;
+import challenger.robot.rat.combat.CombatStrategy;
 import challenger.robot.Strategy;
 import challenger.comms.GlobalArray;
 import challenger.comms.MapManager;
@@ -50,6 +52,12 @@ public class MinerStrategy extends Strategy {
         if(tryStrategy(formationStrategy)) return true;
 
         if(tryStrategy(goHomeStrategy)) return true;
+
+        MapLocation cat = CombatStrategy.catToHunt();
+        if (cat != null) {
+            BabyRat.autoMove(Pathfinder.getMove(cat));
+            return true;
+        }
 
         if(tryStrategy(cheeseStrategy)) return true;
 

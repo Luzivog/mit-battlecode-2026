@@ -897,6 +897,14 @@ All lanes start once S1 is on main. CW waits for S1 only because they share TryT
 
 At most 10 lanes run in parallel in wave 1. Merges are always serial.
 
+## 5.5 Open bugs (certain-sign, unowned)
+
+Found by packages outside their files; each is a small fix judged by its diagnostic plus a `goal` harm test.
+- `TryAttack.miniRun` has no cone check: 13 lost turn tails per 192 games (CB).
+- The formation coordinator writes its own mine into slot `kingId+1`; it looks like a typo for `targetMine` (KS).
+- On corridorofdoomanddespair both kings start with dirt inside their 3×3 and never move: `digDirtInDirection` digs
+  only two tiles ahead (KS; main wins the map 4/4 anyway).
+
 ## 6. If a wave stalls
 
 1. **W0.1 measured r ≈ 0.47 and no net bytecode cost** (§3). Single-cell and single-map reads are noise: judge class

@@ -103,7 +103,7 @@ There is no priority return. The first strategy to move uses the king's movement
 | `FormationStrategy` (`robot/rat/FormationStrategy.java`) | Turn 7+ rats near a far mine into a king | A global formation target exists and, when joining, the rat is within d² ≤ 625 of the formation mine (`:89-121`) | `isComplete()`: target cleared, global < 50, 120 turns since joining, or a cat seen in the last 4 rounds could see the target (`:27-51`) | Path to the target. With `allyCount ≥ 7` and d² ≤ 2, the lowest-ID rat steps onto the exact target (`:79-83,123-151`). `becomeRatKing` when d² ≤ 8 (**or anywhere after round 1900**) and `canBecomeRatKing()`. Yields to going home if raw ≥ 40 and home is ≥ 25 d² closer (`:57-63`). | Slots 9–13. Clears the formation if it formed exactly on the target. | **The timeout is a 1-tick pause**: `tryActivate` re-activates on the next tick with a fresh start time, so rats stay in the formation until the king clears it. `allyCount` counts visible allies plus squeak sources, not the 3×3. Every rat within 25 tiles joins, not just 8, which pulls the army off mining (observed: 9–20 joiners per attempt). A cat sighting skips the strategy for one tick, so rats jitter. |
 | `KingSpawningStrategy` | Keep the rat count at the cap; defend | Every king turn | – | §5.2 | Writes the spawn record (slots 0, 22–31), whose payload is unused | The enemy-neighbour count is always 0 (`:44-46` counts allies among enemy-team robots), so the spawn target is simply the nearest enemy. Spawning does not look at how long the king can survive on its cheese, only at ≥ 100 cheese. |
 | `KingMiningStrategy` (`.jinja2`) | Park the king on a mine and pick up cheese | Every king turn | – | §6.2 | Writes the mine assignment (slots 16–20) | Walks to the centre while no mine is known (cats spawn there; §8 has a king killed by a cat). Any two visible unassigned mines make `mineTarget` flip every tick, because `isMineAssignedToAnyKing` also excludes the king's own assignment (`:204`) (inference). Assignments of dead kings are never cleared, so those mines stay "taken" until the slot is reused (inference from `GlobalArray.java:550-574`). |
-| `KingFormationCoordinatorStrategy` | Decide when and where to form a new king | Every king turn | – | §6.3 | Slots 9–13 and 16–20 | Before round 800, gated by ≥ 20 rats (unreachable at the cap of 16), ≥ 5 known mines, and a mine ≥ 20 tiles from all kings; from round 800 the lock-in relaxes the gates (§6.3). The cat abort (`:329-334`) is **dead**: the `formationTarget` field is shadowed at `:210` and `nearestCat` is only set in the uncalled `isNormal()`. If the coordinator dies, its formation stays in the array (inference). |
+| `KingFormationCoordinatorStrategy` | Decide when and where to form a new king | Every king turn | – | §6.3 | Slots 9–13 and 16–20 | Before round 800, gated by ≥ 20 rats (unreachable at the cap of 16), ≥ 5 known mines, and a mine ≥ 20 tiles from all kings; from round 800 the lock-in relaxes the gates, and from round 100 so does a game still in cooperation with one king (§6.3). The cat abort (`:329-334`) is **dead**: the `formationTarget` field is shadowed at `:210` and `nearestCat` is only set in the uncalled `isNormal()`. If the coordinator dies, its formation stays in the array (inference). |
 | `ExploreStrategy`, `MicroTestStrategy` | – | **Dead code** (never instantiated by the live bot) | | | | |
 
 Other dead or unused code: `KingFormationCoordinatorStrategy.isNormal/findFormationSpotNearMine/isValidFormationCenter`, `GlobalArray.tryClaimFormationCoordinator`, `Squeaker.squeakLureSignal`, `Util.guessEnemyLocs/getEnemySpawnList/genAggroTarget/getSymmetricLocation*`. Symmetric mine inference was added in `9e47039` and removed in `5da8de3`.
@@ -208,26 +208,39 @@ Coordinator side (`robot/king/KingFormationCoordinatorStrategy.java`), on every 
 ```
 kings = king slots alive now                                                                          (:151)
 numRats = 4·⌊n/4⌋ ; req = (W·H ≤ 1200) ? 8 : 12
-lockIn = t ≥ 800 and kings < 3                                                                        (:159)
+lockIn = t ≥ 800 and kings < 3                                                                        (:173)
+coop = kings == 1 and t ≥ 100 and still in cooperation                                                (:174)
 ABORT (clears if I'm coordinator) if kings ≥ 5 or (t > 1200 and kings ≥ 2)
       or numRats < (lockIn ? 12 : req·kings)                                                          (:160-169)
 ABORT if the king count just rose (a formation completed)                                             (:171-176)
 IDLE → tryStartFormation (:199-243):
    danger = (hp < 100 and kings == 1)        // skips the checks below (not the aborts above)
    else need: global ≥ (lockIn and t ≤ 1200 ? 1000 : 150); kings < 5;
-        t ≤ 1200: knownMines ≥ MINE_THRESHOLDS[kings] = {_,5,9,15,∞}[kings]
-        not lockIn: numRats ≥ 20·kings (−4 if W·H ≤ 1200)
-        lockIn:     numRats ≥ 12
-   need no active formation; pick the mine (first 10 known, unassigned, outside taboo) with max
+        t ≤ 1200 and not coop: knownMines ≥ MINE_THRESHOLDS[kings] = {_,5,9,15,∞}[kings]
+        coop or lockIn: numRats ≥ 12
+        otherwise:      numRats ≥ 20·kings (−4 if W·H ≤ 1200)
+   need no active formation; pick the mine (first 10 known, unassigned, outside taboo; coop: on our side, nearer the
+     first king's start than its mirror under every symmetry still possible) with max
      score = −50000·[d²(mine, any king) < max(400, W·H/5)] − Σ d²(mine, king) − d²(mine, centre) − 50·[d²(me, mine) > 400]
-   if not lockIn and best score < −40000: no formation      // every candidate is too close to some king
+   if not lockIn and not coop and best score < −40000: no formation      // every candidate is too close to some king
    write target = mine, coordinator = me; also writes my own mine into assignment slot kingId+1
-COORDINATING: abort after 120 rounds or if global < 50; go IDLE once the target is cleared.
+COORDINATING: abort after 120 rounds, if global < 50, or on a backstab during a coop formation; go IDLE once the
+   target is cleared.
 ```
 The lock-in (KL, docs/plan.md §4.1): kings formed by round 1200 survive to the end and score (rules.md §16.19), and after
 round 1200 a team with 1 king can still form a 2nd. Its gates are measured (git log of the coordinator): the 1000-cheese
 reserve and the mine thresholds keep lock-in kings from starving on a weak economy or a mine-poor map; sites beside the
 king or at the mine nearest a king starved more than the far mine (they share the first king's income).
+
+The cooperation king (KB, docs/plan.md §4.2): a game that ends in cooperation scores kings at 30 (rules.md §1), so 2
+kings to 1 is +10 points, and main lost 19 of its 34 cooperation endings on `goal`, most by 1–3 points. A game still in
+cooperation at r100 is the signal. Without the mine threshold, because kings learn mines from their own vision (TheHeist:
+none known by r200). The site is restricted to our side: the far-mine floor alone picked enemy-side mines behind the
+walls of these maps, and the formations timed out. Measured on the five maps whose games end in cooperation
+(t_minus_five_minutes, peaceinourtime, groveisbeingdesecrated, TheHeist, fullofsecrets): second king formed in 67% of
+games (main 33%) at a median r187 (main r331), 16 tiles from home and 27 from the enemy, none starved. TheHeist does not
+move: no own-side mine is known before its cats die (~r280). The same gates from an early round in contested games
+(r40–r350) lost: the second king starves (docs/closed.md).
 
 Rat side (`FormationStrategy`): §3. In practice, many rats from up to 25 tiles away walk to the mine. Once ≥ 7 allies are visible, the lowest-ID rat steps onto the tile. When ≥ 7 allied rats stand in its 3×3, `canBecomeRatKing` passes and the centre rat converts. That kills the other 8 tiles' rats and absorbs their raw cheese into global (on `far`, global cheese went 1483 at round 759 → 5418 at round 761, from rats that had picked up cheese while waiting by the mine; that cheese does not count as transferred).
 
@@ -355,7 +368,8 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | `MINE_THRESHOLDS` | {3, 5, 9, 15, 1e7} indexed by #kings | `robot/king/KingFormationCoordinatorStrategy.java:13,216` | known mines needed for the next king, until round 1200 | **H** |
 | `UPGRADE_COST`+100 | global ≥ 150 to start | `KingFormationCoordinatorStrategy.java:14,207` | formation cheese gate (outside the lock-in, and the lone-king refill after round 1200) | L |
 | `LOCK_IN_ROUND`, `KING_TARGET` | 800, 3 | `KingFormationCoordinatorStrategy.java:21-22,159` | lock-in window and king target | **H** |
-| `LOCK_IN_MIN_RATS` | 12 | `KingFormationCoordinatorStrategy.java:23,160,225` | lock-in rat floor (start and abort) | M |
+| `LOCK_IN_MIN_RATS` | 12 | `KingFormationCoordinatorStrategy.java:23,175,233` | lock-in and cooperation-king rat floor (start; lock-in abort) | M |
+| `COOP_ROUND` | 100 | `KingFormationCoordinatorStrategy.java:37,174` | from it, a team still in cooperation with one king forms a second on our side | **H** |
 | `LOCK_IN_MIN_CHEESE` | 1000 | `KingFormationCoordinatorStrategy.java:27,207` | lock-in cheese gate before round 1200 | **H** |
 | `MAX_FORMATION_DIST_TO_MINE_SQ` | 25 (unused) | `KingFormationCoordinatorStrategy.java:15` | dead | – |
 | `COORDINATION_TIMEOUT` | 120 | `KingFormationCoordinatorStrategy.java:16,332` | king-side formation timeout | M |

@@ -105,6 +105,9 @@ the ref's own score on the same cells and the paired difference with its CI.
 
 1. **Inner loop**, one change at a time: `tools/games ab challenger awubot --pool CLASS` (gain test against main),
    then `--pool goal` at the package's δ, or a harm test there.
+   - **Rebase onto origin/main before every test.** The test pins origin/main when it starts; a branch missing a
+     merged package reads that package's effect as its own. Naming a commit (`challenger@REV`) as the candidate drops
+     the default reference: pass `--ref challenger@origin/main` with it.
    - Pick the pool where the effect concentrates: a T4 class (`cat`, `starve`, `choke`, `faceoff`, `nocontact`,
      `overflow`, ...), `points`, `weak`, `stress`, or a list pool of loss-class cells (below).
    - Keep the seed base while you compare variants of one idea: their cells are the same, so `tools/games diff` lines

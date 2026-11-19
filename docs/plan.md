@@ -778,15 +778,33 @@ The share of cells lost in both seats follows: about (1 − s)² when the two ga
 s = 0.7 and 1% at s = 0.9. So f₀₂ ≤ 0.02 holds only once s ≥ 0.86: it is a consequence of a large edge, not a separate
 assumption.
 
-| class | cells (w) | wave-1 owners | wave-2 owners | s after wave 1 (low / mid / high) | s after wave 2 (low / mid / high) |
-|---|---|---|---|---|---|
-| COMBAT | 96 (0.337) | CT, CW, CB; E2 on its 31 cells with ≤ 4 mines | E3, CX, CC+CK, KB | 0.58 / 0.70 / 0.78 | 0.65 / 0.78 / 0.90 |
-| POINTS | 72 (0.253) | KL (29–40 of the 62 that reach r1000), PT | KB (the 10 early cooperation endings), PC | 0.60 / 0.68 / 0.76 | 0.65 / 0.76 / 0.88 |
-| STARVE | 62 (0.218) | E2 (25 cells with ≤ 4 mines), E1 (12 where both starved), CT, CW | E3 (25 cells with ≥ 8 mines), E2's later arms | 0.60 / 0.70 / 0.80 | 0.68 / 0.80 / 0.90 |
-| CAT | 33 (0.116) | K1 | K2, K3 (pockets) | 0.58 / 0.68 / 0.78 | 0.70 / 0.82 / 0.92 |
-| COMBAT+starve | 19 (0.067) | E2 (8 with ≤ 4 mines), CT, CW, E1 | E3, CX | 0.58 / 0.68 / 0.78 | 0.65 / 0.78 / 0.90 |
-| SELF | 3 (0.011) | S1 | – | 0.85 / 0.95 / 1.00 | 0.90 / 0.97 / 1.00 |
-| **score** | 285 | | | **59% / 70% / 78%** | **67% / 79% / 90%** |
+| class | cells (w) | wave-1 owners | wave-2 owners | s after wave 1 (low / mid / high) | **s measured after wave 1** | s after wave 2 (low / mid / high) |
+|---|---|---|---|---|---|---|
+| COMBAT | 96 (0.337) | CT, CW, CB; E2 on its 31 cells with ≤ 4 mines | E3, CX, CC+CK, KB | 0.58 / 0.70 / 0.78 | **0.82** (35 of 192 games lost) | 0.65 / 0.78 / 0.90 |
+| POINTS | 72 (0.253) | KL (29–40 of the 62 that reach r1000), PT | KB (the 10 early cooperation endings), PC | 0.60 / 0.68 / 0.76 | **0.72** (40 of 144) | 0.65 / 0.76 / 0.88 |
+| STARVE | 62 (0.218) | E2 (25 cells with ≤ 4 mines), E1 (12 where both starved), CT, CW | E3 (25 cells with ≥ 8 mines), E2's later arms | 0.60 / 0.70 / 0.80 | **0.82** (22 of 124) | 0.68 / 0.80 / 0.90 |
+| CAT | 33 (0.116) | K1 | K2, K3 (pockets) | 0.58 / 0.68 / 0.78 | **0.73** (18 of 66) | 0.70 / 0.82 / 0.92 |
+| COMBAT+starve | 19 (0.067) | E2 (8 with ≤ 4 mines), CT, CW, E1 | E3, CX | 0.58 / 0.68 / 0.78 | **0.82** (7 of 38) | 0.65 / 0.78 / 0.90 |
+| SELF | 3 (0.011) | S1 | – | 0.85 / 0.95 / 1.00 | **1.00** (0 of 6) | 0.90 / 0.97 / 1.00 |
+| **score** | 285 | | | **59% / 70% / 78%** | **78.6%** (448–122) | **67% / 79% / 90%** |
+
+**Measured after wave 1** (docs/theory/w1-classes.md): main `ca54f76` (S1, RB, E2 arm 1a, S2, KL, CW, CT, S3, CB1c)
+against awubot on the same 285 cells (run `1119-065328-ab-12f4`, plain mode, `--replays all`). Cells keep their W0.3
+class in the column above. COMBAT, STARVE and COMBAT+starve passed the high forecast; POINTS and CAT sit between mid
+and high. The losses themselves, classified by W0.3's rules:
+
+| class | W0.3 losses (share) | lost games after wave 1 (share) | change | list pool |
+|---|---|---|---|---|
+| POINTS | 72 (25%) | 41 (34%): 12 cooperation endings, 29 at r2000 | −43% | `L1-points`, `L1-coop` |
+| COMBAT | 96 (34%) | 32 (26%) | −67% | `L1-combat` |
+| STARVE | 62 (22%) | 27 (22%) | −56% | `L1-starve` |
+| CAT | 33 (12%) | 15 (12%) | −55% | `L1-cat` |
+| COMBAT+starve | 19 (7%) | 7 (6%) | −63% | `L1-combat-starve` |
+| SELF | 3 (1%) | 0 | −100% | – |
+| **all** | 285 of 570 games | 122 of 570 games | −57% | |
+
+By mechanism (w1-classes §3), 57% of the losses are economic: income share by r500 decides the long games, and the
+centre mines decide the income (`L1-econ`). 75 of the 122 losses are on maps with ≥ 8 mines (s = 0.755 there).
 
 Mid-column arithmetic:
 - Wave 1: 0.337·0.70 + 0.253·0.68 + 0.218·0.70 + 0.116·0.68 + 0.067·0.68 + 0.011·0.95 = 0.696.

@@ -73,6 +73,7 @@ insertmeowname: chosen as the worst, they regressed.
 | `PM_SYM_B` (seat B, general) | `goal` | 24008, 1,000 | −0.002 [−0.015, +0.011]; seat B −0.004 ± 0.025; seat B where main has no symmetry by r300 −0.027 ± 0.044 |
 | `PM_SYM` | the 48 ROTATIONAL `goal` maps | 24004, 10 a map | −0.014 ± 0.027 |
 | `PM_COOP_HOLD` | TheHeist | 24003, 106 | −0.406 ± 0.104 |
+| `SPAWN_POOR_CUT` 0 / 20 (main 10) | therainbow, DefaultSmall, Excavation | 24005, 150 a map | −0.086 ± 0.041 / −0.369 ± 0.041; worse on each map |
 | `PM_COOP_HOLD` | longwayaround, therainbow, 7 rotational maps besides grove | 24003 | 0 (backstab maps: the hold never binds) |
 
 Seat A's symmetry from the book is therefore no broad lever: it helps where main never resolves the symmetry and a

@@ -27,7 +27,7 @@ snapshot a game for another build to resume.
 ## The score
 
 **score = Σ wᵢ · instructions:uᵢ / 10⁹** over the 17 weighted scenarios: the estimated user-space instructions of
-one corpus game, in G. Main: **89.7802**.
+one corpus game, in G. Main: **89.780** (89.7802 to 89.7803 over six runs).
 
 - **Scenarios.** Each is one real game of the agreement corpus (`engine/test/corpus.py`): awubot against itself,
   its four snapshots and the nine `opp_*` bots, either seat, at the map's seed or the corpus's extra seed. It is
@@ -193,7 +193,7 @@ Every scenario uses the binary's 350 MB floor: the collector's 256 MB initial he
 | variant | commit | change | reading |
 |---|---|---|---|
 | no-op | 1a6df81, cb2036f, 08567fa | none | 89.7802 valid, three runs (spread 2.7·10⁻⁵ G) |
-| main | origin/main engine tree of 6008051 | `score --main` | 89.7802 valid |
+| main | origin/main's `engine/` (unchanged from 6008051 to 232fe64) | `score --main` | 89.7802, 89.7803 valid |
 | known speedup | ec5e3ad | `BcxStateHash.rngState` stops at its match instead of scanning all 65,536 candidates | **88.9017 valid** (−0.98%) |
 | known slowdown | e74d55a | `bcx.Match` computes the state hash twice a round | **94.6951 valid** (+5.47%) |
 | result (and hashes, replay) | aa64242 | robots get one bytecode less on every turn after their first (`rt_pause`) | **INVALID** 19/19: result (`digest`, `hash` in all; `A`, `B`, `round`, `series`, `winner` in the 4 games that turned), state hashes from round 2, replay; it would have read 89.0460 |

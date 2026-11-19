@@ -52,20 +52,8 @@ public class KingSpawningStrategy extends Strategy {
             thresh += 10;
         }
 
-        MapLocation target = null;
-        int targetNeighbours = 0;
-        for (int i = 0; i < RobotTracker.numEnemies; i++) {
-            RobotInfo robot = RobotTracker.sortedEnemies[i];
-            MapLocation loc = robot.getLocation();
-            int cnt = 0;
-            for (RobotInfo info : rc.senseNearbyRobots(loc, 2, team == Team.A ? Team.B : Team.A)) {
-                if (info.getTeam() == team) cnt++;
-            }
-            if (cnt <= 1 && (target == null || cnt > targetNeighbours)) {
-                target = loc;
-                targetNeighbours = cnt;
-            }
-        }
+        // the nearest visible enemy
+        MapLocation target = RobotTracker.numEnemies > 0 ? RobotTracker.sortedEnemies[0].getLocation() : null;
         if (target == null) {
             // even out spawning
             if (GlobalArray.ratCounter % GlobalArray.countRatKings() == GlobalArray.getIndexAmongAliveRatKings()) {
@@ -74,7 +62,6 @@ public class KingSpawningStrategy extends Strategy {
             
         } else {
             if (time - lastPanicSpawn > 4 && rc.getHealth() < lastHP) {
-                // indicate("targeting enemy cluster at " + target + " with " + targetNeighbours + " neighbours");
                 thresh += 10;
                 if (rc.getHealth() <= 100) {
                     thresh += 10;

@@ -247,7 +247,7 @@ def main():
     ap.add_argument("--engine", default="1.2.6", choices=["1.2.6", "1.2.5", "all"])
     ap.add_argument("--bots", default="all", help="comma-separated packages, or all (default)")
     ap.add_argument("-j", type=int, default=8)
-    ap.add_argument("--opt", default="-O2")
+    ap.add_argument("--opt", default="-O3")
     ap.add_argument("--glue-opt", help="klasses.cpp's optimization (default: --opt)")
     ap.add_argument("--team", action="append", default=[], metavar="PKG=DIR",
                     help="a bot from its own classes folder, in this order (replaces --bots and build/classes)")

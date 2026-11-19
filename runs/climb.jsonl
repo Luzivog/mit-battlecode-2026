@@ -21,3 +21,4 @@
 {"t": 1795081959, "score": null, "kept": false, "what": "INVALID: bdwgc HBLKSIZE=16384 (mmap alignment abort)"}
 {"t": 1795082535, "score": 13.5299, "kept": true, "what": "bdwgc patch: GC_allochblk skips empty free lists instead of calling GC_allochblk_nth on each; per-configuration gc dir"}
 {"t": 1795083101, "score": 12.6489, "kept": true, "what": "fast path for InternalRobot.getAllRatLocations: plain loops instead of boxed offset lists"}
+{"t": 1795084009, "score": 12.5224, "kept": true, "what": "-O3 by default (compile and ThinLTO link)"}

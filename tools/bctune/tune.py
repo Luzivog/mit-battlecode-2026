@@ -405,14 +405,15 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
     keys = {(r["ref"], r["engine"]) for r in runs}
     if len(keys) > 1:
         raise TuneError(f"runs against different references or engines, pick with --seed-base/--pool: {sorted(keys)}")
-    by_variant, ref, same = {}, {}, {}
+    by_variant, ref, same, ref_mismatch = {}, {}, {}, 0
     for r in runs:
         ours, rs, n_same = cell_scores(r["id"], metric)
         by_variant.setdefault(r["variant"], {}).update(ours)
         same[r["variant"]] = same.get(r["variant"], 0) + n_same
         for cell, s in rs.items():
+            # the same game twice: equal unless two runs played it on CPUs whose Math stubs differ (engine/AGENTS.md)
             if ref.setdefault(cell, s) != s:
-                raise TuneError(f"the reference's cell {cell} differs between runs")
+                ref_mismatch += 1
     labels = [v["label"] for v in c["variants"] if v["label"] in by_variant]
     cells = set(ref)
     for lab in labels:
@@ -436,7 +437,7 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
             sums[lab][i] += by_variant[lab][k]
     variants = {v["label"]: v for v in c["variants"]}
     out = {"campaign": c["name"], "metric": metric, "cells": len(cells), "maps": len(mlist), "variants": [],
-           "effects": [],
+           "effects": [], "ref_mismatch": ref_mismatch,
            "seed_base": sorted({r["seed_base"] for r in runs}), "pool": sorted({r["pool"] for r in runs}),
            "ref_id": runs[0]["ref"]}
     rng = random.Random(seed)
@@ -490,6 +491,8 @@ def print_fit(f: dict, c: dict) -> None:
     print(f"campaign {f['campaign']} ({f['metric']}): {len(f['variants'])} variants, {f['cells']} cells on "
           f"{f['maps']} maps, pool {','.join(f['pool'])}, seed base {','.join(map(str, f['seed_base']))}; "
           f"ref {f['ref_id']} scores {f['ref_score']:.3f}")
+    if f["ref_mismatch"]:
+        print(f"  note: {f['ref_mismatch']} reference cells scored differently in two runs (the first is used)")
     print("\nvariants: score against awubot; diff = variant - ref on the same cells, 95% CI by map; same = share of "
           "its games with the ref's outcome")
     for v in sorted(f["variants"], key=lambda v: -v["diff"]):

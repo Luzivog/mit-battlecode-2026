@@ -364,7 +364,6 @@ public class KingCombatStrategy extends Strategy {
         }
         // The king keeps away from every visible cat. A cat whose forward lane (laneCross) holds the king also
         // scores leaving that lane first, getting closer to an exit the king can walk to second.
-        boolean inLane = false;
         for(int idx = 0; idx < RobotTracker.numCats; idx++) {
             var cat = RobotTracker.sortedCats[idx];
             switch(myLoc.directionTo(cat.location).ordinal()) {
@@ -437,7 +436,6 @@ public class KingCombatStrategy extends Strategy {
             }
             int c = laneCross(myLocX, myLocY, cat);
             if(c == NOT_IN_LANE) continue;
-            inLane = true;
             int fx = cat.direction.dx, fy = cat.direction.dy;
             // c grows by `step` per king step along (fy, -fx); the lane ends at |c| > w.
             int w = 3, step = 2;
@@ -569,10 +567,9 @@ public class KingCombatStrategy extends Strategy {
             digDirtInDirection(move);
             if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         }
-        // Dirt in front of a cat that holds the lane takes its dig action instead of a scratch (rules §12).
-        if (inLane) {
+        if (RobotTracker.numCats > 0) {
             placeDefensiveDirt();
-        } else if (RobotTracker.numCats == 0) {
+        } else {
             digSurroundingDirt();
         }
         if(rc.isActionReady()) {

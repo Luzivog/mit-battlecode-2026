@@ -540,6 +540,12 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
     shown, dead_since, w = "", None, J.Waiter()
     finals: dict[str, J.State] = {}
     placed_at, seen_running, progress, moved_at = s.created or time.time(), set[str](), (-1, -1), time.time()
+    tick = time.time()
+
+    def pause() -> None:  # a read every POLL_S from the last one's start: the reads' own time isn't added to it
+        nonlocal tick
+        time.sleep(max(0.0, poll_s - (time.time() - tick)))
+        tick = time.time()
     while True:
         try:
             pr = read_progress(rid)
@@ -551,7 +557,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             states = J.read_states(live) if live else {}
         except Unreachable as e:  # a lost connection says nothing about the run: keep following
             J.say(f"run {rid}: {e}; trying again in {poll_s:.0f} s")
-            time.sleep(poll_s)
+            pause()
             continue
         now = time.time()
         for pid, st in states.items():
@@ -571,7 +577,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                 close(rid, [p for p in pr.pieces if p not in finals])
             return summarize(s, out, finals, pr.pieces)
         if not pr.placed and now - (s.created or now) < PLACE_S:  # tools/run still places its pieces
-            time.sleep(poll_s)
+            pause()
             continue
         alive = [p for p in pr.pieces if p not in finals]
         held = [p for p, f in finals.items() if f.phase == "held"]
@@ -609,7 +615,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                           f"of pieces: closing it with {s.tasks - len(have)} tasks left")
                     close(rid, [])
                     return summarize(s, out, finals, pr.pieces)
-            time.sleep(poll_s)
+            pause()
             continue
         if alive:
             dead_since = None
@@ -632,7 +638,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                     J.say(f"run {rid}: every piece has ended with {left} tasks left: replacement round {k}")
                     place_pieces(s, left)
                     dead_since = None
-        time.sleep(poll_s)
+        pause()
 
 
 def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J.State], held: bool, starting: bool,

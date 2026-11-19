@@ -40,6 +40,11 @@ paired with main on the same cells; arms read their changed cells' replays again
    our rats cannot leave it (a wounded rat moves no faster than its pursuer), cannot shield it cheaply, and every local
    rule tried costs more than it saves: the CX lesson, now for the wounded class. What's left (§5) is FL's ground: joint
    search of the micro on the lab's engagements, with the wounded-rat combo as the target.
+7. **Follow-up (§7): the bots differ in the distribution of situations, through density.** awubot's army is 16% denser
+   and its squeak chase turns that into more support in fights (allies within 3: 1.72 against our 1.62; 10 more joiners
+   a game), worth 0.8–0.9 net grabs a game at pooled rates. Its chase is worth +0.042 to it (oracle), but buying support
+   costs economy: an awubot exploring like us is no weaker (−0.010), and our reinforcement arms closed the gap without
+   gaining (D1 −0.017; D2 screen +0.002, confirmation +0.002 [−0.007, +0.011]).
 
 ---
 
@@ -193,6 +198,120 @@ exception; `1119-191150-ab-1eea`).
     then the victim's and the grabber's next 4 rounds.
 - Python 3: `exdiag.py EX.jsonl... [--rmax=R]` (totals, wins and losses), `exclass.py` (grabs by rule, activity,
   vision, support, zone, stun), `exhaz.py` (the hazard grid), `exsplit.py` (split cells by 50 rounds), `paired.py
-  BASE[:role] RUN[:role]...` (paired diff, bootstrap CI over maps).
+  BASE[:role] RUN[:role]...` (paired diff, bootstrap CI over maps); §7: `exsupport.py` (situations by local balance,
+  wins, losses, split cells), `exsupport2.py` (support against HP at pooled rates), `exepis.py` (fight episodes),
+  `exzone.py` (episodes by zone). `exrunall.sh RUN` runs ExStats over a plain run's replays. ExStats also writes the
+  episodes and per-team density (own rats within 3 and 6 on every rat-turn, r1–300).
 - Data: `D:m14001/` (W3's main run through ExStats), `D:RUN/` for each replayed arm, `D:runs.txt` (every run).
-- Probes on `t3/ex-probes` (worktree `D:wt/`, `D:mkcopy.sh`), never merged: `ex_awunowound`, `ex_awuno50`.
+- Probes on `t3/ex-probes` (worktree `D:wt/`, `D:mkcopy.sh`), never merged: `ex_awunowound`, `ex_awuno50`,
+  `ex_awunochase`, `ex_awuexpl6`.
+
+---
+
+## 7. Follow-up: whose rats fight in the better situations?
+
+Both bots trade at the same rates in each situation (§1.3), so an edge would have to come from how often each side is
+in each situation. Data: W3's main run (14001) and a fresh plain main run `1119-195054-ab-f4a7` (`goal`, seed base
+18101, 1,000 cells, every replay; main 0.819). The two agree to within a few hundredths on every figure below; the
+figures are 14001's unless marked.
+
+### 7.1 The distribution of situations (r1–300)
+
+Rat-turns near an enemy rat (Chebyshev 4), by local balance (own rats within 3 including itself, minus enemy rats
+within 3), from ExStats's hazard grid (`D:exsupport.py`):
+
+| balance | ours: share of turns | awubot's | grabbed per 100 turns, ours / awubot's |
+|---|---|---|---|
+| −3 or less | 1.0% | 1.0% | 30.6 / 28.0 |
+| −2 | 2.8% | 2.7% | 23.2 / 22.8 |
+| −1 | 7.4% | 6.8% | 16.3 / 16.9 |
+| 0 | 24.1% | 22.5% | 8.8 / 9.6 |
+| +1 | 23.5% | 22.3% | 3.3 / 3.7 |
+| +2 | 18.7% | 18.5% | 1.9 / 2.0 |
+| +3 | 15.0% | 16.2% | 0.8 / 0.9 |
+| +4 or more | 7.5% | 10.0% | 0.0 / 0.0 |
+
+- **Neither bot is outnumbered more often in absolute terms**: 76.9 rat-turns a game for us, 75.1 for awubot (11.2% and
+  10.5% of the near-enemy turns). awubot has more turns near enemies (719 against 685) and 35 more a game at +3 or more.
+- **awubot fights with more support**: allies within 3 per near-enemy turn 1.72 against our 1.62 (18101: the same).
+  Priced at the two bots' pooled rates, the support distribution alone costs us 0.8 net grabs a game against awubot
+  (18101: 0.9); the HP and stun distribution (our traps stun more of its rats) gives us back 1.5. Actual: our rats grabbed
+  37.9 times a game and grabbing 39.1; awubot's 39.8 and 37.0.
+- **By outcome**: the support gap is the same in our wins and our losses (allies within 3 at a fight's onset 1.74 against
+  2.06 in wins, 1.64 against 1.96 in losses). What differs is being outnumbered at the onset: 10.7% of our fight onsets
+  in losses, 8.6% in wins (awubot's: 6.8% and 8.6%). In the 148 split cells, the won and the lost game have the same
+  support gap (1.55 / 1.90 and 1.62 / 1.90 at onset); situations at pooled rates explain 1.3 of the 6.7-grab swing
+  between them, the rest is rates within the same situations.
+
+### 7.2 What produces it: density, turned into support by the chase
+
+Fight episodes (`D:exepis.py`): a rat's run of turns with an enemy rat within Chebyshev 4 (gaps of 3 rounds or less),
+r1–300 onsets.
+
+| per game, r1–300 | ours | awubot's |
+|---|---|---|
+| rat-turns (all rats) | 3,619 | 3,594 |
+| own rats within 6, per rat-turn (all turns) | 3.97 | 4.59 |
+| episodes / opened / joined (an ally within 3 already fighting) | 99.5 / 48.6 / 50.9 | 111.7 / 51.2 / 60.5 |
+| onset: allies within 3 / within 6 | 1.73 / 3.40 | 2.04 / 4.15 |
+| onset: alone (no ally within 3) | 33.5% | 29.1% |
+| onset: our rat closed on the nearest enemy / the enemy closed on it | 63% / 55% | 64% / 54% |
+| joiners: rounds after the ally's fight began; distance to the enemy 5 rounds before | 10.0; 5.5 | 9.0; 5.6 |
+| onset nearer its own king than the enemy's | 64% | 71% |
+| end: left alive / grabbed / died otherwise | 41% / 38% / 20% | 40% / 36% / 24% |
+
+- **How fights start is symmetric**: who closes on whom, the HP at onset, cheese carried, the distance joiners come from.
+  Retreat (episodes left alive, and their HP) is the same.
+- **The difference is density.** The whole army is 16% denser for awubot (own rats within 6 on every rat-turn, not
+  only in fights; 8.7% of its rat-turns have none within 6, 10.8% of ours), so the same chase brings 10 more joiners a
+  game. awubot's miners explore on 20% of their trips (`A:robot/rat/MinerStrategy.java`), ours on 60% (`Tune.EXPLORE_P`,
+  +2–3 pp in TN).
+- **By zone**, both bots win the exchange at home and lose it away, and we do better than awubot in every zone:
+
+  | onset zone | our episodes, net grabs a game | awubot's |
+  |---|---|---|
+  | within 6 of its own king | 28.6, +3.41 | 34.7, +1.78 |
+  | its own side | 35.8, +2.35 | 45.9, +0.81 |
+  | the enemy's side | 29.1, −2.50 | 25.4, −3.19 |
+  | within 6 of the enemy king | 6.0, −1.27 | 5.7, −1.52 |
+
+  On awubot's side our rats start 51% of their fights alone (awubot's on ours: 46%).
+
+### 7.3 Prices
+
+Awubot copies on `t3/ex-probes`, plain against main on the 1,000 cells of 18101, paired with main's run there.
+
+| oracle | run | score | vs main [95% CI] | results changed (+ / −) | mechanism |
+|---|---|---|---|---|---|
+| awubot's rats never chase squeaked enemies (fight only what they see; `ex_awunochase`) | `1119-195055-ab-4d4a` | 0.860 | **+0.042 [+0.021, +0.063]** | 383 (233 / 150) | its density unchanged (4.54 within 6), its allies within 3 in fights 1.72 → 1.59 (ours 1.56): the support gap gone; grabs on its rats 39.5 → 42.7 a game |
+| awubot's miners explore on 60% of trips, as ours (`ex_awuexpl6`) | `1119-195435-ab-d1c4` | 0.808 | −0.010 [−0.027, +0.006] | 302 (141 / 161) | its density 4.60 → 4.41, fight support 1.72 → 1.66, grabs on its rats 39.5 → 41.0; no gain to us: the exploration's economy pays for the lost support, for awubot as for us (TN) |
+
+- The chase is worth 4.2 pp to awubot (AB measured ours at ~9 pp to us): reinforcement is a real lever, and it works
+  through support in fights.
+- Density bought by exploring less does not pay, for either bot.
+
+### 7.4 Arm
+
+At most two arms, each a commit off main, screened on `goal`, 1,000 cells, seed base 18102, `--remote`.
+
+| arm | change | run | diff [95% CI] | cells changed (+ / −) | mechanism (changed cells' replays, r1–300) | branch @ head |
+|---|---|---|---|---|---|---|
+| D1 | reinforcement reach: with no enemy visible and the nearest squeaked enemy beyond the combat BFS's reach, a rat above 50 HP holding at most 9 raw cheese paths toward it instead of returning to its task | `1119-200223-ab-bf20` | −0.017 [−0.039, +0.005] | 326 (148 / 178) | it closed the support gap: our allies within 3 near enemies 1.55 → 1.74 (awubot's 1.72), near-enemy turns 719 → 774 a game, net grabs +1.1 a game, almost all of it near our king (+3.46 against +2.60); our rat-turns in r1–300 fell 3,607 → 3,535 | `t3/ex-d1-reinforce` @ `30f1505` |
+| D2 | D1 for home fights only: the squeaked enemy within Chebyshev 8 of our nearest king | `1119-202329-ab-ccef` | +0.002 [−0.014, +0.017] | 249 (125 / 124) | not replayed; confirmation below | `t3/ex-d2-reinforce-home` @ `cde413a` (one commit on 93e8311) |
+
+D1 passed `--pool smoke` (no robot killed by its own exception, `1119-200229-ab-c540`). D2's screen read above zero,
+so it went to a confirmation, rebased onto main 93e8311 as one commit: `goal`, 3,000 cells, seed base 18103
+(`1119-203013-ab-a91d`): **+0.002 [−0.007, +0.011]**, 623 cells changed (319 / 304). Its lower bound is below zero:
+closed.
+
+### 7.5 What it means
+
+- **Yes, there is an asymmetry, and it is density, not behaviour.** awubot's rats fight with more allies because its
+  army is denser (it explores on a third as many trips), and its squeak chase turns that density into support. Per
+  situation the bots still trade identically, and we out-trade awubot in every zone.
+- **It is the price of our economy, and it does not pay to close it.** An awubot that explores like us loses its density
+  and its support and is no weaker against us (−0.010); closing our own gap by reinforcement (D1) closed it and lost.
+  The chase itself is load-bearing for both bots (awubot's +4.2 pp oracle, AB's ~9 pp for ours); its reach is not a
+  lever.
+- What separates our lost games from our wins is not support but being outnumbered at a fight's onset (10.7% against
+  8.6%) and the rates within the same situations (in split cells situations explain 1.3 of a 6.7-grab swing).

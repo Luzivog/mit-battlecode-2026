@@ -620,7 +620,7 @@ def cmd_explain(args) -> int:
     weights = {sc["id"]: sc for sc in m["scenarios"]}
     total = s["score_if_valid"] or 0
     print(f"last score of {s['checkout']} ({s['head']}): {s['score_if_valid']} G instr/game, "
-          f"{'valid' if s['valid'] else 'INVALID'}; main {s['main_score']}")
+          f"{'valid' if s['valid'] else 'INVALID'}; main {ref['score'] if ref else 'not cached'}")
     for reason in s["invalid"]:
         print(f"INVALID: {reason}")
     rows = sorted(s["rows"], key=lambda r: -(weights[r["id"]]["weight"] * (r.get("instr_u") or 0)))

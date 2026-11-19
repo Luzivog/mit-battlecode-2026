@@ -59,6 +59,8 @@ one corpus game, in G. Main: **89.7802**.
 
 ## How to climb
 
+0. Once per worktree: `./gradlew classes` (the bots' class files the build reads). The first `score` builds
+   everything (about 34 CPU-min; 10-20 min here).
 1. Run `score` on the unchanged checkout. That is your starting score: it equals main's.
 2. Make one change in `engine/` at a time, then `score`. Keep the change only if the score is valid and lower;
    otherwise revert it.

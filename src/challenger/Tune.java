@@ -93,4 +93,7 @@ public final class Tune {
     // A second king from this round with one king, at CatBook's site (robot/king/KingFormationCoordinatorStrategy);
     // GAME_MAX_NUMBER_OF_ROUNDS or more: never.
     public static final int CM_KING2_ROUND = 2000;
+    // K2 D': kings remember cat footprints (CatLanes), park and chase cheese off them, take no mining step into a known
+    // lane (robot/king/KingMiningStrategy).
+    public static final boolean CM_LANE_MEMORY = false;
 }

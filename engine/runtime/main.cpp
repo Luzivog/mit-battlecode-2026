@@ -319,10 +319,12 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     if (!g_exc)
         r = ((PlayFn)g_entry_fns[0])(jstr(field("a")->s), jstr(field("b")->s), jstr(field("map")->s), jstr(o.root + "/maps"),
                                       has_seed, seed, jstr(replay), o.dump, jstr(ca), jstr(cb), skipv ? (jlong)skipv->i : 0, indicators);
-    fclose(hashes);
-    if (dump) fclose(dump);
+    // a lost write (a full disk) must end the game in an error, not leave a short file that reads as a difference
+    bool hashes_bad = !hashes || ferror(hashes) || fclose(hashes) != 0;
+    bool dump_bad = dump && (ferror(dump) || fclose(dump) != 0);
     std::string line;
-    if (g_exc || !r) line = std::string("error uncaught ") + (g_exc ? g_exc->klass->name : "null");
+    if (hashes_bad || dump_bad) line = "error cannot write " + gdir + (hashes_bad ? "/hashes.txt" : "/dump.txt");
+    else if (g_exc || !r) line = std::string("error uncaught ") + (g_exc ? g_exc->klass->name : "null");
     else {
         char b[4096];
         rt_string_utf8(r, b, sizeof b);

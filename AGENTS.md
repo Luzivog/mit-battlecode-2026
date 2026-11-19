@@ -38,7 +38,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 | `docs/testing.md`, `docs/evaluation.md` | before judging a change |
 | `docs/theory/`, `docs/plan.md` | the theory and the work packages (track T) |
 | `docs/closed.md` | before trying a change: directions measured and rejected |
-| `docs/theory/w2-classes.md` | why main still loses (after wave 3): loss table, the centre-mine economy, oracle-priced levers, ranked packages (`w1-classes.md`: after wave 1) |
+| `docs/theory/w3-step-back.md` | where games are decided (the state from r150, the rat exchange in r1–300), oracle prices of awubot's grabs, throws and traps, and the levers that are closed |
+| `docs/theory/w2-classes.md` | why main still lost after wave 3: loss table, the centre-mine economy, oracle-priced levers (`w1-classes.md`: after wave 1) |
 
 ## Rules
 

@@ -288,12 +288,12 @@ for c in $(cd A && find . -name '*.class'); do cmp <(javap -c -p -constants A/$c
 
 **Noise** (the first screen: 32 variants, each 16 constants one step from main, 285 `goal` cells):
 - No variant game equalled main's game on the same cell and seat: with 16 constants moved, every game diverges
-  early. With 3 constants moved, 8% did; with one, see stage 3 below.
+  early. With 3 constants moved, 8% did; with one, 4-13% (below).
 - Per-cell SD of the paired diff (variant − main): 0.38. A variant's cell score varies with SD 0.26 across variants
   (the chaos of W0.1); 25 of 285 cells scored the same for all 32 (22 of them won both games by every variant).
 - The variants' mean scores spread with SD 0.026, against 0.016 from the chaos alone: the constants move the score.
-- A single variant's diff on 285 cells has a 95% CI of about ±0.04; an effect fitted from all 32 has one of about
-  ±0.006 for one step.
+- A single variant's diff on 285 cells has a 95% CI of about ±0.04; an effect fitted from all 32 has one of
+  ±0.005 to ±0.010 for one step.
 
 **Method: two-level screens, a step, a dose-response, then the ordinary protocol.** Builds are the scarce resource
 and games are cheap and parallel, so the search uses few variants with many games each, and lets every game inform
@@ -329,8 +329,11 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
   - Gauntlet `1119-130506-gauntlet-fe4c`: OBG −0.003 [−0.050, +0.043], GST +0.025 [−0.011, +0.060], both no harm;
     the 2-pass `quick` opponents pass or end at their 32-cell cap (parmesan −0.062 [−0.141, 0.000], food and
     awubot_us −0.016, awubot_sus 0.000). Smoke: no robot of ours killed by its own exception.
+  - Rebased onto main with KF (`c774154`), `goal` harm test, δ 0.05, seed base 61007: PASS, +0.026 [−0.013, +0.068]
+    (192 cells, `1119-141554-ab-7d5f`). The branch differs from that main in one instruction operand
+    (`MinerStrategy`: `ldc2_w 0.2` → `0.6`).
   - Every unbiased reading of 0.6 against main is positive (s4 +0.034, `goal` +0.019, `mines-ge8` +0.038,
-    `teammade` +0.041): about +2.7 pp on `goal`, concentrated on rich maps, which a δ 0.05 test passes about half
+    `teammade` +0.041, after KF +0.026): about +2.7 pp on `goal`, concentrated on rich maps, which a δ 0.05 test passes about half
     the time. s3's +0.036 was the best of four points, so it is left out.
 - One constant moved: `EXPLORE_P` 0.2 → 0.6, measured +0.036 and +0.034 against main on two seed bases. Its
   mechanism shows in the diagnostic: our share of all cheese delivered rises by 1.0 pp at r500 and 1.2 pp at r1000
@@ -340,8 +343,9 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
 - Single-constant variants share 4-13% of their games with main (identical outcome), multi-constant ones 0-8%; the
   paired diff between two single-constant variants is far tighter than either against main (`SPAWN_FLOOR` 50 vs
   without: ±0.005 on 760 cells), because a rarely-binding constant leaves most games untouched.
-- Cost of s1-s4: 61 variant builds (about 65 min of one build slot) and about 56,000 games on Imperial; each
-  campaign ran 35-50 min from its first build to its last result. Transient SSH refusals on the login node failed
+- Cost of s1-s4: 61 variant builds (about 65 min of one build slot) and 68,626 games on Imperial (1.06 M CPU s), of
+  which about 11,000 were main's games replayed by paired runs started together, or failed batches played again
+  (`play` now plays main once, in its own run); each campaign ran 35-50 min from its first build to its last result. Transient SSH refusals on the login node failed
   some batches in s2; `tools/games retry` and a second `tools/tune play` (it plays again a variant short of its cells)
   filled them from the cache.
 

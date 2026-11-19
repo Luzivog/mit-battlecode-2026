@@ -320,9 +320,16 @@ def cmd_show(a) -> int:
 
 # ------------------------------------------------------------------------------------------------------- fit
 
-def cell_scores(run_id: str) -> tuple[dict, dict]:
-    """(ours, ref): (map, seed) -> score of the cell (games won / 2), for cells with both seats played."""
-    games = {"o": {}, "r": {}}
+def outcome(r: dict) -> tuple:
+    """A game's result seat by seat, as tools/games compares games: equal outcomes = the same game."""
+    return (r.get("winner"), r.get("win_type"), r.get("round"), json.dumps(r.get("A"), sort_keys=True),
+            json.dumps(r.get("B"), sort_keys=True))
+
+
+def cell_scores(run_id: str) -> tuple[dict, dict, int]:
+    """(ours, ref, same): (map, seed) -> score of the cell (games won / 2), for cells with both seats played; same =
+    how many of our games have the reference's outcome on their cell and seat."""
+    games, outs = {"o": {}, "r": {}}, {"o": {}, "r": {}}
     with open(run_dir(run_id) / "results.jsonl") as f:
         for line in f:
             r = json.loads(line)
@@ -330,7 +337,10 @@ def cell_scores(run_id: str) -> tuple[dict, dict]:
                 continue
             # seat: the seat of the tested bot (ours, or the reference)
             games[r["role"]].setdefault((r["map"], r["seed"]), {})[r["seat"]] = 1.0 if r["winner"] == r["seat"] else 0.0
-    return tuple({cell: (g["A"] + g["B"]) / 2 for cell, g in games[role].items() if len(g) == 2} for role in "or")
+            outs[r["role"]][(r["map"], r["seed"], r["seat"])] = outcome(r)
+    same = sum(1 for k, o in outs["o"].items() if outs["r"].get(k) == o)
+    ours, ref = ({cell: (g["A"] + g["B"]) / 2 for cell, g in games[role].items() if len(g) == 2} for role in "or")
+    return ours, ref, same
 
 
 def solve(m: list[list[float]], b: list[float]) -> list[float]:
@@ -377,10 +387,11 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
     keys = {(r["ref"], r["engine"]) for r in runs}
     if len(keys) > 1:
         raise TuneError(f"runs against different references or engines, pick with --seed-base/--pool: {sorted(keys)}")
-    by_variant, ref = {}, {}
+    by_variant, ref, same = {}, {}, {}
     for r in runs:
-        ours, rs = cell_scores(r["id"])
+        ours, rs, n_same = cell_scores(r["id"])
         by_variant.setdefault(r["variant"], {}).update(ours)
+        same[r["variant"]] = same.get(r["variant"], 0) + n_same
         for cell, s in rs.items():
             if ref.setdefault(cell, s) != s:
                 raise TuneError(f"the reference's cell {cell} differs between runs")
@@ -423,7 +434,8 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
     for lab in labels:
         d, lo, hi = ci([s - r for s, r in zip(sums[lab], rsum)])
         out["variants"].append({"label": lab, "values": variants[lab]["values"], "t": variants[lab].get("t"),
-                                "score": sum(sums[lab]) / len(cells), "diff": d, "lo": lo, "hi": hi})
+                                "score": sum(sums[lab]) / len(cells), "diff": d, "lo": lo, "hi": hi,
+                                "same": same[lab] / (2 * len(by_variant[lab]))})
     xs = [variants[lab]["x"] for lab in labels]
     if c["factors"] and all(x is not None for x in xs) and len(labels) > len(c["factors"]):
         P = projector(xs)
@@ -458,10 +470,14 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
 def print_fit(f: dict, c: dict) -> None:
     print(f"campaign {f['campaign']}: {len(f['variants'])} variants, {f['cells']} cells on {f['maps']} maps, "
           f"pool {','.join(f['pool'])}, seed base {','.join(map(str, f['seed_base']))}; ref {f['ref_id']} scores {f['ref_score']:.3f}")
-    print("\nvariants (score against awubot; diff = variant - ref on the same cells, 95% CI by map):")
+    print("\nvariants: score against awubot; diff = variant - ref on the same cells, 95% CI by map; same = share of "
+          "its games with the ref's outcome")
     for v in sorted(f["variants"], key=lambda v: -v["diff"]):
         vals = ", ".join(f"{k} {fmt(c['params'][k]['type'], x)}" for k, x in v["values"].items()) or "base"
-        print(f"  {v['label']:6s} {v['score']:.3f}  {v['diff']:+.3f} [{v['lo']:+.3f}, {v['hi']:+.3f}]  {vals}")
+        print(f"  {v['label']:6s} {v['score']:.3f}  {v['diff']:+.3f} [{v['lo']:+.3f}, {v['hi']:+.3f}]  "
+              f"same {v['same']:.2f}  {vals}")
+    sames = [v["same"] for v in f["variants"]]
+    print(f"  mean share of games equal to the ref's: {sum(sames) / len(sames):.2f}")
     if f["effects"]:
         cv = f["curvature"]
         print(f"\ncurvature (mean of the variants - ref): {cv['est']:+.3f} [{cv['lo']:+.3f}, {cv['hi']:+.3f}]")

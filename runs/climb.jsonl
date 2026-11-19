@@ -1,2 +1,3 @@
 {"t": 1795070116, "score": 89.7803, "kept": true, "what": "baseline: main 4de99bd unchanged"}
 {"t": 1795071043, "score": 40.0640, "kept": true, "what": "fast path for GameWorld.bfsFromTarget (int BFS, original kept as $orig, BCX_CHECK_FASTPATH differential)"}
+{"t": 1795071232, "score": 37.4599, "kept": true, "what": "arrays of system enums allocated pointer-free (GC no longer scans the BFS tables)"}

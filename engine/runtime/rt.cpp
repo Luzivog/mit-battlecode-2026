@@ -51,7 +51,10 @@ Obj* rt_newarray(Klass* ak, jint n) {
     size_t es = elem_size(ak->elem);
     size_t bytes = sizeof(ArrHdr) + es * (size_t)n;
     Obj* a;
-    if (ak->elem == 'L') a = (Obj*)GC_MALLOC(bytes);
+    // an array of a system enum holds only its constants (or null), which the enum's statics keep alive: the
+    // collector need not scan it (the cats' BFS tables are such arrays, tiles squared of them)
+    Klass* c = ak->component;
+    if (ak->elem == 'L' && !((c->flags & KF_ENUM) && c->module == 0)) a = (Obj*)GC_MALLOC(bytes);
     else {
         a = (Obj*)GC_MALLOC_ATOMIC(bytes);
         if (a) memset(a, 0, bytes);

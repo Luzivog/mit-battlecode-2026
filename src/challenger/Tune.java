@@ -15,7 +15,7 @@ public final class Tune {
     public static final int SPAWN_FLOOR = 100; // tune: 50 [0, 400] a rat above cost 10 needs global >= FLOOR
 
     // Miners (robot/rat/MinerStrategy).
-    public static final double EXPLORE_P = 0.2; // tune: 0.1 [0.0, 0.6] share of trips that explore once mines are known
+    public static final double EXPLORE_P = 0.2; // tune: 0.1 [0.0, 1.0] share of trips that explore once mines are known
     public static final int GOHOME_PCT = 100; // tune: 30 [40, 200] go-home loads (10, 25, 40, 60, 80, 105 by distance) in percent
     public static final int IDLE_GOHOME = 50; // tune: 25 [0, 150] with nothing to do, go home above this raw cheese
 

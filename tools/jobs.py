@@ -12,6 +12,7 @@ Results come back to the worktree's runs/ID (gitignored).
 """
 from __future__ import annotations
 
+import hashlib
 import io
 import os
 import re
@@ -22,13 +23,14 @@ import sys
 import tarfile
 import tempfile
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from tools import backends as B
 from tools import kit, provision
-from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR, Refused,
-                          login, login_into, submit_host)
+from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR,
+                          Refused, login, login_into, submit_host)
 
 REPO = Path(__file__).resolve().parent.parent
 LOCAL_RUNS = REPO / "runs"
@@ -77,10 +79,43 @@ def head(repo: Path = REPO) -> Code:
 
 
 def snapshot(repo: Path = REPO) -> Code:
+    """The working tree as a commit whose parent is HEAD (tree_commit), bundled; HEAD itself when the tree is
+    clean."""
+    t = tree_commit(repo)
+    return Code(t.commit, t.subject, t.bundle())
+
+
+@dataclass(frozen=True)
+class Tree:
+    """The working tree as a commit (HEAD when clean), not yet bundled: KEY names its bundle's content (the commit and
+    main's), so a bundle is made and shipped once a content (ship_cas)."""
+    repo: Path
+    commit: str
+    subject: str
+    main: str
+
+    @property
+    def key(self) -> str:
+        return hashlib.sha256(f"{self.commit} {self.main}".encode()).hexdigest()[:24]
+
+    def bundle(self) -> bytes:
+        ref = f"refs/bc26-run/{secrets.token_hex(4)}"
+        git(self.repo, "update-ref", ref, self.commit)
+        try:
+            return bundle(self.repo, ref)
+        finally:
+            git(self.repo, "update-ref", "-d", ref)
+
+
+def tree_commit(repo: Path = REPO) -> Tree:
     """The working tree as a commit whose parent is HEAD, made with a copy of the index (nothing in the repo changes
-    but loose objects); HEAD itself when the tree is clean."""
+    but loose objects); HEAD itself when the tree is clean. The same tree on the same HEAD makes the same commit (its
+    author, committer and dates fixed: HEAD's date), so an unchanged tree ships nothing again."""
+    main = git(repo, "rev-parse", "--verify", "-q", "refs/heads/main^{commit}").decode().strip() if git(
+        repo, "branch", "--list", "main").strip() else ""
     if not git(repo, "--no-optional-locks", "status", "--porcelain").strip():
-        return head(repo)
+        commit, subject = git(repo, "log", "-1", "--format=%H%n%s", "HEAD").decode(errors=ESC).splitlines()
+        return Tree(repo, commit, subject, main)
     with tempfile.TemporaryDirectory() as tmp:
         index = Path(tmp) / "index"
         real = Path(git(repo, "rev-parse", "--path-format=absolute", "--git-path", "index").decode().strip())
@@ -89,14 +124,46 @@ def snapshot(repo: Path = REPO) -> Code:
         env = os.environ | {"GIT_INDEX_FILE": str(index)}
         git(repo, "add", "-A", env=env)
         tree = git(repo, "write-tree", env=env).decode().strip()
-    commit = git(repo, "commit-tree", tree, "-p", "HEAD", "-m", "tools/run: the working tree").decode().strip()
-    ref = f"refs/bc26-run/{secrets.token_hex(4)}"
-    git(repo, "update-ref", ref, commit)
-    try:
-        data = bundle(repo, ref)
-    finally:
-        git(repo, "update-ref", "-d", ref)
-    return Code(commit, "the working tree", data)
+    when = git(repo, "log", "-1", "--format=%ct", "HEAD").decode().strip() + " +0000"
+    who = {"GIT_AUTHOR_NAME": "tools/run", "GIT_AUTHOR_EMAIL": "tools-run@bc26", "GIT_AUTHOR_DATE": when,
+           "GIT_COMMITTER_NAME": "tools/run", "GIT_COMMITTER_EMAIL": "tools-run@bc26", "GIT_COMMITTER_DATE": when}
+    commit = git(repo, "commit-tree", tree, "-p", "HEAD", "-m", "tools/run: the working tree",
+                 env=os.environ | who).decode().strip()
+    return Tree(repo, commit, "the working tree", main)
+
+
+def content_key(repo: Path, paths: list[str]) -> str:
+    """PATHS' content (their names, modes and bytes; not their times), as a hash: shipped files are stored under it."""
+    h = hashlib.sha256()
+
+    def add(p: Path) -> None:
+        rel = str(p.relative_to(repo))
+        if p.is_symlink():
+            h.update(f"L {rel} {os.readlink(p)}\n".encode())
+        elif p.is_dir():
+            h.update(f"D {rel}\n".encode())
+            for c in sorted(p.iterdir()):
+                add(c)
+        else:
+            h.update(f"F {rel} {p.stat().st_mode & 0o777:o} ".encode())
+            with open(p, "rb") as f:
+                h.update(hashlib.file_digest(f, "sha256").digest())
+    for rel in sorted(paths):
+        add(repo / rel)
+    return h.hexdigest()[:24]
+
+
+def ship_cas(blobs: dict[str, Callable[[], bytes]], hosts: tuple[str, ...]) -> list[str]:
+    """Each blob of BLOBS (its name in REMOTE_CAS, named by its content -> what makes its bytes) on the volume: one
+    login finds those there (their times refreshed, for the sweep), the rest are made here and uploaded under a
+    temporary name, renamed in whole. The names uploaded."""
+    names = sorted(blobs)
+    have = login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(names)}; do "
+                 f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split()
+    sent = [n for n in names if n not in have]
+    for n in sent:
+        login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](), hosts)
+    return sent
 
 
 def ship(paths: list[str], repo: Path = REPO, cwd: Path | None = None) -> list[str]:

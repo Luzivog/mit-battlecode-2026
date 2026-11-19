@@ -167,3 +167,102 @@ def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]
     assert p.returncode == 0 and p.stdout.startswith("1 jobs and 2 runs deleted"), p.stdout + p.stderr
     assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "running"]
     assert [x.name for x in (root / "runs").iterdir()] == ["run-1118-000000-open"]
+
+
+# ---- the pool ----
+def wait_for(cond, what: str) -> None:  # type: ignore[no-untyped-def]
+    import time
+    end = time.monotonic() + BOUND_S
+    while not cond():
+        assert time.monotonic() < end, what
+        time.sleep(0.05)
+
+
+def piece_states(remote: Path) -> list[dict[str, object]]:
+    d = remote / "pool" / "pieces"
+    out = []
+    for f in (d.iterdir() if d.exists() else []):
+        if not f.name.startswith("."):
+            try:
+                out.append(json.loads(f.read_text()))
+            except ValueError:
+                pass
+    return out
+
+
+def test_a_new_run_takes_live_pieces_free_slots(world: tuple[Path, dict[str, str]]) -> None:
+    repo, env = world
+    remote = Path(env["BC26_LOCAL_REMOTE"])
+    (repo / "one.txt").write_text("x\n")
+    first = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
+                 "sleep", "6")
+    assert first.returncode == 0, first.stderr
+    wait_for(lambda: any(p["running"] == 1 for p in piece_states(remote)), "the first run's piece runs its task")
+    p = tool(repo, env, "run", "--where", "local", "--task-mem", "100M", "--json", "--each", "one.txt", "--", "bash",
+             "-c", "echo served")
+    assert p.returncode == 0, p.stderr
+    assert "1 live piece has 1 free slot: no new piece" in p.stderr
+    summary = json.loads(p.stdout[p.stdout.index("{"):])
+    assert summary["pieces_requested"] == 0 and summary["served_by_others"] == 1 and summary["ok"] == 1
+    r = json.loads((repo / "runs" / summary["id"] / "0" / "result.json").read_text())
+    assert r["piece_run"] == first.stdout.strip()
+
+
+def test_a_run_ships_its_content_once(world: tuple[Path, dict[str, str]]) -> None:
+    repo, env = world
+    (repo / "built").mkdir()
+    (repo / "built" / "x").write_text("a build output\n")
+    said = []
+    for _ in range(2):
+        p = tool(repo, env, "run", "--where", "local", "--with", "built", "--", "cat", "built/x")
+        assert p.returncode == 0 and p.stdout.endswith("\na build output\n"), p.stderr
+        said.append(p.stderr)
+    assert "its code (" in said[0] and "MB)" in said[0] and "built (" in said[0]
+    assert "its code (on the volume) and built (on the volume)" in said[1]
+    (repo / "built" / "x").write_text("another build output\n")
+    p = tool(repo, env, "run", "--where", "local", "--with", "built", "--", "cat", "built/x")
+    assert p.stdout.endswith("\nanother build output\n") and "its code (on the volume)" in p.stderr
+    assert "built (on the volume)" not in p.stderr
+    assert len(list((Path(env["BC26_LOCAL_REMOTE"]) / "cas").iterdir())) == 3
+
+
+def test_cancelling_a_pooled_run_spares_the_tasks_its_pieces_serve(world: tuple[Path, dict[str, str]]) -> None:
+    repo, env = world
+    remote = Path(env["BC26_LOCAL_REMOTE"])
+    (repo / "one.txt").write_text("x\n")
+    first = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
+                 "sleep", "30")
+    rid1 = first.stdout.strip()
+    wait_for(lambda: any(p["running"] == 1 for p in piece_states(remote)), "the first run's piece runs its task")
+    second = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
+                  "bash", "-c", "sleep 3; echo done")
+    rid2 = second.stdout.strip()
+    assert "no new piece" in second.stderr
+    wait_for(lambda: (remote / "runs" / rid2 / "claims" / "0").exists(), "the first run's piece takes the second's")
+    p = tool(repo, env, "compute", "cancel", rid1)
+    assert p.returncode == 0 and "1 running piece stop its tasks" in p.stdout, p.stdout + p.stderr
+    p = tool(repo, env, "compute", "wait", rid2, "--json", "--poll", "0.3")
+    assert p.returncode == 0, p.stderr
+    assert (repo / "runs" / rid2 / "0" / "log").read_text() == "done\n"
+    p = tool(repo, env, "compute", "wait", rid1, "--poll", "0.3")
+    assert p.returncode == 1 and not (remote / "pool" / "open" / rid1).exists()
+
+
+def test_the_follower_adds_pieces_while_tasks_wait(world: tuple[Path, dict[str, str]]) -> None:
+    """Free slots counted at submission that never take the run's tasks (the piece ended): its follower adds
+    pieces."""
+    repo, env = world
+    remote = Path(env["BC26_LOCAL_REMOTE"])
+    (repo / "two.txt").write_text("a\nb\n")
+    p = tool(repo, env, "run", "--where", "local", "--json", "--task-mem", "100M", "--each", "two.txt", "--", "true")
+    assert p.returncode == 0, p.stderr
+    runtime = json.loads((remote / "runs" / p.stdout.splitlines()[0] / "run.json").read_text())["env"]
+    fake = remote / "pool" / "pieces" / "local-1118-000000-fake"
+    fake.write_text(json.dumps({"v": 1, "job": fake.name, "backend": "local", "slots": 4, "running": 0,
+                                "task_cpus": 1, "task_mem_mb": 100, "env": runtime, "deadline": None}))
+    p = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "two.txt", "--", "true")
+    assert p.returncode == 0 and "has 4 free slots: no new piece" in p.stderr, p.stderr
+    fake.unlink()  # that piece ended before taking them
+    p = tool(repo, env, "compute", "wait", p.stdout.strip(), "--json", "--poll", "0.3")
+    assert p.returncode == 0, p.stderr
+    assert "2 tasks wait, 0 free slots on 0 live pieces: pieces added (round 1)" in p.stderr

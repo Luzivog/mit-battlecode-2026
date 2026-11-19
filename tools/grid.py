@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
         print(s.id, flush=True)
         sweep_daily()
         try:
-            R.place_pieces(s, len(tasks))
+            R.place(s, len(tasks))
         except Refused:
             R.close(s.id, [])  # a run no piece serves is closed, so the sweep takes its folder
             raise

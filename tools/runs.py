@@ -1,16 +1,24 @@
 """Runs: many tasks spread over every free remote CPU (`tools/run`). No daemon: the run's folder on /vol/bitbucket is
-the record, its pieces (jobs.py jobs running tools/piece.py) claim its tasks, and whoever follows it (`tools/run`
-itself, or `tools/compute wait RUN`) fetches results, replaces pieces that were all lost, and closes it.
+the record, pieces (jobs.py jobs running tools/piece.py) claim its tasks, and whoever follows it (`tools/run` itself,
+or `tools/compute wait RUN`) fetches results, adds pieces while its tasks wait, and closes it.
 
 A run is REMOTE_RUNS/ID (ID: run-MMDD-HHMMSS-XXXX): `run.json` (its settings), `tasks.jsonl` (a task a line:
-{"argv": [...], "lines": [...]}), `commit`, `code.bundle`, `with.tgz` (hard-linked into each piece's job folder),
-`piece.py` (the submitter's, so a piece always speaks its follower's protocol), `pieces` (each piece's job id, a
-line), `claims/`, `lost/`, `done/` (tools/piece.py), `replace.K` (round K of replacements was submitted), `closed`
-(every task is done, or the run was cancelled: pieces stop). Results come back to the worktree's runs/ID/N/
-(result.json, log, out/).
+{"argv": [...], "lines": [...]}), `commit`, `code.bundle`, `with.tgz` (hard links to REMOTE_CAS's copies, which are
+named by their content and shipped once a content; hard-linked into each piece's job folder), `kit` (a kit run's
+engine jars), `piece.py` (the submitter's, so a piece always speaks its follower's protocol), `pieces` (each piece's
+job id, a line), `claims/`, `lost/`, `done/` (tools/piece.py), `replace.K` (round K of added pieces was submitted),
+`closed` (every task is done, or the run was cancelled: its tasks stop). Results come back to the worktree's
+runs/ID/N/ (result.json, log, out/).
+
+The pool. A run of tasks of a set size (not --whole) with no --max-cpus is pooled: REMOTE_POOL/open/ID lists it while
+it is open, every live pooled piece of the same task size and runtime may take its tasks (the fewest-running run
+first: tools/piece.py), and its own pieces serve every other pooled run once its own tasks are all claimed. A new
+pooled run asks for pieces only for the tasks the live pieces' free slots (REMOTE_POOL/pieces/) can't take; its
+follower adds pieces while tasks wait unclaimed and none of its pieces is still queued.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import secrets
@@ -24,7 +32,9 @@ from pathlib import Path
 from tools import backends as B
 from tools import jobs as J
 from tools import kit, provision
-from tools.remote import (CPU_HOST, LOCAL, REMOTE_RUNS, SLURM_HOSTS, Refused, Unreachable, login, login_into)
+from tools.piece import BEAT_S, MIN_LEFT_S, POOL_V, STALE_S
+from tools.remote import (CPU_HOST, LOCAL, REMOTE_CAS, REMOTE_POOL, REMOTE_RUNS, SLURM_HOSTS, Refused, Unreachable,
+                          login, login_into)
 
 RUN_ID = rf"run{J.ID_TAIL}"
 DEFAULT_TASK_MEM_MB = 1700  # a game's JVM peaks at 0.5-1.6 GB (docs/testing.md §7), plus headroom
@@ -32,6 +42,10 @@ DEFAULT_TIME_S = 4 * 3600  # a Slurm or cpucluster1 piece's --time: at it, the p
 MAX_ROUNDS = 3  # rounds of replacement pieces a run may get, once all its pieces were lost
 QUEUED_PIECES = 4  # Condor pieces queued for a run when no backend has a free machine for it now
 ORDER = ("cpucluster1", "condor", "slurm", "local")  # of equal offers, the CPU-only cluster first, the GPU cluster last
+LIVE_S = 3 * BEAT_S  # a piece's state file older than this is a dead piece's
+GRACE_S = 20.0 if not LOCAL else 0.5  # after a placement (or the run's start), how long before pieces are added
+POOL_ROUNDS = 8  # placements a pooled run's follower may make
+STUCK_S = 90.0 if not LOCAL else 1.0  # a pooled run none of whose tasks moved for this long has stopped moving
 
 
 @dataclass(frozen=True)
@@ -48,6 +62,16 @@ class Settings:
     cwd: str
     commit: str
     gather: tuple[str, ...]
+    pool: bool = False  # pooled (the module's docstring); runs made before the pool aren't
+    pool_v: int = 0  # the pool's protocol (tools/piece.py's POOL_V)
+    env: str = ""  # the runtime's hash (provision.env_file()): a piece serves runs of its own runtime only
+    created: float = 0.0  # epoch s: the older of two runs as short of tasks is served first
+    code_key: str = ""  # the code's content (jobs.Tree.key) and the shipped files' (jobs.content_key)
+    with_key: str = ""
+
+
+def env_hash() -> str:
+    return hashlib.sha256(provision.env_file()).hexdigest()[:16]
 
 
 def new_run_id() -> str:
@@ -202,27 +226,44 @@ def create(tasks: list[Task], task_cpus: int, task_mem_mb: int, wheres: tuple[st
     here = (cwd or Path.cwd()).resolve()
     if with_kit and build:
         kit.compile_classes(repo)
-    code = J.snapshot(repo)
+    tree = J.tree_commit(repo)
     paths = J.ship(ships, repo, here) + ([kit.CLASSES] if with_kit and kit.CLASSES not in ships else [])
-    with_tgz = provision.tar_paths(repo, paths) if paths else b""
+    wkey = J.content_key(repo, paths) if paths else ""
     rid = new_run_id()
+    pooled = task_cpus > 0 and max_cpus is None
     s = Settings(rid, len(tasks), task_cpus, task_mem_mb, wheres, time_s or DEFAULT_TIME_S, time_s, max_cpus, with_kit,
-                 str(here.relative_to(repo)) if here.is_relative_to(repo) else ".", code.commit, gather)
+                 str(here.relative_to(repo)) if here.is_relative_to(repo) else ".", tree.commit, gather, pooled,
+                 POOL_V if pooled else 0, env_hash(), time.time(), tree.key, wkey)
     hosts = SLURM_HOSTS
     if not LOCAL:
         J.private_root(hosts)
         if "cpucluster1" in wheres:
             J.private_root((CPU_HOST,))
         provision.ensure(hosts, repo, with_kit)
-    files = {"run.json": json.dumps(asdict(s)).encode(), "commit": f"{code.commit}\n".encode(),
-             "code.bundle": code.bundle, "piece.py": (Path(__file__).parent / "piece.py").read_bytes(),
+    code_blob, with_blob = f"code-{tree.key}.bundle", f"with-{wkey}.tgz"
+    size: dict[str, int] = {}
+
+    def made(name: str, data: bytes) -> bytes:
+        size[name] = len(data)
+        return data
+    sent = J.ship_cas({code_blob: lambda: made(code_blob, tree.bundle())}
+                      | ({with_blob: lambda: made(with_blob, provision.tar_paths(repo, paths))} if paths else {}), hosts)
+    files = {"run.json": json.dumps(asdict(s)).encode(), "commit": f"{tree.commit}\n".encode(),
+             "piece.py": (Path(__file__).parent / "piece.py").read_bytes(),
              "tasks.jsonl": "".join(json.dumps({"argv": t.argv, "lines": t.lines}) + "\n" for t in tasks).encode(),
-             "pieces": b""} | ({"with.tgz": with_tgz} if with_tgz else {})
+             "pieces": b""} | ({"kit": provision.kit_file(repo)} if with_kit else {})
     d = run_dir(rid)
-    login(f"mkdir -p {REMOTE_RUNS} && mkdir -m 700 {d} && tar -xf - -C {d} && mkdir {d}/claims {d}/done {d}/lost",
-          J.folder_tar(files), hosts)
-    J.say(f"run {rid}: {len(tasks)} task{'s' * (len(tasks) != 1)} of commit {code.commit[:12]} ({code.subject})"
-          + (f", shipping {', '.join(paths)} ({len(with_tgz) / 1e6:.1f} MB)" if paths else ""))
+    links = f" && ln {REMOTE_CAS}/{code_blob} {d}/code.bundle" + (f" && ln {REMOTE_CAS}/{with_blob} {d}/with.tgz"
+                                                                     if paths else "")
+    opened = f" && mkdir -p {REMOTE_POOL}/open && : > {REMOTE_POOL}/open/{rid}" if pooled else ""
+    login(f"mkdir -p {REMOTE_RUNS} && mkdir -m 700 {d} && tar -xf - -C {d} && mkdir {d}/claims {d}/done {d}/lost"
+          f"{links}{opened}", J.folder_tar(files), hosts)
+    shipped = [f"its code ({size[code_blob] / 1e6:.1f} MB)" if code_blob in sent else "its code (on the volume)"]
+    if paths:
+        shipped.append(f"{', '.join(paths)} ({size[with_blob] / 1e6:.1f} MB)" if with_blob in sent
+                       else f"{', '.join(paths)} (on the volume)")
+    J.say(f"run {rid}: {len(tasks)} task{'s' * (len(tasks) != 1)} of commit {tree.commit[:12]} ({tree.subject}), "
+          f"shipping {' and '.join(shipped)}" + (", pooled" if pooled else ""))
     return s
 
 
@@ -330,6 +371,88 @@ def place_pieces(s: Settings, need: int) -> list[str]:
     return [i for i, _ in got]
 
 
+# ---- the pool ----
+def read_pool() -> tuple[list[dict[str, object]], float]:
+    """Every pooled piece's state (REMOTE_POOL/pieces), each with its `age` by the volume's clock; that clock."""
+    out = login(f"mkdir -p {REMOTE_POOL}/pieces && cd {REMOTE_POOL}/pieces && c=$(mktemp ../.clock.XXXXXX) && "
+                "stat -c %Y \"$c\" && rm -f \"$c\" && for f in *; do [ -f \"$f\" ] || continue; "
+                "printf '%s\\t' \"$(stat -c %Y \"$f\")\"; head -c 4096 \"$f\" | tr -d '\\n'; echo; done")
+    lines = out.splitlines()
+    clock = float(lines[0])
+    pieces = []
+    for line in lines[1:]:
+        mtime, _, said = line.partition("\t")
+        try:
+            d = json.loads(said)
+            d["age"] = clock - float(mtime)
+        except ValueError:
+            continue
+        pieces.append(d)
+    return pieces, clock
+
+
+def serving(s: Settings, pieces: list[dict[str, object]], clock: float) -> list[dict[str, object]]:
+    """The live pieces of PIECES that would take S's tasks (tools/piece.py's `serves` and `fits`)."""
+    out = []
+    for p in pieces:
+        if float(str(p.get("age", 1e9))) > LIVE_S or p.get("v") != POOL_V:
+            continue
+        if (p.get("task_cpus"), p.get("task_mem_mb"), p.get("env")) != (s.task_cpus, s.task_mem_mb, s.env):
+            continue
+        if p.get("backend") not in s.wheres:
+            continue
+        if p.get("deadline") is not None and float(str(p["deadline"])) - clock < min(
+                MIN_LEFT_S, float(str(p.get("limit") or MIN_LEFT_S * 2)) / 2):
+            continue
+        out.append(p)
+    return out
+
+
+def pool_free(s: Settings) -> tuple[int, int]:
+    """The free slots of the live pieces that would take S's tasks now, and those pieces' count."""
+    pieces, clock = read_pool()
+    live = serving(s, pieces, clock)
+    return sum(max(0, int(str(p["slots"])) - int(str(p["running"]))) for p in live), len(live)
+
+
+def place(s: Settings, need: int) -> list[str]:
+    """Pieces for NEED tasks at once (place_pieces); for a pooled run, only for those the live pieces' free slots
+    can't take (they take its tasks within seconds). Refused when a piece was needed and none could be submitted."""
+    if not s.pool:
+        return place_pieces(s, need)
+    try:
+        free, live = pool_free(s)
+    except Refused as e:
+        free = live = 0
+        J.say(f"run {s.id}: the pool's state unread: {e}")
+    if free:
+        J.say(f"run {s.id}: {live} live piece{'s' * (live != 1)} {'have' if live != 1 else 'has'} {free} free slot"
+              f"{'s' * (free != 1)}: " + ("no new piece" if free >= need else f"pieces for the other {need - free}"))
+    if free >= need:
+        return []
+    try:
+        return place_pieces(s, need - free)
+    except Refused as e:
+        if not free:
+            raise
+        J.say(f"run {s.id}: {e}")
+        return []
+
+
+def stale_claims(rid: str) -> int:
+    """RID's claims no piece has touched for STALE_S (by the volume's clock): a dead piece's, any piece takes them."""
+    d = run_dir(rid)
+    out = login(f"cd {d} && c=$(mktemp .clock.XXXXXX) && stat -c %Y \"$c\" && rm -f \"$c\" && "
+                "find claims -mindepth 1 -maxdepth 2 -printf '%P %T@\\n'").splitlines()
+    clock, last = float(out[0]), dict[str, float]()
+    for line in out[1:]:
+        path, _, t = line.rpartition(" ")
+        n = path.split("/")[0]
+        if n.isdigit():
+            last[n] = max(last.get(n, 0.0), float(t))
+    return sum(1 for t in last.values() if clock - t > STALE_S)
+
+
 # ---- following a run ----
 @dataclass
 class Progress:
@@ -377,10 +500,10 @@ def result_of(out: Path, n: int) -> dict[str, object]:
 
 
 def close(rid: str, pieces: list[str]) -> None:
-    """The run closed (pieces stop claiming), its inputs deleted (a piece still running holds its own links), and its
-    pieces that never started cancelled: no machine is held for nothing."""
+    """The run closed (pieces stop claiming; it leaves the pool), its inputs deleted (a piece still running holds its
+    own links), and its pieces that never started cancelled: no machine is held for nothing."""
     d = run_dir(rid)
-    login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz")
+    login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz {REMOTE_POOL}/open/{rid}")
     if not pieces:
         return
     states = J.read_states(pieces)
@@ -402,6 +525,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
     have = {int(p.name) for p in out.iterdir() if p.name.isdigit() and (p / "result.json").exists()}
     shown, dead_since, w = "", None, J.Waiter()
     finals: dict[str, J.State] = {}
+    placed_at, seen_running, progress, moved_at = s.created or time.time(), set[str](), (-1, -1), time.time()
     while True:
         try:
             pr = read_progress(rid)
@@ -431,36 +555,51 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
         if len(have) >= s.tasks or pr.closed:
             if not pr.closed:
                 close(rid, [p for p in pr.pieces if p not in finals])
-            return summarize(s, out, finals)
+            return summarize(s, out, finals, pr.pieces)
         alive = [p for p in pr.pieces if p not in finals]
         held = [p for p, f in finals.items() if f.phase == "held"]
-        if held and not alive:  # never routed around: the run stays open, and its follower stops, saying why
+        if (len(pr.done), len(pr.claimed)) != progress:
+            progress, moved_at = (len(pr.done), len(pr.claimed)), now
+        # a pooled run may go on on other runs' pieces: its own pieces' end stops it only once nothing moves
+        stuck = not s.pool or now - moved_at > STUCK_S
+        if held and not alive and stuck:  # never routed around: the run stays open, and its follower stops, saying why
             J.say(f"run {rid}: no piece runs and {len(held)} held: " + "; ".join(J.describe(p, finals[p]) for p in held)
                   + f". Report it; `tools/compute wait {rid}` follows the run again")
-            summary = summarize(s, out, finals)
+            summary = summarize(s, out, finals, pr.pieces)
             summary["exit"] = J.HELD
             return summary
         broken = [p for p, f in finals.items() if f.exit not in (None, 0, 75) and f.phase != "held"]
-        if broken and not alive:  # a piece that failed (not one lost) would fail again: the run stops, its log shown
+        if broken and not alive and stuck:  # a piece that failed (not one lost) would fail again: the run stops
             p = broken[0]
             tail = J.read_log(J.job(p), 0).decode(errors="replace").splitlines()[-15:]
             J.say(f"run {rid}: piece {J.describe(p, finals[p])}, so no piece is started again; its log ends:\n  "
                   + "\n  ".join(tail))
             close(rid, [])
-            return summarize(s, out, finals)
+            return summarize(s, out, finals, pr.pieces)
+        if s.pool:
+            starting = {p for p in alive if states.get(p) and states[p].phase == "running"} - seen_running
+            seen_running |= starting
+            if follow_pool(s, pr, alive, states, bool(held), bool(starting), now, placed_at, moved_at):
+                placed_at = now
+                if pr.rounds >= POOL_ROUNDS and not alive and now - moved_at > STALE_S + 60:
+                    J.say(f"run {rid}: no piece took its tasks for {now - moved_at:.0f} s, after {pr.rounds} rounds "
+                          f"of pieces: closing it with {s.tasks - len(have)} tasks left")
+                    close(rid, [])
+                    return summarize(s, out, finals, pr.pieces)
+            time.sleep(poll_s)
+            continue
         if alive:
             dead_since = None
         else:
             dead_since = dead_since or now
             left = s.tasks - len(have)
             unclaimed = s.tasks - len(pr.done | pr.claimed)
-            from tools.piece import STALE_S
             if unclaimed > 0 or now - dead_since > (0 if LOCAL else STALE_S + 60):
                 if pr.rounds >= MAX_ROUNDS:
                     J.say(f"run {rid}: every piece ended with {left} tasks left, after {pr.rounds} rounds of "
                           "replacements: closing it")
                     close(rid, [])
-                    return summarize(s, out, finals)
+                    return summarize(s, out, finals, pr.pieces)
                 k = pr.rounds + 1
                 try:
                     login(f"mkdir {run_dir(rid)}/replace.{k}")  # one follower submits round K
@@ -473,7 +612,41 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
         time.sleep(poll_s)
 
 
-def summarize(s: Settings, out: Path, finals: dict[str, J.State]) -> dict[str, object]:
+def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J.State], held: bool, starting: bool,
+                now: float, placed_at: float, moved_at: float) -> bool:
+    """A pooled run's pieces added, when its tasks wait: unclaimed, or claimed by dead pieces while none of its own
+    runs, beyond what live pieces have free. Never while one of its pieces is queued or held (a hold is reported, not
+    routed around), just started (its claims are coming), or within GRACE_S of the last placement. True when it
+    looked (the next look waits GRACE_S again)."""
+    if held or starting or now - placed_at < GRACE_S:
+        return False
+    if any(states.get(p) is None or states[p].phase in ("queued", "unknown") for p in alive):
+        return False
+    waiting = s.tasks - len(pr.done | pr.claimed)
+    if not waiting and not alive and pr.claimed - pr.done and now - moved_at > STALE_S:
+        waiting = stale_claims(s.id)
+    if not waiting:
+        return False
+    if pr.rounds >= POOL_ROUNDS:
+        return True
+    free, live = pool_free(s)
+    if waiting <= free:
+        return True
+    k = pr.rounds + 1
+    try:
+        login(f"mkdir {run_dir(s.id)}/replace.{k}")  # one follower submits round K
+    except Refused:
+        return True
+    J.say(f"run {s.id}: {waiting} tasks wait, {free} free slots on {live} live pieces: pieces added (round {k})")
+    try:
+        place_pieces(s, waiting - free)
+    except Refused as e:
+        J.say(f"run {s.id}: {e}")
+    return True
+
+
+def summarize(s: Settings, out: Path, finals: dict[str, J.State], pieces: list[str] | None = None
+              ) -> dict[str, object]:
     results = [result_of(out, n) for n in range(s.tasks)]
     codes = [r.get("code") for r in results]
     failed = [n for n, c in enumerate(codes) if c != 0]
@@ -494,6 +667,8 @@ def summarize(s: Settings, out: Path, finals: dict[str, J.State]) -> dict[str, o
         "task_s_total": round(sum(secs), 1), "task_peak_max": max(peaks, default=0),
         "hosts": sorted({str(r.get("host")) for r in results if r.get("host")}),
         "pieces": {p: J.describe(p, st) for p, st in finals.items()},
+        "pieces_requested": len(pieces) if pieces is not None else len(finals),
+        "served_by_others": sum(1 for r in results if r.get("piece_run")),
         "exit": exit_code(codes)}
     (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
     return summary
@@ -508,12 +683,20 @@ def exit_code(codes: list[object]) -> int:
 
 
 def cancel(rid: str) -> str:
+    """RID closed: its tasks stop within seconds wherever they run. Its pieces are cancelled, but a pooled run's
+    running pieces: they may run other runs' tasks, so they stop its tasks and go on with those, or end at once."""
     pr = read_progress(rid)
-    login(f"touch {run_dir(rid)}/closed && rm -f {run_dir(rid)}/code.bundle {run_dir(rid)}/with.tgz")
-    said = []
+    pooled = read_settings(rid).pool
+    d = run_dir(rid)
+    login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz {REMOTE_POOL}/open/{rid}")
+    said, kept = [], 0
     for pid, st in J.read_states(pr.pieces).items():
-        if st.phase in ("queued", "running", "held", "unknown"):
+        if pooled and st.phase == "running":
+            kept += 1
+        elif st.phase in ("queued", "running", "held", "unknown"):
             said.append(J.cancel(pid))
+    if kept:
+        said.append(f"{kept} running piece{'s' * (kept != 1)} stop its tasks and go on with other runs' or end")
     return f"run {rid} closed; " + ("; ".join(said) if said else "no piece was live")
 
 

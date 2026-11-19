@@ -41,10 +41,12 @@ Campaigns live in `~/battlecode26-data/tune/NAME/campaign.json` (`TUNE_DATA` ove
    (n a power of two). Every column is balanced and orthogonal to every other and to every product of two columns, so
    a main effect is mixed with no two-constant interaction. Quadratic terms all fall into the intercept, read as the
    curvature (mean of the variants − main).
-2. `play` makes the variant's native binary (`tools/games build`, one at a time: about 60 s, one build slot; the
-   other stays free), then starts `tools/games ab challenger@COMMIT awubot --ref challenger@MAIN --min-cells N
-   --max-cells N --seed-base B --remote`. Every variant plays the same N cells; main's games come from the cache
-   after the first. Use a seed base no test of these variants or of their choice used.
+2. `play` first starts main's own run on the cells (`tools/games ab challenger@MAIN awubot --ref none --min-cells N
+   --max-cells N --seed-base B --remote`, label `ref`), then makes each variant's native binary (`tools/games build`,
+   one at a time: about 60 s, one build slot; the other stays free) and starts the same test for it. Every variant
+   plays the same N cells. Main plays once: paired runs started together each replayed main's games until the
+   cache held them (23% of the games of campaign s3). Use a seed base no test of these variants or of their choice
+   used. A variant whose run stopped short of its cells (failed batches) is played again by the next `play`.
 3. `fit` scores each cell (games won / 2) for every variant and main, keeps the cells every one of them completed, and
    fits the coded design by least squares on the variants' mean scores. Effects are "score change for +1 step". CIs
    resample maps (as `tools/games` does), so they speak for maps in general, not only the pool's.

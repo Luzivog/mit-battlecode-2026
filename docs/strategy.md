@@ -71,7 +71,7 @@ elif goHome == null && shouldGoHome(): goHome = new GoHome(); cheese.target = nu
 5. loop: while goSomewhere==null or !goSomewhere.runTick():
        known = knownCheeseMines.size
        if known==0 or (known≤2 and time ≤ W·H/8): target = pickExplorationTarget()
-       else: 20% pickExplorationTarget(), 80% pickSeenMine()
+       else: 60% pickExplorationTarget(), 40% pickSeenMine()   // Tune.EXPLORE_P (TN; was 20/80)
        goSomewhere = Traverse(target, d²≤2)
 ```
 - `pickExplorationTarget` (`:113-139`): in round 2, the map centre. In rounds ≤ 20, a ray from the nearest king (§1). Otherwise a random **unseen** 3×3 unit from `MapManager.localTracker`, resampled ≤ 6 times if within d² ≤ 36 of any king. If every unit has been seen, a uniform random tile.
@@ -96,7 +96,7 @@ There is no priority return. The first strategy to move uses the king's movement
 
 | Strategy | Goal | Entry | Exit | Key algorithm | Comms | Weaknesses / blind spots |
 |---|---|---|---|---|---|---|
-| `MinerStrategy` (`robot/rat/MinerStrategy.java`) | Collect cheese and explore | Always (the only primary strategy) | Never | §2.3 | Reads mines (slots 38–63) and king positions | No roles. 20% exploration never stops, even late or with the map fully seen (`:70`). Distance-weighted mine choice sends rats to far, likely contested mines (`:100-102`). Ignores enemy and cat positions when choosing targets. Mines under a king are excluded. |
+| `MinerStrategy` (`robot/rat/MinerStrategy.java`) | Collect cheese and explore | Always (the only primary strategy) | Never | §2.3 | Reads mines (slots 38–63) and king positions | No roles. Exploration (60% of trips, `Tune.EXPLORE_P`; 20% before TN) never stops, even late or with the map fully seen; it is load-bearing (AB) and more of it gains on rich maps (§9). Distance-weighted mine choice sends rats to far, likely contested mines (`:100-102`). Ignores enemy and cat positions when choosing targets. Mines under a king are excluded. |
 | `CheeseStrategy` (`robot/rat/CheeseStrategy.java`) | Pick up visible cheese | Any tile in vision with cheese > 0 | Target emptied or Traverse gave up | Target = the **largest** pile in vision among those it can pick up after ≤ 6 steps through passable cells (`Pathfinder.computePickable`: allies block, and dirt unless dirt pathing is on), ignoring distance; `Traverse(target, d²≤1)`. Vision ignores walls and dirt: before the reach check, chases of piles seen across them took ~1,700 rat-turns a game in r150–600 of long rich-map losses at 0.4 cheese a turn (MC probe) | – | No coordination, so many rats chase the same pile (inference). Scans `senseNearbyMapInfos()` every turn. Ignores danger. Not reached while going home or in a formation, but `tryPickUpCheese` still grabs anything adjacent. |
 | `TraverseStrategy` (`robot/rat/TraverseStrategy.java`) | Get within d² of a target | Created by others | Arrived, `Pathfinder.givenUp()`, or (raw < 20 **and** stuck **and** `time%25==0`) | `BabyRat.autoMove(Pathfinder.getMove)`. Every 25 turns it checks displacement (≤ 8 over 25 turns, ≤ 18 over 50) and sets `stuck` | – | Once set, `stuck` is never reset. Rats carrying ≥ 20 raw never give up because of `stuck`. |
 | `GoHomeStrategy` + `AntColony` (`robot/rat/goHome/*.jinja2`) | Deliver raw cheese | `goHome != null` and raw > 0 | raw == 0 | Each rat lays its own trail: `mark[king][y][x] = min(old, curMark++)` on each move, and `curMark` resets to `base+5` on reaching home. Going home = BFS to the **lowest mark** among reachable tiles in the 11×11 window (`GoHomeStrategy:57-107`). If there is no mark, `Traverse(king, 8)`. When the king moves 1 tile, `base--` (all marks age). If it moves farther (new king or death), that king's marks reset (`AntColony:50-69`). Within d² ≤ 9 of the king-adjacent tile it turns to face the king so the transfer works (`:28-38`). | King positions (slots 2–8) | The trail is per rat and only covers places that rat has been. A rat that never visited home follows `Traverse`. Raw cheese slows rats ×(1 + 0.01·raw) (rules.md §4), yet pickup is unconditional (largest observed transfer: 891). |
@@ -302,7 +302,7 @@ Against `awubot_quals` the result was 6–1. Against `awubot` (mirror), probe as
 
 ## 9. Tunable constants (macro)
 
-Sensitivity is a guess: **H** means likely to change win rate by itself, **M** means it matters on some map types, **L** means it is cosmetic or an edge case.
+Sensitivity is a guess: **H** means likely to change win rate by itself, **M** means it matters on some map types, **L** means it is cosmetic or an edge case. Constants in `src/challenger/Tune.java` were measured by `tools/tune` (track TN, docs/evaluation.md "Tuning constants"): their column gives the score change for one step, from the screens s1 (around main, seed base 61001) and s2 (around EXPLORE_P 0.3, TRAP_RAW 10, COOP_ROUND 50, seed base 61002), with 95% CIs by map. "Flat" means no step moved the score measurably.
 
 ### Baby rats
 | Name / expression | Value | File:line | Meaning | Sens. |
@@ -317,9 +317,9 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | `CRITICAL_HP` | 20 | `robot/rat/MinerStrategy.java:16` | carrying cheese with hp ≤ 20 → go home | L |
 | `EARLY_EXPLORE_TURNS` | 20 | `MinerStrategy.java:17` | ray exploration window | M |
 | `EXPLORE_DIR_X/Y` | 16 rays | `MinerStrategy.java:19-20` | early exploration directions | L |
-| idle go-home | raw > 50 | `MinerStrategy.java:55` | go home when nothing else to do | M |
+| idle go-home | raw > 50 (`Tune.IDLE_GOHOME`) | `MinerStrategy.java` (`runTick`) | go home when nothing else to do | flat (TN): +0.40 [−0.29, +1.14] pp per +25 (s1), +0.20 [−0.29, +0.72] (s2) |
 | explore-only phase | known==0 or (known ≤ 2 and t ≤ W·H/8) | `MinerStrategy.java:65-66` | before mining starts | M |
-| explore probability | `p = 0.2` | `MinerStrategy.java:70` | share of trips that explore | **H** |
+| explore probability | **0.6** (`Tune.EXPLORE_P`; 0.2 before TN) | `MinerStrategy.java` (`runTick`) | share of trips that explore once mines are known | **H, measured** (TN: pp per step, 95% CI by map; docs/evaluation.md "Tuning constants"): +1.4 pp per +0.1 at 0.2 (s1), +1.3 at 0.3 (s2); against main on fresh seeds, 760 cells each: 0.3 +0.001, 0.4 +0.022, 0.5 +0.016 and +0.020, 0.6 **+0.036 and +0.034**, 0.7 +0.024, 0.8 +0.026, 1.0 +0.018 (parabola peak 0.70). The gain is on ≥ 8-mine maps (0.6: +0.039 there), ≤ 4-mine maps flat. Our share of all cheese delivered by r500 +1.0 pp (+1.5 on ≥ 8 mines): explorers pick the unpicked cheese of w1-classes §3.2 |
 | mine traverse radius | d² ≤ 2 | `MinerStrategy.java:77` | arrival at a mine | L |
 | near-king radius | d² ≤ 49 | `MinerStrategy.java:84` | distance origin for mine weights | M |
 | king-on-mine exclusion | d² ≤ 2 | `MinerStrategy.java:94` | skip the king's mine | M |
@@ -328,7 +328,7 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | explore resamples | 6 | `MinerStrategy.java:123` | bytecode guard | L |
 | explore king exclusion | d² ≤ 36 | `MinerStrategy.java:132` | don't explore near home | L |
 | early ray distance | `[⌈len/2⌉, len]` | `MinerStrategy.java:165-168` | spread of the opening | L |
-| go-home thresholds | 25→10, 100→25, 225→40, 400→60, 900→80, else 105 | `MinerStrategy.java:181-186` | trip length vs slowdown | **H** |
+| go-home thresholds | 25→10, 100→25, 225→40, 400→60, 900→80, else 105, each × `Tune.GOHOME_PCT`/100 | `MinerStrategy.java` (`shouldGoHome`) | trip length vs slowdown | flat (TN): +0.20 [−0.72, +1.07] pp per +30% (s1), +0.43 [−0.38, +1.30] (s2) |
 | no-cheese-seen rule | `2·raw ≥ thresh && lastSeen < t−3` | `MinerStrategy.java:189` | return early when the mine is dry | M |
 | low-global rules | g < 100 & raw ≥ 20; g < 30 & raw > 0 | `MinerStrategy.java:192-193` | emergency delivery | M |
 | health-return table | raw ≥ 150/100/50/20 → hp ≤ 70/60/50/40 | `MinerStrategy.java:206-210` | save carried cheese | M |
@@ -338,7 +338,7 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | traverse give-up | raw < 20 && stuck && t%25 == 0 | `TraverseStrategy.java:44` | abandon target | L |
 | `FORMATION_TIMEOUT` | 120 (effectively a 1-tick pause, §3) | `robot/rat/FormationStrategy.java:19,30` | rat-side formation timeout | M |
 | `MIN_ALLIES_FOR_FORMATION` | 7 (visible + squeakers) | `FormationStrategy.java:20,79` | start stepping onto the centre | M |
-| `MAX_DIST_TO_JOIN` | 625 (25 tiles) | `FormationStrategy.java:21,116` | recruiting radius | **H** |
+| `MAX_DIST_TO_JOIN` | 625 = `Tune.JOIN_DIST`² (25 tiles) | `FormationStrategy.java` | recruiting radius | flat (TN): +0.04 [−0.51, +0.60] pp per +5 tiles (s1) |
 | formation cheese floor | global < 50 → stop | `FormationStrategy.java:31` | can't afford upgrade | L |
 | formation go-home | raw ≥ 40 and home ≥ 25 d² closer | `FormationStrategy.java:60` | deliver first | M |
 | become-king radius | d² ≤ 8, or anywhere after **t > 1900** | `FormationStrategy.java:68` | late-game king | M |
@@ -351,16 +351,16 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 ### Kings
 | Name / expression | Value | File:line | Meaning | Sens. |
 |---|---|---|---|---|
-| `defaultThresh` | 40 | `robot/king/KingSpawningStrategy.java:70` | **normal rat cap of 16** | **H** |
-| small-map thresh | 30 if W·H ≤ 900 and t < 400 | `KingSpawningStrategy.java:71-72` | cap of 12 on small maps | M |
+| `defaultThresh` | 40 (`Tune.SPAWN_CAP`) | `robot/king/KingSpawningStrategy.java` | **normal rat cap of 16** | **H** (not tuned: its −10 side lowers E2's mine-poor cap into E2's −8 arm) |
+| small-map thresh | 30 (`Tune.SPAWN_CAP_SMALL`) if W·H ≤ 900 and t < 400 | `KingSpawningStrategy.java` | cap of 12 on small maps | M |
 | mine-poor thresh | −10 if W·H ≤ 1600 and `minMines` < `RICH_MINES` = 5 | `KingSpawningStrategy.java:22-77` | cap 4 lower on mine-poor maps (§5.2, measured) | **H** |
-| cheese-scaled thresh | `global/10 + 10` | `KingSpawningStrategy.java:79` | cap when poor | M |
-| very-rich line | `global ≥ 3000 − 3t/4` → 1000 | `KingSpawningStrategy.java:80-81` | unlimited spawn | **H** |
-| rich line | `global ≥ 2000 − t/2 && t ≥ 100` → 80 (32 rats) | `KingSpawningStrategy.java:82-83` | doubled cap | **H** |
+| cheese-scaled thresh | `global/10 + 10` (`Tune.SPAWN_CHEESE_DIV`) | `KingSpawningStrategy.java` | cap when poor | flat (TN): −0.13 [−0.69, +0.50] pp per +3 (s1) |
+| very-rich line | `global ≥ 3000 − 3t/4` → 1000 (`Tune.SPAWN_VRICH`) | `KingSpawningStrategy.java` | unlimited spawn | load-bearing (AB); its number flat (TN): +0.25 [−0.45, +0.95] pp per +750 (s1) |
+| rich line | `global ≥ 2000 − t/2 && t ≥ 100` → 80 (32 rats) (`Tune.SPAWN_RICH`) | `KingSpawningStrategy.java` | doubled cap | load-bearing (AB); its number flat in wins (TN): −0.06 [−1.07, +0.86] pp per +500 (s1), though a lower line raises our share of cheese delivered by r500 (−0.74 pp of share per +500) |
 | `threshForNumRats(x)` | `⌊(x−1)/4⌋·10 + 10` | `KingSpawningStrategy.java:18-20` | cost of the x-th rat | – |
 | cat, no allies | +10 | `KingSpawningStrategy.java:86-87` | defend the king vs cats | M |
 | panic spawn | +10 (+10 if hp ≤ 100), ≥ 5 rounds apart, needs a visible enemy and hp loss | `KingSpawningStrategy.java:111-118` | reinforce when attacked | M |
-| spawn floor | `global ≥ 100 || cost == 10` | `KingSpawningStrategy.java:121` | starvation guard (weak) | M |
+| spawn floor | `global ≥ 100 || cost == 10` (`Tune.SPAWN_FLOOR`) | `KingSpawningStrategy.java` | starvation guard (weak) | small (TN): −0.41 [−0.82, +0.01] pp per +50 (s1), −0.36 [−0.79, +0.06] (s2); 50 added to EXPLORE_P 0.4: −0.002 [−0.007, +0.003] (s3) |
 | spawn ring | Chebyshev 2, tile nearest the target | `KingSpawningStrategy.java:78-87` | spawn side | L |
 | taboo box | <40: [1/3,2/3]; <50: [3/7,4/7]; else [4/9,5/9] | `KingMiningStrategy.java.jinja2:29-44`; duplicated in `KingFormationCoordinatorStrategy.java:44-59` | king walk target; formation mine exclusion | M |
 | cheese chase box | Chebyshev ≤ 4 of the mine | `KingMiningStrategy.java.jinja2:133` | king pickup area | L |
@@ -369,12 +369,12 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | near-mine radius | d² < 5, cheese within d² 13 | `KingMiningStrategy.java.jinja2:256,260` | local cheese chase | L |
 | known-mine scan | first 10 | `KingMiningStrategy.java.jinja2:283`; `KingFormationCoordinatorStrategy.java:228` | bytecode guard (later mines ignored) | M |
 | mine dedup radius | d² < 25 | `comms/GlobalArray.java:569` | one king per mine | M |
-| `MINE_THRESHOLDS` | {3, 5, 9, 15, 1e7} indexed by #kings | `robot/king/KingFormationCoordinatorStrategy.java:13,216` | known mines needed for the next king, until round 1200 | **H** |
+| `MINE_THRESHOLDS` | {3, 5 (`Tune.MINES_KING2`), 9, 15, 1e7} indexed by #kings | `robot/king/KingFormationCoordinatorStrategy.java` | known mines needed for the next king, until round 1200 | the second king's 5 flat (TN): +0.76 [−0.01, +1.51] pp per +2 (s1), −0.06 [−1.06, +0.65] (s2) |
 | `UPGRADE_COST`+100 | global ≥ 150 to start | `KingFormationCoordinatorStrategy.java:14,207` | formation cheese gate (outside the lock-in, and the lone-king refill after round 1200) | L |
-| `LOCK_IN_ROUND`, `KING_TARGET` | 800, 3 | `KingFormationCoordinatorStrategy.java:21-22,159` | lock-in window and king target | **H** |
+| `LOCK_IN_ROUND`, `KING_TARGET` | 800 (`Tune.LOCK_IN_ROUND`), 3 | `KingFormationCoordinatorStrategy.java` | lock-in window and king target | **H**; the round flat (TN): +0.26 [−0.24, +0.71] pp per +200 (s1) |
 | `LOCK_IN_MIN_RATS` | 12 | `KingFormationCoordinatorStrategy.java:23,175,233` | lock-in and cooperation-king rat floor (start; lock-in abort) | M |
-| `COOP_ROUND` | 100 | `KingFormationCoordinatorStrategy.java:37,174` | from it to `LOCK_IN_ROUND`, a team still in cooperation with one king forms a second on our side; from the lock-in, under the lock-in's rules | **H** |
-| `LOCK_IN_MIN_CHEESE` | 1000 | `KingFormationCoordinatorStrategy.java:27,207` | lock-in cheese gate before round 1200 | **H** |
+| `COOP_ROUND` | 100 (`Tune.COOP_ROUND`) | `KingFormationCoordinatorStrategy.java` | from it to `LOCK_IN_ROUND`, a team still in cooperation with one king forms a second on our side; from the lock-in, under the lock-in's rules (KF) | not confirmed (TN): −0.86 [−1.58, −0.24] pp per +50 at 100 (s1), but +0.15 [−0.55, +0.86] per +25 at 50 (s2) and 50 added to EXPLORE_P 0.4: +0.003 [−0.009, +0.020] (s3) |
+| `LOCK_IN_MIN_CHEESE` | 1000 (`Tune.LOCK_IN_MIN_CHEESE`) | `KingFormationCoordinatorStrategy.java` | lock-in cheese gate before round 1200 | flat (TN): +0.15 [−0.29, +0.60] pp per +400 (s1), +0.18 [−0.21, +0.57] (s2) |
 | `MAX_FORMATION_DIST_TO_MINE_SQ` | 25 (unused) | `KingFormationCoordinatorStrategy.java:15` | dead | – |
 | `COORDINATION_TIMEOUT` | 120 | `KingFormationCoordinatorStrategy.java:16,332` | king-side formation timeout | M |
 | `MIN_DIST_FROM_KINGS_SQ` | `max(400, W·H/5)` | `KingFormationCoordinatorStrategy.java:41,254` | new king far from existing ones | **H** |
@@ -394,9 +394,9 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 |---|---|---|---|---|
 | cat near king | d² ≤ 36 → fight | `robot/rat/combat/CombatStrategy.java:446` (tmpl `:455`) | defend the king vs cats | **H** |
 | cat hunt gate | t > 500, allCheese > 1000, no enemies, raw == 0, ≥ 16 rats, id%3==0 or t ≥ 1800 | `CombatStrategy.java:447` (tmpl `:456`) | cat-damage share | **H** |
-| bite bonus | +2 damage for 2 cheese when allCheese ≥ 300 | `CombatStrategy.java.jinja2:441` | cheese sink | M |
-| trap gate | rat cost ≥ 70 or raw ≥ 20 | `robot/rat/combat/moves/TryTrap.java.jinja2:66` | cheese sink | M |
-| dirt pathing | (t ≥ 100 && g ≥ 1500) or g ≥ 3000 (sticky); also t ≤ 2 at init | `Pathfinder.java.jinja2:22,469` | rats dig through dirt | M |
+| bite bonus | +2 damage for 2 cheese when allCheese ≥ 300 (`Tune.BITE_BONUS_CHEESE`) | `CombatStrategy.java.jinja2` (`getBiteDamage`) | cheese sink | flat (TN): −0.07 [−0.54, +0.44] pp per +150 (s1) |
+| trap gate | rat cost ≥ 70 or raw ≥ 20 (`Tune.TRAP_RAW`, also the band trap's raw gate; band from global ≥ `Tune.BAND_GLOBAL_CHEESE` = 400) | `robot/rat/combat/moves/TryTrap.java.jinja2` | cheese sink | raw gate not confirmed (TN): −1.23 [−1.92, −0.58] pp per +10 at 20 (s1), +0.06 [−0.27, +0.38] per +5 at 10 (s2), 10 added to EXPLORE_P 0.4: −0.005 [−0.017, +0.007] (s3); band global flat: +0.20 [−0.33, +0.71] per +200 (s1) |
+| dirt pathing | (t ≥ 100 && g ≥ 1500 (`Tune.DIRT_CHEESE`)) or g ≥ 3000 (sticky); also t ≤ 2 at init | `Pathfinder.java.jinja2` (`Config.allowDirt`) | rats dig through dirt | flat (TN): +0.04 [−0.42, +0.50] pp per +500 (s1) |
 | panic squeak | cat within d² < 25 of king; 4-round memory | `comms/Squeaker.java:173-174` | lure cat | M |
 | troll | `id%10==7` | `CombatStrategy.java:157` | combat.md | L |
 
@@ -409,7 +409,7 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 3. **King safety against cats.** *Evidence:* on `peaceinourtime` the king died in cooperation, where only cats deal damage, with 28 rats and 1700 cheese, in all 3 runs (deterministic auto-loss). King #2 on `far` also died to a cat. The king walks toward the centre first (`moveTowardCenter`). Mine choice ignores cat paths. The coordinator's cat abort is dead code. The panic squeak creates phantom enemies. *Try:* keep kings away from the cat's last seen position and heading, bring more rats to cats near the king (radius 36 → 64?), fix the panic-squeak header, and stop moving toward the centre once any mine is known.
 4. **Cat damage share.** *Evidence:* hunting is gated to t > 500, > 1000 cheese, ≥ 16 rats and `id%3==0` (`CombatStrategy.java:447`). Cat traps go down only in coop, from in front of the cat. Cat damage is 50% of the score in coop and 30% in backstab. All 3 games that reached round 2000 were decided on points, and the `mining` mirror was lost on points despite 3 kings and 144 rats. *Try:* start hunting earlier or use a larger fraction when not in contact; place cat traps along the cat's path; this matters most against passive opponents.
 5. **Directed pressure on the enemy king.** *Evidence:* 15 of 18 games ended by king kill, yet nothing seeks the enemy king. Symmetry is computed and shared (slot 1) but only used for comms, and `Util.guessEnemyLocs` is unused. *Try:* when ahead (more rats or kings), send a group to the symmetric spawn or the last seen enemy king. Risky: defending near your own king (the `shouldFight` king-radius rules) may be the source of strength.
-6. **Mine targeting and logistics.** The `√d²` weight favours far mines (`MinerStrategy.java:100-102`). 20% exploration never ends (`:70`). The go-home thresholds go up to 105 raw, which is a ×2 slowdown. Rats skip the king's mine. *Try:* prefer near or safe mines, decay exploration once `localTracker` is mostly seen, tune the threshold table, and consider spawn-tile-aware deliveries.
+6. **Mine targeting and logistics.** The `√d²` weight favours far mines (`MinerStrategy.java:100-102`). Exploration never ends (60% of trips since TN, which measured +3.5 pp for 20% → 60%, §9). The go-home thresholds go up to 105 raw, which is a ×2 slowdown. Rats skip the king's mine. *Try:* prefer near or safe mines, decay exploration once `localTracker` is mostly seen, tune the threshold table, and consider spawn-tile-aware deliveries.
 7. **Backstab policy.** First contact causes an instant backstab, and every combat entry ignores `rc.isCooperation()`. Against awubot this is symmetric. Against coop-farming teams, staying cooperative while ahead on cat damage could win on points. Low priority for beating awubot.
 8. **Endgame scoring.** At t ≥ 1800 the only special logic is: hunt cats with everyone, relaxed formation (1 king only), and becoming king anywhere after round 1900 (only rats in an active formation). *Try:* secure a 2nd king before round 1100; in the last ~50 rounds bank all raw cheese (transfers count, carried raw does not); stop non-essential spending to win tiebreak 1.
 9. **Cheap bug fixes (unknown impact; run A/B tests).**

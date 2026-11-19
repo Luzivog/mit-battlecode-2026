@@ -308,6 +308,29 @@ every constant:
   checks them (a winner of 16 is biased upward) and asks whether to go further. Then a dose-response on the
   confirmed ones, and the chosen vector goes through the protocol above on a seed base the search never used.
 
+**The first campaigns** (19 Nov, main `9bfd416` with MC; every campaign on its own seed base; effects in pp of
+score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
+
+| campaign | design | result |
+|---|---|---|
+| s1, seed base 61001 | 16 constants ± 1 step around main, 32 variants × 285 cells | three \|z\| ≥ 2: `EXPLORE_P` 0.2 ± 0.1 +1.43 [+0.59, +2.26] (+2.55 on ≥ 8-mine maps, flat on the rest), `TRAP_RAW` 20 ± 10 −1.23 [−1.92, −0.58], `COOP_ROUND` 100 ± 50 −0.86 [−1.58, −0.24]; the other 13 within ±0.8 (12 within ±0.5); curvature (variants' mean − main) −0.018 [−0.046, +0.007] |
+| s2, seed base 61002 | the three moved one step (0.3, 10, 50) as the centre; 8 constants ± a step around it, 16 variants + the centre × 475 cells | `EXPLORE_P` replicated: +1.30 [+0.82, +1.83] at 0.3; `TRAP_RAW` (+0.06 per +5) and `COOP_ROUND` (+0.15 per +25) did not; the centre against main +0.005 [−0.022, +0.035], where s1's linear model said +0.035 |
+| s3, seed base 61003 | `EXPLORE_P` 0.3, 0.4, 0.5, 0.6 from main, and 0.4 plus each other candidate, 7 points × 760 cells | against main: 0.3 +0.001, 0.4 +0.022 [+0.005, +0.041], 0.5 +0.016, 0.6 +0.036 [+0.015, +0.057]; added to 0.4 (paired with it): `COOP_ROUND` 50 +0.003 [−0.009, +0.020], `SPAWN_FLOOR` 50 −0.002 [−0.007, +0.003], `TRAP_RAW` 10 −0.005 [−0.017, +0.007] |
+| s4, seed base 61004 | `EXPLORE_P` 0.5, 0.6, 0.7, 0.8, 1.0, 5 points × 760 cells | 0.5 +0.020, **0.6 +0.034 [+0.011, +0.056]**, 0.7 +0.024, 0.8 +0.026, 1.0 +0.018; parabola peak 0.70; past 0.6 the 5–7-mine maps fall off (1.0: −0.016 there), ≥ 8-mine maps hold (+0.039 to +0.044) |
+
+- One constant moved: `EXPLORE_P` 0.2 → 0.6, measured +0.036 and +0.034 against main on two seed bases. Its
+  mechanism shows in the diagnostic: our share of all cheese delivered rises by 1.0 pp at r500 and 1.2 pp at r1000
+  (+1.5 pp at r500 on ≥ 8-mine maps; `fit --metric share500`), the unpicked cheese of docs/theory/w1-classes.md §3.2.
+- Two of s1's three selected effects did not replicate: with 16 constants, |z| ≥ 2 picks about one flat constant by
+  chance, and the chosen ones read high. Trust a constant once a second seed base agrees.
+- Single-constant variants share 4-13% of their games with main (identical outcome), multi-constant ones 0-8%; the
+  paired diff between two single-constant variants is far tighter than either against main (`SPAWN_FLOOR` 50 vs
+  without: ±0.005 on 760 cells), because a rarely-binding constant leaves most games untouched.
+- Cost of s1-s4: 61 variant builds (about 65 min of one build slot) and about 56,000 games on Imperial; each
+  campaign ran 35-50 min from its first build to its last result. Transient SSH refusals on the login node failed
+  some batches in s2; `tools/games retry` and a second `tools/tune play` (it plays again a variant short of its cells)
+  filled them from the cache.
+
 ## Measured: the native engine (2026-11-19)
 
 **One test on all four**: `tools/games ab challenger awubot --test harm --pool goal --no-cache` (challenger = main's,

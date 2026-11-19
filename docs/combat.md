@@ -446,7 +446,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | funny-target turn | `bfsIters <= 5` | `CombatStrategy:201` | Turn toward a squeaked enemy | L |
 | troll selector | `id % 10 == 7`, once per lifetime | `CombatStrategy:183` | §3.4 | L |
 | threat penalty | −100 | `CombatStrategy:367,373,379` | Grab-threat cost, binary | H |
-| bite damage | 10 if allCheese < 300 else 12 | `CombatStrategy:441-442` | Damage and cheese per bite (2 cheese for +2) | H |
+| bite damage | 10 if allCheese < 300 (`Tune.BITE_BONUS_CHEESE`) else 12 | `CombatStrategy.getBiteDamage` | Damage and cheese per bite (2 cheese for +2) | H; the 300 flat (TN): −0.07 [−0.54, +0.44] pp per +150 (strategy.md §9) |
 | cheese per +k damage | `(k−1)²+1` | `CombatStrategy:484-488` | Exact engine minimum, do not change | – |
 | shouldFight: cat near king | dist²(cat, king) ≤ 36 | `CombatStrategy:455` | King defence vs cats | M |
 | shouldFight: cat hunt | time>500, allCheese>1000, numEnemies==0, raw==0, rats≥16, id%3==0 or time≥1800 | `CombatStrategy:456` | Proactive cat damage (points) | M |
@@ -519,7 +519,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 
 | Name | Value | Location | Meaning | Sens. |
 |---|---|---|---|---|
-| global trap mode | ratCost ≥ 70 (≥ 24 rats) or raw ≥ 20 | `moves/TryTrap:66` | Trap any approaching enemy | M |
+| global trap mode | ratCost ≥ 70 (≥ 24 rats) or raw ≥ 20 (`Tune.TRAP_RAW`) | `moves/TryTrap.globalShouldRun` | Trap any approaching enemy | M; the 20 not confirmed by TN (strategy.md §9) |
 | "strong" enemy | (hp ≥ 80 and hp ≥ myHp+bite) or hp == 100 | `:71` | Otherwise trap only for these | M |
 | early-exit scan | nearest 3 | `:79` | | L |
 | weights scan | nearest 5 enemy rats | `:164` | | L |

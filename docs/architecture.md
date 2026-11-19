@@ -63,7 +63,7 @@ isLastMove=true; executeGlance()           turn ±90° if the turn cooldown is u
 3. `GoHomeStrategy`: follow breadcrumbs to a king and transfer cheese.
 4. `CheeseStrategy`: walk to the largest visible pile it can reach (`Pathfinder.computePickable`).
 5. If raw cheese > 50: force GoHome.
-6. Loop `TraverseStrategy(target, 2)` until one accepts. The target is an unexplored 3×3 unit (`MapManager.localTracker.sampleUnseenUnitCenter()`) or a known mine weighted by distance (20% explore once mines are known).
+6. Loop `TraverseStrategy(target, 2)` until one accepts. The target is an unexplored 3×3 unit (`MapManager.localTracker.sampleUnseenUnitCenter()`) or a known mine weighted by distance (60% explore once mines are known, `Tune.EXPLORE_P`).
 
 `ExploreStrategy` and `MicroTestStrategy` are not reachable from `BabyRat`.
 

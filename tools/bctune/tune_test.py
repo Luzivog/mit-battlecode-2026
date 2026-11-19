@@ -103,8 +103,10 @@ class Commits(unittest.TestCase):
                         os.environ[k] = v
 
 
-def fake_runs(games_data: Path, c: dict, effects: dict, maps: int, passes: int, seed_base: int, rng) -> None:
-    """Writes one results.jsonl a variant: each game won with p = base(map) + sum effects * x, ref at x = 0."""
+def fake_runs(games_data: Path, c: dict, effects: dict, maps: int, passes: int, seed_base: int, rng,
+              split: bool = False) -> None:
+    """Writes one results.jsonl a variant: each game won with p = base(map) + sum effects * x, ref at x = 0; the ref's
+    games in every variant's run (a paired run), or with SPLIT once in a run of its own (tools/tune play)."""
     names = c["factors"]
     base_p = {f"m{i}": 0.55 + 0.4 * (i % 5) / 4 for i in range(maps)}
     ref_games = []
@@ -119,13 +121,22 @@ def fake_runs(games_data: Path, c: dict, effects: dict, maps: int, passes: int, 
         lines = []
         for m, s, seat, won in ref_games:
             other = "AB".replace(seat, "")
-            lines.append({"role": "r", "map": m, "seed": s, "seat": seat, "winner": seat if won else other})
+            if not split:
+                lines.append({"role": "r", "map": m, "seed": s, "seat": seat, "winner": seat if won else other})
             p = base_p[m] + sum(effects.get(n, 0) * x for n, x in zip(names, v["x"]))
             w = rng.random() < max(0.0, min(1.0, p))
             lines.append({"role": "o", "map": m, "seed": s, "seat": seat, "winner": seat if w else other})
         (d / "results.jsonl").write_text("".join(json.dumps(x) + "\n" for x in lines))
         (d / "state.json").write_text(json.dumps({"status": "done"}))
         c["runs"].append({"variant": v["label"], "id": rid, "pool": "goal", "seed_base": seed_base,
+                          "cells": maps * passes, "ref": "challenger@x", "engine": "1.2.6"})
+    if split:
+        d = games_data / "runs" / f"run-{c['name']}-ref-{seed_base}"
+        d.mkdir(parents=True)
+        lines = [{"role": "o", "map": m, "seed": s, "seat": seat, "winner": seat if won else "AB".replace(seat, "")}
+                 for m, s, seat, won in ref_games]
+        (d / "results.jsonl").write_text("".join(json.dumps(x) + "\n" for x in lines))
+        c["runs"].append({"variant": tune.REF, "id": d.name, "pool": "goal", "seed_base": seed_base,
                           "cells": maps * passes, "ref": "challenger@x", "engine": "1.2.6"})
 
 
@@ -171,6 +182,29 @@ class Fit(unittest.TestCase):
         self.assertLess(abs(f["curvature"]["est"]), 0.03)
         self.assertLess(abs(f["centre"]["c"][0]), 0.04)
         self.assertEqual(len(f["variants"]), 17)
+
+    def test_reference_in_its_own_run_reads_the_same(self):
+        names = ["A", "B", "C"]
+        fits = []
+        for split in (False, True):
+            c = {"name": f"split{split}", "factors": names, "variants": [], "runs": [],
+                 "params": {n: {"type": "int", "value": 10, "step": 1} for n in names}}
+            for i, x in enumerate(tune.screen_design(len(names))):
+                c["variants"].append({"label": f"v{i:02d}", "x": x, "values": {}})
+            with tempfile.TemporaryDirectory() as tmp:
+                old = tune.GAMES_DATA
+                tune.GAMES_DATA = Path(tmp)
+                try:
+                    fake_runs(Path(tmp), c, {"B": 0.05}, maps=30, passes=4, seed_base=1, rng=random.Random(5),
+                              split=split)
+                    fits.append(tune.fit_campaign(c, None, boot=200))
+                finally:
+                    tune.GAMES_DATA = old
+        self.assertEqual(fits[0]["cells"], fits[1]["cells"])
+        self.assertAlmostEqual(fits[0]["ref_score"], fits[1]["ref_score"])
+        for e0, e1 in zip(fits[0]["effects"], fits[1]["effects"]):
+            self.assertAlmostEqual(e0["effect"], e1["effect"])
+        self.assertAlmostEqual(fits[0]["variants"][0]["diff"], fits[1]["variants"][0]["diff"])
 
     def test_path_fit_finds_the_peak(self):
         rng = random.Random(3)

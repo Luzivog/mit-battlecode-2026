@@ -21,6 +21,7 @@ DATA = Path(os.environ.get("TUNE_DATA", "~/battlecode26-data/tune")).expanduser(
 GAMES_DATA = Path(os.environ.get("BCGAMES_DATA", "~/battlecode26-data/games")).expanduser()
 GAMES = ROOT / "tools" / "games"
 POOLS_DIR = GAMES_DATA / "pools"
+REF = "ref"  # the label of the reference's own runs in a campaign
 
 LINE = re.compile(r"^(?P<head>\s*public static final (?P<type>int|double) (?P<name>[A-Z][A-Z0-9_]*) = )"
                   r"(?P<value>-?[0-9.]+)(?P<tail>; // tune: (?P<step>[0-9.]+) \[(?P<lo>-?[0-9.]+), (?P<hi>-?[0-9.]+)\]"
@@ -158,6 +159,8 @@ def new_campaign(name: str, rev: str, kind: str) -> dict:
 
 
 def add_variant(c: dict, label: str, values: dict, x: list | None = None, t: float | None = None) -> dict:
+    if label == REF or any(v["label"] == label for v in c["variants"]):
+        raise TuneError(f"label {label} is taken")
     base_text = tune_text(c["base"])
     changed = {k: v for k, v in values.items() if v != c["params"][k]["value"]}
     text = render(base_text, changed)
@@ -293,8 +296,13 @@ def cmd_play(a) -> int:
         todo = [v for v in todo if v["label"] in a.only.split(",")]
     print(f"campaign {a.name}: {len(todo)} variants to play against awubot, ref {ref}, pool {a.pool}, "
           f"seed base {a.seed_base}, {a.cells} cells", flush=True)
+    # The reference plays its cells once, in a plain run of its own, and the variants play without a reference: run
+    # in parallel, each variant's paired run would play the reference's games again until the cache held them.
+    if todo and not any(r["variant"] == REF and {k: r[k] for k in key} == key
+                        and run_cells(r["id"]) in ("running", a.cells) for r in c["runs"]):
+        todo = [{"label": REF, "bot": ref}] + todo
     for v in todo:
-        bot = f"challenger@{v['commit'][:12]}"
+        bot = v.get("bot") or f"challenger@{v['commit'][:12]}"
         if not a.local:
             # one build at a time: the host's other build slot stays free for other agents
             b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
@@ -302,7 +310,7 @@ def cmd_play(a) -> int:
             if b.returncode != 0:
                 print(f"{v['label']}: build failed:\n{b.stdout[-2000:]}{b.stderr[-2000:]}", file=sys.stderr)
                 return 1
-        cmd = [str(GAMES), "ab", bot, "awubot", "--ref", ref, "--pool", a.pool, "--seed-base", str(a.seed_base),
+        cmd = [str(GAMES), "ab", bot, "awubot", "--ref", "none", "--pool", a.pool, "--seed-base", str(a.seed_base),
                "--min-cells", str(a.cells), "--max-cells", str(a.cells), "--engine", a.engine]
         if not a.local:
             cmd.append("--remote")
@@ -334,6 +342,9 @@ def cmd_wait(a) -> int:
 def cmd_show(a) -> int:
     c = load(a.name)
     print(f"campaign {c['name']} ({c['kind']}), base {c['base'][:12]}, constants: {', '.join(c['factors']) or '-'}")
+    for r in c["runs"]:
+        if r["variant"] == REF:
+            print(f"  {REF:6s} {r['ref']}  {r['id']} [{run_status(r['id'])}]")
     for v in c["variants"]:
         runs = [f"{r['id']} [{run_status(r['id'])}]" for r in c["runs"] if r["variant"] == v["label"]]
         vals = ", ".join(f"{k} {fmt(c['params'][k]['type'], x)}" for k, x in v["values"].items()) or "base"
@@ -368,10 +379,9 @@ def metric_value(r: dict, metric: str) -> float:
     raise TuneError(f"unknown metric {metric} (win, shareN)")
 
 
-def cell_scores(run_id: str, metric: str = "win") -> tuple[dict, dict, int]:
-    """(ours, ref, same): (map, seed) -> score of the cell (the metric's mean over its two games; win: games won / 2),
-    for cells with both seats played; same = how many of our games have the reference's outcome on their cell and
-    seat."""
+def cell_scores(run_id: str, metric: str = "win") -> tuple[dict, dict, dict, dict]:
+    """(ours, ref, ours_outcomes, ref_outcomes): (map, seed) -> score of the cell (the metric's mean over its two
+    games; win: games won / 2), for cells with both seats played; (map, seed, seat) -> outcome() of every game."""
     games, outs = {"o": {}, "r": {}}, {"o": {}, "r": {}}
     with open(run_dir(run_id) / "results.jsonl") as f:
         for line in f:
@@ -381,9 +391,8 @@ def cell_scores(run_id: str, metric: str = "win") -> tuple[dict, dict, int]:
             # seat: the seat of the tested bot (ours, or the reference)
             games[r["role"]].setdefault((r["map"], r["seed"]), {})[r["seat"]] = metric_value(r, metric)
             outs[r["role"]][(r["map"], r["seed"], r["seat"])] = outcome(r)
-    same = sum(1 for k, o in outs["o"].items() if outs["r"].get(k) == o)
     ours, ref = ({cell: (g["A"] + g["B"]) / 2 for cell, g in games[role].items() if len(g) == 2} for role in "or")
-    return ours, ref, same
+    return ours, ref, outs["o"], outs["r"]
 
 
 def solve(m: list[list[float]], b: list[float]) -> list[float]:
@@ -431,11 +440,15 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
     keys = {(r["ref"], r["engine"]) for r in runs}
     if len(keys) > 1:
         raise TuneError(f"runs against different references or engines, pick with --seed-base/--pool: {sorted(keys)}")
-    by_variant, ref, same, ref_mismatch = {}, {}, {}, 0
+    by_variant, ref, outs, ref_outs, ref_mismatch = {}, {}, {}, {}, 0
     for r in runs:
-        ours, rs, n_same = cell_scores(r["id"], metric)
-        by_variant.setdefault(r["variant"], {}).update(ours)
-        same[r["variant"]] = same.get(r["variant"], 0) + n_same
+        ours, rs, o_out, r_out = cell_scores(r["id"], metric)
+        if r["variant"] == REF:  # the reference's own plain run
+            ours, rs, o_out, r_out = {}, ours, {}, o_out
+        else:
+            by_variant.setdefault(r["variant"], {}).update(ours)
+            outs.setdefault(r["variant"], {}).update(o_out)
+        ref_outs.update(r_out)
         for cell, s in rs.items():
             # the same game twice: equal unless two runs played it on CPUs whose Math stubs differ (engine/AGENTS.md)
             if ref.setdefault(cell, s) != s:
@@ -481,7 +494,8 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
         d, lo, hi = ci([s - r for s, r in zip(sums[lab], rsum)])
         out["variants"].append({"label": lab, "values": variants[lab]["values"], "t": variants[lab].get("t"),
                                 "score": sum(sums[lab]) / len(cells), "diff": d, "lo": lo, "hi": hi,
-                                "same": same[lab] / (2 * len(by_variant[lab]))})
+                                "same": sum(1 for k, o in outs[lab].items() if ref_outs.get(k) == o)
+                                / max(1, len(outs[lab]))})
     # the design's rows; a centre point (every x 0) is compared with them instead
     rows = [lab for lab in labels if variants[lab]["x"] is not None and any(variants[lab]["x"])]
     centres = [lab for lab in labels if variants[lab]["x"] is not None and not any(variants[lab]["x"])]

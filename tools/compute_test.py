@@ -290,3 +290,34 @@ def test_the_pooled_follower_adds_pieces_only_when_tasks_wait(monkeypatch: pytes
     assert look({}) and placed == [4]
     monkeypatch.setattr(R, "submitted", lambda jid: now - R.QUEUED_S - 1)
     assert look(queued) and placed == [4, 4]  # queued too long to wait for
+
+
+def test_content_keys_ignore_times_and_snapshots_repeat(tmp_path: Path) -> None:
+    """Shipped once a content: the files' key is their names, modes and bytes, not their times, and the same dirty
+    tree on the same HEAD is the same snapshot commit."""
+    import os
+    repo = tmp_path / "r"
+    (repo / "built" / "sub").mkdir(parents=True)
+    (repo / "built" / "sub" / "a").write_text("a\n")
+    key = J.content_key(repo, ["built"])
+    os.utime(repo / "built" / "sub" / "a", (1, 1))
+    assert J.content_key(repo, ["built"]) == key
+    (repo / "built" / "sub" / "a").write_text("b\n")
+    assert J.content_key(repo, ["built"]) != key
+    g = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run([*g, "init", "-q", "-b", "main"], check=True)
+    (repo / ".gitignore").write_text("built/\n")
+    (repo / "f").write_text("one\n")
+    subprocess.run([*g, "add", "f", ".gitignore"], check=True)
+    subprocess.run([*g, "commit", "-qm", "one"], check=True)
+    assert J.tree_commit(repo).commit == subprocess.run([*g, "rev-parse", "HEAD"], capture_output=True, text=True,
+                                                        check=True).stdout.strip()  # clean: HEAD itself
+    (repo / "f").write_text("two\n")
+    a, b = J.tree_commit(repo), J.tree_commit(repo)
+    assert a.commit == b.commit and a.key == b.key and a.subject == "the working tree"
+    (repo / "f").write_text("three\n")
+    assert J.tree_commit(repo).commit != a.commit
+    (tmp_path / "b.bundle").write_bytes(a.bundle())
+    heads = subprocess.run([*g, "bundle", "list-heads", str(tmp_path / "b.bundle")], capture_output=True, text=True,
+                           check=True).stdout
+    assert a.commit in heads and "refs/heads/main" in heads

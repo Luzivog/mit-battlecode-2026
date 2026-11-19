@@ -83,7 +83,8 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
     out["task_slots_now"] = {w: sum(o.slots for o in free[w]) for w in B.WHERES}
     try:
         pieces, _ = R.read_pool()
-        live = [p for p in pieces if float(str(p.get("age", 1e9))) <= R.LIVE_S]
+        live = [p for p in pieces if float(str(p.get("age", 1e9))) <= R.LIVE_S and isinstance(p.get("slots"), int)
+                and isinstance(p.get("running"), int)]
         opened = login(f"ls {REMOTE_POOL}/open 2>/dev/null | wc -l").strip()
         out["pool"] = {"pieces": len(live), "slots": sum(int(str(p["slots"])) for p in live),
                        "running": sum(int(str(p["running"])) for p in live), "open_runs": int(opened or 0),

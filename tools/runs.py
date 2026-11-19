@@ -399,7 +399,8 @@ def serving(s: Settings, pieces: list[dict[str, object]], clock: float) -> list[
     """The live pieces of PIECES that would take S's tasks (tools/piece.py's `serves` and `fits`)."""
     out = []
     for p in pieces:
-        if float(str(p.get("age", 1e9))) > LIVE_S or p.get("v") != POOL_V:
+        if float(str(p.get("age", 1e9))) > LIVE_S or p.get("v") != POOL_V or not isinstance(p.get("slots"), int) \
+                or not isinstance(p.get("running"), int):
             continue
         if (p.get("task_cpus"), p.get("task_mem_mb"), p.get("env")) != (s.task_cpus, s.task_mem_mb, s.env):
             continue

@@ -38,8 +38,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private static int MIN_DIST_FROM_KINGS_SQ;
 
-    private final KingMiningStrategy miningStrategy;
-
     private final int tabooMinX;
     private final int tabooMaxX;
     private final int tabooMinY;
@@ -64,9 +62,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         MONITORING
     }
 
-    public KingFormationCoordinatorStrategy(KingMiningStrategy aMiningStrategy) {
+    public KingFormationCoordinatorStrategy() {
         MIN_DIST_FROM_KINGS_SQ = Math.max(400, mapWidth * mapHeight / 5);
-        miningStrategy = aMiningStrategy;
 
         if (mapWidth < 40 && mapHeight < 40) {
             tabooMinX = mapWidth / 3;
@@ -263,7 +260,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         state = FormationState.COORDINATING;
 
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
-        GlobalArray.writeKingMineAssignment(kingId + 1, miningStrategy.getMineTarget());
 
         // indicate("FORMATION: coordinating at " + formationTarget);
     }

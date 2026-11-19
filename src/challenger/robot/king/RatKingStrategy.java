@@ -17,7 +17,7 @@ public class RatKingStrategy extends Strategy {
         spawningStrategy = new KingSpawningStrategy();
         combatStrategy = new KingCombatStrategy();
         miningStrategy = new KingMiningStrategy();
-        formationStrategy = new KingFormationCoordinatorStrategy(miningStrategy);
+        formationStrategy = new KingFormationCoordinatorStrategy();
     }
 
     @Override

@@ -118,7 +118,7 @@ Other dead or unused code: `KingFormationCoordinatorStrategy.isNormal/findFormat
 | 2–8 | kings | all | king positions and liveness; `nearestRatKing`; `countRatKings()` |
 | 9–13 | coordinator king; formed rat clears | rats, kings | formation target = formation mine (the same tile), coordinator id |
 | 14 `ALIVE_RAT_COUNT` | kings: `(cost−10)·2/5` = 4·⌊n/4⌋ | rats | cat-hunt gate `≥16` |
-| 16–20 | each king (own mine every tick); coordinator also writes slot `kingId+1` (`:245`) | kings | mine dedup: d² < 25 of a live king's assignment counts as taken; a dead king's slot is ignored (`getKingMineAssignment`) |
+| 16–20 | each king (own mine every tick) | kings | mine dedup: d² < 25 of a live king's assignment counts as taken; a dead king's slot is ignored (`getKingMineAssignment`) |
 | 21 `KING_EXPAND` | king stuck for 17 turns | `RobotTracker.reset` | `isKingExpanded(i)` tests `kingId`, not `i` (`GlobalArray.java:125`), so for rats (`kingId=-1`) it is always false |
 | 22–31 | spawning king | new rat | spawn record. **The 13-bit payload is free for role assignment.** |
 | 38–63 | kings | all | known mines, gossiped by rat squeaks within 4 tiles of a king |
@@ -223,7 +223,7 @@ IDLE → tryStartFormation (:199-243):
      first king's start than its mirror under every symmetry still possible) with max
      score = −50000·[d²(mine, any king) < max(400, W·H/5)] − Σ d²(mine, king) − d²(mine, centre) − 50·[d²(me, mine) > 400]
    if not lockIn and not coop and best score < −40000: no formation      // every candidate is too close to some king
-   write target = mine, coordinator = me; also writes my own mine into assignment slot kingId+1
+   write target = mine, coordinator = me
 COORDINATING: abort after 120 rounds, if global < 50, or on a backstab during a coop formation; go IDLE once the
    target is cleared.
 ```

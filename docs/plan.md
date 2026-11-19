@@ -822,6 +822,15 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   STARVE deaths: the bank is empty. CAT deaths: the far site wins 13 of 25, about +0.9 pp, too few to measure. Arms
   N, NF, T2F, CAT, CAT2 all H0. tminusten (seat-A king walks into the cat) is a single-map king-site case.
 
+- **W2 done** (2026-11-19; `docs/theory/w2-classes.md`): main against awubot on fresh cells (seed base 9201, 570
+  cells) 0.835; points losses −70% since W1, fights, starvation and cats unchanged; losses cluster on 15 maps. The
+  rich-map income gap is the centre mines (81% of it in long rich losses), taken by presence, not by fights or
+  efficiency, and what varies is awubot's commitment there (its random luck, which is also the seat effect). An
+  awubot that never takes centre cheese loses +0.080 [+0.044, +0.115] more (+0.130 on centre maps); our own presence
+  (three oracles with the centre mines given) gains nothing. Ranked: CD (deny awubot the centre: traps, carrier
+  interception, dirt; unpriced mechanism, ceiling +8 pp), CL (cat lane from one seat, ≤ 3 pp). Oracles must be read
+  against salted copies of main: main's draw on one seed base shifts every arm alike (§4.6 there).
+
 ## 5. Order to 90%
 
 ### 5.1 Loss model on `goal`

@@ -166,7 +166,8 @@ holdout results are slightly optimistic. Never tune a constant on those games.
 
 **Seeds and cells.**
 - With seed base 0 (the default), pass 0 plays each map's own seed: the official game. Later passes play seeds derived
-  from (base, pass, entry). A `map:seed` entry plays its seed in pass 0 whatever the base.
+  from (base, pass, entry). A `map:seed` entry plays its seed in pass 0 of seed base 0 only; any other base derives
+  every seed, so a confirmatory test on a fresh base never replays the cells an arm was chosen on.
 - Each pass visits every entry once, in a new fixed random order. An early stop has covered the pool once
   (`--min-cells` defaults to one pass).
 - Seeds are applied by rewriting the map file's seed field into a cached copy, so the official engine stays

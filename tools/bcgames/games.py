@@ -54,7 +54,8 @@ def cell_seed(map_name: str, seed_base: int, pass_no: int) -> int | None:
 def cells(entries: list[str], seed_base: int):
     """Round robin over the pool's entries, in a new fixed random order each pass, one seed per entry per pass.
 
-    An entry "map:seed" plays that seed in pass 0 (whatever the seed base) and derived seeds later."""
+    An entry "map:seed" plays that seed in pass 0 of seed base 0 (the cell it names) and derived seeds otherwise, so a
+    fresh seed base never replays the listed cells."""
     idx = 0
     pass_no = 0
     while True:
@@ -62,7 +63,7 @@ def cells(entries: list[str], seed_base: int):
         random.Random(f"{seed_base}:{pass_no}").shuffle(order)
         for e in order:
             m, fixed = pools.entry_map(e), pools.entry_seed(e)
-            seed = fixed if (fixed is not None and pass_no == 0) else cell_seed(e, seed_base, pass_no)
+            seed = fixed if (fixed is not None and pass_no == 0 and seed_base == 0) else cell_seed(e, seed_base, pass_no)
             yield {"idx": idx, "pass": pass_no, "map": m, "seed": seed}
             idx += 1
         pass_no += 1

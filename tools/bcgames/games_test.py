@@ -56,8 +56,12 @@ class ListPoolTest(unittest.TestCase):
             ok.write_text("tiny:5  # a cell\nDefaultSmall\n")
             entries = pools.list_pool(ok)
             self.assertEqual(entries, ["tiny:5", "DefaultSmall"])
-            first = [next(c) for c in [games.cells(entries, 9)] for _ in range(2)]
+            first = [next(c) for c in [games.cells(entries, 0)] for _ in range(2)]
             self.assertEqual({(c["map"], c["seed"]) for c in first if c["map"] == "tiny"}, {("tiny", 5)})
+            fresh = [next(c) for c in [games.cells(entries, 9)] for _ in range(2)]
+            tiny = [c["seed"] for c in fresh if c["map"] == "tiny"]
+            self.assertEqual(len(tiny), 1)
+            self.assertNotEqual(tiny[0], 5)  # a fresh seed base never replays the listed cell
             bad = Path(d) / "bad.txt"
             bad.write_text("tiny\nnosuchmap:3\n")
             with self.assertRaises(store.SetupError):

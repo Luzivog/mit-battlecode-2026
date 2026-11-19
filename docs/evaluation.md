@@ -174,7 +174,10 @@ the ref's own score on the same cells and the paired difference with its CI.
   - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. It prints the same JDK
     fingerprint as Ubuntu's 21.0.13 here, so remote and local games share one cache. Verified: remote games
     byte-identical to local ones (replay digests, Slurm and Condor).
-  - A test reads each task's results as they come back, and cancels the rest of the run when it stops.
+  - A test reads each task's results as they come back, and cancels the rest of the run when it stops. A task that
+    ended without a result (it failed on its node, or lost its machine at every start) fails its game as soon as its
+    folder comes back, and the game is played once more; a test never waits for a follower's cancels of pieces that
+    never started (a test's last 4 games waited 33 min for them on 19 Nov, `1119-180558-ab-2c02`).
   - A game runs 3-6x slower on a DoC CPU, but Condor offers ~2,500 games at once. Use it for `goal`, the gauntlet,
     calibrations and the holdout.
 

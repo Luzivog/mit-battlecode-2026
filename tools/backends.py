@@ -40,6 +40,7 @@ SLURM_CARDS = {"nvidia_a100_80gb_pcie": "a100", "nvidia_a40": "a40", "nvidia_a30
 SLURM_WHOLE_ASK, SLURM_TASK_CPUS = 9, 6
 CPU_JOB_MIN_MEM_MB = 1000  # the least memory a Slurm CPU job gets a CPU (a convention)
 USR1_LEAD_S = 120  # SIGUSR1 this long before --time: the job saves and requeues (job.sh)
+PROBE_S = 120.0  # a login of sbatch --test-only probes (one a size of each slot tried)
 
 
 @dataclass(frozen=True)
@@ -366,7 +367,7 @@ def slurm_sizes(slots: list[CpuSlot], least: int, est: int | None) -> list[CpuSl
 
     script = WILL_RUN + "".join(shlex.join(["ask", str(i), str(c), *cpu_slot_args(at(slot, c), est)]) + "\n"
                                 for i, slot in enumerate(slots) for c in rungs[i])
-    got = answered(login("bash -s", script.encode()))
+    got = answered(login("bash -s", script.encode(), timeout=PROBE_S))
     return [at(slot, got[i]) if i in got else None for i, slot in enumerate(slots)]
 
 
@@ -512,7 +513,7 @@ def cpucluster_grants(asks: list[tuple[str, int, int]], est: int) -> list[int | 
     script = WILL_RUN + "".join(shlex.join(["ask", str(i), str(x), "-p", part, f"--cpus-per-task={x}",
                                             f"--mem-per-cpu={mb}M", *checkpointed(est)]) + "\n"
                                 for i, (part, _, mb) in enumerate(asks) for x in rungs[i])
-    got = answered(login("bash -s", script.encode(), (CPU_HOST,)))
+    got = answered(login("bash -s", script.encode(), (CPU_HOST,), timeout=PROBE_S))
     return [got.get(i) for i in range(len(asks))]
 
 

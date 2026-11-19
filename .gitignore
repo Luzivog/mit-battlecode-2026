@@ -218,3 +218,6 @@ engine/.ninja_deps
 engine/.ninja_log
 # tools/games: what the Imperial backend ships to the nodes
 .bcgames-ship/
+
+# the fight lab's generated copy of challenger (tools/fightlab/mkcopy.py)
+src/flch/

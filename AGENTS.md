@@ -84,12 +84,14 @@ tools/compute wait ID --json                                # run in the backgro
 engine/build/bcx play SPECS.jsonl OUTDIR --no-indicators  # native games; same specs and results as tools/play
 tools/enginebench/enginebench score                        # the engine-speed eval (tools/enginebench/AGENTS.md)
 tools/tune params                                           # tune src/challenger/Tune.java's constants (tools/bctune/AGENTS.md)
+tools/book/book check                                       # the per-map table, src/challenger/book.jsonl (tools/book/AGENTS.md)
 ```
 
 Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot --pool POOL` (gain test: the branch against
 main, both playing awubot on the same cells) prints an ID; run `tools/games wait ID` in the background (exit 0 =
 passed; `wait --any ID...` for several), then `tools/games show ID` and `tools/games diff OLD NEW`. A gain smaller than
-the test's δ merges by the precision route (`docs/evaluation.md`, Protocol item 5). Add `--remote` to play on Imperial. Games play on
+the test's δ merges by the precision route (`docs/evaluation.md`, Protocol item 5). A change that wins only on
+some maps goes in the per-map table (`docs/evaluation.md`, "The book"): an entry per map and seat, each with its evidence. Add `--remote` to play on Imperial. Games play on
 the native engine (`engine/`) with a same-machine exactness check; `--backend java` plays on the official engine.
 Tests are the slow part of the work: run independent ones in parallel (Imperial has thousands of free slots),
 never block on one in the foreground, and ask for replays in the test (`--replays losses|all`) when you'll read them.

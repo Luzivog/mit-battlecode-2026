@@ -23,17 +23,17 @@ Python is stdlib only (it runs on remote nodes too). Data: `~/battlecode26-data/
 
 ## Invariants
 
-1. **A game is a pure function of its key, whichever engine plays it**: `Play.java`'s hash, the JDK fingerprint, engine jar, both bots' class
-   hashes and packages, map file hash, seed (`store.game_key`). The JDK fingerprint (`JdkPrint`) hashes the JDK
-   classes the instrumenter copies for bots. Ubuntu's 21.0.13 and DoC's Temurin 21.0.13+9 print the same, so the
-   local and remote caches are one. JVM flags, load and games-per-JVM are not in the key because
-   they change nothing (docs/testing.md "Runner": byte-identical replays). Anything that can change a game goes into
-   the key; anything else stays out of it. The engine that played a result is provenance (`backend`, `native_build`),
-   not part of the key: the native engine plays the official engine's games, and the exactness guard checks it on
-   every run (docs/evaluation.md "Engines").
-2. **The reference engine is the unmodified official jar.** `Play.java` calls the engine's own classes in `Server`'s order. The
-   only engine state it touches is `InternalRobot.rand` (the static cat RNG), reset to `new Random(1092)` before each
-   game, which is exactly a fresh JVM's state. `play_test.py` checks both: byte-identical replay with
+1. **A game is a pure function of its key, whichever engine plays it**: `Play.java`'s hash, the JDK fingerprint, engine
+   jar, both bots' class hashes and packages, map file hash, seed (`store.game_key`). The JDK fingerprint (`JdkPrint`)
+   hashes the JDK classes the instrumenter copies for bots. Ubuntu's 21.0.13 and DoC's Temurin 21.0.13+9 print the same,
+   so the local and remote caches are one. JVM flags, load and games-per-JVM are not in the key because they change
+   nothing (docs/testing.md "Runner": byte-identical replays). Anything that can change a game goes into the key;
+   anything else stays out of it. The engine that played a result is provenance (`backend`, `native_build`), not part of
+   the key: the native engine plays the official engine's games, and the exactness guard checks it on every run
+   (docs/evaluation.md "Engines").
+2. **The reference engine is the unmodified official jar.** `Play.java` calls the engine's own classes in `Server`'s
+   order. The only engine state it touches is `InternalRobot.rand` (the static cat RNG), reset to `new Random(1092)`
+   before each game, which is exactly a fresh JVM's state. `play_test.py` checks both: byte-identical replay with
    `battlecode.server.Main`, and a game played second in a JVM equals the same game alone.
 3. **Seeds are map variants**: `store.map_variant` patches the 4 bytes of `GameMap.randomSeed`. It equals the
    `src/battlecode` override's `-Pseed` on 1.2.5 (byte-identical replays, checked on 3 maps). The native engine takes

@@ -367,7 +367,8 @@ def drive(d: Path) -> int:
                  "games_per_min": round(counts["played"] / wall * 60, 2) if wall > 0 else 0,
                  "backends": {"native": counts["native"], "java": counts["java"],
                               "native_errors": counts["native_errors"]},
-                 "guard": dict(guard, pending=getattr(runner, "guards_pending", 0)), "tests": [t.summary() for t in tests]}
+                 "guard": dict(guard, pending=getattr(runner, "guards_pending", 0)),
+                 "tests": [t.summary() for t in tests]}
         if error:
             state["error"] = error
         write_json(d / "state.json", state)

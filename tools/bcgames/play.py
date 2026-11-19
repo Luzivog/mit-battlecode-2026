@@ -370,10 +370,11 @@ class Runner:
     def guard(self, job: Job, nres: dict, done) -> None:
         """Plays JOB on Java too (twice if the first run differs). Without on_guard the outcome is delivered once
         compared, with its verdict. With on_guard the native outcome is delivered now (guard verdict "pending") and
-        on_guard(job, guard) gets the verdict later; the caller must not conclude while `guards_pending` is above 0."""
+        on_guard(job, guard) gets the verdict later; the caller must not conclude while guards_pending is above 0."""
         twin = self.resolver.job(dict(job.spec), None)
         mirror = store.parse_bot(job.spec["a"])[0] == store.parse_bot(job.spec["b"])[0]
-        g = {"native_digest": nres.get("digest"), "native_build": nres.get("native_build"), "host": socket.gethostname()}
+        g = {"native_digest": nres.get("digest"), "native_build": nres.get("native_build"),
+             "host": socket.gethostname()}
         if self.on_guard is not None:
             with self.lock:
                 self.guards_pending += 1

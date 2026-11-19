@@ -372,6 +372,20 @@ def _build(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> 
     failed = bins / f"{key}.failed"
     if failed.exists() and time.time() - failed.stat().st_mtime < RETRY_FAILED_S:
         raise BuildError(failed.read_text())
+    for attempt in (1, 2):
+        try:
+            return _build_once(plan, eid, snap, ids, key)
+        except BuildError as e:
+            # a step killed by a signal (the host's OOM killer) says nothing of the build: try once more
+            if "failed (-" not in str(e) or attempt == 2:
+                failed.write_text(str(e))
+                raise
+            _say(f"build of {key} was killed ({str(e).splitlines()[0]}); trying again in 60 s")
+            time.sleep(60)
+
+
+def _build_once(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> None:
+    bins = NDATA / "bin"
     teams = [(b.pkg, classes_dir(b)) for b in plan.bots]
     log = bins / f"{key}.log"
     with gen_dir(plan.version, eid, ids) as gen:
@@ -384,15 +398,17 @@ def _build(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> 
         _say(f"building binary {key} ({len(teams)} bots: {', '.join(p for p, _ in teams[len(BASE):]) or 'base'}) "
              f"in {gen.name}; log {log}")
         t0 = time.time()
+        # the translator: serial GC (3.7 GB peak instead of 4.9), one at a time on the host (BCX_TRANSLATE_LOCK)
+        env = dict(os.environ, BCX_TRANSLATE_LOCK=str(NDATA / "translate.lock"), JAVA_TOOL_OPTIONS="-XX:+UseSerialGC")
         with open(log, "w") as lf:
             lf.write(" ".join(cmd) + "\n")
             lf.flush()
-            code, cpu = run_measured(cmd, stdout=lf, stderr=subprocess.STDOUT, cwd=src)
+            code, cpu = run_measured(cmd, stdout=lf, stderr=subprocess.STDOUT, cwd=src, env=env)
         wall = time.time() - t0
         if code != 0:
-            tail = log.read_text()[-3000:]
-            failed.write_text(f"build of {key} failed (exit {code}), {log}:\n{tail}")
-            raise BuildError(failed.read_text())
+            out = log.read_text()
+            out = out[out.find("\n") + 1:]  # the output, not the command
+            raise BuildError(f"build of {key} failed (exit {code}), {log}:\n{out[-3000:]}")
         tmp = Path(tempfile.mkdtemp(prefix=f".{key}.", dir=bins))
         try:
             subprocess.run(["strip", "-o", str(tmp / "bcx"), str(gen / "bcx")], check=True, capture_output=True)
@@ -403,7 +419,7 @@ def _build(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> 
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
         (gen / "last.json").write_text(json.dumps({"engine": eid, "bots": ids}))
-        failed.unlink(missing_ok=True)
+        (bins / f"{key}.failed").unlink(missing_ok=True)
         _say(f"built {key} in {wall:.0f} s ({cpu:.0f} CPU s)")
 
 

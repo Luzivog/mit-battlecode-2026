@@ -168,7 +168,14 @@ def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None,
     for b, classes in teams:
         cmd += ["--team", f"{b}={classes}"]
     print(f"build {version}: translating the engine and {len(teams)} bots", flush=True)
-    sh(cmd)
+    lock = os.environ.get("BCX_TRANSLATE_LOCK")  # one translation at a time on a host (each peaks at 4-5 GB)
+    if lock:
+        import fcntl
+        with open(lock, "a") as f:
+            fcntl.flock(f, fcntl.LOCK_EX)
+            sh(cmd)
+    else:
+        sh(cmd)
     vc = gen / "version.cpp"
     text = f'extern "C" const char bcx_engine_version[] = "{version}";\n'
     text += 'extern "C" const char* const bcx_bot_hashes[] = {' + ", ".join(

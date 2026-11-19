@@ -37,8 +37,9 @@ One JSON object a line (blank lines and `#` lines skipped):
 ## How it works
 
 - **Identity.** At round 1 the first king (`Book.init`, the first call after `Game.init`) keys on its team, the map's
-  size and its own location; on a key of a book map-seat it reads its r² 25 view (`senseNearbyMapInfos`) into three
-  121-bit masks (walls, dirt; bit `(dx + 5) * 11 + dy + 5`; mines would separate no map of `maps/` more) and compares them and its ID with the map file's.
+  size and its own location; on a key of a book map-seat it reads its r² 25 view (`senseNearbyMapInfos`) into two
+  121-bit masks (walls, dirt; bit `(dx + 5) * 11 + dy + 5`; mines separate no map of `maps/` further) and compares
+  them and its ID with the map file's.
   A match writes the map's id (1 + its index in `pools.GOAL`) to shared slot 15; every robot after it reads the slot
   at its first turn. A map-seat without entries is never keyed, so it costs a robot only the slot read (~15
   bytecodes once); a book map-seat's king pays the scan once (measured in docs/evaluation.md "The book").
@@ -48,8 +49,10 @@ One JSON object a line (blank lines and `#` lines skipped):
   Visible copies exist: the champion's catless maps (DefaultLarge, DefaultMedium, arrows) and testpathfinding,
   testpathfinding2 (whatsthecatdoin); an entry on those maps must name its twins.
 - **Settable constants.** `gen` drops `final` from the Tune.java constants some entry sets (only those): their uses
-  read a static field instead of an inlined constant, the same instruction count except where javac folded the
-  constant into an expression. `Book.apply` writes them in the robot's first turn, before any class that reads Tune
+  read a static field instead of an inlined constant: the same instruction count where the use was a plain constant,
+  more where javac folded it into an expression or a condition (`Tune.KING_HAND == 0 || !isRatKing` was `true`). Those
+  extra bytecodes run on every map, so a booked constant changes a few games off its map-seats too (measured: docs/
+  evaluation.md "The book"); prefer a switch whose use is a single read. `Book.apply` writes them in the robot's first turn, before any class that reads Tune
   is loaded, so a `static final` copied from one (`KingFormationCoordinatorStrategy`) gets the book's value too. Every
   other constant stays compile-time, so a main without entries has main's instructions.
 - `tools/tune` reads and rewrites both forms; a tuned value of a booked constant is its default off the book.

@@ -100,6 +100,13 @@ to the robot's team.
 - **Fast paths.** A hand-written replacement for a translated method lands only when the corpus agrees and a
   differential build (`BCX_CHECK_FASTPATH=1`) runs the translated original beside the fast path on every call over the
   corpus and finds no difference in results or state. The original stays in the build behind that flag.
+  - How: a patch class (`jvm/subst/bcx/subst/*_p.java`, a `patch` line in `natives.txt`) defines the method and an
+    `@Orig` stub `NAME$orig` with the same descriptor; the translator keeps the target's method under that name.
+    `bcx.subst.FastPath` holds the flag (`CHECK`), `fail` and the fast paths' natives (`runtime/natives.cpp`).
+    A patch class's name stands for its target in every patch, so one patch can call what another adds.
+  - The fast paths: `GameWorld` (the cats' BFS tables, the vision cone's tiles, `bfsHash`'s table reads),
+    `InternalRobot` (`canSenseLocation`, `getAllRatLocations`), `RobotControllerImpl.canSenseLocation`,
+    `BcxStateHash` (`rngState`, `tiles`, `bfsHash`), `MapLocation.toString`, `Unsafe`'s unaligned reads.
 
 ## Build, play, test
 
@@ -123,7 +130,7 @@ python3 engine/test/imperial.py report RUN         # its agreement and CPU time,
   built in (`--root REPO` or `BCX_ROOT` for another), then the jar's maps (`engine/build/maps-VERSION/`).
 - `build.py` fetches the jars and bdwgc once into `~/battlecode26-data/engine/`, compiles `engine/jvm`, translates
   into `~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/` (one per checkout, so worktrees build at once) and
-  compiles with ninja (`-j`, default 8). Needs clang, ninja, cmake, a JDK 21, zlib. The binary is static, so it runs
+  compiles with ninja (`-j`, default 8). Needs clang and lld (ThinLTO, -O3), ninja, cmake, a JDK 21, zlib. The binary is static, so it runs
   on any x86-64 Linux node.
 - `tools/play` and `tools/games` build their own binaries through `--team` (each bot from its own classes folder, in
   that order: a team's module index is its position), `--gen` and `--out` (docs/evaluation.md "Engines"), with

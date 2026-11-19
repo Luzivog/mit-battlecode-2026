@@ -1419,6 +1419,383 @@ public class CellTracker {
         }
     }
 
+    // Row y (0 <= y < mapHeight) of the seen cells and of the seen walls, bit x: whole-map floods (KingMiningStrategy).
+    public static long seenRow(int y) {
+        switch(y) {
+            case 0 -> {
+                return seen0;
+            }
+            case 1 -> {
+                return seen1;
+            }
+            case 2 -> {
+                return seen2;
+            }
+            case 3 -> {
+                return seen3;
+            }
+            case 4 -> {
+                return seen4;
+            }
+            case 5 -> {
+                return seen5;
+            }
+            case 6 -> {
+                return seen6;
+            }
+            case 7 -> {
+                return seen7;
+            }
+            case 8 -> {
+                return seen8;
+            }
+            case 9 -> {
+                return seen9;
+            }
+            case 10 -> {
+                return seen10;
+            }
+            case 11 -> {
+                return seen11;
+            }
+            case 12 -> {
+                return seen12;
+            }
+            case 13 -> {
+                return seen13;
+            }
+            case 14 -> {
+                return seen14;
+            }
+            case 15 -> {
+                return seen15;
+            }
+            case 16 -> {
+                return seen16;
+            }
+            case 17 -> {
+                return seen17;
+            }
+            case 18 -> {
+                return seen18;
+            }
+            case 19 -> {
+                return seen19;
+            }
+            case 20 -> {
+                return seen20;
+            }
+            case 21 -> {
+                return seen21;
+            }
+            case 22 -> {
+                return seen22;
+            }
+            case 23 -> {
+                return seen23;
+            }
+            case 24 -> {
+                return seen24;
+            }
+            case 25 -> {
+                return seen25;
+            }
+            case 26 -> {
+                return seen26;
+            }
+            case 27 -> {
+                return seen27;
+            }
+            case 28 -> {
+                return seen28;
+            }
+            case 29 -> {
+                return seen29;
+            }
+            case 30 -> {
+                return seen30;
+            }
+            case 31 -> {
+                return seen31;
+            }
+            case 32 -> {
+                return seen32;
+            }
+            case 33 -> {
+                return seen33;
+            }
+            case 34 -> {
+                return seen34;
+            }
+            case 35 -> {
+                return seen35;
+            }
+            case 36 -> {
+                return seen36;
+            }
+            case 37 -> {
+                return seen37;
+            }
+            case 38 -> {
+                return seen38;
+            }
+            case 39 -> {
+                return seen39;
+            }
+            case 40 -> {
+                return seen40;
+            }
+            case 41 -> {
+                return seen41;
+            }
+            case 42 -> {
+                return seen42;
+            }
+            case 43 -> {
+                return seen43;
+            }
+            case 44 -> {
+                return seen44;
+            }
+            case 45 -> {
+                return seen45;
+            }
+            case 46 -> {
+                return seen46;
+            }
+            case 47 -> {
+                return seen47;
+            }
+            case 48 -> {
+                return seen48;
+            }
+            case 49 -> {
+                return seen49;
+            }
+            case 50 -> {
+                return seen50;
+            }
+            case 51 -> {
+                return seen51;
+            }
+            case 52 -> {
+                return seen52;
+            }
+            case 53 -> {
+                return seen53;
+            }
+            case 54 -> {
+                return seen54;
+            }
+            case 55 -> {
+                return seen55;
+            }
+            case 56 -> {
+                return seen56;
+            }
+            case 57 -> {
+                return seen57;
+            }
+            case 58 -> {
+                return seen58;
+            }
+            case 59 -> {
+                return seen59;
+            }
+            default -> {
+                return -1l;
+            }
+        }
+    }
+
+    public static long wallRow(int y) {
+        switch(y) {
+            case 0 -> {
+                return seen0 & ~passable0;
+            }
+            case 1 -> {
+                return seen1 & ~passable1;
+            }
+            case 2 -> {
+                return seen2 & ~passable2;
+            }
+            case 3 -> {
+                return seen3 & ~passable3;
+            }
+            case 4 -> {
+                return seen4 & ~passable4;
+            }
+            case 5 -> {
+                return seen5 & ~passable5;
+            }
+            case 6 -> {
+                return seen6 & ~passable6;
+            }
+            case 7 -> {
+                return seen7 & ~passable7;
+            }
+            case 8 -> {
+                return seen8 & ~passable8;
+            }
+            case 9 -> {
+                return seen9 & ~passable9;
+            }
+            case 10 -> {
+                return seen10 & ~passable10;
+            }
+            case 11 -> {
+                return seen11 & ~passable11;
+            }
+            case 12 -> {
+                return seen12 & ~passable12;
+            }
+            case 13 -> {
+                return seen13 & ~passable13;
+            }
+            case 14 -> {
+                return seen14 & ~passable14;
+            }
+            case 15 -> {
+                return seen15 & ~passable15;
+            }
+            case 16 -> {
+                return seen16 & ~passable16;
+            }
+            case 17 -> {
+                return seen17 & ~passable17;
+            }
+            case 18 -> {
+                return seen18 & ~passable18;
+            }
+            case 19 -> {
+                return seen19 & ~passable19;
+            }
+            case 20 -> {
+                return seen20 & ~passable20;
+            }
+            case 21 -> {
+                return seen21 & ~passable21;
+            }
+            case 22 -> {
+                return seen22 & ~passable22;
+            }
+            case 23 -> {
+                return seen23 & ~passable23;
+            }
+            case 24 -> {
+                return seen24 & ~passable24;
+            }
+            case 25 -> {
+                return seen25 & ~passable25;
+            }
+            case 26 -> {
+                return seen26 & ~passable26;
+            }
+            case 27 -> {
+                return seen27 & ~passable27;
+            }
+            case 28 -> {
+                return seen28 & ~passable28;
+            }
+            case 29 -> {
+                return seen29 & ~passable29;
+            }
+            case 30 -> {
+                return seen30 & ~passable30;
+            }
+            case 31 -> {
+                return seen31 & ~passable31;
+            }
+            case 32 -> {
+                return seen32 & ~passable32;
+            }
+            case 33 -> {
+                return seen33 & ~passable33;
+            }
+            case 34 -> {
+                return seen34 & ~passable34;
+            }
+            case 35 -> {
+                return seen35 & ~passable35;
+            }
+            case 36 -> {
+                return seen36 & ~passable36;
+            }
+            case 37 -> {
+                return seen37 & ~passable37;
+            }
+            case 38 -> {
+                return seen38 & ~passable38;
+            }
+            case 39 -> {
+                return seen39 & ~passable39;
+            }
+            case 40 -> {
+                return seen40 & ~passable40;
+            }
+            case 41 -> {
+                return seen41 & ~passable41;
+            }
+            case 42 -> {
+                return seen42 & ~passable42;
+            }
+            case 43 -> {
+                return seen43 & ~passable43;
+            }
+            case 44 -> {
+                return seen44 & ~passable44;
+            }
+            case 45 -> {
+                return seen45 & ~passable45;
+            }
+            case 46 -> {
+                return seen46 & ~passable46;
+            }
+            case 47 -> {
+                return seen47 & ~passable47;
+            }
+            case 48 -> {
+                return seen48 & ~passable48;
+            }
+            case 49 -> {
+                return seen49 & ~passable49;
+            }
+            case 50 -> {
+                return seen50 & ~passable50;
+            }
+            case 51 -> {
+                return seen51 & ~passable51;
+            }
+            case 52 -> {
+                return seen52 & ~passable52;
+            }
+            case 53 -> {
+                return seen53 & ~passable53;
+            }
+            case 54 -> {
+                return seen54 & ~passable54;
+            }
+            case 55 -> {
+                return seen55 & ~passable55;
+            }
+            case 56 -> {
+                return seen56 & ~passable56;
+            }
+            case 57 -> {
+                return seen57 & ~passable57;
+            }
+            case 58 -> {
+                return seen58 & ~passable58;
+            }
+            case 59 -> {
+                return seen59 & ~passable59;
+            }
+            default -> {
+                return -1l;
+            }
+        }
+    }
+
     public static boolean isWallAdjacent(MapLocation loc) {
         if(loc.y == mapHeight - 1 || loc.x == 0 || loc.x == mapWidth - 1) return true;
         switch(loc.y) {

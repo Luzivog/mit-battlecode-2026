@@ -101,10 +101,226 @@ public class KingMiningStrategy extends Strategy {
         return RobotTracker.numCats > 0 && KingCombatStrategy.entersCatLane(dir);
     }
 
+    // A pocket: the king's 3x3 cannot leave a region closed by seen walls. Its centres are then the king's whole
+    // component (walls are permanent; dirt counts as open, the king digs). Only mines a centre covers are targets;
+    // with none, the king parks at the centre nearest the nearest known mine and claims no mine.
+    private static final int POCKET_CHECK_PERIOD = 10;
+    private static final int POCKET_MAX_SWEEPS = 20;
+    private boolean pocket;
+    private long[] pocketRows;
+    private int nextPocketCheck;
+    private boolean targetExact;
+    private boolean targetReached;
+    private static final int POCKET_MAX_ROWS = 24;
+    private MapLocation parkSpot;
+    private int parkMines = -1;
+
+    private void checkPocket() throws GameActionException {
+        if (pocket || time < nextPocketCheck) return;
+        // a king that has stood on its target needs no proof until the target changes
+        if (foundCheeseMine && (targetReached || chebyshevDistance(myLoc, mineTarget) <= 1)) {
+            targetReached = true;
+            return;
+        }
+        nextPocketCheck = time + POCKET_CHECK_PERIOD;
+        if (!floodPocket()) return;
+        pocket = true;
+        // the 5x5 clearance (stuck fallback) only removes centres of a closed pocket
+        RatKing.is5x5 = false;
+        pending5x5 = false;
+        if (foundCheeseMine && !canCover(mineTarget, targetExact)) {
+            mineTarget = null;
+            foundCheeseMine = false;
+        }
+    }
+
+    // Floods king centres (3x3 on the map with no seen wall) from myLoc, unseen cells counted open, row by row. True
+    // if it closes before reaching a centre whose 3x3 holds an unseen cell; pocketRows then holds the centres.
+    private long[] floodFree, floodEdge;
+    private long floodPrepared;
+
+    private boolean floodPocket() throws GameActionException {
+        int h = mapHeight;
+        long[] r = new long[h];
+        floodFree = new long[h];
+        floodEdge = new long[h];
+        floodPrepared = 0;
+        r[myLocY] = 1L << myLocX;
+        int a = myLocY, b = myLocY;
+        for (int sweep = 0; sweep < POCKET_MAX_SWEEPS; sweep++) {
+            if (Clock.getBytecodesLeft() < 6000 || b - a >= POCKET_MAX_ROWS) return false;
+            boolean grew = false;
+            for (int y = a > 1 ? a - 1 : 1; y <= b + 1 && y < h - 1; y++) {
+                long n = r[y - 1] | r[y] | r[y + 1];
+                n = (n | (n << 1) | (n >>> 1)) & floodRow(y);
+                if (n != r[y]) {
+                    if ((n & floodEdge[y]) != 0) return false;
+                    r[y] = n;
+                    grew = true;
+                    if (y < a) a = y;
+                    if (y > b) b = y;
+                }
+            }
+            for (int y = b < h - 2 ? b + 1 : h - 2; y >= a - 1 && y >= 1; y--) {
+                long n = r[y - 1] | r[y] | r[y + 1];
+                n = (n | (n << 1) | (n >>> 1)) & floodRow(y);
+                if (n != r[y]) {
+                    if ((n & floodEdge[y]) != 0) return false;
+                    r[y] = n;
+                    grew = true;
+                    if (y < a) a = y;
+                    if (y > b) b = y;
+                }
+            }
+            if (!grew) {
+                pocketRows = r;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // The centres of row y (1 <= y <= mapHeight - 2) whose 3x3 holds no seen wall; floodEdge[y]: those whose 3x3
+    // holds an unseen cell.
+    private long floodRow(int y) {
+        if ((floodPrepared & (1L << y)) == 0) {
+            floodPrepared |= 1L << y;
+            long full = (1L << mapWidth) - 1;
+            long o = ~(CellTracker.wallRow(y - 1) | CellTracker.wallRow(y) | CellTracker.wallRow(y + 1));
+            floodFree[y] = o & (o << 1) & (o >>> 1) & full & ~1L & ~(1L << (mapWidth - 1));
+            long u = ~(CellTracker.seenRow(y - 1) & CellTracker.seenRow(y) & CellTracker.seenRow(y + 1)) & full;
+            floodEdge[y] = u | (u << 1) | (u >>> 1);
+        }
+        return floodFree[y];
+    }
+
+    // Can a pocket centre cover the mine? An inexact mine (decode2x2) is one of the 2x2 cells from its corner.
+    private boolean canCover(MapLocation aMine, boolean exact) {
+        if (!pocket) return true;
+        int x = aMine.x, y = aMine.y;
+        long cols = (exact ? 7L : 15L) << (x - 1);
+        if (x == 0) cols = exact ? 3L : 7L;
+        long rows = (y > 0 ? pocketRows[y - 1] : 0) | pocketRows[y] | (y + 1 < mapHeight ? pocketRows[y + 1] : 0);
+        if (!exact && y + 2 < mapHeight) rows |= pocketRows[y + 2];
+        return (rows & cols) != 0;
+    }
+
+    private void park() throws GameActionException {
+        int mines = Game.knownCheeseMines.set.length();
+        if (mines != parkMines) {
+            parkMines = mines;
+            parkSpot = nearestPocketCentre(nearestKnownMine());
+        }
+        if (GlobalArray.getKingMineAssignment(kingId) != null) GlobalArray.writeKingMineAssignment(kingId, null);
+        // within a step the path search stops anyway (its waypoint is within d2 2)
+        if (rc.isMovementReady() && chebyshevDistance(myLoc, parkSpot) > 1) moveIfBugTargetFar(parkSpot);
+        {
+            var loc = myLoc.translate(-1, -1);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(-1, 0);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(-1, 1);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(0, -1);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(0, 0);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(0, 1);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(1, -1);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(1, 0);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+        {
+            var loc = myLoc.translate(1, 1);
+            if(rc.canPickUpCheese(loc)) {
+                rc.pickUpCheese(loc);
+            }
+        }
+    }
+
+    private MapLocation nearestKnownMine() {
+        MapLocation best = centerTarget;
+        int bestDist = Integer.MAX_VALUE;
+        int n = Game.knownCheeseMines.set.length();
+        for (int i = 0; i < n; i++) {
+            MapLocation m = decode2x2(Game.knownCheeseMines.at(i));
+            if (m == null) continue;
+            int d = myLoc.distanceSquaredTo(m);
+            if (d < bestDist) {
+                bestDist = d;
+                best = m;
+            }
+        }
+        return best;
+    }
+
+    // The pocket centre nearest the target: per row, the set bits on either side of the target's column.
+    private MapLocation nearestPocketCentre(MapLocation aTarget) {
+        MapLocation best = myLoc;
+        int bestDist = myLoc.distanceSquaredTo(aTarget);
+        int tx = aTarget.x;
+        long low = (2L << tx) - 1;
+        for (int y = mapHeight - 2; y >= 1; y--) {
+            long row = pocketRows[y];
+            if (row == 0) continue;
+            int dy = y - aTarget.y;
+            long below = row & low;
+            if (below != 0) {
+                int dx = tx - (63 - Long.numberOfLeadingZeros(below));
+                if (dx * dx + dy * dy < bestDist) {
+                    bestDist = dx * dx + dy * dy;
+                    best = new MapLocation(tx - dx, y);
+                }
+            }
+            long above = row & ~low;
+            if (above != 0) {
+                int dx = Long.numberOfTrailingZeros(above) - tx;
+                if (dx * dx + dy * dy < bestDist) {
+                    bestDist = dx * dx + dy * dy;
+                    best = new MapLocation(tx + dx, y);
+                }
+            }
+        }
+        return best;
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
         // indicate("stuckTurns: " + stuckTurns);
         pathedNearCat = false;
+        checkPocket();
         scanForCheeseMines();
 
         if (!foundCheeseMine) {
@@ -112,7 +328,8 @@ public class KingMiningStrategy extends Strategy {
         }
 
         if (!foundCheeseMine) {
-            moveTowardCenter();
+            if (pocket) park();
+            else moveTowardCenter();
         } else {
             GlobalArray.writeKingMineAssignment(kingId, mineTarget);
             moveTowardMine();
@@ -254,6 +471,7 @@ public class KingMiningStrategy extends Strategy {
                 GlobalArray.registerGlobalCheeseMine(encoded);
 
                 if (GlobalArray.isMineAssignedToOtherKing(myMine)) continue;
+                if (!canCover(myMine, true)) continue;
                 // if (isInTabooZone(myMine)) continue;
 
                 int myDist = myLoc.distanceSquaredTo(myMine);
@@ -265,7 +483,9 @@ public class KingMiningStrategy extends Strategy {
         }
 
         if (myBestMine != null) {
+            if (!myBestMine.equals(mineTarget)) targetReached = false;
             mineTarget = myBestMine;
+            targetExact = true;
             foundCheeseMine = true;
             GlobalArray.writeKingMineAssignment(kingId, mineTarget);
             return true;
@@ -336,6 +556,7 @@ public class KingMiningStrategy extends Strategy {
             MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
             if (myMine == null) continue;
             if (GlobalArray.isMineAssignedToOtherKing(myMine)) continue;
+            if (!canCover(myMine, false)) continue;
             // if (isInTabooZone(myMine)) continue;
 
             int myDist = myLoc.distanceSquaredTo(myMine);
@@ -346,7 +567,9 @@ public class KingMiningStrategy extends Strategy {
         }
 
         if (myBestMine != null) {
+            targetReached = false;
             mineTarget = myBestMine;
+            targetExact = false;
             foundCheeseMine = true;
             GlobalArray.writeKingMineAssignment(kingId, mineTarget);
         }

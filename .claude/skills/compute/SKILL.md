@@ -26,6 +26,9 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
 - `--with PATH` ships another git-ignored file or folder. `--where condor,slurm,cpucluster1` limits the backends.
 - It prints the run's id first, then waits until every task has ended; the exit code is 0 when every task ended 0,
   else the first task's code. A task whose machine was taken back runs again elsewhere, three starts at most.
+- A machine with under 2 GB free where tasks write takes no task. A task that exits 75 says its machine can't
+  run it: it goes to another machine and that one takes no more. A machine's tasks share `JOB_CACHE`, a folder
+  for what each would otherwise copy (references/internals.md, "Room to write").
 - Runs share one pool (not `--whole`, not `--max-cpus`): a live piece of any run takes tasks of every open run of the
   same `--task-cpus`, `--task-mem` and backends, the run with the fewest running tasks first, and ends as soon as
   nothing is left. A new run asks for pieces only beyond the live pieces' free slots, so its tasks often start within

@@ -41,7 +41,6 @@ public class MinerStrategy extends Strategy {
         if (BabyRat.transferSwitch) {
             bannedMines = new FastIndexedIntSet();
             BabyRat.transferSwitch = false;
-            if (Tune.SQ_PAIR) transfers++;
         }
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
@@ -68,8 +67,6 @@ public class MinerStrategy extends Strategy {
             return true;
         }
 
-        if (Tune.SQ_PAIR && follow()) return true;
-
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
@@ -90,70 +87,6 @@ public class MinerStrategy extends Strategy {
         }
 
         return true;
-    }
-
-    // SQ pairs (Tune.SQ_PAIR): the leader's id & 511, plus 1 (0: no leader); its id once sensed, where and when last
-    // seen; a possible leader holds until holdUntil.
-    private int leaderBits, leaderId, leaderSeen, transfers, holdUntil;
-    private MapLocation leaderLoc;
-    private Direction leaderDir;
-
-    public void pairWith(int payload) {
-        if (payload < 4096) {
-            holdUntil = time + 2;
-            return;
-        }
-        leaderBits = (payload & 511) + 1;
-        leaderDir = directions[(payload >>> 9) & 7];
-        leaderSeen = time;
-    }
-
-    // Step toward the leader while farther than 1 tile. Out of view, face where it was (unidentified: toward its spawn
-    // tile, then the next quarters, holding still); following, skip the end-of-turn glance so it stays in view. A
-    // possible leader holds its first 2 rounds so that its follower finds it. False once unpaired.
-    private boolean follow() throws GameActionException {
-        if (time < holdUntil) return true;
-        if (leaderBits == 0) return false;
-        if (transfers >= Tune.SQ_PAIR_TRIPS || time >= Tune.SQ_PAIR_ROUND || time - leaderSeen > Tune.SQ_PAIR_LOST) {
-            leaderBits = 0;
-            return false;
-        }
-        senseLeader();
-        if (leaderSeen != time && rc.canTurn() && (leaderLoc == null || myLoc.distanceSquaredTo(leaderLoc) <= 2)) {
-            BabyRat.turn(leaderLoc != null ? myLoc.directionTo(leaderLoc) : leaderDir != null ? leaderDir : myDir.rotateLeft().rotateLeft());
-            leaderDir = null;
-            senseLeader();
-        }
-        if (leaderBits == 0) return false;
-        if (leaderLoc == null) return true;
-        if (myLoc.distanceSquaredTo(leaderLoc) > 2) {
-            BabyRat.autoMove(Pathfinder.getMove(leaderLoc));
-            senseLeader();
-        }
-        BabyRat.shouldGlance = false;
-        goSomewhereStrategy = null;
-        return true;
-    }
-
-    private void senseLeader() throws GameActionException {
-        if (leaderId == 0) {
-            for (RobotInfo r : rc.senseNearbyRobots(-1, team)) {
-                if ((r.getID() & 511) + 1 == leaderBits && r.getType() == UnitType.BABY_RAT) {
-                    leaderId = r.getID();
-                    break;
-                }
-            }
-            if (leaderId == 0) return;
-        }
-        if (rc.canSenseRobot(leaderId)) {
-            RobotInfo r = rc.senseRobot(leaderId);
-            if (r.getType() != UnitType.BABY_RAT) {
-                leaderBits = 0;
-                return;
-            }
-            leaderLoc = r.getLocation();
-            leaderSeen = time;
-        }
     }
 
     private MapLocation pickSeenMine() {

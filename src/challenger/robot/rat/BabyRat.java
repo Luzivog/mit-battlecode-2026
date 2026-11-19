@@ -26,7 +26,6 @@ public class BabyRat {
         int payload = GlobalArray.loadSpawnInfo();
         // println("BabyRat payload: " + payload + " id " + rc.getID() + " index " + myIndex);
         primaryStrategy = new MinerStrategy();
-        if (challenger.Tune.SQ_PAIR && payload > 0) ((MinerStrategy) primaryStrategy).pairWith(payload);
         combatStrategy = new CombatStrategy();
         Pathfinder.init();
         AntColony.init();

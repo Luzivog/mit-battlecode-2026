@@ -47,8 +47,9 @@ Python is stdlib only (it runs on remote nodes too). Data: `~/battlecode26-data/
    `challenger@origin/main`, pinned to a commit at submission (`games.pin`). Exit 0 means the test passed.
 7. **The native backend never decides a game the Java engine would play differently.** A native error replays the
    game on Java; a guard mismatch the Java engine's own nondeterminism doesn't explain stops the run, marks the binary
-   bad and purges its results (`play.Runner.guard`, `native.verdict`). A guarded game is delivered only once compared,
-   so a test never scores a guarded game before its check.
+   bad and purges its results (`play.Runner.guard`, `native.verdict`). A run never concludes while a check is
+   pending (`guards_pending`): locally the twin plays beside the run, remotely in its own task (`ID~guard`, both
+   engines on one machine), so no cell waits for a Java twin.
 8. **Pools never hold a sealed map**: every visible pool, class pool and list pool is checked against
    `pools.visible()`.
 

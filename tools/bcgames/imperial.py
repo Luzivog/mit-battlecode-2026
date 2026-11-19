@@ -7,9 +7,11 @@ Each batch of jobs becomes a spec file and one `tools/run --each SPECS --chunk K
 - every spec names its bots' jars (`classes_a`, `classes_b`), so a node plays exactly the classes built here.
 
 Native games (the default where the native engine can play them, native.py) go in batches of their own: their binary
-is built here, uploaded once to the volume (RUNTIME/bcx/<key>, gzip'd on the way; a binary unused for REMOTE_KEEP_DAYS
-is removed) and named by each spec (`bcx`). A spec with `guard: true` is also played on Java in the same task, so on
-the same machine, and comes back with the guard's verdict (play.Runner.guard).
+is built here, uploaded once to the volume (RUNTIME/bcx/<key>.gz; a binary unused for REMOTE_KEEP_DAYS is removed)
+and named by each spec (`bcx`). A guarded game goes out twice: as itself, whose result the test uses, and as
+`ID~guard` with `guard: true`, a task that plays it on both engines on one machine and returns only the guard's
+verdict (play.Runner.guard). So a Java twin never holds up a cell; the run waits for the verdicts (guards_pending,
+on_guard) before it concludes.
 
 Results are read from runs/RUN/N/out/results.jsonl as the tasks end, so a test can stop before its batch does. A
 result enters the local cache only when the node computed the same game key (same runner, JDK fingerprint, engine,
@@ -62,14 +64,15 @@ class ImperialRunner:
     """Same interface as play.Runner: resolver, cached(job), submit(job, callback), close(wait), mismatches."""
 
     def __init__(self, outdir: Path, where: str | None, timeout: float, backend: str = "native",
-                 guard: float | None = None, on_mismatch=None, use_cache: bool = True):
+                 guard: float | None = None, on_mismatch=None, use_cache: bool = True, on_guard=None):
         self.resolver = play.Resolver()
         self.use_cache = use_cache
         self.planner = native.Planner(self.resolver) if backend == "native" else None
         self.binaries: dict[native.Plan, dict] = {}  # plan -> {state: building|ready|failed, key, remote, error}
         self.guard_rate = native.GUARD_RATE if guard is None else guard
         self.guarded: set[str] = set()
-        self.on_mismatch = on_mismatch
+        self.on_mismatch, self.on_guard = on_mismatch, on_guard
+        self.guards_pending = 0
         self.mismatches: list[dict] = []
         self.cache = store.Cache()
         self.cache_lock = threading.Lock()
@@ -185,6 +188,7 @@ class ImperialRunner:
         jars = self._ship([j for j, _ in batch])
         n = len(self.batches)
         specs = self.outdir / f"batch-{n}.jsonl"
+        guards = {}
         with open(specs, "w") as f:
             for job, _ in batch:
                 spec = dict(job.spec)
@@ -196,7 +200,9 @@ class ImperialRunner:
                     st = self.binaries[job.plan]
                     spec["bcx"] = st["remote"]
                     if self._wants_guard(job, st["key"]):
-                        spec["guard"] = True
+                        gid = f"{spec['id']}~guard"
+                        guards[gid] = job
+                        f.write(json.dumps(dict(spec, id=gid, guard=True, replay=False)) + "\n")
                 f.write(json.dumps(spec) + "\n")
         cmd = [str(store.ROOT / "tools" / "run"), "--detach", "--each", str(specs), "--chunk",
                str(CHUNK), "--gather", "results.jsonl",
@@ -212,7 +218,10 @@ class ImperialRunner:
         if proc.returncode != 0 or not lines:
             raise store.SetupError(f"tools/run exit {proc.returncode}: {proc.stderr.strip()[-500:]}")
         run = lines[0]
-        b = {"run": run, "jobs": {j.spec["id"]: (j, cb) for j, cb in batch}, "done": set(), "ended": False}
+        b = {"run": run, "jobs": {j.spec["id"]: (j, cb) for j, cb in batch}, "guards": guards, "done": set(),
+             "ended": False}
+        with self.lock:
+            self.guards_pending += len(guards)
         b["proc"] = subprocess.Popen([str(store.ROOT / "tools" / "compute"), "wait", run], cwd=store.ROOT,
                                      stdout=self.log, stderr=self.log)
         self.batches.append(b)
@@ -234,9 +243,29 @@ class ImperialRunner:
             if gid not in b["done"] and not self.stopping.is_set():
                 b["done"].add(gid)
                 cb(play.finish(job, {"error": f"imperial run {b['run']}: no result (runs/{b['run']}/*/log)"}, False))
+        for gid in b["guards"]:
+            if gid not in b["done"] and not self.stopping.is_set():
+                self._deliver(b, {"id": gid, "guard": {"verdict": "java-error", "error": "no result"}})
+
+    def _guard_result(self, b: dict, gid: str, r: dict) -> None:
+        """A guard task's verdict (its game's result came from its own task)."""
+        job = b["guards"][gid]
+        g = r.get("guard") if isinstance(r.get("guard"), dict) else {
+            "verdict": "java-error", "error": r.get("error") or "the guard task played no Java game"}
+        g = dict(g, remote=b["run"])
+        if g.get("verdict") == "mismatch":
+            self._mismatch(job, g)
+        with self.lock:
+            self.guards_pending -= 1
+        if self.on_guard:
+            self.on_guard(job, g)
 
     def _deliver(self, b: dict, r: dict) -> None:
         gid = r.get("id")
+        if gid in b["guards"] and gid not in b["done"]:
+            b["done"].add(gid)
+            self._guard_result(b, gid, r)
+            return
         if gid not in b["jobs"] or gid in b["done"]:
             return
         b["done"].add(gid)

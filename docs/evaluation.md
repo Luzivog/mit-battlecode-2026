@@ -173,9 +173,10 @@ the ref's own score on the same cells and the paired difference with its CI.
   host, 8 compile jobs each. A new challenger build takes about 95 s; a change to `engine/` or the JDK rebuilds
   everything once per build slot (about 5 min). `tools/games build` builds them ahead of a test: after a merge,
   `tools/games build challenger@origin/main` spares the next tests main's build.
-- **Exactness guard.** Each run also plays some of its native games on Java, on the same machine (Imperial: in the
-  same task): every binary's first game in the run, and 1 in 32 of the rest, chosen by game key. A guarded game
-  counts only once compared, so a test never scores it before its check. When the replays differ, Java plays it
+- **Exactness guard.** Each run also plays some of its native games on Java, on the same machine: every binary's
+  first game in the run, and 1 in 32 of the rest, chosen by game key. Locally the Java twin runs beside the run;
+  remotely a separate task plays the game on both engines on one machine. Neither holds up a cell, and the run does
+  not conclude (or print a verdict) until every check has come back. When the replays differ, Java plays it
   again. If its two runs differ and one equals the native game, the Java engine's own nondeterminism explains it
   (engine/AGENTS.md "Known gaps") and the native result stands. Otherwise the run stops with an error (exit 1), the
   binary is marked bad and never used again, and its results leave the cache. Report it, and rerun with

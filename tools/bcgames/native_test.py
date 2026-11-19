@@ -284,6 +284,37 @@ class GuardFlowTest(unittest.TestCase):
         self.assertEqual(r.cache.get(KEY)["backend"], "java")
 
 
+class RemoteGuardTest(unittest.TestCase):
+    """imperial.ImperialRunner: a guarded game's verdict comes from its own task, apart from the game's result."""
+
+    def test_guard_task_resolves_apart_from_the_game(self):
+        from bcgames import imperial
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        old = native.NDATA
+        native.NDATA = Path(tmp.name)
+        self.addCleanup(setattr, native, "NDATA", old)
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock, r.cache_lock = threading.Lock(), threading.Lock()
+        r.cache = store.Cache(Path(tmp.name) / "c.sqlite")
+        r.mismatches, r.seen, r.got = [], [], []
+        r.on_mismatch = lambda job, g: r.seen.append(g)
+        r.on_guard = lambda job, g: r.got.append((g["verdict"], r.guards_pending))
+        r._say = lambda msg: None
+        r.guards_pending = 2
+        job = play.Job(spec={"id": "g", "a": "x", "b": "y", "map": "m"}, key=KEY, meta={"key": KEY})
+        delivered = []
+        b = {"run": "run-1", "jobs": {"g": (job, delivered.append)}, "done": set(),
+             "guards": {"g~guard": job, "h~guard": job}}
+        r._deliver(b, dict(result(), id="g~guard", guard={"verdict": "same", "native_build": "b1"}))
+        self.assertEqual((r.got, delivered), ([("same", 1)], []))
+        r._deliver(b, dict(result(), id="g", key=KEY, backend="native", native_build="b1"))
+        self.assertEqual((delivered[0]["backend"], r.cache.get(KEY)["backend"]), ("native", "native"))
+        r._deliver(b, dict(result("d2"), id="h~guard", guard={"verdict": "mismatch", "native_build": "b1"}))
+        self.assertEqual((r.got[-1], len(r.seen)), (("mismatch", 0), 1))
+        self.assertIsNone(r.cache.get(KEY))  # the binary's results purged
+
+
 class FinishTest(unittest.TestCase):
     def test_backend_of_old_cache_entries_is_java(self):
         job = play.Job(spec={"id": "g"}, key="k", meta={"key": "k"})

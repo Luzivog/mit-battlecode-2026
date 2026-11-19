@@ -430,7 +430,7 @@ def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False, on_gua
     guard = p.get("guard")
     if p.get("remote"):
         return imperial.ImperialRunner(d, p.get("where"), 3600 if replay else p["timeout"], backend, guard,
-                                       on_mismatch, use_cache=p.get("cache", True))
+                                       on_mismatch, use_cache=p.get("cache", True), on_guard=on_guard)
     return play.Runner(p["workers"], d, play.DEFAULT_TIMEOUT if replay else p["timeout"],
                        use_cache=not replay and p.get("cache", True), backend=backend, guard=guard,
                        on_mismatch=on_mismatch, on_guard=on_guard)

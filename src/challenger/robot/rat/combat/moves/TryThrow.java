@@ -43,6 +43,8 @@ public final class TryThrow {
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
+    // marks the own king's zone, whose RobotInfo the carrier may not see: own team, a king
+    static RobotInfo ownKing;
     static RobotInfo occ_m4_4;
     static RobotInfo occ_m3_4;
     static RobotInfo occ_m2_4;
@@ -824,6 +826,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowNNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 tryThrowNNE();
@@ -901,6 +913,16 @@ public final class TryThrow {
                 tryThrowNEN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowNEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNESE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNENW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
@@ -980,6 +1002,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowESE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowES();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowENW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 tryThrowESE();
@@ -1057,6 +1089,16 @@ public final class TryThrow {
                 tryThrowSES();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowSEE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSEN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSENE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSESW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSEW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSENW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
@@ -1136,6 +1178,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowSSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 tryThrowSSW();
@@ -1213,6 +1265,16 @@ public final class TryThrow {
                 tryThrowSWS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowSWW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowSWNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
@@ -1292,6 +1354,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowWSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowWN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 tryThrowWNW();
@@ -1370,6 +1442,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowNWW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNWNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNWE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNWSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNWS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowNWSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
         }
@@ -1384,6 +1466,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 1 -> {
                 tryThrowCNE();
@@ -1391,6 +1483,16 @@ public final class TryThrow {
                 tryThrowCN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 2 -> {
@@ -1400,6 +1502,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCSE();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 3 -> {
                 tryThrowCSE();
@@ -1407,6 +1519,16 @@ public final class TryThrow {
                 tryThrowCS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 4 -> {
@@ -1416,6 +1538,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 5 -> {
                 tryThrowCSW();
@@ -1423,6 +1555,16 @@ public final class TryThrow {
                 tryThrowCS();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 6 -> {
@@ -1432,6 +1574,16 @@ public final class TryThrow {
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCN();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             case 7 -> {
                 tryThrowCNW();
@@ -1439,6 +1591,16 @@ public final class TryThrow {
                 tryThrowCN();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 tryThrowCW();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCNE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSE();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCS();
+                if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
+                tryThrowCSW();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
             }
             default -> { }
@@ -3294,16 +3456,13 @@ public final class TryThrow {
             markCell(dx, dy + 1, info);
             markCell(dx + 1, dy + 1, info);
         }
+        // the own king's zone even out of sight: lines behind the carrier pass tiles it cannot see
         if (GlobalArray.nearestRatKing != null) {
             int dx = GlobalArray.nearestRatKing.x - myLocX;
             int dy = GlobalArray.nearestRatKing.y - myLocY;
             if (dx >= -4 && dx <= 4 && dy >= -4 && dy <= 4) {
-                if (rc.canSenseLocation(GlobalArray.nearestRatKing)) {
-                    RobotInfo info = rc.senseRobotAtLocation(GlobalArray.nearestRatKing);
-                    if (info != null && info.getTeam() == team && info.getType() == UnitType.RAT_KING) {
-                        markKingZone(dx, dy, info);
-                    }
-                }
+                if (ownKing == null) ownKing = new RobotInfo(-1, team, UnitType.RAT_KING, 0, myLoc, Direction.NORTH, 0, 0, null);
+                markKingZone(dx, dy, ownKing);
             }
         }
     }

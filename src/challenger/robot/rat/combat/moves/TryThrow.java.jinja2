@@ -76,6 +76,8 @@ public final class TryThrow {
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
+    // marks the own king's zone, whose RobotInfo the carrier may not see: own team, a king
+    static RobotInfo ownKing;
     {% for dy in range(grid_radius, -grid_radius - 1, -1) %}
     {% for dx in range(-grid_radius, grid_radius + 1) %}
     static RobotInfo {{ occ_var(dx, dy) }};
@@ -191,7 +193,13 @@ public final class TryThrow {
         switch (myDir.ordinal()) {
             {% for ord in range(8) %}
             case {{ ord }} -> {
-                {% for d in related_map[ord] %}
+                {# staying or stepping forward, the carrier can turn to any of the 8 directions before it throws #}
+                {% if move_dir == 'Direction.CENTER' or move_dir == directions[ord] %}
+                {% set throw_dirs = related_map[ord] + (directions | reject('in', related_map[ord]) | list) %}
+                {% else %}
+                {% set throw_dirs = related_map[ord] %}
+                {% endif %}
+                {% for d in throw_dirs %}
                 tryThrow{{ dir_short_map[move_dir] }}{{ dir_short_map[d] }}();
                 if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) return;
                 {% endfor %}
@@ -315,16 +323,13 @@ public final class TryThrow {
             markCell(dx, dy + 1, info);
             markCell(dx + 1, dy + 1, info);
         }
+        // the own king's zone even out of sight: lines behind the carrier pass tiles it cannot see
         if (GlobalArray.nearestRatKing != null) {
             int dx = GlobalArray.nearestRatKing.x - myLocX;
             int dy = GlobalArray.nearestRatKing.y - myLocY;
             if (dx >= -{{ grid_radius }} && dx <= {{ grid_radius }} && dy >= -{{ grid_radius }} && dy <= {{ grid_radius }}) {
-                if (rc.canSenseLocation(GlobalArray.nearestRatKing)) {
-                    RobotInfo info = rc.senseRobotAtLocation(GlobalArray.nearestRatKing);
-                    if (info != null && info.getTeam() == team && info.getType() == UnitType.RAT_KING) {
-                        markKingZone(dx, dy, info);
-                    }
-                }
+                if (ownKing == null) ownKing = new RobotInfo(-1, team, UnitType.RAT_KING, 0, myLoc, Direction.NORTH, 0, 0, null);
+                markKingZone(dx, dy, ownKing);
             }
         }
     }

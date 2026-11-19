@@ -22,6 +22,12 @@ public final class InternalRobot_p {
         return f;
     }
 
+    // the mask of this robot's last vision key (facing, radius, angle, bottom-left) and its box radius
+    private byte[] bcxSenseMask;
+    private Direction bcxSenseDir;
+    private int bcxSenseR2, bcxSenseAngle, bcxSenseR;
+    private boolean bcxSenseBl;
+
     private boolean bcxSense(MapLocation loc) {
         int r2 = getVisionRadiusSquared();
         int angle = getVisionConeAngle();
@@ -29,9 +35,17 @@ public final class InternalRobot_p {
         MapLocation c = location;
         Direction d = dir;
         if (c == null || loc == null || d == null || gameWorld == null || r2 < 0 || r2 > 1 << 12) return canSenseLocation$orig(loc);
-        GameWorld_p g = (GameWorld_p) (Object) gameWorld;
-        byte[] mask = g.bcxConeMask(d, (double) angle, r2, bl);
-        int r = g.bcxMaskR;
+        byte[] mask = bcxSenseMask;
+        if (mask == null || d != bcxSenseDir || r2 != bcxSenseR2 || angle != bcxSenseAngle || bl != bcxSenseBl) {
+            GameWorld_p g = (GameWorld_p) (Object) gameWorld;
+            bcxSenseMask = mask = g.bcxConeMask(d, (double) angle, r2, bl);
+            bcxSenseR = g.bcxMaskR;
+            bcxSenseDir = d;
+            bcxSenseR2 = r2;
+            bcxSenseAngle = angle;
+            bcxSenseBl = bl;
+        }
+        int r = bcxSenseR;
         long dx = (long) loc.x - c.x, dy = (long) loc.y - c.y;
         if (dx < -r || dx > r || dy < -r || dy > r) return c.isWithinDistanceSquared(loc, r2, d, (double) angle, bl);
         int k = ((int) dx + r) * (2 * r + 1) + (int) dy + r;

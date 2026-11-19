@@ -21,6 +21,8 @@
 #include "rt.h"
 #include "sched.h"
 
+// the static binary's writable data (.data, .bss): the collector's only static roots
+extern "C" char __data_start[], _end[];
 void rt_link_arrays();
 void rt_init_strings();
 void rt_init_core();
@@ -414,6 +416,10 @@ int main(int argc, char** argv) {
             else {
                 GC_set_all_interior_pointers(1);
                 GC_INIT();
+                // in a static binary the collector would take everything from the first page to the end of .bss
+                // as roots, code included (90 MB scanned per collection); only .data and .bss can hold heap pointers
+                GC_clear_roots();
+                GC_add_roots(__data_start, _end);
                 // a game's live data is small next to what it allocates: collect rarely
                 GC_set_free_space_divisor(1);
                 GC_expand_hp((size_t)256 << 20);

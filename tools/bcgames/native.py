@@ -17,6 +17,10 @@ Store (NDATA: BCGAMES_DATA/native, or BCGAMES_NATIVE_DATA):
   gen/<version>-<i>.engine/ the engine sources it builds from, at a fixed path (changed files rewritten only)
   bin/<key>/bcx             a binary (stripped), build.json: what it holds; bin/<key>.log: its build's output
   bin/<key>/BAD             the exactness guard found it playing a game the Java engine doesn't: never used again
+  bin/<key>.use             a process that plays or ships a binary holds it shared (flock) for its life: in use
+
+gc() bounds bin/ by count, age and size: the most recently used are kept, KEEP of them or any used within KEEP_S, up
+to KEEP_BYTES in all; one used within GRACE_S or held by a live process is never removed.
 """
 from __future__ import annotations
 
@@ -52,8 +56,10 @@ GLUE_OPT = "-O1"
 OPT = os.environ.get("BCGAMES_NATIVE_OPT", "-O2")
 LTO = os.environ.get("BCGAMES_NATIVE_LTO", "off")
 NICE = 5  # builds sit on a test's critical path: below games, not far below
-KEEP = 24              # binaries kept (the most recently used); one used in the last KEEP_S seconds is never removed
+KEEP = 24              # binaries kept (the most recently used), and any used in the last KEEP_S seconds...
 KEEP_S = 6 * 3600
+KEEP_BYTES = int(os.environ.get("BCGAMES_NATIVE_KEEP_BYTES", 4 << 30))  # ...up to this much in all (about 100 MB each)
+GRACE_S = 1800         # one used this recently is kept whatever its size (a build that just ended, a test starting)
 RETRY_FAILED_S = 3600  # a failed build is tried again after this long
 TIMEOUT = 600          # seconds a native game may take (the slowest measured: ~45 s on a DoC machine)
 # The sparring bots: awubot and tools/games' gauntlet opponents (games.MAIN_OPPONENTS + OTHER_OPPONENTS), sorted.
@@ -367,6 +373,9 @@ def build(plan: Plan) -> tuple[str, Path]:
     why = bad(key)
     if why:
         raise BuildError(f"binary {key} is marked bad: {why}")
+    hold(key)
+    if not (d / "bcx").exists():  # gc removed it before the hold: build it again
+        return build(plan)
     if time.time() - _touched.get(key, 0) > 60:
         (d / "used").touch()
         _touched[key] = time.time()
@@ -429,13 +438,26 @@ def _build_once(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str
         _say(f"built {key} in {wall:.0f} s ({cpu:.0f} CPU s)")
 
 
-def gc() -> None:
-    """Keeps the KEEP most recently used binaries and any used in the last KEEP_S seconds."""
+_held: dict[str, object] = {}
+
+
+def hold(key: str) -> None:
+    """KEY in use by this process until it ends: a shared flock on bin/<key>.use, which gc() never takes from it."""
+    if key in _held:
+        return
+    f = open(NDATA / "bin" / f"{key}.use", "a")
+    fcntl.flock(f, fcntl.LOCK_SH)  # waits while gc() removes it
+    os.utime(f.name)  # fresh: gc() never unlinks the lock file of a binary it can't see yet
+    _held[key] = f
+
+
+def gc(dry: bool = False) -> list[tuple[str, int]]:
+    """bin/ bounded (the module's docstring): the binaries removed (or, DRY, to be), with their bytes."""
     bins = NDATA / "bin"
     try:
         found = [d for d in bins.iterdir() if d.is_dir() and not d.name.startswith(".")]
     except OSError:
-        return
+        return []
 
     def used(d: Path) -> float:
         for f in ("used", "build.json"):
@@ -445,13 +467,35 @@ def gc() -> None:
                 pass
         return 0.0
 
+    def size(d: Path) -> int:
+        return sum(f.stat().st_size for f in d.iterdir() if f.is_file())
+
     now = time.time()
-    for d in sorted(found, key=used, reverse=True)[KEEP:]:
-        if now - used(d) > KEEP_S:
-            shutil.rmtree(d, ignore_errors=True)
+    gone, kept, total = [], 0, 0
+    for d in sorted(found, key=used, reverse=True):
+        n, age = size(d), now - used(d)
+        if age > GRACE_S and not ((kept < KEEP or age < KEEP_S) and total + n <= KEEP_BYTES):
+            with open(bins / f"{d.name}.use", "a") as f:
+                try:
+                    fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:  # a live process plays or ships it
+                    pass
+                else:
+                    if not dry:
+                        shutil.rmtree(d, ignore_errors=True)
+                    gone.append((d.name, n))
+                    continue
+        kept += 1
+        total += n
+    names = {d.name for d in found} - {k for k, _ in gone}
+    for f in bins.iterdir():  # what is left of binaries gone a day: their build log, locks, failure note
+        stem = f.name.split(".")[0]
+        if f.is_file() and stem and stem not in names and now - f.stat().st_mtime > 86400 and not dry:
+            f.unlink(missing_ok=True)
     for d in bins.glob(".*.*"):
-        if d.is_dir() and now - d.stat().st_mtime > 3600:
+        if d.is_dir() and now - d.stat().st_mtime > 3600 and not dry:
             shutil.rmtree(d, ignore_errors=True)
+    return gone
 
 
 # ---------------------------------------------------------------------------------------------------------- games

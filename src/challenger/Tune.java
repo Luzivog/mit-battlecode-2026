@@ -61,7 +61,7 @@ public final class Tune {
     public static final int RATNAP_ALLY_HP = 22; // tune: 10 [0, 60] the ally sacrifice takes allies at this HP or less
     public static final int RATNAP_BACK = 5; // tune: 5 [0, 40] TryRatNap's extra score of grabbing, then stepping back
     // The strafe cost of TryAttack, TryRatNap and TryTrap: low when the movement cooldown is < 2 (the next move stays).
-    public static final int STRAFE_LO = 3; // tune: 3 [0, 30] strafe cost from a movement cooldown < 2
+    public static final int STRAFE_LO = 0; // tune: 3 [0, 30] strafe cost from a movement cooldown < 2 (FL: 3 -> 0, +1.7 pp on 3,000 fresh cells)
     public static final int STRAFE_HI = 8; // tune: 4 [0, 40] strafe cost from a movement cooldown of 2 or more
     // Carrying an enemy (CombatStrategy): throw when the best line scores THROW_HOLD (42: a collision at step 2), else hold
     // and act with the free action; throw whatever the line once the carry is CARRY_AGE rounds old or at CARRY_HP.

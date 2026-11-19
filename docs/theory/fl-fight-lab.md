@@ -8,7 +8,30 @@ data, `~/battlecode26-data/scratch/fl/lab/`. Rounds are engine rounds.
 
 ## 0. Summary
 
-(written last)
+1. **The fights that decide games** (W2's 1,140 replays, 49,896 engagements, §1): in our COMBAT losses we still win
+   the r1–300 rat exchange, by half as much as in our wins on the same maps (+5.6 against +11.7 rats, +317 against
+   +1,181 HP), with the same number of fights. Group fights away from kings carry the largest share of the rat gap,
+   fights at our king the largest share of the HP gap; our king dies inside a fight at our king in 31 of 43 early-fight
+   losses, after a run of fights we won.
+2. **The lab** (§2, `tools/fightlab/`): real games forked at their fights. A lab copy of challenger reads its micro
+   constants from properties from the fork round on, so every arm shares the fork's state and memory; scenario maps
+   cannot stage these fights (kings only, full HP, no memory). An arm is scored against a salted null on the same
+   fork: the exchange in HP, rats, king HP and cheese over 80 rounds or to r300.
+3. **Validation, single arms** (§3.1, 10 arms × 553 forks × 2 salts): reverting CT's band traps or CW's hold shows a
+   loss in the lab (−98 and −52 HP of exchange a fork, both clear of 0; −4.4 and −2.5 pp in 1,000-cell whole-game
+   tests). But across arms the lab does not rank whole-game effects: correlation +0.17 on the five priced fresh, +0.24
+   on nine with past packages' prices. `THREAT_PENALTY` 40 is the lab's worst arm (−172 HP) and costs 1.2 pp; CX's
+   graded threat gains 38 HP and no games: fight-level gains convert to wins at rates that differ by mechanism (CB and
+   CX found the same with duels).
+4. **Validation, a screen** (§3.2, the same 16-constant design in games and in the lab): over the 16 effects the lab
+   predicts the games, r = +0.81 (Spearman +0.66), and ranks the same two constants first. But a native whole game
+   now costs 2.4 CPU-s (XC) against 53 for a lab fork on Java: the games' screen resolved its effects at about a
+   ninth of the lab's CPU. **Judge micro on native whole games; use the lab to see what a change does to fights.**
+5. **The micro searched** (§4): 16 newly exposed constants and TN2's three are flat around main (all within ±0.4 pp
+   per step but two; joint moves cost 3.8 pp). The two leads: `THROW_HOLD` 22 did not hold as a single move (the lab
+   reads it as nothing); **`STRAFE_LO` 3 → 0** (a strafe from movement cooldown < 2 free in TryAttack, TryRatNap and
+   TryTrap) passed the precision route's confirmation, **+0.017 [+0.006, +0.028]** on 3,000 fresh cells, after
+   screens of +0.020 and −0.012; about +1.1 pp over all 4,760 fresh cells; the lab reads +162 HP a fork for it.
 
 ---
 
@@ -197,10 +220,39 @@ The screen's two leads, moved alone from main, in whole games on fresh seed base
 | `THROW_HOLD` 10 | +0.009 [−0.008, +0.026] | | |
 | `STRAFE_LO` 1 | +0.009 [−0.011, +0.028] | | |
 
-- Neither confirms. The screen's slopes are averages over a region where 15 other constants also move (curvature
-  −3.8 pp); at main, a single move is worth about 0 ± 1 pp. Main's micro is at a local optimum for one-step moves of
-  all 19 screened weights (TN2's three and these 16).
-- The lab on the same single moves: (§4.1, below).
+- On these two seed bases neither single move holds up. The screen's slopes are averages over a region where 15
+  other constants also move (curvature −3.8 pp), so a slope there need not hold at main.
+- **The lab on the same single moves** (`lab1/pts`: 280 first forks × 2 salts, run `run-1119-195611-03535f`), each
+  against the null of the same fork and salt:
+
+| variant | HP exchange to r0 + 80 | HP exchange to r300 | rats to r300 | king HP to r300 | same (r300) |
+|---|---|---|---|---|---|
+| `STRAFE_LO` 0 | **+87 [+51, +124]** | **+162 [+66, +265]** | −0.07 [−0.50, +0.37] | +27 [−6, +58] | 0.06 |
+| `THROW_HOLD` 22 | −3 [−39, +34] | −2 [−89, +80] | −0.01 | −1 | 0.12 |
+| both | +98 [+56, +142] | +166 [+73, +262] | +0.21 | +16 | 0.04 |
+
+  The lab reads `THROW_HOLD` 22 alone as doing nothing (its screen slope came from the other constants' region) and
+  `STRAFE_LO` 0 as a clear gain in fights: cheaper strafes win HP in the fight at hand. Whether that becomes games is
+  the question the validation (§3.1) says the lab cannot answer, so it went to the precision route.
+
+### 4.1 `STRAFE_LO` 0, the precision route
+
+- **Confirmation**: `goal`, 3,000 cells, seed base 17014 (fresh), against main (`99ef794`, 0.821 there):
+  **+0.017 [+0.006, +0.028]**, 505 cells better, 409 worse (run `1119-200722-ab-bcaf`, branch `t3/fl-strafe0`
+  `42ad4b2`). Its lower bound clears 0, the precision route's rule; the decision rule was fixed before the run.
+- **Its screens disagree**: `fls2` +0.020 (17012, 760 cells), `fls3` −0.012 (17013, 1,000 cells). Over all 4,760
+  fresh cells (fls2, fls3 and the confirmation) +0.011. The whole-game screen's slope (−0.96 pp per +3, z −3.9, 17011)
+  and the lab's fight-level gain (+162 HP a fork) point the same way.
+- **The change**: a strafe from a movement cooldown below 2 costs nothing in TryAttack, TryRatNap and TryTrap
+  (`CombatCommon.strafeCost`, which charged 3 there and 8 from 2 up; TryFight never charges it). With the next move
+  still free after such a strafe, those generators now prefer a strafing bite, grab or trap over a forward one only
+  on the other scores; at 8 (cooldown ≥ 2) a strafe still costs the next turn's move. One instruction operand changes
+  (`iconst_3` → `iconst_0` in `CombatCommon.strafeCost`).
+- **Smoke** (`1119-201829-ab-3e4a`): no robot of ours killed by its own exception (awubot 6). **Gauntlet**
+  (`1119-201828-gauntlet-e9c6`, harm tests against main): no harm; OBG +0.023 [−0.038, +0.083] (107 cells), GST +0.000
+  [−0.039, +0.040] (104); `quick` opponents pass, `opp_cerr` (−0.016), `opp_gravy` (−0.047 [−0.125, +0.000]: 2 worse
+  cells of 32) and `awubot_quals` (1 worse of 32) end inconclusive at their 32-cell cap.
+- On the branch: `t3/fl-fight-lab` carries `STRAFE_LO` 0 (the bot equals the tested `42ad4b2`).
 
 ## 5. Against docs/closed.md
 

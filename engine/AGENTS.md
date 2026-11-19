@@ -2,7 +2,7 @@
 
 A native build of the official Battlecode 2026 engine that plays exactly the official engine's games with the same
 Java bots, many times faster. Why it is built this way: `DESIGN.md`. Exactness fails silently and costly, so every
-change here passes `engine/test/agreement.py --full` before it lands ("The checks").
+change here passes the full corpus (`engine/test/imperial.py run --full`) before it lands ("The checks").
 
 ## Exactness
 
@@ -93,7 +93,7 @@ to the robot's team.
   overrun the bytecode limit mid-statement, fail asserts, resign, disintegrate, and use the JDK features the corpus
   uses (collections, strings, boxing, lambdas, records, switches, `Math`, `Random`).
 - **Status** (19 Nov 2026, engine 1.2.6, commit f14753a): every game of the full corpus (8388) has a reference run
-  and a native run that agree in all the checks and in every result field. 7 more reference runs on DoC machines
+  and a native run that agree in all the checks and in every result field. 6 more reference runs on DoC machines
   disagreed with the native run on the same machine; each time the native run equalled the reference's run of that
   game elsewhere ("Known gaps"). 1.2.5: the same for a 1-in-10 sample (839 games, 1 such run). Quick 5/5,
   `refmain_test` 13/13, `conformance` 5/5.
@@ -107,7 +107,7 @@ to the robot's team.
 ./gradlew classes                                  # the bots' class files (build/classes)
 .venv/bin/python engine/build.py                   # engine/build/bcx: engine 1.2.6 and every bot package
 .venv/bin/python engine/build.py --engine 1.2.5    # engine/build/bcx-1.2.5 (--engine all: both)
-engine/build/bcx play SPECS.jsonl OUTDIR [-j N] [--no-replay] [--dump]   # native games
+engine/build/bcx play SPECS.jsonl OUTDIR [-j N] [--no-replay] [--no-indicators] [--dump]   # native games
 .venv/bin/python engine/play_java.py SPECS.jsonl OUTDIR [-j N] [--dump]  # the same games on the official jar
 .venv/bin/python engine/test/agreement.py --quick  # both engines, compared, here (--specs FILE: any specs)
 python3 engine/test/imperial.py run --full         # the whole corpus on Imperial, both engines in each task

@@ -370,7 +370,7 @@ def _build(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> 
         (gen / "last.json").unlink(missing_ok=True)
         src = sync_engine(snap, gen)
         cmd = ["nice", "-n", str(NICE), sys.executable, str(src / "engine" / "build.py"), "--engine", plan.version,
-               "-j", str(JOBS), "--glue-opt", GLUE_OPT, "--gen", str(gen), "--out", str(gen / "bcx")]
+               "-j", str(JOBS), f"--glue-opt={GLUE_OPT}", "--gen", str(gen), "--out", str(gen / "bcx")]
         for pkg, c in teams:
             cmd += ["--team", f"{pkg}={c}"]
         _say(f"building binary {key} ({len(teams)} bots: {', '.join(p for p, _ in teams[len(BASE):]) or 'base'}) "

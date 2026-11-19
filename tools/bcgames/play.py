@@ -57,6 +57,7 @@ PROPS = {
     "bc.server.validate-maps": "true",
 }
 DEFAULT_TIMEOUT = 1800  # seconds per game; the slowest official games take ~150 s alone
+IDLE_S = 60  # a game JVM idle this long exits (a fresh JVM plays the same games)
 
 
 class Slots:
@@ -243,7 +244,11 @@ class Pool:
 
     def _loop(self, w: Worker, q: queue.Queue) -> None:
         while True:
-            item = q.get()
+            try:
+                item = q.get(timeout=IDLE_S)
+            except queue.Empty:  # a native run's Java pool is mostly idle: don't keep its JVMs
+                w.stop()
+                continue
             if item is None or self.closed:
                 break
             job, on_result = item

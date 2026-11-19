@@ -1890,7 +1890,8 @@ public class Pathfinder {
             bug.outOfSightLoc = null;
             if(loc == null || loc.equals(myLoc)) return Direction.CENTER;
             var dir = myLoc.directionTo(loc);
-            turn(dir);
+            // a rat that already turned this round cannot look; the turn would throw and lose the rest of the turn
+            if(rc.canTurn()) turn(dir);
             if(CellTracker.isPassable(loc) && (!CellTracker.isDirt(loc) || Config.allowDirt())) {
                 return dir;
             }

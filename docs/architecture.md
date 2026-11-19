@@ -189,7 +189,7 @@ There are 64 slots of 0–1023. **Only kings may write** (50 bytecodes per write
 | 12–13 | `FORMATION_MINE` | (x+1, y+1) | same | FormationStrategy (join if dist² ≤ 625) |
 | 14 | `ALIVE_RAT_COUNT` | `(rc.getCurrentRatCost()-10)*2/5` | every king postTick | `numberOfRatsAlive` (CombatStrategy.shouldFight vs cats) |
 | **15** | (none) | **FREE: never read or written** | | |
-| 16–20 | `KING_MINE_ASSIGNMENT`+k | `encode2x2(mine)+1`; 0 = none; **never cleared when a king dies** | KingMiningStrategy (own k); the formation coordinator writes slot k+1 | kings: `isMineAssignedToAnyKing` (dist² < 25) |
+| 16–20 | `KING_MINE_ASSIGNMENT`+k | `encode2x2(mine)+1`; 0 = none; never cleared when a king dies, so `getKingMineAssignment` ignores a dead king's slot | KingMiningStrategy (own k; 0 while parked in a pocket); the formation coordinator writes slot k+1 | kings: `isMineAssignedToOtherKing` (mining: own slot skipped), `isMineAssignedToAnyKing` (formation site) (dist² < 25) |
 | 21 | `KING_EXPAND` | bit k = king k is 5×5 | `expandKing()` after 17 stuck turns (`contractKing` unused) | `RobotTracker.reset` → `isKingExpanded(i)`. **Bug:** it tests bit `kingId`, not `i`; babies have kingId −1, so the result is always false |
 | 22–31 | `RAT_SPAWN_INFO`+2k, +2k+1 | A = `hi3<<7 \| marker`, where `marker=(dx+4)*9+(dy+4)` is the spawn cell relative to king k; B = low 10 bits of a 13-bit payload; 1023 = empty | king k in the postTick of the **round after** `buildRat` (`toSpawn1→toSpawn0` delay). The first king of each round resets all 10 slots to 1023 | `BabyRat.init → loadSpawnInfo()`: finds the king whose marker equals its own position |
 | 32–34, 35–37 | `MAP_CHUNK_START` | Two 30-bit values, little-endian 10/10/10. Bit 29 = empty flag; bits 0–28 = `MapTracker.encodeChunk` = `cx<<27 \| cy<<25 \| 25-bit unit mask` | every king postTick: 2 chunks per turn, round-robin over the chunks it has seen, each chunk's 3 slots all or none (`CHUNK_WRITES_COST`). The last king in turn order wins | everyone preTick → `MapManager.applyGlobalChunk` |
@@ -251,6 +251,7 @@ The king's `trySqueakKing` has two more bugs: it shifts by loop index `i*15` ins
   - `dirt` is set or cleared on **every** sighting.
   - `init` marks rows ≥ mapHeight as seen (switch fall-through, :28-33). `isSeen` returns true off-map.
   - Accessors `isSeen/isPassable/isDirt(loc | x,y)` are `switch(y)` + a bit test.
+  - `seenRow(y)` and `wallRow(y)` (= seen and not passable) return a whole row, for `KingMiningStrategy`'s pocket flood.
   - Also: `isWallAdjacent`, `isPassable3x3/5x5`, `isKingPassable` (3×3, or 5×5 when `RatKing.is5x5`).
 - **`mapData[60]`.** One StringBuilder per row y; char x is `'\0'` unknown, `'\1'` non-wall, `'\2'` wall. It is written only by baby `storeCell`: not by `storeCellKing`, and not by symmetry mirroring. Combat reads it with `charAt` (1 bytecode).
 - **Scans.**
@@ -452,4 +453,4 @@ Cheesefarm (rounds 1–570) matches these numbers to within ~15% on every row. T
 - `for_related`/`for_wide_related` macros are never called.
 - Kings calling `Pathfinder.getMove` may run `BabyRat.turn`'s baby side effects.
 - The cheese-mine squeak decodes 1 of 3 mines; panic and empty king enemy squeaks inject phantom enemies (§4.2).
-- `isKingExpanded` uses the wrong index; slot 9 uses 0 as "none" although 0 is a valid kingId; king mine assignments are never cleared.
+- `isKingExpanded` uses the wrong index; slot 9 uses 0 as "none" although 0 is a valid kingId.

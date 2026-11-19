@@ -34,10 +34,11 @@ W0.3's mirror run `1118-222544-ab-6dea`, so every cell can be compared with its 
 7. **The seat decides part of the rest.** Our win rate is 0.832 from the seat the mirror run favoured and 0.740 from the
    other; about 28% of the split cells are seat-decided (tminusten, bed, dirtpassageway, EscapeTheNight, Hike,
    peaceinourtime and others). The cell counts (177/94/14) are what independent games at 0.786 give (176/96/13).
-8. **Ranked packages** (§5): PC1 last-cat rule (+0.7 to +1.2 pp, low risk); KB with a centre-mine site (running;
-   +1 to +2 pp); MC centre-mine presence on rich maps (+1 to +3 pp, sign uncertain, study first); E2b army from
-   attrition on small mine-poor maps (+0.5 to +1 pp); KS on the seat-decided king walks (running; +0.3 to +0.7 pp).
-   Together +3 to +6 pp: about 0.82–0.85. 90% needs the rich-map economy fixed; nothing measured yet reaches it.
+8. **Ranked packages** (§5): PC1 last-cat rule, on top of KB's cooperation king (+0.4 to +1.2 pp, low risk); MC
+   centre-mine presence on rich maps (+1 to +3 pp, sign uncertain, study first); E2b army from attrition on small
+   mine-poor maps (+0.5 to +0.9 pp); KS on the seat-decided king walks (running; +0.4 to +0.7 pp); a centre-mine
+   second king only after MC (+0.3 to +0.9 pp). Together +3 to +6 pp: about 0.82–0.85. 90% needs the rich-map economy
+   fixed; nothing measured yet reaches it.
 
 ---
 
@@ -308,15 +309,16 @@ Each is derived from a mechanism above. "Flips" are games of the 570, expected o
 
 | rank | id | change | evidence | flips | test | risk |
 |---|---|---|---|---|---|---|
-| 1 | **PC1** | Last-cat rule. In cooperation, our rats stop damaging a cat that may be the last one alive once its HP is low enough to die to the next bites, unless our transferred cheese is clearly ahead. They deliver raw cheese instead. Arm B: one deliberate backstab bite on an enemy rat just before our final blow, which keeps the game going under backstab weights. | §3.3: 10 of 12 cooperation losses ended by our own final damage while behind on cheese; 5–2 when awubot ends it; points at the instant (`E:world/GameWorld.java:911`, `:1181`). | +4 to +7 of the 10; −1 of the 4 wins we ended. +0.7 to +1.2 pp | gain on `L1-coop` (12 cells) at δ 0.10; harm on `goal`. Diagnostic: who deals the last cat damage (`D:LastCat.java`), cheese share at the end. | low. Fires only in cooperation near a cat's death. A cat held at low HP may wander into our rats or king. Arm B changes the scoring and lets awubot trap cats for 100 rounds (R§2). |
-| 2 | **KB** (running) | Second king at a centre mine cluster the miners do not work, early (r150–350) on maps with ≥ 8 mines. | §3.2: awubot's extra kings sit at centre mines in 54% of our losses (34% of wins). Win rate 0.61 when awubot forms first, 0.85 when we do. Our centre share is 0.36 in long rich-map losses. diamond c089A. KL's closed arms: a king beside ours starves. | snowball 21, r2000 with fewer kings 8: +5 to +10. +1 to +2 pp | KB's own plan, plus the centre-share diagnostic (`D:mcan.py`) and `L1-econ`. | KB's: the opening loses presence; a centre king is more exposed. |
-| 3 | **MC** (new) | Centre-mine presence on rich maps in r150–600: a fixed share of rats holds the boxes of the centre mines, and miners keep our own-side mines picked. Study first: why 943 cheese a game sits unpicked on our side in rich-map losses (rat positions by role from replays), then one arm. | §3.2: centre share 0.36 vs 0.57; presence 491 vs 1,081 rat-turns at the centre in losses; 39% vs 48% of our rat-turns at mines. Income share at r500 decides the long games. | `L1-econ` holds 69 losses; moving the centre share to 0.5 in a third of them: +10 to +15 if it works. +1 to +3 pp, sign uncertain | gain on `L1-econ` (62 cells) at δ 0.08, then `goal`. Diagnostics: centre share and own-side unpicked by r600, our rats' kills per game (must not fall). | high. E3's four miner-targeting arms lost (docs/closed.md); CC+CK showed that rats moved to one job leave another. Presence is untested. |
-| 4 | **E2b** (E2's later arm) | On maps under E2's cap, lift the cap back to awubot's once we see a larger enemy army near our king or mines (attrition), not from the map. | §3.5: houseofcards 4 of 6 lost with 8 rats against 12 and almost no income; the cap wins 6 of 6 on eight other gated maps, so a map gate cannot separate them. | houseofcards, DefaultSmall, bed, dirtfulcat, Excavation: +3 to +5. +0.5 to +0.9 pp | gain on `L1-early` (23 cells) at δ 0.10; harm on `mines-le4` (E2's gain). | medium. It can give back E2's measured gain. |
-| 5 | **KS** (running) and K-seat | The king does not leave a safe home for a mine whose path a cat or the enemy controls. tminusten: the king walks along the edge into the cats. dirtpassageway: into the centre. bed: into the cat's dead end. | §3.5, §3.6, §4: 8 losses on these 3 maps, all in the seat that both bots lose. K2: parked kings take 82 HP of scratches per 1,000 king-rounds, against 379–557 at 2–8 tiles from a mine. | +2 to +4. +0.4 to +0.7 pp | `L1-seat` (33 cells) and `L-cat`. | medium. Parked kings mine less (KS, K2). |
+| 1 | **PC1** | Last-cat rule. In cooperation, our rats stop damaging a cat that may be the last one alive once its HP is low enough to die to the next bites, unless our transferred cheese is clearly ahead. They deliver raw cheese instead. Arm B: one deliberate backstab bite on an enemy rat just before our final blow, which keeps the game going under backstab weights. Build it on KB's cooperation king, which targets the same maps. | §3.3: 10 of 12 cooperation losses ended by our own final damage while behind on cheese; 5–2 when awubot ends it; points at the instant (`E:world/GameWorld.java:911`, `:1181`). Kings were equal in 9 of the 12, so KB's cooperation king (+0.21 on the coop maps) converts some of the same games first. | +4 to +7 of the 10 on today's main, fewer after KB's arm; −1 of the 4 wins we ended. +0.4 to +1.2 pp | gain on `L1-coop` (12 cells) at δ 0.10, against a main that holds KB's cooperation king; harm on `goal`. Diagnostic: who deals the last cat damage (`D:LastCat.java`), cheese share at the end. | low. Fires only in cooperation near a cat's death. A cat held at low HP may wander into our rats or king. Arm B changes the scoring and lets awubot trap cats for 100 rounds (R§2). |
+| 2 | **MC** (new) | Centre-mine presence on rich maps in r150–600: a fixed share of rats holds the boxes of the centre mines, and miners keep our own-side mines picked. Study first: why 943 cheese a game sits unpicked on our side in rich-map losses (rat positions by role from replays), then one arm. | §3.2: centre share 0.36 vs 0.57; presence 491 vs 1,081 rat-turns at the centre in losses; 39% vs 48% of our rat-turns at mines. Income share at r500 decides the long games. | `L1-econ` holds 69 losses; moving the centre share to 0.5 in a third of them: +10 to +15 if it works. +1 to +3 pp, sign uncertain | gain on `L1-econ` (62 cells) at δ 0.08, then `goal`. Diagnostics: centre share and own-side unpicked by r600, our rats' kills per game (must not fall). | high. E3's four miner-targeting arms lost (docs/closed.md); CC+CK showed that rats moved to one job leave another. Presence is untested. |
+| 3 | **E2b** (E2's later arm) | On maps under E2's cap, lift the cap back to awubot's once we see a larger enemy army near our king or mines (attrition), not from the map. | §3.5: houseofcards 4 of 6 lost with 8 rats against 12 and almost no income; the cap wins 6 of 6 on eight other gated maps, so a map gate cannot separate them. | houseofcards, DefaultSmall, bed, dirtfulcat, Excavation: +3 to +5. +0.5 to +0.9 pp | gain on `L1-early` (23 cells) at δ 0.10; harm on `mines-le4` (E2's gain). | medium. It can give back E2's measured gain. |
+| 4 | **KS** (running) and K-seat | The king does not leave a safe home for a mine whose path a cat or the enemy controls. tminusten: the king walks along the edge into the cats. dirtpassageway: into the centre. bed: into the cat's dead end. | §3.5, §3.6, §4: 8 losses on these 3 maps, all in the seat that both bots lose. K2: parked kings take 82 HP of scratches per 1,000 king-rounds, against 379–557 at 2–8 tiles from a mine. | +2 to +4. +0.4 to +0.7 pp | `L1-seat` (33 cells) and `L-cat`. | medium. Parked kings mine less (KS, K2). |
+| 5 | **KB-centre** (after MC) | Second king at a centre mine cluster on maps with ≥ 8 mines, once our centre income can feed it. | §3.2: awubot's extra kings sit at centre mines in 54% of our losses (34% of wins); 0.61 when awubot forms first, 0.85 when we do. That is correlation: awubot forms them once it is rich. KB's early-king round arms starved (H0 ×4, KB memory) and KL's kings beside ours starved. | r2000 with fewer kings 8, part of snowball 21: +2 to +5. +0.3 to +0.9 pp, only after MC | KB's diagnostics plus the centre share (`D:mcan.py`), on `L1-econ`. | high: a second king without the centre income starves (KB, KL). |
 
 **The plan's wave-3 list against this evidence** (plan §4.3):
-- **PC**: yes, as PC1 above. Its points estimator (slot 15) matters for the "unless clearly ahead" gate. The cheese
-  share is the only open term in cooperation (cat damage and kings were equal).
+- **PC**: yes, as PC1 above. Its points estimator (slot 15) matters for the "unless clearly ahead" gate. In the
+  cooperation losses cat damage was always equal and kings equal in 9 of 12: the cheese share and the king count are
+  the open terms, and KB's cooperation king takes the second.
 - **XA**: lure cats onto awubot's king. The cat races (tminusten) are seat-decided, and K2's squeak arms showed that
   steering is not what scratches kings. Low.
 - **IS**: no loss traced to a wrong enemy-king guess. Low.
@@ -328,7 +330,9 @@ Each is derived from a mechanism above. "Flips" are games of the 570, expected o
 - **AB** (running): ablations. Of the three features, "eternal exploration" bears on MC's unpicked own-side cheese.
 
 **The packages running now:**
-- **KB**: supported, with the centre-mine site and the income-share diagnostic (rank 2).
+- **KB**: its cooperation king (passed, +0.21 on the coop maps) fits §3.3: kings were equal in 9 of the 12
+  cooperation losses. Its early round arms starved; §3.2 does not reopen them, because awubot's centre kings follow
+  its centre income. A centre site waits for MC (rank 5).
 - **PT**: the r2000 losses move with the army and the kings, not delivery (§3.4). The cooperation lever is PC1's,
   not PT's delivery deadline.
 - **KS**: supported on the seat-decided king walks (rank 5).
@@ -337,7 +341,7 @@ Each is derived from a mechanism above. "Flips" are games of the 570, expected o
 
 **What 90% needs.** The five packages give about +3 to +6 pp: 0.82–0.85. Reaching 0.90 means cutting the losses from
 122 to 57. Rich maps hold 75 of them at 0.755; at 0.90 there, the total would be about 0.88. The remaining gap is the
-centre-mine economy of rich maps (MC, KB). Nothing measured yet shows a lever of that size.
+centre-mine economy of rich maps (MC, then a centre king). Nothing measured yet shows a lever of that size.
 
 ---
 

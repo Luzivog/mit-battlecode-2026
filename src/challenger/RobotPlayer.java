@@ -25,6 +25,7 @@ public class RobotPlayer {
 
     public static void run(RobotController rc) throws GameActionException {
         Game.init(rc);
+        Book.init(); // first: the classes that read Tune load after it (tools/book/AGENTS.md)
         Rng.seed();
         Rng.init();
         EnemyManager.init();

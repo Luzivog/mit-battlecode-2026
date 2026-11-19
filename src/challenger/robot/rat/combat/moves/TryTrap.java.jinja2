@@ -84,9 +84,27 @@ public final class TryTrap {
         return false;
     }
 
+    // The approach band (docs/theory/t2-combat.md §2.4): an enemy baby rat at Chebyshev 2 (d² 4-8) that steps toward us,
+    // or sideways, enters the 3×3 of the tile between us. Trap that tile whenever the cheese allows.
+    static final int BAND_GLOBAL_CHEESE = 400;
+    static RobotInfo bandEnemy;
+
+    // The nearest enemy baby rat, if it is in the band and we can pay for a trap from raw cheese or a rich global.
+    private static RobotInfo findBandEnemy() {
+        if (rc.getRawCheese() < 20 && rc.getGlobalCheese() < BAND_GLOBAL_CHEESE) return null;
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() != UnitType.BABY_RAT) continue;
+            int d = info.location.distanceSquaredTo(myLoc);
+            return d >= 4 && d <= 8 ? info : null;
+        }
+        return null;
+    }
+
     public static boolean run() throws GameActionException {
         if (!verifyCanRun()) return false;
-        shouldDefRun = globalShouldRun();
+        bandEnemy = findBandEnemy();
+        shouldDefRun = bandEnemy != null || globalShouldRun();
         if (!shouldDefRun && !shouldRunEarlyExit()) return false;
 
         bytecodeStart = Clock.getBytecodeNum();
@@ -148,8 +166,24 @@ public final class TryTrap {
 
         applyTrapWeights();
         applyEnemyWeights();
+        if (bandEnemy != null) {
+            // the tile between first, else ±45°; above any cone sum, but not enough to undo a −100 or −1000
+            Direction d = myLoc.directionTo(bandEnemy.location);
+            addAdjacentWeight(d, 20);
+            addAdjacentWeight(d.rotateLeft(), 10);
+            addAdjacentWeight(d.rotateRight(), 10);
+        }
 
         {# // Profiler.pop("TryTrap.computeWeights"); #}
+    }
+
+    private static void addAdjacentWeight(Direction d, double v) {
+        switch (d.ordinal()) {
+            {% for d in directions %}
+            case {{ loop.index0 }} -> {{ wvar(dir_dx[d], dir_dy[d]) }} += v;
+            {% endfor %}
+            default -> { }
+        }
     }
 
     private static void clearWeights() {

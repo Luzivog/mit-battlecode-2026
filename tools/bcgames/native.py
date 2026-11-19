@@ -456,30 +456,62 @@ def gc() -> None:
 
 # ---------------------------------------------------------------------------------------------------------- games
 
+NO_ROOM_MB = 1024  # under this free where a game writes, a native failure is put down to the disk
+
+
+def no_room(error: str, where: Path) -> bool:
+    """A native failure for want of disk: ENOSPC, or any failure with under NO_ROOM_MB free at WHERE (a full disk
+    also shows as a bcx that exits 0 without its result, or dies of SIGBUS: 111 games on 4 lab machines, 19 Nov)."""
+    if "No space left" in error or "Errno 28" in error:
+        return True
+    try:
+        st = os.statvfs(where)
+    except OSError:
+        return False
+    return st.f_bavail * st.f_frsize < NO_ROOM_MB << 20
+
+
+LOCAL_KEEP_S = 1800  # a binary of the piece's cache unused this long goes when another one is unpacked
+
+
 def local_binary(path: str) -> Path:
     """A binary a spec names (a remote node: on the shared volume, maybe gzip'd), copied once to this machine's disk
-    (the task's TMPDIR, shared by the tasks of one piece), so games don't page it in over the network. When that disk
-    is full (seen on DoC), unpacked next to it on the volume, once for every node: slower, never elsewhere."""
+    so games don't page it in over the network: into JOB_CACHE (tools/piece.py: shared by the tasks of one piece, so
+    unpacked once a piece under a lock, not 100 MB a task), else the task's TMPDIR. Binaries there unused for
+    LOCAL_KEEP_S go when another is unpacked. When that disk is full (seen on DoC), unpacked next to it on the volume,
+    once for every node: slower, never elsewhere."""
     src = Path(path)
     name = src.name[:-3] if src.name.endswith(".gz") else src.name
+    local = Path(os.environ.get("JOB_CACHE") or tempfile.gettempdir()) / "bcx"
     errors = []
-    for final in dict.fromkeys([Path(tempfile.gettempdir()) / "bcx" / name, src.parent / name]):
+    for final in dict.fromkeys([local / name, src.parent / name]):
         if final.exists():
+            if final.parent == local:
+                os.utime(final)  # in use: kept
             return final
         tmp = None
         try:
             final.parent.mkdir(parents=True, exist_ok=True)
-            fd, tmp = tempfile.mkstemp(prefix=name + ".", dir=final.parent)
-            with os.fdopen(fd, "wb") as out:
-                if src.name.endswith(".gz"):
-                    import gzip
-                    with gzip.open(src) as f:
-                        shutil.copyfileobj(f, out, 1 << 20)
-                else:
-                    with open(src, "rb") as f:
-                        shutil.copyfileobj(f, out, 1 << 20)
-            os.chmod(tmp, 0o700)
-            os.replace(tmp, final)
+            with open(final.parent / f".{name}.lock", "a") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX)  # one task of the piece unpacks it, the others wait for it
+                if final.exists():
+                    return final
+                fd, tmp = tempfile.mkstemp(prefix=name + ".", dir=final.parent)
+                with os.fdopen(fd, "wb") as out:
+                    if src.name.endswith(".gz"):
+                        import gzip
+                        with gzip.open(src) as f:
+                            shutil.copyfileobj(f, out, 1 << 20)
+                    else:
+                        with open(src, "rb") as f:
+                            shutil.copyfileobj(f, out, 1 << 20)
+                os.chmod(tmp, 0o700)
+                os.replace(tmp, final)
+            if final.parent == local:
+                now = time.time()
+                for old in local.iterdir():  # a running game keeps its unlinked binary
+                    if old.name != name and not old.name.startswith(".") and now - old.stat().st_mtime > LOCAL_KEEP_S:
+                        old.unlink(missing_ok=True)
             return final
         except OSError as e:  # a full disk (seen on DoC): the next place
             errors.append(f"{final.parent}: {e}")

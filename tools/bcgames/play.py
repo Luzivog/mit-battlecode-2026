@@ -56,6 +56,7 @@ PROPS = {
     "bc.engine.debug-methods": "false", "bc.engine.enable-profiler": "false",
     "bc.server.validate-maps": "true",
 }
+GIVE_BACK = 75  # tools/play --give-back's exit when this host can't write its games (tools/piece.py GIVE_BACK)
 DEFAULT_TIMEOUT = 1800  # seconds per game; the slowest official games take ~150 s alone
 IDLE_S = 60  # a game JVM idle this long exits (a fresh JVM plays the same games)
 
@@ -310,7 +311,11 @@ class Runner:
 
     def __init__(self, workers: int, outdir: Path, timeout: float = DEFAULT_TIMEOUT, use_cache: bool = True,
                  backend: str = "native", guard: float | None = None, on_mismatch=None, slots: bool = True,
-                 on_guard=None):
+                 on_guard=None, no_room=None):
+        """NO_ROOM(job, error): a native failure for want of disk where games write (native.no_room) goes there,
+        not to Java (remote tasks: tools/play --give-back)."""
+        self.no_room = no_room
+        self.outdir = outdir
         self.resolver = Resolver()
         self.cache = store.Cache() if use_cache else None
         self.cache_lock = threading.Lock()
@@ -346,6 +351,9 @@ class Runner:
         def native_done(job: Job, res: dict) -> None:
             if res.get("error"):  # the native engine couldn't play it: the Java engine does
                 err = res["error"]
+                if self.no_room is not None and native.no_room(err, self.outdir):
+                    self.no_room(job, err)
+                    return
                 self.pool.submit(job, lambda j, r: done(j, dict(r, native_error=err)))
             elif self.wants_guard(job, res):
                 self.guard(job, res, done)
@@ -460,6 +468,10 @@ def main(argv=None) -> int:
     ap.add_argument("--guard", type=float, default=None,
                     help=f"share of native games also played on Java and compared (default {native.GUARD_RATE:g}, "
                          "plus each binary's first game; 0: only specs with guard: true)")
+    ap.add_argument("--give-back", action="store_true",
+                    help="a remote task: a native game failing for want of disk where games write ends tools/play "
+                         f"with code {GIVE_BACK} at once, unplayed, so its piece gives the task to another machine "
+                         "(tools/piece.py GIVE_BACK) instead of playing it on Java here")
     args = ap.parse_args(argv)
 
     t0 = time.time()
@@ -470,9 +482,15 @@ def main(argv=None) -> int:
     replay_dir = outdir / "replays" if args.replays != "none" else None
     if replay_dir:
         replay_dir.mkdir(exist_ok=True)
+    gave_back: list[str] = []
+    done = threading.Event()
+
+    def no_room(job: Job, err: str) -> None:
+        gave_back.append(f"{job.spec.get('id')}: {err}")
+        done.set()
     try:
         runner = Runner(args.workers, outdir, args.timeout, use_cache=not args.no_cache, backend=args.backend,
-                        guard=args.guard)
+                        guard=args.guard, no_room=no_room if args.give_back else None)
         jobs = []
         for s in specs:
             if args.engine and "engine" not in s:
@@ -487,7 +505,6 @@ def main(argv=None) -> int:
 
     out = open(outdir / "results.jsonl", "a")
     lock = threading.Lock()
-    done = threading.Event()
     counts = {"played": 0, "cached": 0, "errors": 0, "left": len(jobs), "native": 0, "java": 0}
 
     def record(r: dict) -> None:
@@ -514,6 +531,10 @@ def main(argv=None) -> int:
             runner.submit(j, record)
     if jobs:
         done.wait()
+    if gave_back:
+        print(f"tools/play: no room to write on {socket.gethostname()}: {gave_back[0][-300:]}", file=sys.stderr,
+              flush=True)
+        os._exit(GIVE_BACK)  # its other games, if any, are played wherever the task goes next
     runner.close()
     wall = time.time() - t0
     rate = counts["played"] / wall * 60 if wall > 0 else 0

@@ -3,6 +3,7 @@ python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'"""
 import json
 import os
 import tempfile
+import time
 import threading
 import unittest
 from pathlib import Path
@@ -127,6 +128,39 @@ class StoreTest(unittest.TestCase):
             os.chmod(Path(self.tmp.name) / "local" / "bcx", 0o700)
             tempfile.tempdir = old
 
+    def test_a_pieces_tasks_share_its_unpacked_binary(self):
+        import gzip
+        cache = Path(self.tmp.name) / "cache"
+        src = Path(self.tmp.name) / "k7.gz"
+        src.write_bytes(gzip.compress(b"seven"))
+        old_bin = cache / "bcx" / "k1"
+        old_bin.parent.mkdir(parents=True)
+        old_bin.write_bytes(b"old")
+        os.utime(old_bin, (time.time() - native.LOCAL_KEEP_S - 10,) * 2)
+        recent = cache / "bcx" / "k2"
+        recent.write_bytes(b"recent")
+        os.environ["JOB_CACHE"] = str(cache)
+        try:
+            got = native.local_binary(str(src))
+            self.assertEqual((got, got.read_bytes()), (cache / "bcx" / "k7", b"seven"))
+            self.assertFalse(old_bin.exists())  # unused for LOCAL_KEEP_S: gone
+            self.assertTrue(recent.exists())
+            src.unlink()  # the piece's next task finds it
+            self.assertEqual(native.local_binary(str(src)), got)
+        finally:
+            del os.environ["JOB_CACHE"]
+
+    def test_no_room_reads_the_error_and_the_disk(self):
+        where = Path(self.tmp.name)
+        self.assertTrue(native.no_room("native: OSError: [Errno 28] No space left on device", where))
+        self.assertFalse(native.no_room("native: the game process exited with 0", where))  # this disk has room
+        old = native.NO_ROOM_MB
+        native.NO_ROOM_MB = 1 << 40
+        try:
+            self.assertTrue(native.no_room("native: the game process exited with 0", where))
+        finally:
+            native.NO_ROOM_MB = old
+
     def test_purge_removes_one_binarys_results(self):
         cache = store.Cache(Path(self.tmp.name) / "c.sqlite")
         cache.put("k1", {"winner": "A", "backend": "native", "native_build": "b1"})
@@ -215,6 +249,7 @@ class GuardFlowTest(unittest.TestCase):
         r.seen, r.checked = [], []
         r.on_mismatch = lambda job, g: r.seen.append(g)
         r.on_guard, r.guards_pending = None, 0
+        r.no_room, r.outdir = None, Path(self.tmp.name)
         return r
 
     def play(self, r, nres, spec=None):
@@ -282,6 +317,17 @@ class GuardFlowTest(unittest.TestCase):
         got = self.play(r, result(backend="native", native_build="b1"),
                         {"id": "g", "a": "x", "b": "y", "map": "m", "guard": True})
         self.assertEqual(got["guard"]["verdict"], "same")
+
+    def test_a_native_failure_for_want_of_disk_goes_back_unplayed(self):
+        r = self.runner([result()])
+        gave = []
+        r.no_room = lambda job, err: gave.append(err)
+        r.native = type("N", (), {"submit": lambda self, job, cb: (cb(job, {"error": "native: OSError: [Errno 28] "
+                                                                                  "No space left on device"}), True)[1]})()
+        job = play.Job(spec={"id": "g", "a": "challenger", "b": "awubot", "map": "m"}, key=KEY, meta={"key": KEY})
+        out = []
+        r.submit(job, out.append)
+        self.assertEqual((len(gave), out, r.pool.played), (1, [], 0))  # not played on Java, nothing delivered
 
     def test_native_failure_plays_on_java(self):
         r = self.runner([result()])

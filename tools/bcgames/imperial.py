@@ -229,7 +229,7 @@ class ImperialRunner:
             cmd += ["--where", self.where]
         cmd += ["--", "env", f"BCGAMES_DATA={SHIP.relative_to(store.ROOT)}", "BCGAMES_SLOTS=0", "tools/play",
                 "{file}", "{out}", "--workers", "1", "--no-cache", "--timeout", str(int(self.timeout)),
-                "--backend", "native" if is_native else "java", "--guard", "0"]
+                "--backend", "native" if is_native else "java", "--guard", "0", "--give-back"]
         proc = subprocess.run(cmd, cwd=store.ROOT, capture_output=True, text=True)
         self.log.write(proc.stderr)
         lines = proc.stdout.split()

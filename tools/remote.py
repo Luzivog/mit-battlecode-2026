@@ -7,13 +7,17 @@ shell of a job's life without DoC.
 """
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import os
 import re
+import shlex
 import subprocess
 import tempfile
+import threading
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 LOCAL = os.environ.get("BC26_LOCAL_REMOTE", "")  # tests: a folder here standing in for REMOTE_ROOT
@@ -29,7 +33,9 @@ RUNTIME = f"{REMOTE_ROOT}/runtime"  # the JDK, the Python and the engine's jars 
 DATA = Path.home() / "battlecode26-data"
 UMASK = "umask 077; "  # before every remote command: what it creates is ours alone
 MAX_ARG = 131_072  # Linux's cap on one argument (MAX_ARG_STRLEN): a longer command goes on ssh's stdin
-SLURM_HOSTS = ("gpucluster2", "gpucluster3")  # the GPU cluster's login nodes: the second if the first is down
+# The GPU cluster's login nodes: the second when the first can't be reached (a name whose kept connection was already
+# tried is skipped: login)
+SLURM_HOSTS = ("gpucluster2", "gpucluster3")
 CPU_HOST = "cpucluster1.doc.ic.ac.uk"  # cpucluster1's login node
 SUBMIT = "ash04.doc.ic.ac.uk"  # the Condor submit host, a lab machine: one login per call, never a kept connection
 CONDOR = ("export CONDOR_CONFIG=/vol/condor/pool/doc/config/condor_config.global "
@@ -45,37 +51,215 @@ class Unreachable(Refused):
     """No login node answered (ssh's 255 from each), so the command may not have run at all."""
 
 
+# Every call is bounded on both sides: ssh is killed here after its bound and the command runs under `timeout -s KILL`
+# there (19 Nov: unbounded reads of a folder that stopped answering hung for 28 minutes, and every tool behind them).
+READ_S = 20.0  # a read or a small write; an upload gets 1 s more a MB (UPLOAD_MB_S)
+UPLOAD_MB_S = 1.0
+BULK_S = 600.0  # a bulk transfer's bound (login_into: a run's results)
+SLACK_S = 10.0  # ssh here outlives the remote bound by this much, so the remote side's kill is the one that ends it
+MASTER_S = 60.0  # making a kept connection (through the jump host)
+# sshd allows 10 sessions a connection (MaxSessions); a session refused made ssh open a connection of its own (93 at
+# once on 19 Nov). Every process of ours on this machine holds one of SESSIONS slots (a lock file) a session, at most
+# BULK_SESSIONS of them for bulk transfers, and a client can't fall off the kept connection (ssh_argv)
+SESSIONS, BULK_SESSIONS, SUBMIT_SESSIONS = 8, 3, 4
+SLOT_WAIT_S = 300.0  # how long a call waits its turn for a session (every call holding one is bounded)
+CLIENT = Path(os.environ.get("BC26_CLIENT_DIR") or (f"{LOCAL}.client" if LOCAL else DATA / "compute"))
+SSH_TAG = os.environ.get("BC26_SSH_TAG", "bc26-ssh")  # the kept connections' socket names (a test uses its own)
+
+
+def control_path(host: str) -> str:
+    """HOST's kept connection's socket, as ssh resolves it with the usual configuration (the jump host included:
+    ssh's %C hashes it, so a client whose proxy differs would look for another socket)."""
+    if host not in _CONTROL:
+        p = subprocess.run(["ssh", "-G", "-o", f"ControlPath={RUN_DIR}/{SSH_TAG}-%C", host], capture_output=True,
+                           text=True, timeout=10, stdin=subprocess.DEVNULL)
+        got = [x.split(" ", 1)[1] for x in p.stdout.splitlines() if x.startswith("controlpath ")]
+        if p.returncode or not got:
+            raise Unreachable(f"ssh -G {host}: exit {p.returncode}: {p.stderr.strip()[-200:]}")
+        _CONTROL[host] = got[0]
+    return _CONTROL[host]
+
+
+RUN_DIR = os.environ.get("XDG_RUNTIME_DIR", "/tmp")
+_CONTROL: dict[str, str] = {}
+SSH_OPTS = ["-o", "BatchMode=yes", "-o", "LogLevel=ERROR", "-o", "ConnectTimeout=20", "-o", "ServerAliveInterval=15",
+            "-o", "ServerAliveCountMax=4"]
+
+
 def ssh_argv(host: str, cmd: str, stream: int = 0) -> list[str]:
-    """ssh's command line for CMD on HOST: only the Slurm login nodes, cpucluster1's and the submit host. The login
-    nodes go over one kept-open connection each (STREAM: another one, for a bulk transfer beside it), never a new
-    connection a call, which made gpucluster2 refuse new ones for minutes; the submit host is a lab machine, where a
-    kept connection would count as its owner's load, so one login a call."""
+    """ssh's command line for CMD on HOST: only the Slurm login nodes, cpucluster1's and the submit host. A login node
+    is reached only over its kept connection (start_master): no ControlMaster, and a proxy that fails, so a session the
+    master can't open ends 255 instead of opening a connection of its own. The submit host is a lab machine, where a
+    kept connection would count as its owner's load, so one login a call. STREAM: unused (one connection a host)."""
     if host not in (*SLURM_HOSTS, CPU_HOST, SUBMIT):
         raise Refused(f"no ssh to {host}: DoC allows lab machines only through Condor")
-    opts = ["-o", "BatchMode=yes", "-o", "LogLevel=ERROR", "-o", "ConnectTimeout=20", "-o", "ServerAliveInterval=15",
-            "-o", "ServerAliveCountMax=4"]
+    opts = list(SSH_OPTS)
     if host != SUBMIT:
-        sock = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / f"bc26-ssh-%C{f'-{stream}' if stream else ''}"
-        opts += ["-o", "ControlMaster=auto", "-o", f"ControlPath={sock}", "-o", "ControlPersist=10m"]
+        opts += ["-o", "ControlMaster=no", "-o", f"ControlPath={control_path(host)}", "-o", "ProxyCommand=/bin/false"]
     return ["ssh", *opts, host, cmd]
 
 
-def _run(host: str, script: str, stdin: bytes | None, stream: int) -> subprocess.CompletedProcess[bytes]:
-    if LOCAL:
-        return subprocess.run(["bash", "-c", script], input=stdin, capture_output=True)
-    return subprocess.run(ssh_argv(host, script, stream), input=stdin, capture_output=True)
+def master_up(host: str) -> bool:
+    p = subprocess.run(["ssh", "-O", "check", "-o", f"ControlPath={control_path(host)}", host], capture_output=True,
+                       timeout=10, stdin=subprocess.DEVNULL)
+    return p.returncode == 0
 
 
-def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = SLURM_HOSTS, stream: int = 0) -> str:
-    """CMD on the first login node of HOSTS that answers; its stdout. ssh's 255 tries the next node, which runs CMD
-    again, so a CMD that changes anything must refuse to run twice (a `mkdir` of its folder). Refused when CMD fails,
-    Unreachable when no node answers. A CMD too long for one argument goes as a script on ssh's stdin."""
+def start_master(host: str) -> None:
+    """HOST's kept connection, made by one process at a time (a lock), unless one is up; it lasts 10 minutes past its
+    last session. Unreachable when it can't be made."""
+    with _locked(CLIENT / "ssh" / f"{Path(control_path(host)).name}.master", MASTER_S):
+        if master_up(host):
+            return
+        with tempfile.TemporaryFile() as err:
+            try:
+                p = subprocess.run(["ssh", *SSH_OPTS, "-o", "ControlMaster=yes", "-o",
+                                    f"ControlPath={control_path(host)}", "-o", "ControlPersist=10m", "-f", "-N", host],
+                                   stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=err, timeout=MASTER_S)
+            except subprocess.TimeoutExpired:
+                raise Unreachable(f"on {host}: no connection within {MASTER_S:.0f} s") from None
+            err.seek(0)
+            if p.returncode:
+                raise Unreachable(f"on {host}: connecting: exit {p.returncode}: "
+                                  f"{err.read().decode(errors=ESC).strip()[-300:]}")
+
+
+@contextmanager
+def _locked(path: Path, wait_s: float) -> Iterator[None]:
+    """An exclusive lock on PATH for the block, waited for WAIT_S at most (then Unreachable)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o600)
+    try:
+        end = time.monotonic() + wait_s
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() >= end:
+                    raise Unreachable(f"{path.name}: held by another process for {wait_s:.0f} s") from None
+                time.sleep(0.05)
+        yield
+    finally:
+        os.close(fd)
+
+
+@contextmanager
+def session(host: str, bulk: bool, wait_s: float) -> Iterator[None]:
+    """One of HOST's session slots, shared by every process here: SESSIONS a kept connection (BULK_SESSIONS of them
+    for bulk transfers), SUBMIT_SESSIONS logins at once to the submit host. Unreachable when none frees within
+    WAIT_S."""
+    if host == SUBMIT:
+        key, slots = "submit", range(SUBMIT_SESSIONS)
+    else:
+        key = host if LOCAL else Path(control_path(host)).name
+        slots = range(SESSIONS - BULK_SESSIONS, SESSIONS) if bulk else range(SESSIONS)
+    d = CLIENT / "ssh"
+    d.mkdir(parents=True, exist_ok=True)
+    end = time.monotonic() + wait_s
+    while True:
+        for i in slots:
+            fd = os.open(d / f"{key}.{i}", os.O_RDWR | os.O_CREAT, 0o600)
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                os.close(fd)
+                continue
+            try:
+                yield
+            finally:
+                os.close(fd)
+            return
+        if time.monotonic() >= end:
+            raise Unreachable(f"{host}: all {len(slots)} sessions busy for {wait_s:.0f} s")
+        time.sleep(0.05)
+
+
+# The remote side's bound: the command runs in a session of its own (setsid), beside a `sleep` of its bound; when the
+# sleep ends first, the bound is said on stderr and the whole session is killed, the command's children too (GNU
+# timeout kills only its child on the login nodes, and a child left holding the output kept the ssh session open). A
+# background job's stdin is /dev/null unless it is named, so it is.
+BOUND_SH = ('sleep {t} </dev/null >/dev/null 2>&1 & w=$!; bash -c "$1" 0<&0 & p=$!; wait -n; e=$?; '
+            'if kill -0 $p 2>/dev/null; then echo "{said} {t} s" >&2; kill -KILL -$$; fi; kill $w 2>/dev/null; exit $e')
+TIMED_OUT = "bc26: the remote bound ended it after"
+
+
+def bounded(script: str, t: float) -> str:
+    """SCRIPT run under a kill of it and every process it started after T seconds (BOUND_SH)."""
+    inner = BOUND_SH.format(t=int(t), said=TIMED_OUT)
+    return f"setsid bash -c {shlex.quote(inner)} _ {shlex.quote(script)}; exit $?"
+
+
+def killed(code: int, err: bytes) -> bool:
+    return TIMED_OUT.encode() in err
+
+
+# sshd's answer when the connection already holds its 10 sessions (other processes' calls, old tools' among them): the
+# command never ran, so the call waits its turn and asks again
+SESSION_REFUSED = re.compile(r"Session open refused|session request failed")
+
+
+def _attempts(host: str, launch: Callable[[], tuple[int, bytes]], wait_s: float) -> tuple[int, bytes]:
+    """LAUNCH (one ssh call: its code and stderr) until it gets a session: again while sshd refuses one (for WAIT_S at
+    most), and once more after making the kept connection again when it had gone. Locally, once."""
+    end = time.monotonic() + wait_s
+    pause, remade = 0.2, False
+    while True:
+        code, err = launch()
+        if code != 255 or LOCAL:
+            return code, err
+        if SESSION_REFUSED.search(err.decode(errors=ESC)) and time.monotonic() + pause < end:
+            time.sleep(pause)
+            pause = min(pause * 2, 5.0)
+            continue
+        if not remade and not master_up(host):
+            start_master(host)
+            remade = True
+            continue
+        return code, err
+
+
+def _run(host: str, script: str, stdin: bytes | None, t: float, bulk: bool = False
+         ) -> subprocess.CompletedProcess[bytes]:
+    """SCRIPT on HOST within T seconds (both sides), in one session slot (waited for: SLOT_WAIT_S). Unreachable when it
+    ran out of time, or no session could be had."""
+    got: list[subprocess.CompletedProcess[bytes]] = []
+
+    def launch() -> tuple[int, bytes]:
+        argv = ["bash", "-c", bounded(script, t)] if LOCAL else ssh_argv(host, bounded(script, t))
+        try:
+            p = subprocess.run(argv, input=stdin, capture_output=True, timeout=t + SLACK_S,
+                               stdin=None if stdin is not None else subprocess.DEVNULL)
+        except subprocess.TimeoutExpired:
+            raise Unreachable(f"on {host}: no answer within {t + SLACK_S:.0f} s") from None
+        got.append(p)
+        return p.returncode, p.stderr
+    with session(host, bulk, SLOT_WAIT_S):
+        code, err = _attempts(host, launch, SLOT_WAIT_S)
+    if killed(code, err):
+        raise Unreachable(f"on {host}: the remote bound ended it after {t:.0f} s")
+    return got[-1]
+
+
+def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = SLURM_HOSTS, stream: int = 0,
+          timeout: float | None = None) -> str:
+    """CMD on the first login node of HOSTS that answers; its stdout. ssh's 255 tries the next node (one with another
+    kept connection), which runs CMD again, so a CMD that changes anything must refuse to run twice (a `mkdir` of its
+    folder). Refused when CMD fails, Unreachable when no node answers or it ran out of time (TIMEOUT: READ_S, plus
+    UPLOAD_MB_S a MB of STDIN). A CMD too long for one argument goes as a script on ssh's stdin."""
     script = UMASK + cmd
-    if stdin is None and len(script.encode()) >= MAX_ARG:
+    if stdin is None and len(script.encode()) >= MAX_ARG // 2:  # quoted once more by `bounded`
         script, stdin = "bash -s", script.encode()
+    t = timeout or READ_S + UPLOAD_MB_S * len(stdin or b"") / 1e6
+    bulk = len(stdin or b"") > 1 << 20
     p: subprocess.CompletedProcess[bytes] | None = None
+    tried: set[str] = set()
     for host in hosts:
-        p = _run(host, script, stdin, stream)
+        key = host if LOCAL else control_path(host)
+        if key in tried:  # another name of a connection already tried (gpucluster2 and 3 are one host)
+            continue
+        tried.add(key)
+        p = _run(host, script, stdin, t, bulk)
         if p.returncode != 255:
             break
     assert p is not None
@@ -85,25 +269,46 @@ def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = SLURM_H
     return p.stdout.decode(errors=ESC)
 
 
-def login_into(cmd: str, into: Path, hosts: tuple[str, ...] = SLURM_HOSTS, stream: int = 1) -> None:
+def login_into(cmd: str, into: Path, hosts: tuple[str, ...] = SLURM_HOSTS, stream: int = 1,
+               timeout: float = BULK_S) -> None:
     """CMD, whose stdout is a tar, on the first login node of HOSTS that answers, unpacked into INTO as it comes (the
-    bytes never in Python), over a connection of its own (STREAM)."""
+    bytes never in Python), in a bulk session slot, within TIMEOUT."""
     into.mkdir(parents=True, exist_ok=True)
+    tried: set[str] = set()
     for host in hosts:
-        with tempfile.TemporaryFile() as err:
-            argv = ["bash", "-c", UMASK + cmd] if LOCAL else ssh_argv(host, UMASK + cmd, stream)
-            src = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=err)
-            assert src.stdout is not None
-            tar = subprocess.run(["tar", "-xf", "-", "-C", str(into)], stdin=src.stdout, capture_output=True)
-            src.stdout.close()
-            code = src.wait()
-            if code == 255 and not LOCAL:
-                continue
-            err.seek(0)
-            if code or tar.returncode:
-                raise Refused(f"on {host}: exit {code}, tar {tar.returncode}: "
-                              f"{(err.read() + tar.stderr).decode(errors=ESC).strip()[-500:]}")
-            return
+        key = host if LOCAL else control_path(host)
+        if key in tried:
+            continue
+        tried.add(key)
+        tars: list[subprocess.CompletedProcess[bytes]] = []
+
+        def launch() -> tuple[int, bytes]:
+            script = bounded(UMASK + cmd, timeout)
+            argv = ["bash", "-c", script] if LOCAL else ssh_argv(host, script)
+            with tempfile.TemporaryFile() as err:
+                src = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=err)
+                assert src.stdout is not None
+                timer = threading.Timer(timeout + SLACK_S, src.kill)
+                timer.start()
+                try:
+                    tars.append(subprocess.run(["tar", "-xf", "-", "-C", str(into)], stdin=src.stdout,
+                                               capture_output=True))
+                    src.stdout.close()
+                    code = src.wait()
+                finally:
+                    timer.cancel()
+                err.seek(0)
+                return code, err.read()
+        with session(host, True, SLOT_WAIT_S):
+            code, err = _attempts(host, launch, SLOT_WAIT_S)
+        if code == 255 and not LOCAL:
+            continue
+        if killed(code, err) or code == -9:
+            raise Unreachable(f"on {host}: the transfer ran out of its {timeout:.0f} s")
+        if code or tars[-1].returncode:
+            raise Refused(f"on {host}: exit {code}, tar {tars[-1].returncode}: "
+                          f"{(err + tars[-1].stderr).decode(errors=ESC).strip()[-500:]}")
+        return
     raise Unreachable(f"on {hosts[0]}: exit 255")
 
 
@@ -122,14 +327,18 @@ KINIT_REFUSED_TEXT = re.compile(r"Password incorrect|Preauthentication failed|cr
 
 
 def bitwarden_password() -> bytes:
-    bw = subprocess.run([str(BW), "get", "password", BW_ITEM], capture_output=True, stdin=subprocess.DEVNULL)
+    try:
+        bw = subprocess.run([str(BW), "get", "password", BW_ITEM], capture_output=True, stdin=subprocess.DEVNULL,
+                            timeout=60)
+    except subprocess.TimeoutExpired:
+        raise Refused(f"{BW} gave no answer within 60 s") from None
     if bw.returncode:
         raise Refused(f"{BW} exited {bw.returncode}: {bw.stderr.decode(errors=ESC).strip()[:300]}")
     return bw.stdout
 
 
 def kinit_on_submit(password: bytes) -> subprocess.CompletedProcess[bytes]:
-    return subprocess.run(ssh_argv(SUBMIT, f"kinit {PRINCIPAL}"), input=password, capture_output=True)
+    return _submit_run(ssh_argv(SUBMIT, bounded(f"kinit {PRINCIPAL}", SUBMIT_S)), password)
 
 
 def kerberos_login(password: Callable[[], bytes] = bitwarden_password,
@@ -160,15 +369,27 @@ def kerberos_login(password: Callable[[], bytes] = bitwarden_password,
 NOT_CONNECTED = re.compile(r"banner exchange|kex_exchange_identification|Connection timed out|Connection refused|"
                            r"Could not resolve hostname|Connection closed by .* port 22$")
 SUBMIT_TRIES, SUBMIT_PAUSE_S = 3, 10.0
+SUBMIT_S = 120.0  # a command on the submit host (a login a call: the jump host and a lab machine's sshd included)
+
+
+def _submit_run(argv: list[str], stdin: bytes | None = None) -> subprocess.CompletedProcess[bytes]:
+    """ARGV (ssh to SUBMIT) in one of its session slots, within SUBMIT_S; a timeout reads as ssh's 255 with no word of
+    a connection failure, so it is never run again."""
+    with session(SUBMIT, False, SLOT_WAIT_S):
+        try:
+            return subprocess.run(argv, input=stdin, capture_output=True, timeout=SUBMIT_S + SLACK_S,
+                                  stdin=None if stdin is not None else subprocess.DEVNULL)
+        except subprocess.TimeoutExpired:
+            return subprocess.CompletedProcess(argv, 255, b"", f"no answer within {SUBMIT_S:.0f} s".encode())
 
 
 def ssh_submit(cmd: str, sleep: Callable[[float], None] = time.sleep,
                run: Callable[[list[str]], subprocess.CompletedProcess[bytes]] | None = None
                ) -> subprocess.CompletedProcess[bytes]:
     """CMD on SUBMIT, tried again (SUBMIT_TRIES in all) while ssh fails before connecting."""
-    go = run or (lambda argv: subprocess.run(argv, capture_output=True))
+    go = run or _submit_run
     for k in range(SUBMIT_TRIES):
-        p = go(ssh_argv(SUBMIT, cmd))
+        p = go(ssh_argv(SUBMIT, bounded(cmd, SUBMIT_S)))
         said = p.stderr.decode(errors=ESC).strip()
         if p.returncode != 255 or not NOT_CONNECTED.search(said) or k == SUBMIT_TRIES - 1:
             return p

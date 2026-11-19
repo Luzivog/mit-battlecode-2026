@@ -811,6 +811,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   gain H0 (+0.006, one map of 95), no harm on `goal`, `teammade` or the gauntlet. Every other arm was H0 (site,
   timeout, mine and rat gates, KB-centre): rich-map formations follow wealth (the 20-rat gate is the rich spawn line),
   and opening a gate forms kings into weakness.
+- **TN merged** (2026-11-19, abcfd6c; docs/evaluation.md "Tuning constants"): 18 constants moved to `Tune.java`
+  (no instruction changed), `tools/tune` screens and fits them. One moved: `EXPLORE_P` 0.2 → 0.6, the share of miner
+  trips that explore, gaining on ≥ 8-mine maps (our cheese share at r500 +1.5 pp there). Fresh seeds: s4 +0.034
+  [+0.011, +0.056], `goal` gain at δ 0.05 H0 at +0.019 [−0.007, +0.044], `mines-ge8` +0.038 [+0.004, +0.075],
+  `teammade` passed +0.041, `goal` harm after KF +0.026; gauntlet no harm. The rest are flat or did not replicate.
 
 ## 5. Order to 90%
 

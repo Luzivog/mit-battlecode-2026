@@ -21,10 +21,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int LOCK_IN_ROUND = 800;
     private static final int KING_TARGET = 3;
     private static final int LOCK_IN_MIN_RATS = 12;
-    // Early second king (KB): from EARLY_ROUND, a team with one king forms a second without the 20-per-king rat gate,
-    // with the lock-in's 12-rat floor. It keeps the mine thresholds and the far-mine floor: the new king needs a mine of
-    // its own, because a king beside another shares its income and starves (KL, docs/closed.md).
-    private static final int EARLY_ROUND = 200;
     // A lock-in king pays upkeep to the end and its formation consumes ~8 rats to rebuild: before the cutoff, form only
     // with a 120-round upkeep reserve for 3 kings (720) + the formation (50) + the rebuild (~280). Measured: lock-in
     // formations started below 1000 global starved 22 of 38 games and won 5 fewer than main, above it 12 more.
@@ -218,12 +214,15 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             // ~1.13 per mine per round against 2 per king (T1 §2.7). Measured without this gate, paired against main:
             // lock-in won 15 fewer of 62 games on maps with <= 4 mines, and 15 more of 246 on maps with >= 16.
             if (myPreCutoff && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
-            if (lockIn || (myKingCount == 1 && time >= EARLY_ROUND)) {
-                if (numRats < LOCK_IN_MIN_RATS) return;
-            } else if(mapWidth * mapHeight > 1200) {
-                if (numRats < 20 * myKingCount) return;
+            if(!lockIn) {
+                // indicate("D");
+                if(mapWidth * mapHeight > 1200) {
+                    if (numRats < 20 * myKingCount) return;
+                } else {
+                    if (numRats < 20 * myKingCount - 4) return;
+                }
             } else {
-                if (numRats < 20 * myKingCount - 4) return;
+                if (numRats < LOCK_IN_MIN_RATS) return;
             }
         }
         // indicate("passed formation checks");

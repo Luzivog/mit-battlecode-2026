@@ -97,6 +97,8 @@ to the robot's team.
   disagreed with the native run on the same machine; each time the native run equalled the reference's run of that
   game elsewhere ("Known gaps"). 1.2.5: the same for a 1-in-10 sample (839 games, 1 such run). Quick 5/5,
   `refmain_test` 13/13, `conformance` 5/5.
+  After track XC's fast paths (19 Nov, run-1119-141114-8d31, `--task-mem 6000M`): 8385/8388, the other 3 the
+  reference's DoC fault ("Known gaps"), agreeing when re-run (run-1119-145839-9f88, 9/9).
 - **Fast paths.** A hand-written replacement for a translated method lands only when the corpus agrees and a
   differential build (`BCX_CHECK_FASTPATH=1`) runs the translated original beside the fast path on every call over the
   corpus and finds no difference in results or state. The original stays in the build behind that flag.
@@ -114,11 +116,11 @@ to the robot's team.
 ./gradlew classes                                  # the bots' class files (build/classes)
 .venv/bin/python engine/build.py                   # engine/build/bcx: engine 1.2.6 and every bot package
 .venv/bin/python engine/build.py --engine 1.2.5    # engine/build/bcx-1.2.5 (--engine all: both)
-engine/build.py --team PKG=CLASSES_DIR... --gen DIR --out FILE [--glue-opt=-O1]   # tools/bcgames/native.py's builds
+engine/build.py --team PKG=CLASSES_DIR... --gen DIR --out FILE [--glue-opt=-O1] [--opt=-O2 --lto=off]   # native.py's
 engine/build/bcx play SPECS.jsonl OUTDIR [-j N] [--no-replay] [--no-indicators] [--dump]   # native games
 .venv/bin/python engine/play_java.py SPECS.jsonl OUTDIR [-j N] [--dump]  # the same games on the official jar
 .venv/bin/python engine/test/agreement.py --quick  # both engines, compared, here (--specs FILE: any specs)
-python3 engine/test/imperial.py run --full         # the whole corpus on Imperial, both engines in each task
+python3 engine/test/imperial.py run --full -- --task-mem 6000M   # the whole corpus on Imperial, both engines a task
 python3 engine/test/imperial.py report RUN         # its agreement and CPU time, from runs/RUN/rows.jsonl
 .venv/bin/python engine/test/refmain_test.py       # RefMain against battlecode.server.Main
 .venv/bin/python engine/test/conformance.py        # translated test programs against the JVM
@@ -130,8 +132,23 @@ python3 engine/test/imperial.py report RUN         # its agreement and CPU time,
   built in (`--root REPO` or `BCX_ROOT` for another), then the jar's maps (`engine/build/maps-VERSION/`).
 - `build.py` fetches the jars and bdwgc once into `~/battlecode26-data/engine/`, compiles `engine/jvm`, translates
   into `~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/` (one per checkout, so worktrees build at once) and
-  compiles with ninja (`-j`, default 8). Needs clang and lld (ThinLTO, -O3), ninja, cmake, a JDK 21, zlib. The binary is static, so it runs
-  on any x86-64 Linux node.
+  compiles with ninja (`-j`, default 8). Needs clang, lld (for ThinLTO), ninja, cmake, a JDK 21, zlib. The binary is
+  static, so it runs on any x86-64 Linux node.
+- **Build configurations.** `build.py`'s default, `-O3` and ThinLTO (`--lto thin`, lld; the link inlines the
+  translated code's small cross-file calls), is the standalone build, enginebench's and `imperial.py`'s: the climbed
+  one. `tools/play` and `tools/games` (`tools/bcgames/native.py`) build `-O2 --lto off --glue-opt=-O1`, because their
+  builds sit on every test's critical path. Measured on clankerland (19 Nov), a challenger change on 14 sparring bots:
+
+  | configuration | incremental build, wall / CPU | full build, wall / CPU | enginebench (G a game) |
+  |---|---|---|---|
+  | main's engine before XC (-O2) | 57-75 s / 210-295 s | 241 s / 1480 s | 89.78 |
+  | `-O2 --lto off` (native.py) | 68-75 s / 240-270 s | 204 s / 1290 s | 15.02 |
+  | `-O3 --lto off` | 112 s / 356 s | 276 s / 1620 s | 15.10 |
+  | `-O2 --lto thin` | 124 s / 557 s | 567 s / 3250 s | not measured (-O3 saved 1%) |
+  | `-O3 --lto thin` (default) | 119 s / 566 s | 522 s / 3200 s | 11.48 |
+
+  The flags change no result: the full corpus agrees under the default ("The checks"), and under `-O2 --lto off`
+  `agreement.py --quick` 5/5 and a 1-in-25 DoC sample 336/336 (run-1119-161950-59c3, 19 Nov).
 - `tools/play` and `tools/games` build their own binaries through `--team` (each bot from its own classes folder, in
   that order: a team's module index is its position), `--gen` and `--out` (docs/evaluation.md "Engines"), with
   `--glue-opt=-O1`: `klasses.cpp` (class tables, class-init wrappers, dispatch chains, cut stubs; no game logic) is
@@ -141,9 +158,13 @@ python3 engine/test/imperial.py report RUN         # its agreement and CPU time,
   6 to 8 min (about 25 CPU-min); nothing changed, 38 s (the translation); one bot changed, 43 s, when the change
   reaches no JDK code no other bot reaches (else the engine files that change recompile too).
 - `imperial.py run` ships `engine/build/dist` (the stripped binaries, the jar's maps, the jars) with `tools/run --kit`;
-  a task plays its specs on both engines and keeps both engines' files only for games that disagree. Give games whose
-  reference JVM needs more than 1.7 GB `-- --task-mem 6000M` (the JVM peaks at 4.5 GB on `mining` with
-  awubot_sus: per-robot class copies).
+  a task plays its specs on both engines and keeps both engines' files only for games that disagree. Run the full
+  corpus with `-- --task-mem 6000M`: at the default 1.7 GB the reference JVM of `clockwisdom`, `coop`, `mining` and
+  `where_are_you` games dies with no result (it peaks at 4.5 GB on `mining` with awubot_sus: per-robot class copies).
+- A DoC node's disk can fill under a run: on 19 Nov cedar06 and rowan24 failed 7 native games with `bcx: fatal:
+  cannot write .../replay.bc26` (other tasks there: `OSError: [Errno 28] No space left on device`), and rowan25 lost
+  a 4 KB block of a `hashes.txt`. A failed write is now always a game error (`cannot write`); such an error is the
+  node's: re-run the game elsewhere.
 
 ### How the translation works (what to read before changing it)
 
@@ -201,7 +222,9 @@ instrumentation and JIT).
   Compare engines on the same machine (`imperial.py` does).
 - The reference itself is not deterministic on DoC's machines: in 8 of about 18,500 reference runs there (two full
   corpus passes and a 1.2.5 sample, both seats), one robot's turn recorded a different bytecode count (once 0, once
-  34, against about 7,000 to 15,000 natively) and the game went another way from that turn. Every time, the
+  34, against about 7,000 to 15,000 natively) and the game went another way from that turn. On 19 Nov, 12 more in
+  about 16,900 (two full passes and re-runs): each time the reference's turn did less (no move, turn, attack or
+  indicator) than the native engine's, on that machine and here, with main's engine and XC's alike. Every time, the
   native run on the same machine equalled both engines run here, and the reference run again elsewhere agreed with
   it. None in about 300 reference runs here. No error was printed. One candidate: `SandboxedRobotPlayer` hands
   control between the engine's and the robot's threads with an unlooped `Object.wait()`, so a spurious wakeup lets

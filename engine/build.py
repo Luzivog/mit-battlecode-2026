@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the native engine: engine/build/bcx (engine 1.2.6) and, with --engine 1.2.5, engine/build/bcx-1.2.5.
 
-    engine/build.py [--engine 1.2.6|1.2.5|all] [--bots PKG,PKG|all] [-j N] [--opt -O3]
+    engine/build.py [--engine 1.2.6|1.2.5|all] [--bots PKG,PKG|all] [-j N] [--opt -O3] [--lto thin|off]
     engine/build.py --engine 1.2.6 --team PKG=CLASSES_DIR... --gen DIR --out FILE    (tools/bcgames/native.py)
 
 Steps: fetch the jars and bdwgc once (~/battlecode26-data/engine/), compile the translator (engine/jvm), translate
@@ -53,8 +53,7 @@ ENTRY = ("bcx/NativeMain.play(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Str
          "Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;JZ)Ljava/lang/String;")
 # -ffp-exception-behavior=strict: no compile-time folding of an FP operation that can raise (clang folds
 # -inf*0 to +NaN; the CPU, so the JVM, gives -NaN)
-# -flto=thin: the translated code calls many small methods across files (getters, index arithmetic); the link inlines
-CXXFLAGS = ["-std=c++20", "-flto=thin", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",
+CXXFLAGS = ["-std=c++20", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",
             "-fno-rtti", "-fno-exceptions", "-w"]
 
 
@@ -167,7 +166,7 @@ def bot_packages(classes: Path):
 
 
 def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None, exe: Path = None,
-          glue_opt: str = None):
+          glue_opt: str = None, lto: bool = True):
     """TEAMS: [(package, classes dir)], default every bot of build/classes (or BOTS). GEN, EXE: the generated-files
     folder (default one per checkout) and the binary (default engine/build/bcx[-VERSION]). GLUE_OPT: klasses.cpp's
     optimization (default OPT): class tables, class-init wrappers and dispatch chains, no game logic; it changes with
@@ -208,15 +207,19 @@ def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None,
     srcs = sorted(gen.glob("m*.cpp")) + [gen / "klasses.cpp", gen / "version.cpp"] + \
         [rt / f for f in ("rt.cpp", "sched.cpp", "natives.cpp", "main.cpp")]
     exe = exe or OUT / ("bcx" if version == "1.2.6" else f"bcx-{version}")
-    lines = [f"cxxflags = {' '.join(CXXFLAGS)} {opt} {inc}",
+    # ThinLTO: the translated code calls many small methods across files (getters, index arithmetic) and the link
+    # inlines them; a changed bot then costs a link that redoes the LTO backend of what moved (engine/AGENTS.md)
+    cxx = CXXFLAGS + (["-flto=thin"] if lto else [])
+    # with its own optimization, klasses.cpp is a plain object: under ThinLTO the link would redo it at OPT
+    glue = CXXFLAGS if glue_opt else cxx
+    link = (f"clang++ -static -flto=thin -fuse-ld=lld -Wl,--thinlto-jobs={jobs} -Wl,--thinlto-cache-dir={gen / 'lto-cache'} "
+            f"{opt}" if lto else "clang++ -static")
+    lines = [f"cxxflags = {' '.join(cxx)} {opt} {inc}",
              "rule cxx\n  command = clang++ $cxxflags -MMD -MF $out.d -c $in -o $out\n  depfile = $out.d\n  deps = gcc",
-             # with its own optimization, klasses.cpp is a plain object: under ThinLTO the link would redo it at OPT
-             f"rule cxxglue\n  command = clang++ {' '.join(f for f in CXXFLAGS if not (glue_opt and f.startswith('-flto')))} "
-             f"{glue_opt or opt} {inc} -MMD -MF $out.d -c $in -o $out\n"
+             f"rule cxxglue\n  command = clang++ {' '.join(glue)} {glue_opt or opt} {inc} -MMD -MF $out.d -c $in -o $out\n"
              "  depfile = $out.d\n  deps = gcc",
              "rule cc\n  command = clang -O2 -ffp-contract=off -fno-fast-math -msse4.1 -c $in -o $out",
-             f"rule link\n  command = clang++ -static -flto=thin -fuse-ld=lld -Wl,--thinlto-jobs={jobs} "
-             f"-Wl,--thinlto-cache-dir={gen / 'lto-cache'} {opt} -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
+             f"rule link\n  command = {link} -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
     objs = []
     for s in srcs:
         o = gen / "obj" / (s.stem + ("_rt" if s.parent == rt else "") + ".o")
@@ -250,6 +253,7 @@ def main():
     ap.add_argument("--bots", default="all", help="comma-separated packages, or all (default)")
     ap.add_argument("-j", type=int, default=8)
     ap.add_argument("--opt", default="-O3")
+    ap.add_argument("--lto", default="thin", choices=["thin", "off"], help="ThinLTO at the link (default thin)")
     ap.add_argument("--glue-opt", help="klasses.cpp's optimization (default: --opt)")
     ap.add_argument("--team", action="append", default=[], metavar="PKG=DIR",
                     help="a bot from its own classes folder, in this order (replaces --bots and build/classes)")
@@ -262,7 +266,7 @@ def main():
     teams = [tuple(t.split("=", 1)) for t in a.team] or None
     deps(versions)
     for v in versions:
-        build(v, a.bots.split(","), a.j, a.opt, teams, a.gen, a.out, a.glue_opt)
+        build(v, a.bots.split(","), a.j, a.opt, teams, a.gen, a.out, a.glue_opt, a.lto == "thin")
 
 
 if __name__ == "__main__":

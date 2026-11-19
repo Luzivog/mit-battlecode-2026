@@ -171,7 +171,8 @@ the ref's own score on the same cells and the paired difference with its CI.
   engine's sources, and kept for every later run and agent (`~/battlecode26-data/games/native/bin/`, the 24 most
   recently used). A run plays its cached games and its games of existing binaries while a missing one builds; a
   second run asking for the same binary waits for the first's build. Builds run niced, at most 2 at once on the
-  host, 8 compile jobs each. A new challenger build takes about 95 s; a change to `engine/` or the JDK rebuilds
+  host, 8 compile jobs each, at `-O2` without ThinLTO (engine/AGENTS.md, "Build configurations"). A new challenger
+  build takes about 70 s; a change to `engine/` or the JDK rebuilds
   everything once per build slot (about 5 min). `tools/games build` builds them ahead of a test: after a merge,
   `tools/games build challenger@origin/main` spares the next tests main's build.
 - **Exactness guard.** Each run also plays some of its native games on Java, on the same machine: every binary's

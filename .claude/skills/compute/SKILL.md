@@ -54,6 +54,8 @@ on a node (no toolchain) only specs naming a native binary (`bcx`) play natively
 `tools/run --kit --each SPECS.jsonl --chunk K --gather results.jsonl -- tools/play {file} {out} --workers 1`, and the
 results come back as `runs/RUN/results.jsonl` in SPECS's order. The exact interface (what a task gets, how SPECS is
 cut, what comes back, how a lost machine is handled): references/internals.md, "The games interface".
+- A lab machine's disk can fill under a run (19 Nov: cedar06, rowan24). Its games then fail with `cannot write ...`
+  or `OSError: [Errno 28] No space left on device`: that is the node, not the code; re-run those games.
 
 ## One job on a chosen backend
 

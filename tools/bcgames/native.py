@@ -46,6 +46,11 @@ JOBS = int(os.environ.get("BCGAMES_NATIVE_JOBS", "8"))      # compile jobs a bui
 # klasses.cpp (class tables, class-init wrappers, dispatch chains: no game logic) changes with any bot and is one
 # file: about 240 s at -O2, 8 s at -O1, the rest of a challenger rebuild about 90 s
 GLUE_OPT = "-O1"
+# the rest: -O2 and no ThinLTO, not engine/build.py's default -O3 + ThinLTO (engine/AGENTS.md, "Build
+# configurations"): a changed challenger rebuilds in main's engine's time (68-75 s wall, 240-270 CPU s on clankerland)
+# instead of ~120 s and ~560 CPU s, for games 31% dearer (enginebench 15.02 G a game against 11.48)
+OPT = os.environ.get("BCGAMES_NATIVE_OPT", "-O2")
+LTO = os.environ.get("BCGAMES_NATIVE_LTO", "off")
 NICE = 5  # builds sit on a test's critical path: below games, not far below
 KEEP = 24              # binaries kept (the most recently used); one used in the last KEEP_S seconds is never removed
 KEEP_S = 6 * 3600
@@ -101,14 +106,15 @@ _snap_lock = threading.Lock()
 
 def snapshot(version: str) -> tuple[str, Path]:
     """(engine id, folder holding engine/): this checkout's engine sources copied into the store once, so a build never
-    reads a file an agent is editing. The id hashes the copy, the version, its jar, the toolchain and GLUE_OPT."""
+    reads a file an agent is editing. The id hashes the copy, the version, its jar, the toolchain, GLUE_OPT, OPT and
+    LTO."""
     with _snap_lock:
         if version in _snapshots:
             return _snapshots[version]
         (NDATA / "src").mkdir(parents=True, exist_ok=True)
         tmp = Path(tempfile.mkdtemp(prefix=".snap", dir=NDATA / "src"))
         try:
-            h = hashlib.sha256(json.dumps([version, store.ENGINES[version], toolchain(), GLUE_OPT]).encode())
+            h = hashlib.sha256(json.dumps([version, store.ENGINES[version], toolchain(), GLUE_OPT, OPT, LTO]).encode())
             for f in engine_files():
                 rel = f.relative_to(ENGINE)
                 data = f.read_bytes()
@@ -392,7 +398,7 @@ def _build_once(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str
         (gen / "last.json").unlink(missing_ok=True)
         src = sync_engine(snap, gen)
         cmd = ["nice", "-n", str(NICE), sys.executable, str(src / "engine" / "build.py"), "--engine", plan.version,
-               "-j", str(JOBS), f"--glue-opt={GLUE_OPT}", "--gen", str(gen), "--out", str(gen / "bcx")]
+               "-j", str(JOBS), f"--glue-opt={GLUE_OPT}", f"--opt={OPT}", f"--lto={LTO}", "--gen", str(gen), "--out", str(gen / "bcx")]
         for pkg, c in teams:
             cmd += ["--team", f"{pkg}={c}"]
         _say(f"building binary {key} ({len(teams)} bots: {', '.join(p for p, _ in teams[len(BASE):]) or 'base'}) "

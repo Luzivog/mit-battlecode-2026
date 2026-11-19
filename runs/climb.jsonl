@@ -30,3 +30,4 @@
 {"t": 1795088029, "score": 11.4796, "kept": true, "what": "fast paths for Unsafe.get{Short,Int,Long}Unaligned(o, off, bigEndian): one native read"}
 {"t": 1795088201, "score": 11.4796, "kept": true, "what": "rebased on main 3564f46 (EN's build.py options kept; --glue-opt compiles klasses.cpp outside LTO)"}
 {"t": 1795091732, "score": 11.4801, "kept": true, "what": "a failed write of hashes.txt or dump.txt ends the game in an error (DoC nodes with full disks)"}
+{"t": 1795106083, "score": 11.4801, "kept": true, "what": "build.py --lto thin|off; tools/games builds -O2 --lto off (15.0235 G, its builds at main's speed); default stays -O3 + ThinLTO"}

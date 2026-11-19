@@ -60,7 +60,9 @@ Python is stdlib only (it runs on remote nodes too). Data: `~/battlecode26-data/
   must read "no behaviour change".
 - A new result field goes in `Play.java` (cheap per-game state) or `play.finish` (provenance), and in the native
   engine's result (`engine/`) if it is an outcome. Keep the field names of `engine/AGENTS.md` (track X's format).
-- Native builds: `native.build` runs `engine/build.py --team ... --gen ... --out ... --glue-opt=-O1` from a copy of the
-  engine's sources. A binary's key hashes those sources, the JDK, clang, `GLUE_OPT` and its bots in order, so any
+- Native builds: `native.build` runs `engine/build.py --team ... --gen ... --out ... --glue-opt=-O1 --opt=-O2
+  --lto=off` from a copy of the engine's sources: `-O2` without ThinLTO, so a challenger rebuild costs what it did
+  before XC (engine/AGENTS.md, "Build configurations"). A binary's key hashes those sources, the JDK, clang,
+  `GLUE_OPT`, `OPT`, `LTO` and its bots in order, so any
   engine change rebuilds; a build slot (`gen/<version>-<i>`) keeps its engine copy at a fixed path, so only changed
   files recompile.

@@ -118,7 +118,10 @@ the ref's own score on the same cells and the paired difference with its CI.
    Games are deterministic, so each flip comes from the change. But a change that only moves the bytecode or RNG
    streams also flips many cells (W0.1, below). A single flipped cell means nothing on its own. Read flips clustered
    on a map or a class, and the package's diagnostic. Get replays with `tools/games replays ID --cells changed`, which
-   replays them deterministically: test runs stay replay-free.
+   plays those games again: test runs stay replay-free. About 1 replay in 50–100 is not the recorded game (its
+   digest differs; `same_game: false` in `replays/index.jsonl`): leave those out of per-game reasoning. Two known
+   causes (engine/AGENTS.md): HotSpot's `Math` stubs give CPU-dependent results, and the official engine itself
+   diverged in 8 of ~18,500 runs on DoC machines.
 3. **Before you report a branch**: rebase on main;
    - the gain test on `goal` passes (or, for a certain-sign fix, the harm test passes and the diagnostic moved);
    - `--pool smoke` shows no new robots killed by exceptions;

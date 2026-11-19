@@ -320,15 +320,19 @@ class Piece:
             n = todo.pop(0)
             if not todo:
                 del cand[rid]
-            if not self.ready(r):
-                cand.pop(rid, None)
-                continue
-            if not self.room() or not self.claim(r, n):
-                if self.low_disk:
-                    break
+            # room first (it may prune unused checkouts), then the claim, then the checkout: one made before a claim
+            # that failed, or pruned by the room check before its task started, was made again for every claim
+            # (a piece remade one run's checkout every 5 s for 4 minutes on 19 Nov)
+            if not self.room():
+                break
+            if not self.claim(r, n):
                 continue
             if self.starts(r, n) >= MAX_STARTS:
                 self.lost(r, n)
+                continue
+            if not self.ready(r):
+                self.give_back(r, n, "its checkout failed here")
+                cand.pop(rid, None)
                 continue
             self.start(r, n)
             count[0] += 1

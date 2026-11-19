@@ -146,8 +146,9 @@ the ref's own score on the same cells and the paired difference with its CI.
 - **`--remote`** plays on DoC's machines through track C's `tools/run` (`.claude/skills/compute/`).
   - Read the compute skill first. Condor needs Bitwarden unlocked; cpucluster1 refuses jobs at times.
   - `--workers` becomes the games in flight (default 256). Each test sends at most one pass (or 32 cells) beyond its
-    scored prefix, its next decision point. Batches go out every 30 s; each task plays one game with `tools/play`
-    (`imperial.CHUNK`), native or Java.
+    scored prefix, its next decision point. A batch goes out as soon as games wait, at least 10 s after the test's
+    previous batch (`imperial.FLUSH_S`); each task plays one game with `tools/play` (`imperial.CHUNK`), native or
+    Java. Results are read as `tools/compute wait` fetches them (every 30 s a batch).
   - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. It prints the same JDK
     fingerprint as Ubuntu's 21.0.13 here, so remote and local games share one cache. Verified: remote games
     byte-identical to local ones (replay digests, Slurm and Condor).
@@ -286,6 +287,19 @@ so the test stops at H0 after one pass, 95 cells; every game played, none from t
 - Runs `1119-075646-ab-6b7c`, `1119-080013-ab-2c4a`, `1119-050004-ab-b371`, `1119-054917-ab-0c94`,
   `1119-080707-ab-58f6`, `1119-080708-ab-3640`. The local `quick` run and the remote Java one share 228 of 228
   games, all the same.
+
+**Remote dispatch after track C2** (the shared pool), `ab challenger@71402d9 awubot --ref challenger@origin/main
+--test harm --pool quick --no-cache --remote` (H1 after 52-77 cells), runs started together:
+- Per-task overhead of a native task (task time minus game time): median 2.9 s against a median native game of
+  9.9 s on DoC (`1119-090957-ab-7475`, 636 tasks); a piece's first task about 30 s (unpacking the binary).
+- Games a native task: 1 game, 430 and 470 s wall, 7,774-7,956 task-seconds; 4 games, 870 and 872 s,
+  5,780-6,054 task-seconds (`1119-095954-ab-97f1`, `-095955-ab-4ad5`, `-095956-ab-8433`, `-095957-ab-53ef`). One
+  game a task: twice as fast for a quarter more slot time.
+- The batch floor (`FLUSH_S`), batches sent as soon as games wait: a batch's oldest game waited 5-7 s, mostly the
+  `tools/run` call (about 5 s); at 30 s the floor bound once in 21 refills (26 s), and 10 s and 30 s made the same 5-6
+  batches a test (`1119-094802-ab-9547`, `-094803-ab-19e6`, `-094803-ab-0196`, `-094804-ab-ce62`). Refills are paced
+  by results, which arrive with each batch's 30 s poll; that, and pieces lost mid-run (tasks restarted after about
+  5 min, seen in 2 of 3 runs at 09:29), are the latency left.
 
 **Builds** (`~/battlecode26-data/games/native/bin/*/build.json`), niced, 8 compile jobs:
 - From nothing (14 sparring bots and challenger), or after any change to `engine/` or the JDK: 279-315 s, 1626-1707

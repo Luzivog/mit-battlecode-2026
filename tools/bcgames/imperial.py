@@ -33,12 +33,15 @@ from . import native, play, store
 
 SHIP = store.ROOT / ".bcgames-ship"
 # A batch goes out as soon as jobs wait (after COALESCE_S, so a wave goes as one batch), but no sooner than FLUSH_S
-# after the run's previous batch: each batch is a tools/run call and a poller against the login nodes.
-FLUSH_S = float(os.environ.get("BCGAMES_FLUSH_S", "30"))
+# after the run's previous batch: each batch is a tools/run call and a poller against the login nodes. Measured
+# (docs/evaluation.md): a batch's oldest job waits 5-7 s, mostly the tools/run call; at 10 s and at 30 s a test made
+# the same 5-6 batches, refills being paced by the results' arrival.
+FLUSH_S = 10.0
 COALESCE_S = 1.0
 POLL_S = 3            # reading finished tasks' results (local files, which tools/compute wait fetches)
-CHUNK = 1             # games a task: one, so a batch ends with its longest game (a task starts in 2 s, median)
-CHUNK_NATIVE = int(os.environ.get("BCGAMES_CHUNK_NATIVE", str(CHUNK)))
+# Games a task, native or Java: one, so a batch ends with its longest game. Native tasks of 4 games used a quarter
+# less slot time (overhead 1 s a game instead of 2.4) but took twice the wall time.
+CHUNK = 1
 REMOTE_KEEP_DAYS = 3
 
 
@@ -220,7 +223,7 @@ class ImperialRunner:
                         f.write(json.dumps(dict(spec, id=gid, guard=True, replay=False)) + "\n")
                 f.write(json.dumps(spec) + "\n")
         cmd = [str(store.ROOT / "tools" / "run"), "--detach", "--each", str(specs), "--chunk",
-               str(CHUNK_NATIVE if is_native else CHUNK), "--gather", "results.jsonl",
+               str(CHUNK), "--gather", "results.jsonl",
                "--with", str(SHIP.relative_to(store.ROOT))]
         if self.where:
             cmd += ["--where", self.where]

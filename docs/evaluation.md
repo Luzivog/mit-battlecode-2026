@@ -410,8 +410,8 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
   tasks. Their pieces were alive but stalled: a piece serving more than 4 other runs' contents deleted each checkout
   it had just made and made it again for every claim (281,305 checkouts for 339,682 task starts on 19 Nov; one piece
   399 in a row), so for minutes it neither beat nor reaped; other pieces took its claims as dead after 300 s. A
-  start that found its checkout gone killed the piece. The same stalls made 96% of the game tasks over 120 s: the
-  game took 19 s, the task 132 s more.
+  start that found its checkout gone killed the piece (440 of 14,156 pieces). 96% of the game tasks over 120 s were
+  slow outside their game (the game 19 s at the median, the task 132 s more): reaped late by a stalled piece.
 - Guards: a guard task takes 78 s at the median (214 s p90), its Java game 2-3 times slower on the slowest DoC CPUs
   than on the fastest; a test's guards went out with their games, so the last batch's guards ended last.
 - Placement: `tools/run --detach` took 16 s at the median (74 s p90, 314 s p99) placing pieces before it returned,
@@ -425,7 +425,35 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
 **The fixes**: the checkout prune keeps the new checkout (compute internals "Another run's checkout"); a piece takes
 no task under 2 GB free and gives back a task whose game found no room ("Room to write"); a piece's tasks unpack a
 binary once (`JOB_CACHE`); guards ahead, twice, first in their batch ("Engines"); a batch is followed as soon as its
-run exists; the cancels come after the verdict; a test's sure games go out at once; the upload's prune can't fail it.
+run exists; the cancels come after the verdict; a test's sure games go out at once; the upload's prune can't fail it;
+a follower reads every 30 s from its last read's start. Runs of these tools are served by their pieces alone
+(`POOL_V` 2): pieces of version 1 still stall and crash on the runs they serve (seen at 16:48-16:59: a task run a
+third time, 10 min late, in both arms).
+
+**Before and after**: `tools/games ab challenger@origin/main awubot --ref none` (380 games) and `tools/games ab
+challenger awubot` (760, paired with main) on `goal`, `--min-cells 190 --max-cells 190 --no-cache --remote`, the same
+seed base for both arms, the two arms started together: main's tools from a worktree at main (the shared pool) and
+these (their own pool, cold at each round's start). Engine of 19 Nov 17:00 (after XC), rounds 5 and 6:
+
+| arm | tests | time to verdict, median / p90 | its last game task | tail share, median / p90 | restarted tasks |
+|---|---|---|---|---|---|
+| main's tools | 8 | 347 / 387 s | 142 s | 0.68 / 0.74 | 0 |
+| these | 8 | 239 / 316 s | 192 s | 0.54 / 0.58 | 0 |
+
+- Main's games ended at 93-127 s in round 6; its verdicts waited for guards until 299-387 s. These tools' guards
+  ended at 162-168 s, and the verdicts came at 190-193 s for both sizes.
+- Tail share = (verdict − the 95th percentile task end) / time to verdict. Here the last 5% of tasks are mostly the
+  guards (18 of 398 tasks).
+- Runs: main's `1119-170233-ab-ee0a`, `-170235-ab-927b`, `-170234-ab-23df`, `-170236-ab-ef2e`, `-171037-ab-76cb`,
+  `-171040-ab-8d50`, `-171038-ab-0178`, `-171042-ab-e3b7`; these `1119-170233-ab-b0d0`, `-170235-ab-393b`,
+  `-170234-ab-3642`, `-170236-ab-8a7d`, `-171036-ab-f537`, `-171039-ab-a380`, `-171038-ab-fdd1`, `-171041-ab-337a`.
+  Earlier rounds (old engine; `~/battlecode26-data/scratch/tl/rounds.txt`): main's tools 414-527 s with 7-10 restarted
+  tasks a test (round 1); in round 4, with one pool for both arms, every test of both took 753-789 s (version-1
+  pieces).
+- Game tasks run by fixed pieces against main's, same window (16:30-17:00): overhead (task − game) p99 4 s against
+  67 s, none over 30 s against 3.2%. With every test's sure games out at once on a cold pool (rounds 5, 6), the first
+  wave on cpucluster1 and GPU-cluster pieces paid up to 60 s before `tools/play` began (2.6% of tasks): a start-up
+  cost, early in the test, not in its tail.
 
 ## Measured: the native engine (2026-11-19)
 

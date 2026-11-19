@@ -601,6 +601,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   bite-damage function on main: PT's cat case goes in `BabyRat.attack`, where cats are forced to 10.
 
 #### PT. Endgame points conversion (bundle with cat-bite cheese)
+- **Closed, not merged** (2026-11-19; `docs/closed.md`). Delivery before r2000 is a dead lever (ΔD ≤ +0.5, flips
+  none). The late cat hunt gains cat damage and loses kings (net ≈ 0). PC1, the last-cat rule, lost on top of MC
+  (−0.186 never dealing the last blow, −0.097 with one king): MC fixed main's own TheHeist cooperation endings, and
+  holding moves the rest to r2000 losses on cheese. What remains on the cooperation maps is economy against bots that
+  out-deliver us.
 - **Change.**
   - `MinerStrategy.java:175-213`: from t ≥ 2000 − (distance to the nearest king + 20), any raw > 0 goes home. No
     exploration after r1800.

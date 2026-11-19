@@ -389,6 +389,8 @@ def drive(d: Path) -> int:
     # Games waiting or playing, and games of a test beyond its scored prefix. Remote: --workers games in flight.
     # Native games are cheap and a slow one holds the prefix back: look further ahead.
     queue_cap = p["workers"] if p.get("remote") else 2 * p["workers"]
+    if p.get("remote"):  # the games every test plays whatever happens (its min cells) go out at once, beyond --workers
+        queue_cap = max([queue_cap] + [(4 if t.ref else 2) * t.min_cells for t in tests])
     ahead_cap = p["workers"] if p.get("remote") else (8 if p.get("backend", "native") == "native" else 4) * p["workers"]
     try:
         while True:

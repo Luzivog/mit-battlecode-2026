@@ -159,8 +159,9 @@ the ref's own score on the same cells and the paired difference with its CI.
   overloading the box.
 - **`--remote`** plays on DoC's machines through track C's `tools/run` (`.claude/skills/compute/`).
   - Read the compute skill first. Condor needs Bitwarden unlocked; cpucluster1 refuses jobs at times.
-  - `--workers` becomes the games in flight (default 256). Each test sends at most one pass (or 32 cells) beyond its
-    scored prefix, its next decision point. A batch goes out as soon as games wait, at least 10 s after the test's
+  - `--workers` becomes the games in flight (default 256), except that the games of a test's first `--min-cells`
+    cells, which it plays whatever happens, go out at once (a 190-cell paired test: 760). Each test sends at most
+    one pass (or 32 cells) beyond its scored prefix, its next decision point. A batch goes out as soon as games wait, at least 10 s after the test's
     previous batch (`imperial.FLUSH_S`); each task plays one game with `tools/play` (`imperial.CHUNK`), native or
     Java. Results are read as `tools/compute wait` fetches them (every 30 s a batch), from the moment `tools/run`
     has made the batch's run: its placement of pieces goes on beside the follower.

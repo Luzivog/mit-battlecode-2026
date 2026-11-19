@@ -104,6 +104,7 @@ sys bcx/NativeControlProvider run0 (II)V sched_run
 sys bcx/NativeControlProvider bytecodesUsed0 (I)I sched_bytecodes_used
 sys bcx/NativeControlProvider terminated0 (I)Z sched_terminated
 sys bcx/NativeControlProvider matchEnded0 ()V sched_match_ended
+sys bcx/NativeControlProvider crashed0 (I)Z sched_crashed
 sys bcx/NativeIO round (IJLjava/lang/String;)V rt_io_round
 sys bcx/NativeIO readFile (Ljava/lang/String;)[B rt_io_readFile
 sys bcx/NativeIO writeFile (Ljava/lang/String;[B)V rt_io_writeFile

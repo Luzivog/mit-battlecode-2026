@@ -40,24 +40,27 @@ the jar's own `LiveMap` constructor, so the jar stays unmodified.
 
 ## Spec and result
 
-A spec is one JSON object a line (JSONL); unknown fields are an error.
+The fields of `tools/play` (track E, `docs/evaluation.md`), so either engine can stand in for it. A spec is one JSON
+object a line (JSONL); fields it does not name are copied to the result.
 
 | field | | meaning |
 |---|---|---|
-| `a`, `b` | required | team A's and team B's package (`src/<pkg>`) |
+| `a`, `b` | required | team A's and team B's package (`src/<pkg>`; `tools/play` also takes `pkg@REV`, the engines do not) |
 | `map` | required | map name: `maps/<map>.map26`, else the jar's bundled map |
 | `seed` | optional int | game seed; absent: the map's embedded seed |
 | `engine` | optional | `1.2.6` (default) or `1.2.5` |
 | `classes` | optional | the compiled classes dir; default `build/classes` of the checkout |
 | `classes_a`, `classes_b` | optional | per-team classes dir, overriding `classes` |
-| `id` | optional | copied to the result |
+| `id` | optional | names the game's folder; copied to the result |
+| `replay` | optional bool | false: no `replay.bc26` kept (the digest is still computed) |
+| `indicators` | optional bool | false: indicator dots, lines and strings left out of the replay, as `tools/play` plays; default true, as the official Gradle run (`bc.engine.show-indicators`). A game does not depend on it; the replay and its digest do |
 | `cat_rng_skip` | optional int ≥ 0 | the cat RNG starts this many draws after its fresh state (default 0; "Conditions") |
 
 A result is one JSON object a line, in spec order:
 
 | field | meaning |
 |---|---|
-| `id`, `a`, `b`, `map`, `engine` | from the spec |
+| `id`, `a`, `b`, `map`, `engine`, other fields | from the spec |
 | `seed` | the seed the game played (the map's when the spec has none) |
 | `winner` | `A` or `B` |
 | `winner_pkg` | the winner's package |
@@ -66,9 +69,17 @@ A result is one JSON object a line, in spec order:
 | `hash` | 16 hex digits: `BcxStateHash.chain()` fed each round's number then its state hash, in round order, then `finish()` (the 64-bit mixer of `BcxStateHash`, see its comment); the per-round hashes are `hashes.txt` |
 | `cat_rng_skip` | from the spec, when it has one |
 | `cat_rng_draws` | draws from the cat RNG during the game |
+| `cooperation` | `GameWorld.isCooperation()` at the end |
+| `A`, `B` | each team's `points` (what `setWinnerIfMorePoints` would award at the end), `cheese_transferred`, `cat_damage`, `rats`, `kings`, `cheese` (`TeamInfo`) and `crashed`: robots whose `run()` ended by a `Throwable` other than `RobotDeathException` or by returning (what the engine reports as "Stack trace" and "froze"; disintegrating is not a crash) |
+| `series` | `{"every": 100, "fields": [...], "A": [...], "B": [...]}`: each team's `[cheese_transferred, rats, kings, cat_damage]` every 100 rounds and at the end, as `tools/play` |
+| `digest` | the first 16 hex digits of the SHA-256 of the replay file (gzip and all), as `tools/play`'s |
 | `backend` | `native` or `java` |
-| `cpu_s` | the process's CPU seconds for the game |
+| `cpu_s`, `wall_ms` | the game process's CPU seconds and wall milliseconds |
 | `error` | present only when the game could not be played; then no outcome fields |
+
+`tools/play` also reports `engine_errors` (crash reports with no frame of either team); the engines do not. Its
+crash scanner gives both teams' crashes to A when both teams are the same package; the engines attribute each crash
+to the robot's team.
 
 ## The checks
 

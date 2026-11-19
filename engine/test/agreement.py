@@ -3,9 +3,10 @@
 
     engine/test/agreement.py [--quick|--full] [--native CMD] [--java CMD] [-j N] [--specs FILE] [--filter RE] [--prune]
 
-Plays the corpus (corpus.py; --specs FILE instead) on both backends and compares every game: the result (winner
-unless the win type is WON_BY_DUBIOUS_REASONS, win type, round, seed, hash), hashes.txt line by line (first
-differing round) and the gunzipped replay (first differing offset, decoded to round and turn by replay.py).
+Plays the corpus (corpus.py; --specs FILE instead) on both backends and compares every game: the result (winner and
+replay digest unless the win type is WON_BY_DUBIOUS_REASONS, win type, round, seed, hash, cat RNG draws, the team
+counters and series), hashes.txt line by line (first differing round) and the gunzipped replay (first differing
+offset, decoded to round and turn by replay.py).
 Each backend is a command run from the repo root as `CMD SPECS.jsonl OUTDIR -j N`; it prints one result line per
 spec in spec order and writes OUTDIR/<id>/{hashes.txt,replay.bc26}. A first word ending in .py runs with this Python.
 The reference (--java, default engine/play_java.py) results are cached in --java-cache, keyed by the spec, the jar,
@@ -177,7 +178,8 @@ def compare(spec, rj, rn, dj: Path, dn: Path) -> dict:
     else:
         diffs = []
         dubious = "WON_BY_DUBIOUS_REASONS" in (rj.get("win_type"), rn.get("win_type"))
-        for f in ("win_type", "round", "seed", "hash") + (() if dubious else ("winner",)):
+        for f in ("win_type", "round", "seed", "hash", "cat_rng_draws", "cooperation", "A", "B", "series") + (
+                () if dubious else ("winner", "digest")):
             if rj.get(f) != rn.get(f):
                 diffs.append(f"{f} {rj.get(f)} vs {rn.get(f)}")
         if diffs:

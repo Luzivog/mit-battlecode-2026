@@ -33,7 +33,7 @@ GC_SHA256 = "7649020621cb26325e1fb5c8742590d92fb48ce5c259b502faf7d9fb5dabb160"
 JAR_SHA256 = {"1.2.6": "ea722532f6d523241ff4f708078563de2a010a39d7d524c66ae1890ab85c04ec",
               "1.2.5": "b9f39d19a2a0bccd35540039747bacd0412b6016b2ef64c39846395989f20488"}
 ENTRY = ("bcx/NativeMain.play(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZI"
-         "Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;J)Ljava/lang/String;")
+         "Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;JZ)Ljava/lang/String;")
 # -ffp-exception-behavior=strict: no compile-time folding of an FP operation that can raise (clang folds
 # -inf*0 to +NaN; the CPU, so the JVM, gives -NaN)
 CXXFLAGS = ["-std=c++20", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",

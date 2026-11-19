@@ -1,5 +1,5 @@
 // The native engine's command line:
-//   bcx play SPECS.jsonl OUTDIR [-j N] [--dump] [--no-replay] [--root REPO]
+//   bcx play SPECS.jsonl OUTDIR [-j N] [--dump] [--no-replay] [--no-indicators] [--root REPO]
 // Each game is played in a forked child (a fresh "JVM": every static starts over), writing OUTDIR/<id or index>/
 // result.json, hashes.txt, replay.bc26 (and dump.txt), as engine/play_java.py does. Result lines are printed in
 // spec order. Spec and result fields: engine/AGENTS.md.
@@ -8,7 +8,10 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <time.h>
+
 #include <cstdio>
+#include <cstring>
 #include <cstdlib>
 #include <map>
 #include <string>
@@ -79,9 +82,10 @@ static std::string check_bot(const std::string& pkg, const std::string& classes)
 
 // ---- a flat JSON object parser (strings, integers, null, booleans): enough for specs
 struct Val {
-    enum { STR, INT, NUL, BOOL } kind;
+    enum { STR, INT, NUL, BOOL, RAW } kind;  // RAW: any other JSON value (an object, an array, a fraction)
     std::string s;
     long long i = 0;
+    std::string raw;  // the value's JSON text
 };
 typedef std::map<std::string, Val> Obj_;
 
@@ -114,6 +118,24 @@ static bool parse_string(const char*& p, std::string& out) {
 
 static void ws(const char*& p) { while (*p == ' ' || *p == '\t' || *p == '\r' || *p == '\n') p++; }
 
+// skips one JSON value of any kind
+static bool skip_value(const char*& p) {
+    if (*p == '"') { std::string t; return parse_string(p, t); }
+    if (*p == '{' || *p == '[') {
+        int depth = 0;
+        while (*p) {
+            if (*p == '"') { std::string t; if (!parse_string(p, t)) return false; continue; }
+            if (*p == '{' || *p == '[') depth++;
+            else if ((*p == '}' || *p == ']') && --depth == 0) { p++; return true; }
+            p++;
+        }
+        return false;
+    }
+    const char* s = p;
+    while (*p && strchr("+-0123456789.eE", *p)) p++;
+    return p != s;
+}
+
 static bool parse_object(const char* p, Obj_& o, std::string& err) {
     ws(p);
     if (*p++ != '{') { err = "spec is not a JSON object"; return false; }
@@ -127,6 +149,7 @@ static bool parse_object(const char* p, Obj_& o, std::string& err) {
         if (*p++ != ':') { err = "expected ':'"; return false; }
         ws(p);
         Val v;
+        const char* vs = p;
         if (*p == '"') { v.kind = Val::STR; if (!parse_string(p, v.s)) { err = "bad string"; return false; } }
         else if (!strncmp(p, "null", 4)) { v.kind = Val::NUL; p += 4; }
         else if (!strncmp(p, "true", 4)) { v.kind = Val::BOOL; v.i = 1; p += 4; }
@@ -135,9 +158,12 @@ static bool parse_object(const char* p, Obj_& o, std::string& err) {
             char* e;
             v.kind = Val::INT;
             v.i = strtoll(p, &e, 10);
-            if (e == p || *e == '.' || *e == 'e' || *e == 'E') { err = "bad value for " + k; return false; }
-            p = e;
+            if (e == p || *e == '.' || *e == 'e' || *e == 'E') {
+                v.kind = Val::RAW;
+                if (!skip_value(p)) { err = "bad value for " + k; return false; }
+            } else p = e;
         }
+        v.raw = std::string(vs, p - vs);
         o[k] = v;
         ws(p);
         if (*p == ',') { p++; continue; }
@@ -160,6 +186,49 @@ static std::string json_str(const std::string& s) {
 
 static Obj* jstr(const std::string& s) { return rt_cstring(s.c_str()); }
 
+// SHA-256 of a file in hex, "" if unreadable (the replay digest: tools/play reports its first 16 digits)
+static std::string sha256_file(const std::string& path) {
+    static const uint32_t K[64] = {
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98,
+        0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
+        0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8,
+        0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+        0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819,
+        0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
+        0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
+        0xc67178f2};
+    FILE* f = fopen(path.c_str(), "rb");
+    if (!f) return "";
+    std::string m;
+    char b[1 << 16];
+    for (size_t n; (n = fread(b, 1, sizeof b, f)) > 0;) m.append(b, n);
+    fclose(f);
+    uint64_t bits = (uint64_t)m.size() * 8;
+    m += (char)0x80;
+    while (m.size() % 64 != 56) m += (char)0;
+    for (int i = 7; i >= 0; i--) m += (char)(bits >> (i * 8));
+    uint32_t h[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
+    auto rotr = [](uint32_t x, int n) { return (x >> n) | (x << (32 - n)); };
+    for (size_t off = 0; off < m.size(); off += 64) {
+        uint32_t w[64];
+        const unsigned char* q = (const unsigned char*)m.data() + off;
+        for (int i = 0; i < 16; i++) w[i] = (uint32_t)q[4 * i] << 24 | (uint32_t)q[4 * i + 1] << 16 | (uint32_t)q[4 * i + 2] << 8 | q[4 * i + 3];
+        for (int i = 16; i < 64; i++)
+            w[i] = w[i - 16] + (rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >> 3)) + w[i - 7] +
+                   (rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >> 10));
+        uint32_t a = h[0], bb = h[1], c = h[2], d = h[3], e = h[4], ff = h[5], g = h[6], hh = h[7];
+        for (int i = 0; i < 64; i++) {
+            uint32_t t1 = hh + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & ff) ^ (~e & g)) + K[i] + w[i];
+            uint32_t t2 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & bb) ^ (a & c) ^ (bb & c));
+            hh = g; g = ff; ff = e; e = d + t1; d = c; c = bb; bb = a; a = t1 + t2;
+        }
+        h[0] += a; h[1] += bb; h[2] += c; h[3] += d; h[4] += e; h[5] += ff; h[6] += g; h[7] += hh;
+    }
+    char hex[65];
+    for (int i = 0; i < 8; i++) snprintf(hex + 8 * i, 9, "%08x", h[i]);
+    return hex;
+}
+
 static std::string dir_name(const Obj_& spec, size_t index) {
     auto it = spec.find("id");
     if (it == spec.end() || it->second.kind == Val::NUL) return std::to_string(index);
@@ -171,12 +240,12 @@ static std::string dir_name(const Obj_& spec, size_t index) {
 
 struct Opts {
     std::string root, outdir;
-    bool dump = false, replay = true;
+    bool dump = false, replay = true, indicators = true;
     int jobs = 1;
 };
 
 static const char* FIELDS[] = {"a", "b", "map", "seed", "engine", "classes", "classes_a", "classes_b", "id", "cat_rng_skip",
-                               nullptr};
+                               "replay", "indicators", nullptr};
 
 // Plays one spec in this (child) process; writes the game's files and returns its result line.
 static std::string play_one(const Obj_& spec, const std::string& gdir, const Opts& o) {
@@ -193,11 +262,16 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     const Val* skipv = field("cat_rng_skip");
     if (skipv) add("cat_rng_skip", skipv->kind == Val::INT ? std::to_string(skipv->i) : "null");
     std::string err;
-    for (auto& kv : spec) {
+    for (auto& kv : spec) {   // other fields: copied
         bool known = false;
         for (const char** f = FIELDS; *f; f++) if (kv.first == *f) known = true;
-        if (!known) err = "unknown spec field " + kv.first;
+        if (!known) add(kv.first, kv.second.raw);
     }
+    const Val* replayv = field("replay");
+    const Val* indv = field("indicators");
+    for (const char* k : {"replay", "indicators"})
+        if (field(k) && field(k)->kind != Val::BOOL) err = std::string("spec field ") + k + " must be a boolean";
+    bool indicators = indv ? indv->i != 0 : o.indicators;
     for (const char* k : {"a", "b", "map"})
         if (!field(k) || field(k)->kind != Val::STR) err = std::string("spec field ") + k + " is required (a string)";
     if (skipv && (skipv->kind != Val::INT || skipv->i < 0)) err = "spec field cat_rng_skip must be a non-negative integer";
@@ -205,7 +279,7 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     if (!err.empty()) {
         add("backend", "\"native\"");
         add("error", json_str(err));
-        return out + "}";
+        return out;  // closed by the parent with cpu_s
     }
     bool has_seed = field("seed") && field("seed")->kind == Val::INT;
     int seed = has_seed ? (int)field("seed")->i : 0;
@@ -227,12 +301,12 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
     FILE* hashes = fopen((gdir + "/hashes.txt").c_str(), "w");
     FILE* dump = o.dump ? fopen((gdir + "/dump.txt").c_str(), "w") : nullptr;
     rt_io_set_outputs(hashes, dump);
-    typedef Obj* (*PlayFn)(Obj*, Obj*, Obj*, Obj*, jboolean, jint, Obj*, jboolean, Obj*, Obj*, jlong);
+    typedef Obj* (*PlayFn)(Obj*, Obj*, Obj*, Obj*, jboolean, jint, Obj*, jboolean, Obj*, Obj*, jlong, jboolean);
     if (g_entry_inits[0]) g_entry_inits[0]();
     Obj* r = nullptr;
     if (!g_exc)
         r = ((PlayFn)g_entry_fns[0])(jstr(field("a")->s), jstr(field("b")->s), jstr(field("map")->s), jstr(o.root + "/maps"),
-                                      has_seed, seed, jstr(replay), o.dump, jstr(ca), jstr(cb), skipv ? (jlong)skipv->i : 0);
+                                      has_seed, seed, jstr(replay), o.dump, jstr(ca), jstr(cb), skipv ? (jlong)skipv->i : 0, indicators);
     fclose(hashes);
     if (dump) fclose(dump);
     std::string line;
@@ -247,6 +321,7 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
         int s, round;
         long long draws = 0;
         sscanf(line.c_str() + 3, "%d %7s %63s %d %31s %lld", &s, winner, wtype, &round, hash, &draws);
+        size_t tab = line.find('\t');
         add("seed", std::to_string(s));
         add("winner", json_str(winner));
         add("winner_pkg", json_str(winner[0] == 'A' ? field("a")->s : field("b")->s));
@@ -254,6 +329,12 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
         add("round", std::to_string(round));
         add("hash", json_str(hash));
         add("cat_rng_draws", std::to_string(draws));
+        if (tab != std::string::npos) out += ", " + line.substr(tab + 1);
+        if (!replay.empty()) {
+            std::string d = sha256_file(replay);
+            if (!d.empty()) add("digest", json_str(d.substr(0, 16)));
+            if (replayv && !replayv->i) unlink(replay.c_str());
+        }
     } else {
         if (has_seed) add("seed", std::to_string(seed));
         add("error", json_str(line.rfind("error ", 0) == 0 ? line.substr(6) : line));
@@ -263,7 +344,7 @@ static std::string play_one(const Obj_& spec, const std::string& gdir, const Opt
 }
 
 static int usage() {
-    fprintf(stderr, "usage: bcx play SPECS.jsonl OUTDIR [-j N] [--dump] [--no-replay] [--root REPO]\n");
+    fprintf(stderr, "usage: bcx play SPECS.jsonl OUTDIR [-j N] [--dump] [--no-replay] [--no-indicators] [--root REPO]\n");
     return 2;
 }
 
@@ -282,6 +363,7 @@ int main(int argc, char** argv) {
         if (!strcmp(argv[i], "-j") && i + 1 < argc) o.jobs = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--dump")) o.dump = true;
         else if (!strcmp(argv[i], "--no-replay")) o.replay = false;
+        else if (!strcmp(argv[i], "--no-indicators")) o.indicators = false;
         else if (!strcmp(argv[i], "--root") && i + 1 < argc) o.root = argv[++i];
         else if (!strcmp(argv[i], "--stdout")) g_print_stdout = true;
         else if (argv[i][0] != '-' && !specs_path) specs_path = argv[i];
@@ -325,6 +407,8 @@ int main(int argc, char** argv) {
         fflush(stderr);
         pid_t pid = fork();
         if (pid == 0) {
+            timespec t0;
+            clock_gettime(CLOCK_MONOTONIC, &t0);
             std::string line;
             if (!ok) line = "{\"backend\": \"native\", \"error\": " + json_str("bad spec: " + err);
             else {
@@ -342,8 +426,11 @@ int main(int argc, char** argv) {
             rusage ru;
             getrusage(RUSAGE_SELF, &ru);
             double cpu = ru.ru_utime.tv_sec + ru.ru_utime.tv_usec / 1e6 + ru.ru_stime.tv_sec + ru.ru_stime.tv_usec / 1e6;
-            char c[64];
-            snprintf(c, sizeof c, ", \"cpu_s\": %.2f}", cpu);
+            timespec t1;
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            long long wall = (t1.tv_sec - t0.tv_sec) * 1000LL + (t1.tv_nsec - t0.tv_nsec) / 1000000;
+            char c[96];
+            snprintf(c, sizeof c, ", \"cpu_s\": %.2f, \"wall_ms\": %lld}", cpu, wall);
             line += c;
             FILE* rf = fopen((gdir + "/result.json").c_str(), "w");
             fprintf(rf, "%s\n", line.c_str());

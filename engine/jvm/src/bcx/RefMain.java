@@ -6,6 +6,7 @@ import battlecode.crossplay.CrossPlayLanguage;
 import battlecode.server.Config;
 import battlecode.server.GameInfo;
 import battlecode.server.GameMaker;
+import battlecode.world.InternalRobot;
 import battlecode.world.control.NullControlProvider;
 import battlecode.world.control.PlayerControlProvider;
 import battlecode.world.control.RobotControlProvider;
@@ -36,9 +37,12 @@ import java.util.Set;
  */
 public final class RefMain {
     static final Set<String> FIELDS = Set.of("a", "b", "map", "seed", "engine", "classes", "classes_a", "classes_b", "id",
-            "cat_rng_skip");
+            "cat_rng_skip", "replay", "indicators");
+    static final long T0 = System.nanoTime();
 
     public static void main(String[] args) throws Exception {
+        System.setOut(new java.io.PrintStream(new Console(System.out), true, StandardCharsets.UTF_8));
+        System.setErr(new java.io.PrintStream(new Console(System.err), true, StandardCharsets.UTF_8));
         String specArg = null;
         String outArg = null;
         boolean dump = false;
@@ -72,6 +76,9 @@ public final class RefMain {
         String engine = spec.containsKey("engine") ? String.valueOf(spec.get("engine")) : "1.2.6";
         result.put("engine", engine);
         if (spec.containsKey("cat_rng_skip")) result.put("cat_rng_skip", spec.get("cat_rng_skip"));
+        for (Map.Entry<String, Object> e : spec.entrySet()) {
+            if (!FIELDS.contains(e.getKey())) result.put(e.getKey(), e.getValue()); // other fields: copied
+        }
 
         String err = validate(spec);
         String jarVersion = jarVersion();
@@ -87,6 +94,7 @@ public final class RefMain {
 
         String a = (String) spec.get("a");
         String b = (String) spec.get("b");
+        Console.prefixes = new String[]{"at " + a + ".", "at " + b + "."};
         String map = (String) spec.get("map");
         boolean hasSeed = spec.containsKey("seed");
         int seed = hasSeed ? ((Long) spec.get("seed")).intValue() : 0;
@@ -108,7 +116,7 @@ public final class RefMain {
                 {"bc.server.debug", "false"},
                 {"bc.engine.debug-methods", "false"},
                 {"bc.engine.enable-profiler", "false"},
-                {"bc.engine.show-indicators", "true"},
+                {"bc.engine.show-indicators", Boolean.FALSE.equals(spec.get("indicators")) ? "false" : "true"},
                 {"bc.game.team-a", a},
                 {"bc.game.team-b", b},
                 {"bc.game.team-a.url", classesA},
@@ -159,15 +167,20 @@ public final class RefMain {
             result.put("round", r.round);
             result.put("hash", battlecode.world.BcxStateHash.hex16(r.hash));
             result.put("cat_rng_draws", r.catDraws);
+            result.put("cooperation", r.cooperation);
+            result.put("A", new Json.Raw(Match.teamJson(r, 0)));
+            result.put("B", new Json.Raw(Match.teamJson(r, 1)));
+            result.put("series", new Json.Raw(Match.seriesJson(r)));
+            if (Files.exists(replay)) {
+                result.put("digest", sha256(Files.readAllBytes(replay)).substring(0, 16));
+                if (Boolean.FALSE.equals(spec.get("replay"))) Files.delete(replay);
+            }
         }
         result.put("backend", "java");
         finish(out, result, code);
     }
 
     static String validate(Map<String, Object> spec) {
-        for (String k : spec.keySet()) {
-            if (!FIELDS.contains(k)) return "unknown spec field " + k;
-        }
         for (String k : new String[]{"a", "b", "map"}) {
             if (!(spec.get(k) instanceof String)) return "spec field " + k + " is required (a string)";
         }
@@ -180,6 +193,9 @@ public final class RefMain {
                 return "spec field seed must be an int";
             }
         }
+        for (String k : new String[]{"replay", "indicators"}) {
+            if (spec.containsKey(k) && !(spec.get(k) instanceof Boolean)) return "spec field " + k + " must be a boolean";
+        }
         if (spec.containsKey("cat_rng_skip") && !(spec.get("cat_rng_skip") instanceof Long l && l >= 0)) {
             return "spec field cat_rng_skip must be a non-negative integer";
         }
@@ -188,6 +204,13 @@ public final class RefMain {
             if (!e.equals("1.2.6") && !e.equals("1.2.5")) return "spec engine must be 1.2.6 or 1.2.5";
         }
         return null;
+    }
+
+    /** Hex SHA-256 (the replay digest, as tools/play's: its first 16 digits). */
+    static String sha256(byte[] bytes) throws Exception {
+        StringBuilder b = new StringBuilder();
+        for (byte x : java.security.MessageDigest.getInstance("SHA-256").digest(bytes)) b.append(String.format("%02x", x));
+        return b.toString();
     }
 
     static String resolve(Path root, String p) {
@@ -206,6 +229,7 @@ public final class RefMain {
         double cpu = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean())
                 .getProcessCpuTime() / 1e9;
         result.put("cpu_s", Double.parseDouble(String.format(Locale.ROOT, "%.2f", cpu)));
+        result.put("wall_ms", (System.nanoTime() - T0) / 1_000_000);
         String line = Json.write(result);
         Files.writeString(out.resolve("result.json"), line + "\n");
         System.out.println(line);
@@ -242,6 +266,65 @@ public final class RefMain {
         public void cleanup() {
             if (crossPlay != null) crossPlay.cleanup();
         }
+
+        @Override
+        public boolean crashReported(InternalRobot robot) { return Console.takeCrash(); }
+    }
+
+    /**
+     * The JVM's System.out and System.err, passed through and read as tools/play reads them: a crash is ErrorReporter's
+     * "Stack trace:" followed by a frame in a team's package, or SandboxedRobotPlayer's "froze ... because it returned
+     * from its run() method". Robots run one at a time, so it belongs to the robot that just ran.
+     */
+    static final class Console extends java.io.OutputStream {
+        static volatile String[] prefixes = new String[0];
+        private static boolean crash;
+        private static boolean inTrace;
+        private final java.io.OutputStream out;
+        private final java.io.ByteArrayOutputStream line = new java.io.ByteArrayOutputStream();
+
+        Console(java.io.OutputStream out) { this.out = out; }
+
+        static synchronized boolean takeCrash() {
+            boolean c = crash;
+            crash = false;
+            inTrace = false;
+            return c;
+        }
+
+        @Override
+        public void write(int c) throws IOException {
+            out.write(c);
+            if (c != '\n') {
+                line.write(c);
+                return;
+            }
+            out.flush();
+            String t = line.toString(StandardCharsets.UTF_8).trim();
+            line.reset();
+            synchronized (Console.class) {
+                if (t.startsWith("Stack trace:")) {
+                    inTrace = true;
+                } else if (inTrace && t.startsWith("at ")) {
+                    for (String p : prefixes) {
+                        if (t.startsWith(p)) {
+                            crash = true;
+                            inTrace = false;
+                        }
+                    }
+                } else if (t.contains(" froze in round ") && t.contains(" because it returned from its run() method")) {
+                    crash = true;
+                }
+            }
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            for (int i = off; i < off + len; i++) write(b[i]);
+        }
+
+        @Override
+        public void flush() throws IOException { out.flush(); }
     }
 
     /** hashes.txt (ROUND HEX16 per line) and, with --dump, dump.txt (a header line per round). */
@@ -401,6 +484,9 @@ public final class RefMain {
             }
         }
 
+        /** JSON text written as it is. */
+        record Raw(String json) {}
+
         static String write(Object v) {
             StringBuilder b = new StringBuilder();
             write(b, v);
@@ -411,6 +497,8 @@ public final class RefMain {
         private static void write(StringBuilder b, Object v) {
             if (v == null) {
                 b.append("null");
+            } else if (v instanceof Raw r) {
+                b.append(r.json());
             } else if (v instanceof String) {
                 String s = (String) v;
                 b.append('"');

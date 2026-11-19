@@ -73,6 +73,7 @@ static void free_robot(Robot* r) {
 }
 
 static void robot_main();
+static jint g_crash_id = -1;  // the robot whose run() just ended in a crash (sched_crashed)
 
 static void enter(Robot* r) {
     g_cur = r;
@@ -116,7 +117,11 @@ static void robot_main() {
     if (g_mon.left < 0) g_mon.left += g_mon.limit;
     else g_mon.left = g_mon.limit;
     if (r->mod->init_robot_player) r->mod->init_robot_player();
-    if (!g_exc) r->mod->run(r->rc);
+    bool ran = !g_exc;
+    if (ran) r->mod->run(r->rc);
+    // SandboxedRobotPlayer reports a Throwable out of run() other than RobotDeathException ("Stack trace") and a
+    // return ("froze"); a failed RobotPlayer initializer escapes its thread unreported
+    if (ran && (!g_exc || strcmp(g_exc->klass->name, "battlecode/instrumenter/RobotDeathException") != 0)) g_crash_id = r->id;
     if (g_exc && getenv("BCX_ROBOT_ERRORS")) {
         extern void rt_describe_exception(Obj* e, char* buf, size_t cap);
         char b[1024];
@@ -190,6 +195,12 @@ jint sched_bytecodes_used(jint id) {
     Robot* r = find(id);
     if (!r || r->killed) return 0;
     return r->mon.limit - r->mon.left;
+}
+
+jboolean sched_crashed(jint id) {
+    bool c = g_crash_id == id;
+    if (c) g_crash_id = -1;
+    return c;
 }
 
 jboolean sched_terminated(jint id) {

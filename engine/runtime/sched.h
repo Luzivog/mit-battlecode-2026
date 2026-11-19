@@ -14,4 +14,5 @@ void sched_run(jint id, jint limit);
 void sched_kill(jint id);
 jint sched_bytecodes_used(jint id);
 jboolean sched_terminated(jint id);
+jboolean sched_crashed(jint id);
 void sched_match_ended();

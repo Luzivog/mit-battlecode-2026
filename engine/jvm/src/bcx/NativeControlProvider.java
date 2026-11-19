@@ -23,7 +23,11 @@ public final class NativeControlProvider implements RobotControlProvider {
     public int getBytecodesUsed(InternalRobot robot) { return bytecodesUsed0(robot.getID()); }
     public boolean getTerminated(InternalRobot robot) { return terminated0(robot.getID()); }
 
+    /** Whether the robot's run() ended in its last turn as the engine reports a crash (sched.cpp, robot_main). */
+    public static boolean crashed(int id) { return crashed0(id); }
+
     private static native void spawn0(int id, String pkg, battlecode.common.RobotController rc);
+    private static native boolean crashed0(int id);
     private static native void kill0(int id);
     private static native void run0(int id, int limit);
     private static native int bytecodesUsed0(int id);

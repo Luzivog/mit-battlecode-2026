@@ -13,6 +13,7 @@ import battlecode.world.GameMapIO;
 import battlecode.world.GameWorld;
 import battlecode.world.InternalRobot;
 import battlecode.world.LiveMap;
+import battlecode.world.TeamInfo;
 import battlecode.world.control.RobotControlProvider;
 
 import java.io.File;
@@ -32,6 +33,12 @@ public final class Match {
 
         /** Where Server cleans up (its finally block: crossPlayServer.cleanup()). */
         void cleanup();
+
+        /**
+         * Whether the engine reported a crash of this robot since the last call: its run() ended by a Throwable other
+         * than RobotDeathException (ErrorReporter's "Stack trace") or by returning ("froze"), as tools/play counts.
+         */
+        boolean crashReported(InternalRobot robot);
     }
 
     /** Receives each round's state hash, and its dump when wantDump(). */
@@ -54,6 +61,85 @@ public final class Match {
         /** Draws (Random.next calls) from the cat RNG during the game. */
         public long catDraws;
         public String error;
+        /** Per team (A, B), as tools/play reports them: GameWorld.isCooperation and the TeamInfo counters at the end. */
+        public boolean cooperation;
+        public final int[] points = new int[2], cheeseTransferred = new int[2], catDamage = new int[2],
+                rats = new int[2], kings = new int[2], cheese = new int[2];
+        /** Robots whose run() ended by a Throwable other than RobotDeathException or by returning (Controls.crashReported). */
+        public final int[] crashed = new int[2];
+        /** Each team's [cheese transferred, rats, kings, cat damage] every SERIES_EVERY rounds and at the end. */
+        public final StringBuilder[] series = {new StringBuilder(), new StringBuilder()};
+        GameWorld world;
+    }
+
+    /** Rounds between two samples of the series (tools/play's). */
+    public static final int SERIES_EVERY = 100;
+
+    /** A team's counters as a JSON object (tools/play's fields and order). */
+    public static String teamJson(Result r, int t) {
+        return "{\"points\": " + r.points[t] + ", \"cheese_transferred\": " + r.cheeseTransferred[t] + ", \"cat_damage\": "
+                + r.catDamage[t] + ", \"rats\": " + r.rats[t] + ", \"kings\": " + r.kings[t] + ", \"cheese\": " + r.cheese[t]
+                + ", \"crashed\": " + r.crashed[t] + "}";
+    }
+
+    /** The series as a JSON object (tools/play's). */
+    public static String seriesJson(Result r) {
+        return "{\"every\": " + SERIES_EVERY + ", \"fields\": [\"cheese_transferred\", \"rats\", \"kings\", \"cat_damage\"], "
+                + "\"A\": [" + r.series[0] + "], \"B\": [" + r.series[1] + "]}";
+    }
+
+    static void sample(GameWorld w, Result r) {
+        TeamInfo ti = w.getTeamInfo();
+        for (Team t : new Team[]{Team.A, Team.B}) {
+            StringBuilder s = r.series[t.ordinal()];
+            s.append(s.length() > 0 ? ", " : "").append('[').append(ti.getCheeseTransferred(t)).append(", ")
+                    .append(ti.getNumBabyRats(t)).append(", ").append(ti.getNumRatKings(t)).append(", ")
+                    .append(ti.getDamageToCats(t)).append(']');
+        }
+    }
+
+    /**
+     * Each team's points as the engine would award them at round 2000 (GameWorld.setWinnerIfMorePoints adds them to
+     * TeamInfo: the delta), and the counters. Called after the replay is written; the world is discarded after it.
+     */
+    static void finishStats(GameWorld w, Result r) {
+        TeamInfo ti = w.getTeamInfo();
+        r.cooperation = w.isCooperation();
+        int[] before = {ti.getPoints(Team.A), ti.getPoints(Team.B)};
+        w.setWinnerIfMorePoints();
+        for (Team t : new Team[]{Team.A, Team.B}) {
+            int i = t.ordinal();
+            r.points[i] = ti.getPoints(t) - before[i];
+            r.cheeseTransferred[i] = ti.getCheeseTransferred(t);
+            r.catDamage[i] = ti.getDamageToCats(t);
+            r.rats[i] = ti.getNumBabyRats(t);
+            r.kings[i] = ti.getNumRatKings(t);
+            r.cheese[i] = ti.getCheese(t);
+        }
+    }
+
+    /** The control provider, counting each team's crashed robots (Controls.crashReported) after each turn. */
+    static final class Crashes implements RobotControlProvider {
+        private final RobotControlProvider p;
+        private final Result r;
+        private final Controls controls;
+
+        Crashes(RobotControlProvider p, Result r, Controls controls) { this.p = p; this.r = r; this.controls = controls; }
+
+        public void matchStarted(GameWorld w) { p.matchStarted(w); }
+        public void matchEnded() { p.matchEnded(); }
+        public void roundStarted() { p.roundStarted(); }
+        public void roundEnded() { p.roundEnded(); }
+        public void robotSpawned(InternalRobot robot) { p.robotSpawned(robot); }
+        public void robotKilled(InternalRobot robot) { p.robotKilled(robot); }
+        public int getBytecodesUsed(InternalRobot robot) { return p.getBytecodesUsed(robot); }
+        public boolean getTerminated(InternalRobot robot) { return p.getTerminated(robot); }
+
+        public void runRobot(InternalRobot robot) {
+            controls.crashReported(robot); // nothing before this turn belongs to it
+            p.runRobot(robot);
+            if (controls.crashReported(robot) && robot.getTeam().ordinal() < 2) r.crashed[robot.getTeam().ordinal()]++;
+        }
     }
 
     /**
@@ -105,7 +191,7 @@ public final class Match {
             gameMaker.makeGameHeader();
             try {
                 boolean profilingEnabled = options.getBoolean("bc.engine.enable-profiler");
-                RobotControlProvider prov = controls.create(game, gameMaker, profilingEnabled);
+                RobotControlProvider prov = new Crashes(controls.create(game, gameMaker, profilingEnabled), res, controls);
                 boolean checkMapGuarantees = options.getBoolean("bc.server.validate-maps");
 
                 int aWins = 0;
@@ -132,6 +218,7 @@ public final class Match {
                 Team gameWinner = aWins >= bWins ? Team.A : Team.B;
                 gameMaker.makeGameFooter(gameWinner);
                 gameMaker.writeGame(game.getSaveFile());
+                finishStats(res.world, res);
             } finally {
                 controls.cleanup();
             }
@@ -162,6 +249,9 @@ public final class Match {
             int before = world.getCurrentRound();
             GameState state = world.runRound();
             int round = world.getCurrentRound();
+            if (!GameState.DONE.equals(state) && round % SERIES_EVERY == 0) {
+                sample(world, res);
+            }
             if (round != before) {
                 long h = BcxStateHash.hash(world);
                 String d = wantDump ? BcxStateHash.dump(world) : null;
@@ -174,6 +264,8 @@ public final class Match {
             }
         }
 
+        sample(world, res);
+        res.world = world;
         res.hash = chain.finish();
         res.round = world.getCurrentRound();
         res.winner = world.getWinner();

@@ -6,13 +6,8 @@ package challenger;
 // STEP is the design's half-swing (a variant plays VALUE - STEP or VALUE + STEP), MIN and MAX the values that still
 // make sense. tools/tune rewrites VALUE and nothing else. Evidence for each value: docs/strategy.md §9, docs/combat.md §10.
 public final class Tune {
-    // A map is mine-rich once the team has proven at least RICH_MAP_MINES mines (util/MineEstimate.reached): from then
-    // on the RICH constants below replace their plain ones.
-    public static final int RICH_MAP_MINES = 8; // tune: 2 [5, 16] mines (estimated, a lower bound) that make a map mine-rich
-
     // Spawning (robot/king/KingSpawningStrategy): a rat is built while its cost is at most the threshold.
     public static final int SPAWN_CAP = 40; // tune: 10 [20, 80] threshold on a normal map: 16 rats
-    public static final int SPAWN_CAP_RICH = 40; // tune: 10 [20, 80] threshold on a mine-rich map
     public static final int SPAWN_CAP_SMALL = 30; // tune: 10 [10, 60] threshold on maps of <= 900 tiles before r400
     public static final int SPAWN_CHEESE_DIV = 10; // tune: 3 [4, 30] threshold at most global / DIV + 10
     public static final int SPAWN_RICH = 2000; // tune: 500 [500, 5000] 32 rats from global >= RICH - t/2 (t >= 100)
@@ -21,7 +16,6 @@ public final class Tune {
 
     // Miners (robot/rat/MinerStrategy).
     public static final double EXPLORE_P = 0.6; // tune: 0.1 [0.0, 1.0] share of trips that explore once mines are known
-    public static final double EXPLORE_P_RICH = 0.6; // tune: 0.1 [0.0, 1.0] the same on a mine-rich map
     public static final int GOHOME_PCT = 100; // tune: 30 [40, 200] go-home loads (10, 25, 40, 60, 80, 105 by distance) in percent
     public static final int EXPLORE_KING_DSQ = 36; // tune: 20 [0, 200] exploration targets lie farther than this d² from our kings
     public static final int IDLE_GOHOME = 50; // tune: 25 [0, 150] with nothing to do, go home above this raw cheese

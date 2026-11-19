@@ -33,7 +33,7 @@ public class KingSpawningStrategy extends Strategy {
     @Override
     public boolean runTick() throws GameActionException {
         // indicate("spawned " + numSpawned);
-        int defaultThresh = MineEstimate.reached(Tune.RICH_MAP_MINES) ? Tune.SPAWN_CAP_RICH : Tune.SPAWN_CAP;
+        int defaultThresh = Tune.SPAWN_CAP;
         if (mapWidth * mapHeight <= 900 && time < 400) {
             defaultThresh = Tune.SPAWN_CAP_SMALL;
         }

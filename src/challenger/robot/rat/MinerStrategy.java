@@ -7,7 +7,6 @@ import challenger.Tune;
 import challenger.robot.Strategy;
 import challenger.comms.GlobalArray;
 import challenger.comms.MapManager;
-import challenger.util.MineEstimate;
 import challenger.util.Rng;
 import challenger.util.string.FastIndexedIntSet;
 import challenger.robot.rat.goHome.GoHomeStrategy;
@@ -69,7 +68,7 @@ public class MinerStrategy extends Strategy {
                 target = pickExplorationTarget();
             } else {
                 // var p = Math.exp(-12.0 * time / (mapWidth * mapHeight));
-                var p = MineEstimate.reached(Tune.RICH_MAP_MINES) ? Tune.EXPLORE_P_RICH : Tune.EXPLORE_P;
+                var p = Tune.EXPLORE_P;
                 if(Rng.mcg() < p * (1l << 31)) {
                     target = pickExplorationTarget();
                 } else {

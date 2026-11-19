@@ -495,6 +495,12 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - Gauntlet: bots that grab the carrier rescue the victim (E:world/InternalRobot.java:685-700).
 - **Size.** 120–250 template lines.
 
+- **Merged** (2026-11-19, af60d68): arm C4, all four changes (damage-scored lines, hold unless step-2 or better,
+  aim while holding, 8 directions). `goal` gain +0.112 [+0.050, +0.174] vs main (1119-035720-ab-1be9); merged on top
+  of KL, +0.139 [+0.061, +0.219] (1119-043231-ab-22e2). Open landings 20.6% → 5.6%, step-2 collisions 59.5% → 83.1%.
+  Holding barely adds bites (2.9 a game, OBG ~23): the gain is the throws. Holding exposes the carrier's blind side
+  (grabs from outside its cone 1,011 → 1,243): CC's lead.
+
 #### E1. One spend gate on every global spend
 - **Rests on.** `critic/Starve.java` on W0.3's 62 STARVE cells (1.2.6; `synthesis/w03_starve.txt`).
   - From r1 to starvation, the losing seat spent a median of 2,180 on spawns (52% of its spending), up to 900 on rat

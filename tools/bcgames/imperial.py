@@ -11,7 +11,12 @@ is built here, uploaded once to the volume (RUNTIME/bcx/<key>.gz; a binary unuse
 and named by each spec (`bcx`). A guarded game goes out twice: as itself, whose result the test uses, and as
 `ID~guard` with `guard: true`, a task that plays it on both engines on one machine and returns only the guard's
 verdict (play.Runner.guard). So a Java twin never holds up a cell; the run waits for the verdicts (guards_pending,
-on_guard) before it concludes.
+on_guard) before it concludes. A guard task takes 5 times its game (80 s median, 500 s at p99), and ended last in
+three tests of four (19 Nov), so guards go first: the games a test will surely play are guarded ahead
+(guard_ahead: the first batch of their binary holds them), and a batch's guard tasks come before its games.
+
+A batch's tools/run is read for its run's id and followed at once: its placement (submitting pieces: seconds to
+minutes) goes on beside it, and the next batch need not wait for it.
 
 Results are read from runs/RUN/N/out/results.jsonl as the tasks end, so a test can stop before its batch does. A
 result enters the local cache only when the node computed the same game key (same runner, JDK fingerprint, engine,
@@ -57,13 +62,11 @@ def ship_binary(key: str, path: Path) -> str:
     if remote.login(f"test -s {dest} && touch {dest} && echo yes; true").strip() == "yes":
         return dest
     data = gzip.compress(path.read_bytes(), 1)
+    # the prune is best effort and leaves other uploads' temporary files alone: a find that saw one renamed away
+    # failed the whole upload, and every game of two tests went to Java (424 games, 19 Nov)
     remote.login(f'mkdir -p {d} && t=$(mktemp {dest}.XXXXXX) && cat > "$t" && mv -f "$t" {dest} && '
-                 f'find {d} -maxdepth 1 -type f -mtime +{REMOTE_KEEP_DAYS} -delete', data, stream=2)
-    return dest
-    data = gzip.compress(path.read_bytes(), 1)
-    remote.login(f'mkdir -p {d} && t=$(mktemp {dest}.XXXXXX) && gunzip -c > "$t" && chmod 700 "$t" && '
-                 f'mv -f "$t" {dest} && find {d} -maxdepth 1 -type f -mtime +{REMOTE_KEEP_DAYS} -delete',
-                 data, stream=2)
+                 f'{{ find {d} -maxdepth 1 -type f ! -name "*.gz.*" -mtime +{REMOTE_KEEP_DAYS} -delete 2>/dev/null; '
+                 f'true; }}', data, stream=2)
     return dest
 
 
@@ -77,7 +80,10 @@ class ImperialRunner:
         self.planner = native.Planner(self.resolver) if backend == "native" else None
         self.binaries: dict[native.Plan, dict] = {}  # plan -> {state: building|ready|failed, key, remote, error}
         self.guard_rate = native.GUARD_RATE if guard is None else guard
-        self.guarded: set[str] = set()
+        self.guarded: set[str] = set()  # binaries with a guarded game in this run
+        self.guard_sent: set[str] = set()  # games (keys) whose guard task is out or queued
+        self.ahead: list[play.Job] = []  # guards of games to come, waiting for their binary
+        self.closing: list[threading.Thread] = []
         self.on_mismatch, self.on_guard = on_mismatch, on_guard
         self.guards_pending = 0
         self.mismatches: list[dict] = []
@@ -117,6 +123,29 @@ class ImperialRunner:
             self.pending.append((job, callback))
         self.wake.set()
 
+    def guard_ahead(self, job: play.Job) -> None:
+        """JOB, a game the run will surely play, guarded now if sampled: its guard task goes out with the first batch
+        of its binary, not with the game (which may come last)."""
+        if self.planner is None or self.guard_rate <= 0 or job.key in self.guard_sent:
+            return
+        if not native.sampled(job.key, self.guard_rate):
+            return
+        try:
+            plan = self.planner.plan(job)
+        except (store.SetupError, native.BuildError):
+            return
+        if plan is None:
+            return
+        job.plan = plan
+        with self.lock:
+            self.guard_sent.add(job.key)
+            self.guards_pending += 1
+            if plan not in self.binaries:
+                self.binaries[plan] = {"state": "building"}
+                threading.Thread(target=self._prepare, args=(plan,), daemon=True).start()
+            self.ahead.append(job)
+        self.wake.set()
+
     def _prepare(self, plan: native.Plan) -> None:
         """Builds the plan's binary here and puts it on the volume."""
         try:
@@ -131,14 +160,29 @@ class ImperialRunner:
         self.wake.set()
 
     def close(self, wait: bool = True) -> None:
+        """Stops reading results; the batches still open are cancelled in the background (drain() waits for that),
+        each once its placement has ended, so no piece it submits is missed."""
         self.stopping.set()
         self.wake.set()
         for b in self.batches:
             if b.get("proc") and b["proc"].poll() is None:
                 b["proc"].kill()
             if b.get("run") and not b.get("ended"):
-                subprocess.run([str(store.ROOT / "tools" / "compute"), "cancel", b["run"]], cwd=store.ROOT,
-                               stdout=self.log, stderr=self.log)
+                t = threading.Thread(target=self._cancel, args=(b,), daemon=True)
+                t.start()
+                self.closing.append(t)
+        if wait:
+            self.drain()
+
+    def _cancel(self, b: dict) -> None:
+        if b.get("place"):
+            b["place"].join()
+        subprocess.run([str(store.ROOT / "tools" / "compute"), "cancel", b["run"]], cwd=store.ROOT,
+                       stdout=self.log, stderr=self.log)
+
+    def drain(self) -> None:
+        for t in self.closing:
+            t.join()
 
     # ------------------------------------------------------------------------------------------------------ batches
 
@@ -153,8 +197,16 @@ class ImperialRunner:
             if self.stopping.wait(max(COALESCE_S, FLUSH_S - (time.time() - last))):
                 return
             self.wake.clear()
-            java, nat, wait = [], [], []
+            java, nat, wait, ahead, dropped = [], [], [], [], []
             with self.lock:
+                for job in self.ahead:  # guards of games to come: with their binary's next batch
+                    st = self.binaries.get(job.plan)
+                    if st is None or st["state"] == "failed":
+                        dropped.append(job)  # no native game to check: its games play on Java
+                    elif st["state"] == "ready":
+                        ahead.append(job)
+                self.ahead = [j for j in self.ahead if j not in ahead and j not in dropped]
+                self.guards_pending -= len(dropped)
                 for job, cb in self.pending:
                     st = self.binaries.get(job.plan) if job.plan is not None else None
                     if st is None or st["state"] == "failed":
@@ -165,23 +217,37 @@ class ImperialRunner:
                     else:
                         wait.append((job, cb))
                 self.pending = wait
+            for job in dropped:
+                if self.on_guard:
+                    self.on_guard(job, {"verdict": "java-error", "error": "its binary failed: no native game"})
             for batch, is_native in ((java, False), (nat, True)):
-                if not batch:
+                if not batch and not (is_native and ahead):
                     continue
                 last = time.time()
                 try:
-                    self._launch(batch, is_native)
+                    self._launch(batch, is_native, ahead if is_native else [])
                 except Exception as e:  # noqa: BLE001 - every game of the batch fails with the reason
                     self._say(f"batch failed to start: {e}")
                     for job, cb in batch:
                         cb(play.finish(job, {"error": f"imperial: {e}"}, False))
+                    if is_native and ahead:
+                        with self.lock:
+                            self.guards_pending -= len(ahead)
+                        for job in ahead:
+                            if self.on_guard:
+                                self.on_guard(job, {"verdict": "java-error", "error": f"imperial: {e}"})
 
     def _wants_guard(self, job: play.Job, key: str) -> bool:
-        if self.guard_rate <= 0:
+        """A game guarded at its launch: its binary's first game in this run (unless one was guarded ahead), or
+        sampled, unless guarded ahead."""
+        if self.guard_rate <= 0 or job.key in self.guard_sent:
             return False
         first = key not in self.guarded
         self.guarded.add(key)
-        return first or native.sampled(job.key, self.guard_rate)
+        if first or native.sampled(job.key, self.guard_rate):
+            self.guard_sent.add(job.key)
+            return True
+        return False
 
     def _ship(self, jobs: list[play.Job]) -> dict[str, str]:
         """Copies what the nodes need into .bcgames-ship; returns jar path -> its path in the ship."""
@@ -202,26 +268,13 @@ class ImperialRunner:
             jars[str(jar)] = str(dest.relative_to(store.ROOT))
         return jars
 
-    def _launch(self, batch: list[tuple[play.Job, object]], is_native: bool) -> None:
-        jars = self._ship([j for j, _ in batch])
+    def _launch(self, batch: list[tuple[play.Job, object]], is_native: bool, ahead: list[play.Job] = ()) -> None:
+        """BATCH's games (and AHEAD's guards) as one tools/run, guard tasks first; followed as soon as tools/run
+        prints the run's id."""
         n = len(self.batches)
         specs = self.outdir / f"batch-{n}.jsonl"
-        guards = {}
-        with open(specs, "w") as f:
-            for job, _ in batch:
-                spec = dict(job.spec)
-                (a_jar, _), (b_jar, _) = self.resolver.bot(spec["a"]), self.resolver.bot(spec["b"])
-                spec["classes_a"], spec["classes_b"] = jars[str(a_jar)], jars[str(b_jar)]
-                if job.replay:
-                    spec["replay"] = True  # the task writes it to OUT/replays/, it comes back with the results
-                if is_native:
-                    st = self.binaries[job.plan]
-                    spec["bcx"] = st["remote"]
-                    if self._wants_guard(job, st["key"]):
-                        gid = f"{spec['id']}~guard"
-                        guards[gid] = job
-                        f.write(json.dumps(dict(spec, id=gid, guard=True, replay=False)) + "\n")
-                f.write(json.dumps(spec) + "\n")
+        lines, guards, fresh = self._specs(batch, is_native, ahead, self._ship([j for j, _ in batch] + list(ahead)))
+        specs.write_text("".join(x + "\n" for x in lines))
         cmd = [str(store.ROOT / "tools" / "run"), "--detach", "--each", str(specs), "--chunk",
                str(CHUNK), "--gather", "results.jsonl",
                "--with", str(SHIP.relative_to(store.ROOT))]
@@ -230,23 +283,69 @@ class ImperialRunner:
         cmd += ["--", "env", f"BCGAMES_DATA={SHIP.relative_to(store.ROOT)}", "BCGAMES_SLOTS=0", "tools/play",
                 "{file}", "{out}", "--workers", "1", "--no-cache", "--timeout", str(int(self.timeout)),
                 "--backend", "native" if is_native else "java", "--guard", "0", "--give-back"]
-        proc = subprocess.run(cmd, cwd=store.ROOT, capture_output=True, text=True)
-        self.log.write(proc.stderr)
-        lines = proc.stdout.split()
-        if proc.returncode != 0 or not lines:
-            raise store.SetupError(f"tools/run exit {proc.returncode}: {proc.stderr.strip()[-500:]}")
-        run = lines[0]
+        proc = subprocess.Popen(cmd, cwd=store.ROOT, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True)
+        assert proc.stdout is not None
+        run = proc.stdout.readline().strip()  # printed once the run's folder is made: its tasks are claimable
+        if not run.startswith("run-"):
+            out, err = proc.communicate()
+            self.log.write(err)
+            raise store.SetupError(f"tools/run exit {proc.returncode}: {(run + out + err).strip()[-500:]}")
         b = {"run": run, "jobs": {j.spec["id"]: (j, cb) for j, cb in batch}, "guards": guards, "done": set(),
              "ended": False}
+        b["place"] = threading.Thread(target=self._placed, args=(proc, run), daemon=True)
+        b["place"].start()
         with self.lock:
-            self.guards_pending += len(guards)
+            self.guards_pending += fresh
         b["proc"] = subprocess.Popen([str(store.ROOT / "tools" / "compute"), "wait", run], cwd=store.ROOT,
                                      stdout=self.log, stderr=self.log)
         self.batches.append(b)
-        waited = time.time() - min(getattr(j, "queued", time.time()) for j, _ in batch)
+        waited = time.time() - min([getattr(j, "queued", time.time()) for j, _ in batch] or [time.time()])
         self._say(f"batch {n}: {len(batch)} {'native' if is_native else 'java'} games as run {run} "
-                  f"(oldest queued {waited:.0f} s)")
+                  f"(oldest queued {waited:.0f} s)" + (f", {len(guards)} guards first" if guards else ""))
         threading.Thread(target=self._follow, args=(b,), daemon=True).start()
+
+    def _specs(self, batch: list[tuple[play.Job, object]], is_native: bool, ahead: list[play.Job],
+               jars: dict[str, str]) -> tuple[list[str], dict[str, play.Job], int]:
+        """The batch's spec lines, every guard task first (AHEAD's, then those of its own games), each game after;
+        the guard tasks by id; how many guards are new (AHEAD's were counted when queued)."""
+        guards: dict[str, play.Job] = {}
+        lines: list[str] = []
+
+        def spec_of(job: play.Job) -> dict:
+            spec = dict(job.spec)
+            (a_jar, _), (b_jar, _) = self.resolver.bot(spec["a"]), self.resolver.bot(spec["b"])
+            spec["classes_a"], spec["classes_b"] = jars[str(a_jar)], jars[str(b_jar)]
+            if is_native:
+                spec["bcx"] = self.binaries[job.plan]["remote"]
+            return spec
+
+        def guard_line(job: play.Job, spec: dict) -> None:
+            gid = f"{spec['id']}~guard"
+            guards[gid] = job
+            lines.insert(len(guards) - 1, json.dumps(dict(spec, id=gid, guard=True, replay=False)))
+
+        for job in ahead:
+            self.guarded.add(self.binaries[job.plan]["key"])
+            guard_line(job, spec_of(job))
+        fresh = 0
+        for job, _ in batch:
+            spec = spec_of(job)
+            if job.replay:
+                spec["replay"] = True  # the task writes it to OUT/replays/, it comes back with the results
+            if is_native and self._wants_guard(job, self.binaries[job.plan]["key"]):
+                guard_line(job, spec)
+                fresh += 1
+            lines.append(json.dumps(spec))
+        return lines, guards, fresh
+
+    def _placed(self, proc: subprocess.Popen, run: str) -> None:
+        """tools/run's placement, beside the batch's follower: its output to the log once it ends."""
+        out, err = proc.communicate()
+        self.log.write(err + out)
+        if proc.returncode:
+            self._say(f"run {run}: tools/run exit {proc.returncode} (its follower ends it)")
+        self.log.flush()
 
     def _follow(self, b: dict) -> None:
         local = store.ROOT / "runs" / b["run"]

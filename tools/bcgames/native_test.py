@@ -379,9 +379,10 @@ class FlusherTest(unittest.TestCase):
         self.addCleanup(lambda: (setattr(imperial, "FLUSH_S", old[0]), setattr(imperial, "COALESCE_S", old[1])))
         r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
         r.lock, r.stopping, r.wake = threading.Lock(), threading.Event(), threading.Event()
-        r.pending, r.binaries = [], {}
+        r.pending, r.binaries, r.ahead, r.guards_pending, r.on_guard = [], {}, [], 0, None
         sent = []
-        r._launch = lambda batch, is_native: sent.append((time.time(), [j.spec["id"] for j, _ in batch], is_native))
+        r._launch = lambda batch, is_native, ahead=(): sent.append((time.time(), [j.spec["id"] for j, _ in batch],
+                                                                    is_native))
         r._say = lambda msg: None
         threading.Thread(target=r._flusher, daemon=True).start()
         self.addCleanup(lambda: (r.stopping.set(), r.wake.set()))
@@ -411,6 +412,50 @@ class FlusherTest(unittest.TestCase):
         self.assertLess(sent[0][0] - t0, 0.15)            # the first wave goes at once
         self.assertGreaterEqual(sent[1][0] - sent[0][0], 0.45)  # then FLUSH_S apart
         self.assertGreaterEqual(sent[2][0] - sent[1][0], 0.45)
+
+
+class GuardsFirstTest(unittest.TestCase):
+    """imperial.ImperialRunner: guards of games to come go out with their binary's first batch, every guard task comes
+    before the batch's games, and a game guarded ahead is not guarded again."""
+
+    def runner(self):
+        from bcgames import imperial
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock = threading.Lock()
+        r.guard_rate, r.guarded, r.guard_sent, r.ahead, r.guards_pending = 1 / 32, set(), set(), [], 0
+        r.plan = native.Plan("1.2.6", ())
+        r.binaries = {r.plan: {"state": "ready", "key": "bin1", "remote": "/vol/bcx/bin1.gz"}}
+        r.resolver = type("R", (), {"bot": lambda self, ref: (Path(f"/j/{ref}.jar"), "h")})()
+        r.planner = type("P", (), {"plan": lambda self, job: r.plan})()
+        r.wake = threading.Event()
+        return r
+
+    def job(self, gid, key):
+        return play.Job(spec={"id": gid, "a": "x", "b": "y", "map": "m"}, key=key, meta={"key": key})
+
+    def test_guards_ahead_then_in_batch_guards_then_games(self):
+        r = self.runner()
+        import hashlib
+        keys = [hashlib.sha256(str(i).encode()).hexdigest()[:32] for i in range(400)]
+        sampled = [k for k in keys if native.sampled(k, r.guard_rate)]
+        unsampled = [k for k in keys if not native.sampled(k, r.guard_rate)]
+        ahead = self.job("late", sampled[0])
+        r.guard_ahead(ahead)
+        r.guard_ahead(ahead)  # once
+        r.guard_ahead(self.job("no", unsampled[0]))  # not sampled: no guard
+        self.assertEqual((len(r.ahead), r.guards_pending), (1, 1))
+        jars = {"/j/x.jar": "s/x.jar", "/j/y.jar": "s/y.jar"}
+        batch = [(self.job(f"g{i}", k), None) for i, k in enumerate([unsampled[1], sampled[1], unsampled[2]])]
+        for j, _ in batch:
+            j.plan = r.plan
+        lines, guards, fresh = r._specs(batch, True, list(r.ahead), jars)
+        ids = [json.loads(x)["id"] for x in lines]
+        self.assertEqual(ids, ["late~guard", "g1~guard", "g0", "g1", "g2"])  # the binary's first game isn't g0:
+        self.assertEqual((sorted(guards), fresh), (["g1~guard", "late~guard"], 1))  # it has a guard already
+        later = self.job("late", sampled[0])
+        later.plan = r.plan
+        lines, guards, fresh = r._specs([(later, None)], True, [], jars)
+        self.assertEqual(([json.loads(x)["id"] for x in lines], fresh), (["late"], 0))  # guarded ahead: once
 
 
 class FinishTest(unittest.TestCase):

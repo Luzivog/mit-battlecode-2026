@@ -90,6 +90,7 @@ class Test:
         self.maps, self.sealed, self.engine = maps, sealed, engine
         self.delta, self.alpha, self.beta = delta, alpha, beta
         self.min_cells, self.max_cells = min_cells, max_cells
+        self.seed_base = seed_base
         self.stream = cells(maps, seed_base)
         self.cells: list[dict] = []
         self.prefix = 0           # cells [0, prefix) are complete and scored
@@ -113,6 +114,11 @@ class Test:
                 out.append({"id": gid, "a": a, "b": b, "map": cell["map"], "seed": cell["seed"],
                             "engine": self.engine, "role": role, "seat": seat})
         return out
+
+    def sure_games(self) -> list[dict]:
+        """The games of the cells this test will play whatever their results: its first min_cells."""
+        stream = cells(self.maps, self.seed_base)
+        return [g for _ in range(self.min_cells) for g in self.games(next(stream))]
 
     def next_cell(self) -> dict:
         cell = next(self.stream)
@@ -323,6 +329,12 @@ def drive(d: Path) -> int:
     runner = make_runner(d, p, on_mismatch, on_guard=on_guard)
     for ref, (jar, h) in meta.get("bots", {}).items():  # the builds made at submission
         runner.resolver.bots[ref] = (Path(jar), h)
+    if hasattr(runner, "guard_ahead"):  # remote: the guards of the games every test will play go out first
+        for t in tests:
+            for spec in t.sure_games():
+                job = runner.resolver.job(spec, None)
+                if not runner.cached(job):
+                    runner.guard_ahead(job)
     inflight = {"n": 0}
     out = open(d / "results.jsonl", "a")
     t0 = time.time()
@@ -414,13 +426,16 @@ def drive(d: Path) -> int:
     except Exception as e:  # noqa: BLE001
         runner.close(wait=False)
         save_state("error", f"{type(e).__name__}: {e}")
+        getattr(runner, "drain", lambda: None)()
         raise
     runner.close(wait=False)
+    # the state (the verdict) is written first; the open remote batches are cancelled after it (drain)
     if stop["error"]:
         save_state("error", stop["error"])
-        return 1
-    save_state("stopped" if stop["flag"] else "done")
-    return 0
+    else:
+        save_state("stopped" if stop["flag"] else "done")
+    getattr(runner, "drain", lambda: None)()
+    return 1 if stop["error"] else 0
 
 
 def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False, on_guard=None):

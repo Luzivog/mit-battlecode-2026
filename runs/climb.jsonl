@@ -14,3 +14,4 @@
 {"t": 1795078196, "score": 21.0248, "kept": true, "what": "InternalRobot.canSenseLocation memo: per (angle, r2, bottomLeft) shape and direction masks shared with the cone path, box radius stored per shape"}
 {"t": 1795078615, "score": 20.0456, "kept": true, "what": "BFS inner loop as a C++ native (FastPath.bfs) over the validated tables"}
 {"t": 1795079199, "score": 15.7214, "kept": true, "what": "ThinLTO (clang -flto=thin, lld) for the generated code and runtime; GC roots from writable PT_LOAD segments"}
+{"t": 1795079889, "score": 14.5835, "kept": true, "what": "fast path for BcxStateHash.tiles: same absorbs from GameWorld's tile arrays, no MapLocation or accessor call per tile"}

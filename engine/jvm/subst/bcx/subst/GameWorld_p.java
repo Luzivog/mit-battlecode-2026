@@ -2,7 +2,11 @@ package bcx.subst;
 
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;
+import battlecode.world.CheeseMine;
+import battlecode.world.InternalRobot;
 import battlecode.world.LiveMap;
+import battlecode.world.Trap;
+import java.util.ArrayList;
 import battlecode.world.MapSymmetry;
 
 /** Fast paths of battlecode.world.GameWorld (originals kept as NAME$orig; FastPath.CHECK runs both).
@@ -15,6 +19,13 @@ public final class GameWorld_p {
     @Orig private boolean[] walls;
     @Orig private Direction[][] bfs_map_0;
     @Orig private Direction[][] bfs_map_1;
+    @Orig private boolean[] dirt;
+    @Orig private int[] cheeseAmounts;
+    @Orig private InternalRobot[][] robots;
+    @Orig private InternalRobot[][] flyingRobots;
+    @Orig private Trap[][] trapLocations;
+    @Orig private ArrayList<Trap>[] trapTriggers;
+    @Orig private CheeseMine[] cheeseMineLocs;
 
     // per symmetry: what the map passes for a 2x2 step (the four checked tiles on the map and not walls), the step's
     // deltas and recorded directions, in the original's order; built on first use from the map the world holds
@@ -237,6 +248,16 @@ public final class GameWorld_p {
 
     @Orig
     public LiveMap getGameMap() { return null; }
+
+    // the tile state BcxStateHash_p.tiles reads (GameWorld's accessors index these)
+    public boolean[] bcxWalls() { return walls; }
+    public boolean[] bcxDirt() { return dirt; }
+    public int[] bcxCheese() { return cheeseAmounts; }
+    public CheeseMine[] bcxMines() { return cheeseMineLocs; }
+    public InternalRobot[][] bcxRobots() { return robots; }
+    public InternalRobot[][] bcxFlying() { return flyingRobots; }
+    public Trap[][] bcxTraps() { return trapLocations; }
+    public ArrayList<Trap>[] bcxTriggers() { return trapTriggers; }
 
     /** The BFS table of a chirality, for BcxStateHash_p. */
     public Direction[][] bcxBfsTable(int c) { return c == 0 ? bfs_map_0 : bfs_map_1; }

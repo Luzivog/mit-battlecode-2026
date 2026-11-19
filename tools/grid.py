@@ -74,6 +74,7 @@ def main(argv: list[str] | None = None) -> int:
         except Refused:
             R.close(s.id, [])  # a run no piece serves is closed, so the sweep takes its folder
             raise
+        R.mark_placed(s.id)
         if a.detach:
             return 0
         summary = R.follow(s.id)

@@ -13,7 +13,8 @@ effect on the win rate from all of them. The method, its measured noise and cost
 | a screening design over some constants (2n variants, resolution IV) | `tools/tune screen NAME --params A,B,... [--scale S]` |
 | variants at given values | `tools/tune points NAME --point LABEL:A=1,B=2 ...` |
 | variants along a screen's steepest-ascent line | `tools/tune path NAME --screen S [--min-z 2] [--t 0.5,1,2]` |
-| build each variant (one at a time) and start its test; **run in the background** | `tools/tune play NAME --seed-base B [--cells 285] [--pool goal]` |
+| build the variants (two at once) and start each one's test as soon as it is built; **run in the background** | `tools/tune play NAME --seed-base B [--cells 285] [--pool goal] [--builds 2]` |
+| wake at each run's end (background; again after each wake) | `tools/tune wait NAME --next` |
 | wait for every run (background) | `tools/tune wait NAME` |
 | variants, commits, runs | `tools/tune show NAME` |
 | scores and effects, 95% CIs by map | `tools/tune fit NAME [--seed-base B] [--split LISTPOOL] [--json]` |
@@ -42,9 +43,11 @@ Campaigns live in `~/battlecode26-data/tune/NAME/campaign.json` (`TUNE_DATA` ove
    a main effect is mixed with no two-constant interaction. Quadratic terms all fall into the intercept, read as the
    curvature (mean of the variants − main).
 2. `play` first starts main's own run on the cells (`tools/games ab challenger@MAIN awubot --ref none --min-cells N
-   --max-cells N --seed-base B --remote`, label `ref`), then makes each variant's native binary (`tools/games build`,
-   one at a time: about 60 s, one build slot; the other stays free) and starts the same test for it. Every variant
-   plays the same N cells. Main plays once: paired runs started together each replayed main's games until the
+   --max-cells N --seed-base B --remote`, label `ref`), then makes the variants' native binaries (`tools/games
+   build`, `--builds` at once, default 2: the host's two slots, translations one at a time, so a build's compile,
+   link and test start overlap the next translation) and starts each variant's test as soon as its own build is
+   done. Every variant plays the same N cells. `tools/tune wait NAME --next` in the background wakes you at each
+   run's end (it prints the runs no earlier `--next` reported, then how many still run). Main plays once: paired runs started together each replayed main's games until the
    cache held them (23% of the games of campaign s3). Use a seed base no test of these variants or of their choice
    used. A variant whose run stopped short of its cells (failed batches) is played again by the next `play`.
 3. `fit` scores each cell (games won / 2) for every variant and main, keeps the cells every one of them completed, and

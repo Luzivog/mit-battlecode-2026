@@ -12,7 +12,9 @@ import re
 import subprocess
 import sys
 import tempfile
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -304,8 +306,10 @@ def cmd_play(a) -> int:
     if todo and not any(r["variant"] == REF and {k: r[k] for k in key} == key
                         and run_cells(r["id"]) in ("running", a.cells) for r in c["runs"]):
         todo = [{"label": REF, "bot": ref}] + todo
-    failed = 0
-    for v in todo:
+    lock = threading.Lock()
+
+    def one(v: dict) -> bool:
+        """V built and its test started (each try a build, then tools/games ab); False when every try failed."""
         bot = v.get("bot") or f"challenger@{v['commit'][:12]}"
         cmd = [str(GAMES), "ab", bot, "awubot", "--ref", "none", "--pool", a.pool, "--seed-base", str(a.seed_base),
                "--min-cells", str(a.cells), "--max-cells", str(a.cells), "--engine", a.engine]
@@ -318,7 +322,6 @@ def cmd_play(a) -> int:
             if attempt:
                 time.sleep(30)
             if not a.local:
-                # one build at a time: the host's other build slot stays free for other agents
                 b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
                                    text=True)
                 if b.returncode != 0:
@@ -330,24 +333,55 @@ def cmd_play(a) -> int:
                 break
             print(f"{v['label']}: tools/games ab failed (try {attempt + 1}):\n{p.stderr[-1500:]}", file=sys.stderr)
         if not rid:
-            failed += 1
-            continue
-        c = load(a.name)  # another play may have written meanwhile
-        c["runs"].append(dict(key, variant=v["label"], id=rid, started=time.time()))
-        save(c)
-        print(f"{v['label']}: {bot} run {rid}", flush=True)
+            return False
+        with lock:
+            c = load(a.name)  # another play may have written meanwhile
+            c["runs"].append(dict(key, variant=v["label"], id=rid, started=time.time()))
+            save(c)
+            print(f"{v['label']}: {bot} run {rid}", flush=True)
+        return True
+
+    # BUILDS variants at once (the host builds two at once, one translating): a build's compile, link and its test's
+    # start overlap the next one's translation. Each test starts as soon as its own build is done.
+    with ThreadPoolExecutor(max(1, a.builds)) as pool:
+        failed = sum(not ok for ok in pool.map(one, todo))
     if failed:
         print(f"{failed} variants not started: run play again", file=sys.stderr)
     return 1 if failed else 0
 
 
+def run_line(r: dict) -> str:
+    try:
+        st = json.loads((run_dir(r["id"]) / "state.json").read_text())
+        t = st["tests"][0]
+        what = f"{t.get('cells', 0)} cells, score {t.get('score', float('nan')):.3f}"
+    except (OSError, ValueError, KeyError, IndexError):
+        what = "no state"
+    return f"{r['variant']} {r['id']} [{run_status(r['id'])}] {what}"
+
+
 def cmd_wait(a) -> int:
-    c = load(a.name)
-    ids = [r["id"] for r in c["runs"] if a.seed_base is None or r["seed_base"] == a.seed_base]
+    """Every run of the campaign stopped; with --next, the next ones: those no earlier --next call reported (at once
+    if some have stopped since), so a background `wait --next` wakes the agent at each result."""
+    seen_file = DATA / a.name / "waited.json"
+    seen = set(json.loads(seen_file.read_text())) if a.next and seen_file.exists() else set()
     while True:
-        left = [i for i in ids if run_status(i) not in ("done", "stopped", "error")]
-        if not left:
-            print(f"campaign {a.name}: {len(ids)} runs stopped")
+        c = load(a.name)  # play may add runs meanwhile
+        runs = [r for r in c["runs"] if a.seed_base is None or r["seed_base"] == a.seed_base]
+        over = [r for r in runs if run_status(r["id"]) in ("done", "stopped", "error")]
+        left = len(runs) - len(over)
+        if a.next:
+            new = [r for r in over if r["id"] not in seen]
+            if new or not left:
+                for r in new:
+                    print(run_line(r))
+                seen |= {r["id"] for r in new}
+                seen_file.write_text(json.dumps(sorted(seen)))
+                print(f"campaign {a.name}: {len(over)} of {len(runs)} runs stopped" + (
+                    f"; {left} running: `tools/tune wait {a.name} --next` again" if left else ""))
+                return 0
+        elif not left:
+            print(f"campaign {a.name}: {len(runs)} runs stopped")
             return 0
         time.sleep(a.poll)
 
@@ -643,7 +677,7 @@ def main(argv=None) -> int:
     sp.add_argument("--rev", help="the base (default the screen's)")
     sp.add_argument("--boot", type=int, default=2000)
     sp.set_defaults(fn=cmd_path)
-    sp = sub.add_parser("play", help="build each variant (one at a time) and start its fixed-size test")
+    sp = sub.add_parser("play", help="build the variants (two at once) and start each one's fixed-size test")
     sp.add_argument("name")
     sp.add_argument("--seed-base", type=int, required=True, help="a seed base no earlier test of these variants used")
     sp.add_argument("--pool", default="goal")
@@ -653,9 +687,14 @@ def main(argv=None) -> int:
     sp.add_argument("--local", action="store_true", help="play here (default: Imperial, --remote)")
     sp.add_argument("--where", help="Imperial backends (tools/games --where)")
     sp.add_argument("--only", help="comma-separated variant labels")
+    sp.add_argument("--builds", type=int, default=2,
+                    help="variants built at once (default 2, the host's build slots; translations go one at a time)")
     sp.set_defaults(fn=cmd_play)
-    sp = sub.add_parser("wait", help="block until every run of the campaign has stopped (run it in the background)")
+    sp = sub.add_parser("wait", help="block until every run of the campaign has stopped, or with --next the next one "
+                                     "(run it in the background)")
     sp.add_argument("name")
+    sp.add_argument("--next", action="store_true",
+                    help="return when a run stops that no earlier --next reported (at once if one has): its line")
     sp.add_argument("--seed-base", type=int)
     sp.add_argument("--poll", type=float, default=30)
     sp.set_defaults(fn=cmd_wait)

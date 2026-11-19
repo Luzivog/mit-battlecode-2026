@@ -314,3 +314,64 @@ def test_its_state_says_its_free_slots(tmp_path: Path) -> None:
     assert (st["slots"], st["running"], st["task_mem_mb"], st["env"], st["backend"]) == (3, 1, 100, "e1", "local")
     p.communicate(timeout=BOUND_S)
     assert not f.exists()
+
+
+def bundle_repo(tmp: Path) -> tuple[Path, str]:
+    """A git repo of one commit (sub/f), its bundle at REPO.bundle; (the bundle, the commit)."""
+    repo = tmp / "repo"
+    repo.mkdir()
+    g = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run([*g, "init", "-q", "-b", "main"], check=True)
+    (repo / "sub").mkdir()
+    (repo / "sub" / "f").write_text("code\n")
+    subprocess.run([*g, "add", "-A"], check=True)
+    subprocess.run([*g, "commit", "-qm", "c"], check=True)
+    commit = subprocess.run([*g, "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    bundle = tmp / "repo.bundle"
+    subprocess.run([*g, "bundle", "create", "-q", str(bundle), "HEAD", "main"], check=True)
+    return bundle, commit
+
+
+def test_a_new_checkout_survives_busy_ones(tmp_path: Path) -> None:
+    """More than CHECKOUTS other runs' checkouts busy: the next run's checkout is made once and its tasks run in it
+    (it used to be deleted at once, so each claim made it again, and a task's start found no checkout)."""
+    root = tmp_path / "root"
+    bundle, commit = bundle_repo(tmp_path)
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a", 2)], 1.0)
+    busy = [pooled_run(root, f"run-1118-12000{i}-000{i}", [stamp(f"b{i}", 2)], 2.0 + i, commit=commit,
+                       code_key=f"kb{i}") for i in range(1, piece.CHECKOUTS + 2)]
+    c = pooled_run(root, "run-1118-120009-cccc", [stamp("c") for _ in range(3)], 9.0, commit=commit, code_key="kc")
+    for r in [*busy, c]:
+        os.link(bundle, r / "code.bundle")
+    out = run_piece_at(tmp_path, a, cpus=len(busy) + 3)
+    assert len(spans(c)) == 3 and all(len(spans(r)) == 1 for r in busy), out
+    assert sum(f"run {c.name}: its checkout made" in x for x in out.splitlines()) == 1, out
+
+
+def test_no_task_without_room_to_write(tmp_path: Path) -> None:
+    run = make_run(tmp_path, [{"argv": ["true"], "lines": []}])
+    p = subprocess.run([sys.executable, str(PIECE), str(run)], cwd=tmp_path / "code",
+                       env=env(tmp_path) | {"BC26_DISK_MIN_MB": str(1 << 40)}, capture_output=True, text=True,
+                       timeout=BOUND_S)
+    assert p.returncode == 0 and "taking no task" in p.stdout and "started" not in p.stdout, p.stdout + p.stderr
+    assert not list((run / "claims").iterdir()) and not list((run / "done").iterdir())
+
+
+def test_a_task_its_host_cant_run_goes_back(tmp_path: Path) -> None:
+    """A task ending GIVE_BACK: its claim goes back (claimable at once by another piece), no result, and the piece
+    takes no more tasks."""
+    tasks = [{"argv": [*SH, f'echo "disk full here"; exit {piece.GIVE_BACK}'], "lines": []}] + [
+        {"argv": ["true"], "lines": []} for _ in range(3)]
+    run = make_run(tmp_path, tasks)
+    out = run_piece(tmp_path, run, cpus=1)
+    assert "taking no more tasks" in out and "disk full here" in out, out
+    assert not list((run / "done").iterdir()) and not list((run / "claims").iterdir())
+    assert [x.name.split(".")[0] for x in (run / "lost").iterdir()] == ["0"]
+
+
+def test_its_tasks_share_a_cache(tmp_path: Path) -> None:
+    run = make_run(tmp_path, [{"argv": [*SH, 'echo "$JOB_CACHE" > $OUT/c; touch "$JOB_CACHE/x$TASK"; ls "$JOB_CACHE" '
+                                        '> $OUT/l'], "lines": []} for _ in range(2)])
+    run_piece(tmp_path, run, cpus=1)
+    (_, _, o0), (_, _, o1) = result(run, 0), result(run, 1)
+    assert o0["out/c"] == o1["out/c"] and o1["out/l"].split() == [b"x0", b"x1"]

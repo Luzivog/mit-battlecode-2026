@@ -5,6 +5,7 @@
   tools/games ab challenger awubot --test harm         harm test: is the branch worse than main?
   tools/games ab X awubot --ref none         plain: X against awubot alone (the integrator's progress rows)
   tools/games wait ID                        block until it stops (run it in the background), print the report
+  tools/games wait --any ID ID...            block until the first of them stops: its report; the rest still run
   tools/games show ID [--games | --game G]   the report so far; every game; one game's timeline
   tools/games gauntlet [challenger]          harm test against each sparring bot, paired with main's own games
   tools/games diff ID1 ID2                   games whose result changed between two runs
@@ -90,6 +91,7 @@ class Test:
         self.maps, self.sealed, self.engine = maps, sealed, engine
         self.delta, self.alpha, self.beta = delta, alpha, beta
         self.min_cells, self.max_cells = min_cells, max_cells
+        self.seed_base = seed_base
         self.stream = cells(maps, seed_base)
         self.cells: list[dict] = []
         self.prefix = 0           # cells [0, prefix) are complete and scored
@@ -113,6 +115,11 @@ class Test:
                 out.append({"id": gid, "a": a, "b": b, "map": cell["map"], "seed": cell["seed"],
                             "engine": self.engine, "role": role, "seat": seat})
         return out
+
+    def sure_games(self) -> list[dict]:
+        """The games of the cells this test will play whatever their results: its first min_cells."""
+        stream = cells(self.maps, self.seed_base)
+        return [g for _ in range(self.min_cells) for g in self.games(next(stream))]
 
     def next_cell(self) -> dict:
         cell = next(self.stream)
@@ -323,6 +330,12 @@ def drive(d: Path) -> int:
     runner = make_runner(d, p, on_mismatch, on_guard=on_guard)
     for ref, (jar, h) in meta.get("bots", {}).items():  # the builds made at submission
         runner.resolver.bots[ref] = (Path(jar), h)
+    if hasattr(runner, "guard_ahead"):  # remote: the guards of the games every test will play go out first
+        for t in tests:
+            for spec in t.sure_games():
+                job = runner.resolver.job(spec, None)
+                if not runner.cached(job):
+                    runner.guard_ahead(job)
     inflight = {"n": 0}
     out = open(d / "results.jsonl", "a")
     t0 = time.time()
@@ -376,6 +389,8 @@ def drive(d: Path) -> int:
     # Games waiting or playing, and games of a test beyond its scored prefix. Remote: --workers games in flight.
     # Native games are cheap and a slow one holds the prefix back: look further ahead.
     queue_cap = p["workers"] if p.get("remote") else 2 * p["workers"]
+    if p.get("remote"):  # the games every test plays whatever happens (its min cells) go out at once, beyond --workers
+        queue_cap = max([queue_cap] + [(4 if t.ref else 2) * t.min_cells for t in tests])
     ahead_cap = p["workers"] if p.get("remote") else (8 if p.get("backend", "native") == "native" else 4) * p["workers"]
     try:
         while True:
@@ -414,13 +429,16 @@ def drive(d: Path) -> int:
     except Exception as e:  # noqa: BLE001
         runner.close(wait=False)
         save_state("error", f"{type(e).__name__}: {e}")
+        getattr(runner, "drain", lambda: None)()
         raise
     runner.close(wait=False)
+    # the state (the verdict) is written first; the open remote batches are cancelled after it (drain)
     if stop["error"]:
         save_state("error", stop["error"])
-        return 1
-    save_state("stopped" if stop["flag"] else "done")
-    return 0
+    else:
+        save_state("stopped" if stop["flag"] else "done")
+    getattr(runner, "drain", lambda: None)()
+    return 1 if stop["error"] else 0
 
 
 def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False, on_guard=None):
@@ -503,6 +521,7 @@ def cmd_retry(args) -> int:
             runner.submit(job, lambda r, old=old: record(old, r))
         done.wait()
         runner.close(wait=not args.remote)
+        getattr(runner, "drain", lambda: None)()  # remote: its open batches cancelled
         out.close()
     rescore(d)
     text, verdict = report(d)
@@ -724,25 +743,55 @@ def start(kind: str, params: dict, fg: bool) -> int:
     return 0
 
 
+def stopped(d: Path) -> str | None:
+    """None while RUN D runs; else why it stopped: its status, or "died" (its driver is gone)."""
+    st = d / "state.json"
+    if not st.exists():
+        return None
+    status = json.loads(st.read_text())["status"]
+    if status != "running":
+        return status
+    return None if alive(json.loads((d / "run.json").read_text()).get("pid")) else "died"
+
+
 def cmd_wait(args) -> int:
-    d = run_dir(args.id)
+    """One run: its report when it stops, exit its verdict. Several: --any returns when the first of them stops (at
+    once if one has), with its report; else when all have, a line each, exit 0 only if every one passed."""
+    dirs = {i: run_dir(i) for i in args.ids}
     deadline = time.time() + args.timeout if args.timeout else None
     while True:
-        st = d / "state.json"
-        meta = json.loads((d / "run.json").read_text())
-        if st.exists():
-            s = json.loads(st.read_text())
-            if s["status"] != "running":
-                break
-            if not alive(meta.get("pid")):
-                print(f"driver of {meta['id']} died; see {d / 'driver.log'}", file=sys.stderr)
-                return EXIT["error"]
-        if deadline and time.time() > deadline:
+        why = {i: stopped(d) for i, d in dirs.items()}
+        done = [i for i in args.ids if why[i]]
+        if (done and args.any) or len(done) == len(dirs) or (deadline and time.time() > deadline):
             break
         time.sleep(5)
-    text, verdict = report(d, args.games)
-    print(text)
-    return EXIT[verdict]
+    if args.any or len(dirs) == 1:
+        if not done:  # --timeout
+            text, verdict = report(dirs[args.ids[0]], args.games)
+            print(text)
+            return EXIT["running"]
+        i = done[0]
+        if why[i] == "died":
+            print(f"driver of {i} died; see {dirs[i] / 'driver.log'}", file=sys.stderr)
+            return EXIT["error"]
+        text, verdict = report(dirs[i], args.games)
+        print(text)
+        left = [x for x in args.ids if x != i and not why[x]]
+        if len(dirs) > 1:
+            print(f"stopped: {i}; " + (f"still running: {' '.join(left)}" if left else "none still running")
+                  + (f"; stopped before: {' '.join(x for x in done if x != i)}" if len(done) > 1 else ""))
+        return EXIT[verdict]
+    code = 0
+    for i in args.ids:
+        if why[i] == "died":
+            line, c = f"{i}: driver died (see {dirs[i] / 'driver.log'})", EXIT["error"]
+        else:
+            text, verdict = report(dirs[i])
+            lines = [x for x in text.splitlines() if x.strip()]
+            line, c = f"{lines[0]}\n  {lines[1].strip() if len(lines) > 1 else ''}", EXIT[verdict]
+        print(line)
+        code = code or c
+    return code
 
 
 def alive(pid) -> bool:
@@ -951,6 +1000,7 @@ def cmd_replays(args) -> int:
     if todo:
         done.wait()
     runner.close(wait=not args.remote)
+    getattr(runner, "drain", lambda: None)()  # remote: its open batches cancelled
     print(f"{len(todo)} replays in {out}/ ({left['bad']} not identical to the recorded game); index: "
           f"{out / 'index.jsonl'}")
     return 1 if left["bad"] else 0
@@ -1110,8 +1160,12 @@ def main(argv=None) -> int:
     sp.add_argument("--rest-passes", type=int, default=2, help="passes over --rest-pool for the other opponents")
     common(sp, 0.10)
 
-    sp = sub.add_parser("wait", help="block until a run stops, then print its report")
-    sp.add_argument("id")
+    sp = sub.add_parser("wait", help="block until a run stops (or, of several, the first with --any, else all), "
+                                     "then print its report")
+    sp.add_argument("ids", nargs="+", metavar="ID")
+    sp.add_argument("--any", action="store_true",
+                    help="return when the first of the runs stops (at once if one has), with its report and exit "
+                         "code, naming the ones still running: wait again on those")
     sp.add_argument("--games", action="store_true")
     sp.add_argument("--timeout", type=float, default=0, help="give up after this many seconds (exit 5)")
     sp = sub.add_parser("show", help="print a run's report")

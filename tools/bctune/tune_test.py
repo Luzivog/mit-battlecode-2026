@@ -254,3 +254,79 @@ class Fit(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Wait(unittest.TestCase):
+    def test_next_reports_each_stopped_run_once(self):
+        import contextlib
+        import io
+        import types
+        with tempfile.TemporaryDirectory() as tmp:
+            old = tune.DATA, tune.GAMES_DATA
+            tune.DATA, tune.GAMES_DATA = Path(tmp) / "tune", Path(tmp) / "games"
+            try:
+                c = {"name": "w", "runs": [{"variant": v, "id": f"r{v}", "seed_base": 1} for v in "abc"]}
+                tune.save(c)
+
+                def state(rid, status):
+                    d = tune.GAMES_DATA / "runs" / rid
+                    d.mkdir(parents=True, exist_ok=True)
+                    (d / "state.json").write_text(json.dumps({"status": status, "tests": [{"cells": 5, "score": .5}]}))
+
+                def wait(**kw):
+                    out = io.StringIO()
+                    with contextlib.redirect_stdout(out):
+                        code = tune.cmd_wait(types.SimpleNamespace(name="w", seed_base=None, poll=0.01, **kw))
+                    return code, out.getvalue()
+                for v in "abc":
+                    state(f"r{v}", "running")
+                state("ra", "done")
+                code, out = wait(next=True)
+                self.assertEqual((code, out.splitlines()[0].split()[:3]), (0, ["a", "ra", "[done]"]))
+                self.assertIn("1 of 3 runs stopped; 2 running", out)
+                state("rb", "done")
+                state("rc", "error")
+                code, out = wait(next=True)  # both stopped since: both, at once
+                self.assertEqual([x.split()[0] for x in out.splitlines()[:2]], ["b", "c"])
+                code, out = wait(next=True)  # nothing left: returns at once
+                self.assertEqual(out.strip(), "campaign w: 3 of 3 runs stopped")
+                self.assertEqual(wait(next=False)[1].strip(), "campaign w: 3 runs stopped")
+            finally:
+                tune.DATA, tune.GAMES_DATA = old
+
+
+class Play(unittest.TestCase):
+    def test_builds_two_at_once_and_starts_each_test_after_its_build(self):
+        import contextlib
+        import io
+        import time
+        import types
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = Path(tmp) / "games"
+            log = Path(tmp) / "log"
+            fake.write_text(f'#!/bin/bash\necho "$1 $2 start $(date +%s.%N)" >> {log}\n'
+                            f'if [ "$1" = build ]; then sleep 0.6; fi\necho "$1 $2 end $(date +%s.%N)" >> {log}\n'
+                            f'[ "$1" = ab ] && echo "1119-000000-ab-$RANDOM"\nexit 0\n')
+            fake.chmod(0o755)
+            old = tune.DATA, tune.GAMES, tune.GAMES_DATA
+            tune.DATA, tune.GAMES, tune.GAMES_DATA = Path(tmp) / "tune", fake, Path(tmp) / "games"
+            try:
+                c = {"name": "p", "runs": [], "variants": [{"label": f"v{i}", "commit": str(i + 1) * 40} for i in range(4)]}
+                tune.save(c)
+                a = types.SimpleNamespace(name="p", pool="goal", seed_base=5, cells=10, ref="challenger",
+                                          engine="1.2.6", local=False, where=None, only=None, builds=2)
+                t0 = time.time()
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(tune.cmd_play(a), 0)
+                wall = time.time() - t0
+                runs = tune.load("p")["runs"]
+                self.assertEqual(sorted(r["variant"] for r in runs), ["ref", "v0", "v1", "v2", "v3"])
+                self.assertLess(wall, 5 * 0.6 - 0.4)  # five builds of 0.6 s, two at once
+                ev = [x.split() for x in log.read_text().splitlines()]
+                for r in runs:  # each test starts after its own build has ended
+                    bot = "challenger" if r["variant"] == "ref" else f"challenger@{str(int(r['variant'][1:]) + 1) * 12}"
+                    built = next(float(e[3]) for e in ev if e[:3] == ["build", bot, "end"])
+                    started = next(float(e[3]) for e in ev if e[:3] == ["ab", bot, "start"])
+                    self.assertGreaterEqual(started, built)
+            finally:
+                tune.DATA, tune.GAMES, tune.GAMES_DATA = old

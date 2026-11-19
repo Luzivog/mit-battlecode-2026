@@ -153,5 +153,46 @@ class RefTest(unittest.TestCase):
         self.assertEqual(t.verdict, "H1")
 
 
+class SureGamesTest(unittest.TestCase):
+    def test_the_first_min_cells_games_as_the_test_will_play_them(self):
+        t = make(ref="ref", min_cells=6, maps=("m1", "m2", "m3", "m4"))
+        sure = t.sure_games()
+        played = [g for _ in range(8) for g in t.games(t.next_cell())]
+        self.assertEqual(sure, played[:len(sure)])
+        self.assertEqual(len(sure), 6 * 4)
+
+
+class WaitTest(unittest.TestCase):
+    def test_any_returns_the_first_stopped_and_names_the_rest(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+        import types
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            old = games.RUNS, games.report
+            games.RUNS = Path(tmp)
+            games.report = lambda d, show_games=False: (f"report of {d.name}\nverdict line", "pass")
+            try:
+                for rid, status in (("r1", "running"), ("r2", "done"), ("r3", "running")):
+                    (Path(tmp) / rid).mkdir()
+                    (Path(tmp) / rid / "run.json").write_text(json.dumps({"id": rid}))  # no pid: alive
+                    (Path(tmp) / rid / "state.json").write_text(json.dumps({"status": status}))
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    code = games.cmd_wait(types.SimpleNamespace(ids=["r1", "r2", "r3"], any=True, games=False,
+                                                                timeout=0))
+                self.assertEqual(code, 0)
+                self.assertIn("report of r2", out.getvalue())
+                self.assertIn("stopped: r2; still running: r1 r3", out.getvalue())
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    code = games.cmd_wait(types.SimpleNamespace(ids=["r1", "r3"], any=True, games=False, timeout=1))
+                self.assertEqual(code, games.EXIT["running"])  # neither stopped within --timeout
+            finally:
+                games.RUNS, games.report = old
+
+
 if __name__ == "__main__":
     unittest.main()

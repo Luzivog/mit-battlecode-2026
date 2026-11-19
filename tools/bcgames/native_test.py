@@ -3,6 +3,7 @@ python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'"""
 import json
 import os
 import tempfile
+import time
 import threading
 import unittest
 from pathlib import Path
@@ -127,6 +128,39 @@ class StoreTest(unittest.TestCase):
             os.chmod(Path(self.tmp.name) / "local" / "bcx", 0o700)
             tempfile.tempdir = old
 
+    def test_a_pieces_tasks_share_its_unpacked_binary(self):
+        import gzip
+        cache = Path(self.tmp.name) / "cache"
+        src = Path(self.tmp.name) / "k7.gz"
+        src.write_bytes(gzip.compress(b"seven"))
+        old_bin = cache / "bcx" / "k1"
+        old_bin.parent.mkdir(parents=True)
+        old_bin.write_bytes(b"old")
+        os.utime(old_bin, (time.time() - native.LOCAL_KEEP_S - 10,) * 2)
+        recent = cache / "bcx" / "k2"
+        recent.write_bytes(b"recent")
+        os.environ["JOB_CACHE"] = str(cache)
+        try:
+            got = native.local_binary(str(src))
+            self.assertEqual((got, got.read_bytes()), (cache / "bcx" / "k7", b"seven"))
+            self.assertFalse(old_bin.exists())  # unused for LOCAL_KEEP_S: gone
+            self.assertTrue(recent.exists())
+            src.unlink()  # the piece's next task finds it
+            self.assertEqual(native.local_binary(str(src)), got)
+        finally:
+            del os.environ["JOB_CACHE"]
+
+    def test_no_room_reads_the_error_and_the_disk(self):
+        where = Path(self.tmp.name)
+        self.assertTrue(native.no_room("native: OSError: [Errno 28] No space left on device", where))
+        self.assertFalse(native.no_room("native: the game process exited with 0", where))  # this disk has room
+        old = native.NO_ROOM_MB
+        native.NO_ROOM_MB = 1 << 40
+        try:
+            self.assertTrue(native.no_room("native: the game process exited with 0", where))
+        finally:
+            native.NO_ROOM_MB = old
+
     def test_purge_removes_one_binarys_results(self):
         cache = store.Cache(Path(self.tmp.name) / "c.sqlite")
         cache.put("k1", {"winner": "A", "backend": "native", "native_build": "b1"})
@@ -215,6 +249,7 @@ class GuardFlowTest(unittest.TestCase):
         r.seen, r.checked = [], []
         r.on_mismatch = lambda job, g: r.seen.append(g)
         r.on_guard, r.guards_pending = None, 0
+        r.no_room, r.outdir = None, Path(self.tmp.name)
         return r
 
     def play(self, r, nres, spec=None):
@@ -283,6 +318,17 @@ class GuardFlowTest(unittest.TestCase):
                         {"id": "g", "a": "x", "b": "y", "map": "m", "guard": True})
         self.assertEqual(got["guard"]["verdict"], "same")
 
+    def test_a_native_failure_for_want_of_disk_goes_back_unplayed(self):
+        r = self.runner([result()])
+        gave = []
+        r.no_room = lambda job, err: gave.append(err)
+        r.native = type("N", (), {"submit": lambda self, job, cb: (cb(job, {"error": "native: OSError: [Errno 28] "
+                                                                                  "No space left on device"}), True)[1]})()
+        job = play.Job(spec={"id": "g", "a": "challenger", "b": "awubot", "map": "m"}, key=KEY, meta={"key": KEY})
+        out = []
+        r.submit(job, out.append)
+        self.assertEqual((len(gave), out, r.pool.played), (1, [], 0))  # not played on Java, nothing delivered
+
     def test_native_failure_plays_on_java(self):
         r = self.runner([result()])
         got = self.play(r, {"error": "native: boom"})
@@ -311,7 +357,8 @@ class RemoteGuardTest(unittest.TestCase):
         job = play.Job(spec={"id": "g", "a": "x", "b": "y", "map": "m"}, key=KEY, meta={"key": KEY})
         delivered = []
         b = {"run": "run-1", "jobs": {"g": (job, delivered.append)}, "done": set(),
-             "guards": {"g~guard": job, "h~guard": job}}
+             "guards": {"g~guard": job, "h~guard": job},
+             "gstate": {k: {"left": 1, "done": False, "err": None} for k in ("g~guard", "h~guard")}}
         r._deliver(b, dict(result(), id="g~guard", guard={"verdict": "same", "native_build": "b1"}))
         self.assertEqual((r.got, delivered), ([("same", 1)], []))
         r._deliver(b, dict(result(), id="g", key=KEY, backend="native", native_build="b1"))
@@ -319,6 +366,27 @@ class RemoteGuardTest(unittest.TestCase):
         r._deliver(b, dict(result("d2"), id="h~guard", guard={"verdict": "mismatch", "native_build": "b1"}))
         self.assertEqual((r.got[-1], len(r.seen)), (("mismatch", 0), 1))
         self.assertIsNone(r.cache.get(KEY))  # the binary's results purged
+
+
+class GuardTwinTest(unittest.TestCase):
+    def test_the_first_verdict_counts_and_an_error_waits_for_the_twin(self):
+        from bcgames import imperial
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock = threading.Lock()
+        r.got, r.mism = [], []
+        r.on_guard = lambda job, g: r.got.append(g["verdict"])
+        r._mismatch = lambda job, g: r.mism.append(g)
+        r.guards_pending = 2
+        job = play.Job(spec={"id": "g"}, key=KEY)
+        b = {"run": "run-1", "guards": {"a~guard": job, "a~guard~2": job, "b~guard": job, "b~guard~2": job},
+             "gstate": {k: {"left": 2, "done": False, "err": None} for k in ("a~guard", "b~guard")}}
+        r._guard_result(b, "a~guard~2", {"guard": {"verdict": "same"}})
+        r._guard_result(b, "a~guard", {"guard": {"verdict": "same"}})
+        self.assertEqual((r.got, r.guards_pending), (["same"], 1))  # once
+        r._guard_result(b, "b~guard", {"error": "boom"})  # its twin may still check it
+        self.assertEqual((r.got, r.guards_pending), (["same"], 1))
+        r._guard_result(b, "b~guard~2", {"guard": {"verdict": "mismatch"}})
+        self.assertEqual((r.got, r.guards_pending, len(r.mism)), (["same", "mismatch"], 0, 1))
 
 
 class FlusherTest(unittest.TestCase):
@@ -333,9 +401,10 @@ class FlusherTest(unittest.TestCase):
         self.addCleanup(lambda: (setattr(imperial, "FLUSH_S", old[0]), setattr(imperial, "COALESCE_S", old[1])))
         r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
         r.lock, r.stopping, r.wake = threading.Lock(), threading.Event(), threading.Event()
-        r.pending, r.binaries = [], {}
+        r.pending, r.binaries, r.ahead, r.guards_pending, r.on_guard = [], {}, [], 0, None
         sent = []
-        r._launch = lambda batch, is_native: sent.append((time.time(), [j.spec["id"] for j, _ in batch], is_native))
+        r._launch = lambda batch, is_native, ahead=(): sent.append((time.time(), [j.spec["id"] for j, _ in batch],
+                                                                    is_native))
         r._say = lambda msg: None
         threading.Thread(target=r._flusher, daemon=True).start()
         self.addCleanup(lambda: (r.stopping.set(), r.wake.set()))
@@ -365,6 +434,87 @@ class FlusherTest(unittest.TestCase):
         self.assertLess(sent[0][0] - t0, 0.15)            # the first wave goes at once
         self.assertGreaterEqual(sent[1][0] - sent[0][0], 0.45)  # then FLUSH_S apart
         self.assertGreaterEqual(sent[2][0] - sent[1][0], 0.45)
+
+
+class GuardsFirstTest(unittest.TestCase):
+    """imperial.ImperialRunner: guards of games to come go out with their binary's first batch, every guard task comes
+    before the batch's games, and a game guarded ahead is not guarded again."""
+
+    def runner(self):
+        from bcgames import imperial
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock = threading.Lock()
+        r.guard_rate, r.guarded, r.guard_sent, r.ahead, r.guards_pending = 1 / 32, set(), set(), [], 0
+        r.plan = native.Plan("1.2.6", ())
+        r.binaries = {r.plan: {"state": "ready", "key": "bin1", "remote": "/vol/bcx/bin1.gz"}}
+        r.resolver = type("R", (), {"bot": lambda self, ref: (Path(f"/j/{ref}.jar"), "h")})()
+        r.planner = type("P", (), {"plan": lambda self, job: r.plan})()
+        r.wake = threading.Event()
+        return r
+
+    def job(self, gid, key):
+        return play.Job(spec={"id": gid, "a": "x", "b": "y", "map": "m"}, key=key, meta={"key": key})
+
+    def test_guards_ahead_then_in_batch_guards_then_games(self):
+        r = self.runner()
+        import hashlib
+        keys = [hashlib.sha256(str(i).encode()).hexdigest()[:32] for i in range(400)]
+        sampled = [k for k in keys if native.sampled(k, r.guard_rate)]
+        unsampled = [k for k in keys if not native.sampled(k, r.guard_rate)]
+        ahead = self.job("late", sampled[0])
+        r.guard_ahead(ahead)
+        r.guard_ahead(ahead)  # once
+        r.guard_ahead(self.job("no", unsampled[0]))  # not sampled: no guard
+        self.assertEqual((len(r.ahead), r.guards_pending), (1, 1))
+        jars = {"/j/x.jar": "s/x.jar", "/j/y.jar": "s/y.jar"}
+        batch = [(self.job(f"g{i}", k), None) for i, k in enumerate([unsampled[1], sampled[1], unsampled[2]])]
+        for j, _ in batch:
+            j.plan = r.plan
+        lines, guards, fresh = r._specs(batch, True, list(r.ahead), jars)
+        ids = [json.loads(x)["id"] for x in lines]
+        # the binary's first game isn't g0: it has a guard already; each guard twice, its twin in the second half
+        self.assertEqual(ids, ["late~guard", "g1~guard", "g0", "late~guard~2", "g1", "g1~guard~2", "g2"])
+        self.assertEqual((sorted(guards), fresh), (["g1~guard", "g1~guard~2", "late~guard", "late~guard~2"], 1))
+        later = self.job("late", sampled[0])
+        later.plan = r.plan
+        lines, guards, fresh = r._specs([(later, None)], True, [], jars)
+        self.assertEqual(([json.loads(x)["id"] for x in lines], fresh), (["late"], 0))  # guarded ahead: once
+
+
+class ShipBinaryTest(unittest.TestCase):
+    """imperial.ship_binary on the stand-in volume (BC26_LOCAL_REMOTE): its prune of old binaries is best effort. A find
+    that saw another upload's temporary file renamed away exited 1 and failed the upload (19 Nov)."""
+
+    def test_an_upload_survives_a_failing_prune(self):
+        import subprocess
+        import sys
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: subprocess.run(["rm", "-rf", str(tmp)]))
+        remote = tmp / "remote"
+        bcx = remote / "runtime" / "bcx"
+        bcx.mkdir(parents=True)
+        old, inflight = bcx / "k0.gz", bcx / "k1.gz.Ab12Cd"  # unused for days; another upload's temporary file
+        for f in (old, inflight):
+            f.write_bytes(b"x")
+            os.utime(f, (time.time() - 10 * 86400,) * 2)
+        shim = tmp / "bin"
+        shim.mkdir()
+        (shim / "find").write_text('#!/bin/bash\n/usr/bin/find "$@"; echo "find: gone: No such file or directory" >&2; '
+                                   'exit 1\n')
+        (shim / "find").chmod(0o755)
+        (tmp / "bcx").write_bytes(b"binary")
+        root = Path(__file__).resolve().parents[2]
+        code = (f"import sys; sys.path[:0] = [{str(root)!r}, {str(root / 'tools')!r}]\n"
+                "from pathlib import Path\nfrom bcgames import imperial\n"
+                f"print(imperial.ship_binary('k2', Path({str(tmp / 'bcx')!r})))\n")
+        env = dict(os.environ, BC26_LOCAL_REMOTE=str(remote), PATH=f"{shim}:{os.environ['PATH']}")
+        p = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=60)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        import gzip
+        self.assertEqual(gzip.decompress((bcx / "k2.gz").read_bytes()), b"binary")
+        self.assertEqual(p.stdout.strip(), str(bcx / "k2.gz"))
+        self.assertFalse(old.exists())  # pruned
+        self.assertTrue(inflight.exists())  # another upload's file: left alone
 
 
 class FinishTest(unittest.TestCase):

@@ -6,7 +6,8 @@ A run is REMOTE_RUNS/ID (ID: run-MMDD-HHMMSS-XXXX): `run.json` (its settings), `
 {"argv": [...], "lines": [...]}), `commit`, `code.bundle`, `with.tgz` (hard links to REMOTE_CAS's copies, which are
 named by their content and shipped once a content; hard-linked into each piece's job folder), `kit` (a kit run's
 engine jars), `piece.py` (the submitter's, so a piece always speaks its follower's protocol), `pieces` (each piece's
-job id, a line), `claims/`, `lost/`, `done/` (tools/piece.py), `replace.K` (round K of added pieces was submitted),
+job id, a line), `claims/`, `lost/`, `done/` (tools/piece.py), `placed` (tools/run's own placement has ended: until
+then, or PLACE_S, a follower adds no piece), `replace.K` (round K of added pieces was submitted),
 `closed` (every task is done, or the run was cancelled: its tasks stop). Results come back to the worktree's
 runs/ID/N/ (result.json, log, out/).
 
@@ -47,6 +48,7 @@ GRACE_S = 20.0 if not LOCAL else 0.5  # after a placement (or the run's start), 
 POOL_ROUNDS = 8  # placements a pooled run's follower may make
 STUCK_S = 90.0 if not LOCAL else 1.0  # a pooled run none of whose tasks moved for this long has stopped moving
 QUEUED_S = 120.0  # a piece queued this long no longer holds back pieces added for its run's waiting tasks
+PLACE_S = 600.0  # a follower adds pieces before tools/run's placement says it ended (`placed`) only this long after
 
 
 @dataclass(frozen=True)
@@ -466,19 +468,26 @@ class Progress:
     pieces: list[str]
     closed: bool
     rounds: int
+    placed: bool = True
 
 
 def read_progress(rid: str) -> Progress:
     d = run_dir(rid)
     s = B.sections(login(f"cd {d} && echo ==done && ls done && echo ==claims && ls claims && echo ==pieces && "
                          f"cat pieces && echo ==closed && {{ ls closed 2>/dev/null; true; }} && echo ==rounds && "
-                         f"{{ ls -d replace.* 2>/dev/null; true; }}"))
+                         f"{{ ls -d replace.* 2>/dev/null; true; }} && echo ==placed && {{ ls placed 2>/dev/null; "
+                         f"true; }}"))
 
     def nums(key: str, suf: str = "") -> set[int]:
         stems = (x[:len(x) - len(suf)] for x in s.get(key, []) if x.endswith(suf))
         return {int(x) for x in stems if x.isdigit()}
     return Progress(nums("done", ".tar"), nums("claims"), [x for x in s.get("pieces", []) if x.strip()],
-                    bool(s.get("closed")), len(s.get("rounds", [])))
+                    bool(s.get("closed")), len(s.get("rounds", [])), bool(s.get("placed")))
+
+
+def mark_placed(rid: str) -> None:
+    """tools/run's placement has ended: its follower (started beside it, as tools/games does) may add pieces now."""
+    login(f"touch {run_dir(rid)}/placed")
 
 
 def fetch(rid: str, names: list[int], out: Path) -> None:
@@ -531,6 +540,12 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
     shown, dead_since, w = "", None, J.Waiter()
     finals: dict[str, J.State] = {}
     placed_at, seen_running, progress, moved_at = s.created or time.time(), set[str](), (-1, -1), time.time()
+    tick = time.time()
+
+    def pause() -> None:  # a read every POLL_S from the last one's start: the reads' own time isn't added to it
+        nonlocal tick
+        time.sleep(max(0.0, poll_s - (time.time() - tick)))
+        tick = time.time()
     while True:
         try:
             pr = read_progress(rid)
@@ -542,7 +557,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             states = J.read_states(live) if live else {}
         except Unreachable as e:  # a lost connection says nothing about the run: keep following
             J.say(f"run {rid}: {e}; trying again in {poll_s:.0f} s")
-            time.sleep(poll_s)
+            pause()
             continue
         now = time.time()
         for pid, st in states.items():
@@ -561,6 +576,9 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             if not pr.closed:
                 close(rid, [p for p in pr.pieces if p not in finals])
             return summarize(s, out, finals, pr.pieces)
+        if not pr.placed and now - (s.created or now) < PLACE_S:  # tools/run still places its pieces
+            pause()
+            continue
         alive = [p for p in pr.pieces if p not in finals]
         held = [p for p, f in finals.items() if f.phase == "held"]
         if (len(pr.done), len(pr.claimed)) != progress:
@@ -597,7 +615,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                           f"of pieces: closing it with {s.tasks - len(have)} tasks left")
                     close(rid, [])
                     return summarize(s, out, finals, pr.pieces)
-            time.sleep(poll_s)
+            pause()
             continue
         if alive:
             dead_since = None
@@ -620,7 +638,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                     J.say(f"run {rid}: every piece has ended with {left} tasks left: replacement round {k}")
                     place_pieces(s, left)
                     dead_since = None
-        time.sleep(poll_s)
+        pause()
 
 
 def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J.State], held: bool, starting: bool,

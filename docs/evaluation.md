@@ -12,6 +12,7 @@ and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcga
 |---|---|
 | **is my branch better than main?** Prints the run's ID at once | `tools/games ab challenger awubot --pool POOL` |
 | wait for it: **run it in the background**; it exits when the test stops | `tools/games wait ID` |
+| several tests: wake at each one's end (its report and exit code, and the IDs still running) | `tools/games wait --any ID ID...` |
 | the report so far; every game; one game's record and timeline | `tools/games show ID`, `--games`, `--game GAME` |
 | is my branch worse than main? (certain-sign fixes, class pools a change must not hurt) | `tools/games ab challenger awubot --test harm --pool POOL` |
 | A against B alone, no reference (the integrator's progress rows) | `tools/games ab challenger awubot --ref none --pool goal` |
@@ -27,6 +28,10 @@ and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcga
 | any of `ab`, `gauntlet`, `replays` on DoC's machines (compute skill) | add `--remote [--where condor,slurm]` |
 
 In Claude Code: run `tools/games ab ...`, then `tools/games wait ID` with the Bash tool's `run_in_background: true`.
+With several tests running, wait on all of them in one background `tools/games wait --any ID ID...`: it returns
+when the first one stops (at once if one has), with that test's report and exit code and the IDs still running; read
+it, act, then start `wait --any` again on those. `tools/games wait ID ID...` without `--any` returns when all have
+stopped, a verdict line each (exit 0 only if every one passed).
 You are woken when the test stops, and the exit code is the verdict:
 
 | exit | gain test (default) | harm test (`--test harm`), gauntlet |
@@ -154,10 +159,15 @@ the ref's own score on the same cells and the paired difference with its CI.
   overloading the box.
 - **`--remote`** plays on DoC's machines through track C's `tools/run` (`.claude/skills/compute/`).
   - Read the compute skill first. Condor needs Bitwarden unlocked; cpucluster1 refuses jobs at times.
-  - `--workers` becomes the games in flight (default 256). Each test sends at most one pass (or 32 cells) beyond its
-    scored prefix, its next decision point. A batch goes out as soon as games wait, at least 10 s after the test's
+  - `--workers` becomes the games in flight (default 256), except that the games of a test's first `--min-cells`
+    cells, which it plays whatever happens, go out at once (a 190-cell paired test: 760). Each test sends at most
+    one pass (or 32 cells) beyond its scored prefix, its next decision point. A batch goes out as soon as games wait, at least 10 s after the test's
     previous batch (`imperial.FLUSH_S`); each task plays one game with `tools/play` (`imperial.CHUNK`), native or
-    Java. Results are read as `tools/compute wait` fetches them (every 30 s a batch).
+    Java. Results are read as `tools/compute wait` fetches them (every 30 s a batch), from the moment `tools/run`
+    has made the batch's run: its placement of pieces goes on beside the follower.
+  - A node with under 2 GB free where its games write takes no task, and a game that fails there for want of disk
+    goes back to the pool unplayed (`tools/play --give-back`, compute internals "Room to write"), not to Java on
+    that node.
   - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. It prints the same JDK
     fingerprint as Ubuntu's 21.0.13 here, so remote and local games share one cache. Verified: remote games
     byte-identical to local ones (replay digests, Slurm and Condor).
@@ -187,7 +197,10 @@ the ref's own score on the same cells and the paired difference with its CI.
 - **Exactness guard.** Each run also plays some of its native games on Java, on the same machine: every binary's
   first game in the run, and 1 in 32 of the rest, chosen by game key. Locally the Java twin runs beside the run;
   remotely a separate task plays the game on both engines on one machine. Neither holds up a cell, and the run does
-  not conclude (or print a verdict) until every check has come back. When the replays differ, Java plays it
+  not conclude (or print a verdict) until every check has come back. Remotely the checks go first: the sampled games
+  of every cell a test will play whatever happens (its first `--min-cells`) are checked from its binary's first
+  batch, each check twice on two machines (the first verdict counts; a mismatch from either stops the run), and a
+  batch's checks come before its games. When the replays differ, Java plays it
   again. If its two runs differ and one equals the native game, the Java engine's own nondeterminism explains it
   (engine/AGENTS.md "Known gaps") and the native result stands. Otherwise the run stops with an error (exit 1), the
   binary is marked bad and never used again, and its results leave the cache. Report it, and rerun with
@@ -286,9 +299,19 @@ for c in $(cd A && find . -name '*.class'); do cmp <(javap -c -p -constants A/$c
 | a game on DoC | 15.7 CPU s (19,421 games of the first screen) | 74.5 CPU s (measured above) |
 | a 570-game variant | ~9,000 CPU s | ~42,000 CPU s |
 
-- Native wins: a minute of one build slot saves ~33,000 CPU s of Imperial a variant. `tools/tune play` builds one
-  variant at a time (the host's other build slot stays free) and starts its test as soon as its binary is ready: one
-  variant a minute.
+- Native wins: a minute of one build slot saves ~33,000 CPU s of Imperial a variant. `tools/tune play` builds two
+  variants at once (`--builds`) and starts each test as soon as its own binary is ready. A variant's build is 45-49 s
+  alone (59-64 CPU s), 38 s of it the translation of every package, one translation at a time on the host; two at
+  once take 67-75 s each, so a variant's test starts every 37-42 s instead of every 53-65 s (8-variant campaigns, 19
+  Nov 17:04-17:29, both slots warm: `tlb3` 331 s from the reference's start to the last variant's, `tlb1` with
+  `--builds 1` 615 s; s1 and s5 took 32 min for 32). A slot whose last build was of another engine rebuilds
+  everything first (279-337 s): after an engine change, worktrees still on the old engine make the two slots
+  alternate, and every build is a full one (a variant took 281-840 s at 16:40-17:00).
+- The other options, measured: one binary of many variants can't share a package (below). On Imperial, a lab
+  machine has the same compiler (ash09, Ubuntu 26.04: clang 21.1.8, as here) but no ninja, 5.6 GB of memory free for
+  a translation that peaks at 3.7 GB, and the compile commands name this host's paths (`-I`, the runtime's sources),
+  so a remote build would be another binary, to be checked by the guard; not done. The gain left is in the
+  translation: it translates the engine and all 15 packages again for a change to one constant of challenger.
 - Several variants in one binary would not help: each must be its own package (two builds of one package can't share
   a binary), so each compiles all ~105 of its files (the 305-363 CPU s of a code change) instead of one, and the
   translation grows with it.
@@ -385,6 +408,60 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
   bytecode and latch measurements. Main moved
   between two `play` calls of s5 (docs-only commits) and the second re-pinned it, replaying 20 runs from the cache:
   `play` now keeps a campaign's first reference.
+
+## Measured: time to verdict (track TL, 2026-11-19)
+
+**What the tail was** (185 remote native tests of 19 Nov, 152,896 tasks; `~/battlecode26-data/scratch/tl/`:
+`collect.py` joins each test's batches to their tasks, `measure.py` and `summary.py` read tests):
+- A guard task ended last in 130 of 173 finished tests, a restarted task (start 2) in 99.
+- Restarts: 3,191 tasks (2.1%) ran a second time, 427 s after their batch at the median: 61% of the slowest 1% of
+  tasks. Their pieces were alive but stalled: a piece serving more than 4 other runs' contents deleted each checkout
+  it had just made and made it again for every claim (281,305 checkouts for 339,682 task starts on 19 Nov; one piece
+  399 in a row), so for minutes it neither beat nor reaped; other pieces took its claims as dead after 300 s. A
+  start that found its checkout gone killed the piece (440 of 14,156 pieces). 96% of the game tasks over 120 s were
+  slow outside their game (the game 19 s at the median, the task 132 s more): reaped late by a stalled piece.
+- Guards: a guard task takes 78 s at the median (214 s p90), its Java game 2-3 times slower on the slowest DoC CPUs
+  than on the fastest; a test's guards went out with their games, so the last batch's guards ended last.
+- Placement: `tools/run --detach` took 16 s at the median (74 s p90, 314 s p99) placing pieces before it returned,
+  and the next batch waited behind it; 31% of tasks had ended before their batch's follower started.
+- Hosts that can't write: 111 native games failed for want of disk on 4 lab machines (betta 87) and played again on
+  Java there, 78 s median, up to 358 s; betta also timed out 25 native games at 600 s. A lab machine's execute
+  folder is on its root (8.4 GB free on ash09); each task unpacked its own 100 MB binary, each checkout ~350 MB.
+- A binary upload whose prune `find` saw another upload's temporary file vanish failed, and sent every game of two
+  tests to Java (424 games).
+
+**The fixes**: the checkout prune keeps the new checkout (compute internals "Another run's checkout"); a piece takes
+no task under 2 GB free and gives back a task whose game found no room ("Room to write"); a piece's tasks unpack a
+binary once (`JOB_CACHE`); guards ahead, twice, first in their batch ("Engines"); a batch is followed as soon as its
+run exists; the cancels come after the verdict; a test's sure games go out at once; the upload's prune can't fail it;
+a follower reads every 30 s from its last read's start. Runs of these tools are served by their pieces alone
+(`POOL_V` 2): pieces of version 1 still stall and crash on the runs they serve (seen at 16:48-16:59: a task run a
+third time, 10 min late, in both arms).
+
+**Before and after**: `tools/games ab challenger@origin/main awubot --ref none` (380 games) and `tools/games ab
+challenger awubot` (760, paired with main) on `goal`, `--min-cells 190 --max-cells 190 --no-cache --remote`, the same
+seed base for both arms, the two arms started together: main's tools from a worktree at main (the shared pool) and
+these (their own pool, cold at each round's start). Engine of 19 Nov 17:00 (after XC), rounds 5 and 6:
+
+| arm | tests | time to verdict, median / p90 | its last game task | tail share, median / p90 | restarted tasks |
+|---|---|---|---|---|---|
+| main's tools | 8 | 347 / 387 s | 142 s | 0.68 / 0.74 | 0 |
+| these | 8 | 239 / 316 s | 192 s | 0.54 / 0.58 | 0 |
+
+- Main's games ended at 93-127 s in round 6; its verdicts waited for guards until 299-387 s. These tools' guards
+  ended at 162-168 s, and the verdicts came at 190-193 s for both sizes.
+- Tail share = (verdict − the 95th percentile task end) / time to verdict. Here the last 5% of tasks are mostly the
+  guards (18 of 398 tasks).
+- Runs: main's `1119-170233-ab-ee0a`, `-170235-ab-927b`, `-170234-ab-23df`, `-170236-ab-ef2e`, `-171037-ab-76cb`,
+  `-171040-ab-8d50`, `-171038-ab-0178`, `-171042-ab-e3b7`; these `1119-170233-ab-b0d0`, `-170235-ab-393b`,
+  `-170234-ab-3642`, `-170236-ab-8a7d`, `-171036-ab-f537`, `-171039-ab-a380`, `-171038-ab-fdd1`, `-171041-ab-337a`.
+  Earlier rounds (old engine; `~/battlecode26-data/scratch/tl/rounds.txt`): main's tools 414-527 s with 7-10 restarted
+  tasks a test (round 1); in round 4, with one pool for both arms, every test of both took 753-789 s (version-1
+  pieces).
+- Game tasks run by fixed pieces against main's, same window (16:30-17:00): overhead (task − game) p99 4 s against
+  67 s, none over 30 s against 3.2%. With every test's sure games out at once on a cold pool (rounds 5, 6), the first
+  wave on cpucluster1 and GPU-cluster pieces paid up to 60 s before `tools/play` began (2.6% of tasks): a start-up
+  cost, early in the test, not in its tail.
 
 ## Measured: the native engine (2026-11-19)
 

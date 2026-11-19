@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from tools.piece import POOL_V
+
 HERE = Path(__file__).parent
 BOUND_S = 120
 
@@ -258,10 +260,11 @@ def test_the_follower_adds_pieces_while_tasks_wait(world: tuple[Path, dict[str, 
     assert p.returncode == 0, p.stderr
     runtime = json.loads((remote / "runs" / p.stdout.splitlines()[0] / "run.json").read_text())["env"]
     fake = remote / "pool" / "pieces" / "local-1118-000000-fake"
-    fake.write_text(json.dumps({"v": 1, "job": fake.name, "backend": "local", "slots": 4, "running": 0,
+    fake.write_text(json.dumps({"v": POOL_V, "job": fake.name, "backend": "local", "slots": 4, "running": 0,
                                 "task_cpus": 1, "task_mem_mb": 100, "env": runtime, "deadline": None}))
     p = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "two.txt", "--", "true")
     assert p.returncode == 0 and "has 4 free slots: no new piece" in p.stderr, p.stderr
+    assert (remote / "runs" / p.stdout.strip() / "placed").exists()  # its follower may add pieces now
     fake.unlink()  # that piece ended before taking them
     p = tool(repo, env, "compute", "wait", p.stdout.strip(), "--json", "--poll", "0.3")
     assert p.returncode == 0, p.stderr

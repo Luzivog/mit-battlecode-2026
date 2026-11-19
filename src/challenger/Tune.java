@@ -83,4 +83,7 @@ public final class Tune {
     public static final int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
     // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
+
+    // PM (per-map tuning, docs/theory/pm-per-map.md): switches and constants for the book. Each default is main's.
+    public static final int SPAWN_POOR_CUT = 10; // tune: 10 [0, 30] rat-cap cut on maps <= 1600 tiles with < 5 mines (E2: 4 rats)
 }

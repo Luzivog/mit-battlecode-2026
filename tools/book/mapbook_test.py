@@ -56,7 +56,7 @@ class View(unittest.TestCase):
         walls = v["walls"][0] | v["walls"][1] << 64
         self.assertEqual(walls, bit(0, 1))
         self.assertEqual(v["dirt"][0] | v["dirt"][1] << 64, bit(5, 0))
-        self.assertEqual(v["mines"][0] | v["mines"][1] << 64, bit(0, 5))
+        self.assertNotIn("mines", v)
         self.assertEqual(v["key"], 20 << 18 | 20 << 12 | 3 << 6 | 3)
         self.assertEqual(mb.view_of(m, "B")["key"], 1 << 24 | 20 << 18 | 20 << 12 | 16 << 6 | 16)
 

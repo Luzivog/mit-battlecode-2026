@@ -38,12 +38,12 @@ One JSON object a line (blank lines and `#` lines skipped):
 
 - **Identity.** At round 1 the first king (`Book.init`, the first call after `Game.init`) keys on its team, the map's
   size and its own location; on a key of a book map-seat it reads its r² 25 view (`senseNearbyMapInfos`) into three
-  121-bit masks (walls, dirt, mines; bit `(dx + 5) * 11 + dy + 5`) and compares them and its ID with the map file's.
+  121-bit masks (walls, dirt; bit `(dx + 5) * 11 + dy + 5`; mines would separate no map of `maps/` more) and compares them and its ID with the map file's.
   A match writes the map's id (1 + its index in `pools.GOAL`) to shared slot 15; every robot after it reads the slot
   at its first turn. A map-seat without entries is never keyed, so it costs a robot only the slot read (~15
   bytecodes once); a book map-seat's king pays the scan once (measured in docs/evaluation.md "The book").
-- **No false match.** A map fires an entry only if its size, the king's team, location and ID and every wall, dirt
-  and mine within r² 25 of the king equal the book map's: a map outside the book matches only if it copies the book
+- **No false match.** A map fires an entry only if its size, the king's team, location and ID and every wall and dirt
+  tile within r² 25 of the king equal the book map's: a map outside the book matches only if it copies the book
   map's start exactly. `check` compares the views of every map in `maps/` (the sealed ones included, never named).
   Visible copies exist: the champion's catless maps (DefaultLarge, DefaultMedium, arrows) and testpathfinding,
   testpathfinding2 (whatsthecatdoin); an entry on those maps must name its twins.

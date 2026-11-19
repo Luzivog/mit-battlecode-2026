@@ -20,6 +20,8 @@ from dataclasses import asdict
 from tools import backends as B
 from tools import jobs as J
 from tools import runs as R
+from tools import view
+from tools import remote
 from tools.remote import LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS, Refused, login
 
 # The workspace holds 55 GB (remote.REMOTE_ROOT), and a day of tests wrote more than that with the retention below in
@@ -56,12 +58,14 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         except Refused as e:
             return e
 
-    with ThreadPoolExecutor(3) as pool:
-        fc, fs, fk = pool.submit(safe, B.read_condor), pool.submit(safe, B.read_slurm), pool.submit(
-            safe, B.read_cpucluster)
-        c, s, k = fc.result(), fs.result(), fk.result()
+    age = remote.CACHE_S  # every read below shared with this machine's other tools: one login each at most
+    with ThreadPoolExecutor(4) as pool:
+        fc, fs, fk = (pool.submit(safe, lambda f=f: f(age)) for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
+        fv = pool.submit(safe, view.get)
+        c, s, k, v = fc.result(), fs.result(), fk.result(), fv.result()
     notes: list[str] = []
-    free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes)] for o in B.WHERES}
+    free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes, max_age=age)]
+            for o in B.WHERES}
     out: dict[str, object] = {"task": {"cpus": task_cpus, "mem_mb": task_mem_mb}}
     if isinstance(c, Refused):
         out["condor"] = {"error": str(c)}
@@ -86,16 +90,15 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
                               "task_slots_now": sum(o.slots for o in free["cpucluster1"]),
                               "jobs": [asdict(j) for j in k.jobs if j.name.startswith("bc26-")]}
     out["task_slots_now"] = {w: sum(o.slots for o in free[w]) for w in B.WHERES}
-    try:
-        pieces, _ = R.read_pool()
-        live = [p for p in pieces if float(str(p.get("age", 1e9))) <= R.LIVE_S and isinstance(p.get("slots"), int)
+    if isinstance(v, Refused):
+        out["pool"] = {"error": str(v)}
+    else:
+        pieces, _ = v.pool()
+        live = [p for p in pieces if p.get("live") and isinstance(p.get("slots"), int)
                 and isinstance(p.get("running"), int)]
-        opened = login(f"ls {REMOTE_POOL}/open 2>/dev/null | wc -l").strip()
         out["pool"] = {"pieces": len(live), "slots": sum(int(str(p["slots"])) for p in live),
-                       "running": sum(int(str(p["running"])) for p in live), "open_runs": int(opened or 0),
+                       "running": sum(int(str(p["running"])) for p in live), "open_runs": len(v.open_runs()),
                        "by_backend": {w: sum(1 for p in live if p.get("backend") == w) for w in B.WHERES}}
-    except Refused as e:
-        out["pool"] = {"error": str(e)}
     if as_json:
         print(json.dumps(out, indent=1))
         return
@@ -171,7 +174,7 @@ def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
     shown: dict[str, str] = {}
     while left:
         try:
-            states = J.read_states(left)
+            states = view.get(jobs=left).states(left)
         except Refused as e:  # a lost connection says nothing about the jobs: keep waiting
             J.say(f"compute: {e}; trying again in {poll_s:.0f} s")
             time.sleep(poll_s)

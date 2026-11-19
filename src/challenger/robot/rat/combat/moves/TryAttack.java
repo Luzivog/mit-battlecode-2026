@@ -1338,6 +1338,9 @@ public final class TryAttack {
         for (int i = 0; i < RobotTracker.numEnemies && i < 2; i++) {
             RobotInfo ri = RobotTracker.sortedEnemies[i];
             if (chebyshevDistance(myLoc, ri) > 1) break;
+            // The bite goes to the tile toward the target's centre, which can be outside our cone: a king is sensed
+            // through any visible tile. That bite threw and lost the turn tail; it now ends the mini step, as it did.
+            if (!rc.canAttack(myLoc.add(myLoc.directionTo(ri.location)))) return true;
             attack(ri, CombatStrategy.getBiteDamage());
             // println("!!!!!!!!!!!!!!mini attacked!!");
             // indicate("accepted mini attack");

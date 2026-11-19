@@ -5,6 +5,7 @@ package challenger.robot.king;
 import battlecode.common.*;
 import challenger.Game;
 import challenger.Pathfinder;
+import challenger.RobotTracker;
 import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
 import static challenger.robot.king.RatKing.*;
@@ -85,9 +86,25 @@ public class KingMiningStrategy extends Strategy {
         return centerTarget;
     }
 
+    // No step into a visible cat's forward lane (KingCombatStrategy.laneCross). With a cat in view the king paths
+    // at most once a turn: Pathfinder.getMove costs 4-5k there, and two calls overrun the king's turn.
+    private boolean pathedNearCat;
+
+    private boolean skipPath(MapLocation target) {
+        if (RobotTracker.numCats == 0) return false;
+        if (pathedNearCat || KingCombatStrategy.entersCatLane(myLoc.directionTo(target))) return true;
+        pathedNearCat = true;
+        return false;
+    }
+
+    private static boolean stepIntoCatLane(Direction dir) {
+        return RobotTracker.numCats > 0 && KingCombatStrategy.entersCatLane(dir);
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
         // indicate("stuckTurns: " + stuckTurns);
+        pathedNearCat = false;
         scanForCheeseMines();
 
         if (!foundCheeseMine) {
@@ -123,12 +140,14 @@ public class KingMiningStrategy extends Strategy {
         }
         if (nearestCheese != null) {
             if (!rc.canPickUpCheese(nearestCheese)) {
-                if(rc.isMovementReady()) {
+                if(rc.isMovementReady() && !skipPath(nearestCheese)) {
                     Direction dir = Pathfinder.getMove(nearestCheese);
                     // indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
-                    digDirtInDirection(dir);
-                    if (rc.canMove(dir)) {
-                        RatKing.rawMove(dir);
+                    if (!stepIntoCatLane(dir)) {
+                        digDirtInDirection(dir);
+                        if (rc.canMove(dir)) {
+                            RatKing.rawMove(dir);
+                        }
                     }
                 }
                 return true;
@@ -210,11 +229,13 @@ public class KingMiningStrategy extends Strategy {
             }
         }
         if (!myLoc.equals(resetLoc)) {
-            if(rc.isMovementReady()) {
+            if(rc.isMovementReady() && !skipPath(resetLoc)) {
                 Direction dir = Pathfinder.getMove(resetLoc);
-                digDirtInDirection(dir);
-                if (rc.canMove(dir)) {
-                    RatKing.rawMove(dir);
+                if (!stepIntoCatLane(dir)) {
+                    digDirtInDirection(dir);
+                    if (rc.canMove(dir)) {
+                        RatKing.rawMove(dir);
+                    }
                 }
             }
             return true;
@@ -255,10 +276,12 @@ public class KingMiningStrategy extends Strategy {
     private static int stuckTurns = 0;
     private static boolean pending5x5 = false;
     private void moveIfBugTargetFar(MapLocation target) throws GameActionException {
+        if(skipPath(target)) return;
         var dir = Pathfinder.getMove(target);
         if(Pathfinder.getBugPos().distanceSquaredTo(myLoc) > 2) {
             if(dir != Direction.CENTER) {
                 stuckTurns = 0;
+                if(stepIntoCatLane(dir)) return;
                 digDirtInDirection(dir);
                 if(rc.canMove(dir)) {
                     RatKing.rawMove(dir);

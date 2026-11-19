@@ -225,3 +225,8 @@ cutclass java/util/concurrent/ForkJoinPool
 cut java/util/concurrent/atomic/AtomicBoolean <clinit> ()V
 cut java/util/stream/DistinctOps$1 opEvaluateParallel (Ljava/util/stream/PipelineHelper;Ljava/util/Spliterator;Ljava/util/function/IntFunction;)Ljava/util/stream/Node;
 sys java/lang/Class forName (Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class; rt_Class_forName init:java/util/ImmutableCollections$Access
+
+# ---- fast paths: hand-written replacements, the original kept as NAME$orig (engine/AGENTS.md, "The checks")
+sys bcx/subst/FastPath check0 ()Z rt_fastpath_check nothrow
+sys bcx/subst/FastPath fail (Ljava/lang/String;)V rt_fastpath_fail
+patch battlecode/world/GameWorld bcx/subst/GameWorld_p

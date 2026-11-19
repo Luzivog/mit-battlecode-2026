@@ -6,6 +6,8 @@
 #include <zlib.h>
 
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <string>
 #include <unordered_map>
 
@@ -297,6 +299,16 @@ void rt_io_round(jint round, jlong hash, Obj* dump) {
         fprintf(g_dump, "== round %d\n%s", round, u.c_str());
         if (!u.empty() && u.back() != '\n') fputc('\n', g_dump);
     }
+}
+// ---- fast paths' differential check (bcx.subst.FastPath)
+jboolean rt_fastpath_check() {
+    const char* v = getenv("BCX_CHECK_FASTPATH");
+    return v && *v && strcmp(v, "0") != 0;
+}
+void rt_fastpath_fail(Obj* what) {
+    fprintf(stderr, "bcx: fast path differs from the original: %s\n", utf8(what).c_str());
+    fflush(stderr);
+    abort();
 }
 jboolean rt_io_exists(Obj* path) {
     struct stat st;

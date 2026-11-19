@@ -151,7 +151,13 @@ public final class Pool {
             new ClassReader(Rename.rename(resource(p), renames(p, cn.name))).accept(pn, 0);
             for (MethodNode pm : pn.methods) {
                 if (pm.name.equals("<init>") || isOrig(pm.invisibleAnnotations)) continue;
-                cn.methods.removeIf(x -> x.name.equals(pm.name) && x.desc.equals(pm.desc));
+                // a fast path: an @Orig stub NAME$orig with the same descriptor keeps the target's method under that name
+                boolean keep = false;
+                for (MethodNode s : pn.methods)
+                    if (s.name.equals(pm.name + "$orig") && s.desc.equals(pm.desc) && isOrig(s.invisibleAnnotations)) keep = true;
+                if (keep) {
+                    for (MethodNode x : cn.methods) if (x.name.equals(pm.name) && x.desc.equals(pm.desc)) x.name = pm.name + "$orig";
+                } else cn.methods.removeIf(x -> x.name.equals(pm.name) && x.desc.equals(pm.desc));
                 cn.methods.add(pm);
             }
             for (FieldNode pf : pn.fields) {
@@ -167,6 +173,8 @@ public final class Pool {
     private Map<String, String> renames(String from, String to) {
         Map<String, String> m = new HashMap<>();
         for (Map.Entry<String, String> e : substitutes.entrySet()) m.put(e.getValue(), e.getKey());
+        // a patch class names its target, so one patch can call the methods another adds
+        for (Map.Entry<String, List<String>> e : patches.entrySet()) for (String p : e.getValue()) m.put(p, e.getKey());
         m.put(from, to);
         // a patch's nested classes stand for the target's (only their names are used)
         for (String n : List.of("Sorter", "Merger", "Node")) m.put(from + "$" + n, to + "$" + n);

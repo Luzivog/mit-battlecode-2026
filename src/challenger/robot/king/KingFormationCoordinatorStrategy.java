@@ -15,6 +15,17 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
     private static final int COORDINATION_TIMEOUT = 120;
 
+    // King lock-in: kings formed by RAT_KING_CUTOFF_ROUND survive to the end, after it a team with 1 king can form only
+    // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form without the 20-per-king rat gate and
+    // the far-mine floor.
+    private static final int LOCK_IN_ROUND = 800;
+    private static final int KING_TARGET = 3;
+    private static final int LOCK_IN_MIN_RATS = 12;
+    // A lock-in king pays upkeep to the end and its formation consumes ~8 rats to rebuild: before the cutoff, form only
+    // with a 120-round upkeep reserve for 3 kings (720) + the formation (50) + the rebuild (~280). Measured: lock-in
+    // formations started below 1000 global starved 22 of 38 games and won 5 fewer than main, above it 12 more.
+    private static final int LOCK_IN_MIN_CHEESE = 1000;
+
     private static int MIN_DIST_FROM_KINGS_SQ;
 
     private final KingMiningStrategy miningStrategy;
@@ -29,6 +40,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private MapLocation targetMine = null;
     private int coordinationStartTurn = 0;
     private int kingCount = 1;
+    private int lastSeenKingCount = 1;
+    private int kings = 1;
+    private boolean lockIn = false;
     private RobotInfo nearestCat = null;
 
     private enum FormationState {
@@ -135,14 +149,23 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        int myKingCount = GlobalArray.countRatKings();
+        // A king whose turn overran misses one liveness write and reads as dead for one round (GlobalArray
+        // updateRatKingTurnCounters): count a king as gone only when it is missing two rounds in a row.
+        int mySeenKingCount = GlobalArray.countRatKings();
+        int myKingCount = Math.max(mySeenKingCount, lastSeenKingCount);
+        lastSeenKingCount = mySeenKingCount;
+        kings = myKingCount;
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 
         var req = 12;
         if(mapWidth * mapHeight <= 1200) {
             req = 8;
         }
-        if (myKingCount >= 5 || (rc.getRoundNum() >= 1100 && myKingCount >= 2) || numRats < req * myKingCount) {
+        lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
+        int minRats = lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
+        if (myKingCount >= 5
+            || (time > GameConstants.RAT_KING_CUTOFF_ROUND && myKingCount >= GameConstants.MAX_NUMBER_OF_RAT_KINGS_AFTER_CUTOFF)
+            || numRats < minRats) {
             // indicate("FORMATION: aborting due to king count or rat count");
             // indicate("numRats: " + numRats + ", myKingCount: " + myKingCount);
             abortFormation();
@@ -180,19 +203,23 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     boolean danger;
     private void tryStartFormation() throws GameActionException {
         danger = false;
-        if(rc.getHealth() < 100 && GlobalArray.countRatKings() == 1) {
+        if(rc.getHealth() < 100 && kings == 1) {
             danger = true;
         } else {
             // indicate("A");
+            boolean myPreCutoff = time <= GameConstants.RAT_KING_CUTOFF_ROUND;
             int myGlobalCheese = rc.getGlobalCheese();
-            if(myGlobalCheese < UPGRADE_COST + 100) return;
+            if(myGlobalCheese < (lockIn && myPreCutoff ? LOCK_IN_MIN_CHEESE : UPGRADE_COST + 100)) return;
             // indicate("B");
-            int myKingCount = GlobalArray.countRatKings();
+            int myKingCount = kings;
             if (myKingCount == 5) return;
             // indicate("C");
             int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
-            if(time <= 1800) {
-                if (Game.knownCheeseMines.size() < MINE_THRESHOLDS[GlobalArray.countRatKings()]) return;
+            // A king formed before the cutoff pays upkeep to the end, so it needs the mines to carry it: a side earns
+            // ~1.13 per mine per round against 2 per king (T1 §2.7). Measured without this gate, paired against main:
+            // lock-in won 15 fewer of 62 games on maps with <= 4 mines, and 15 more of 246 on maps with >= 16.
+            if (myPreCutoff && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
+            if(!lockIn) {
                 // indicate("D");
                 if(mapWidth * mapHeight > 1200) {
                     if (numRats < 20 * myKingCount) return;
@@ -200,7 +227,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                     if (numRats < 20 * myKingCount - 4) return;
                 }
             } else {
-                if (numRats < 12) return;
+                if (numRats < LOCK_IN_MIN_RATS) return;
             }
         }
         // indicate("passed formation checks");
@@ -238,7 +265,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 myBestMine = myMine;
             }
         }
-        if(time < 1800 && myBestScore < -40000) {
+        if(!lockIn && myBestScore < -40000) {
             return null;
         }
         return myBestMine;

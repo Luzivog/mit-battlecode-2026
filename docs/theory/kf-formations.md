@@ -155,8 +155,18 @@ Gain tests against main (`challenger@b962918`), awubot, `mines-ge8`, seed base 7
 | M | known-mine gate on `MineEstimate.atLeast` (the map's mines) | −0.040 [−0.075, −0.007], H0 (76 cells, 1 / 6) | kings formed 0.87 → 1.06 a game, dead within 300 rounds 73 → 127, timeouts in losses 66 → 136 | `1119-130518-ab-6390` |
 | MR | M, and a second king with 16 rats once global ≥ 1,000 on ≥ 8 estimated mines | −0.083 [−0.137, −0.035], H0 (108 cells, 5 / 21) | in the first 55 cells 16 games lost (king kills r500–1500, 4 on points), 2 won: a formation takes 6 of the 16 rats | `1119-131509-ab-c8a6` |
 | M3 | M for the third king only (9 known mines) | −0.008 [−0.026, +0.000], H0 (62 cells, 0 / 1) | – | `1119-132045-ab-e5ab` |
-| K | the site is the mine beyond the floor nearest the map centre (KB-centre) | −0.006 [−0.033, +0.019], H0 (85 cells, 2 / 3) | every mine known: 303 of 556 normal sites on the enemy side | `1119-132454-ab-109d` |
+| K | the site is the mine beyond the floor nearest the map centre (KB-centre) | −0.009 [−0.030, +0.013], H0 (117 cells, 2 / 4) | every mine known: 303 of 556 normal sites on the enemy side | `1119-132454-ab-109d` |
 | **C** (merged candidate) | the cooperation mode (own-side sites only, no rat or mine gate) ends at the lock-in round; a cooperation game then forms under the lock-in's rules | rose, 40 cells at seed base 7102: **79–1 against main's 47–33 on the same cells, +0.400** (25 better, 0 worse; H1 at δ 0.20); we end with 2 kings in 80 of 80 games (main: 1 king in 48); `goal` harm, seed base 7103: H0 (no harm), +0.004 [+0.000, +0.011] (137 cells, 1 better, 0 worse) | rose is the only map where a cooperation search fails past r800 (probe: 10 of 1,520 games at r800, 7 of them rose) | `1119-132048-ab-f61e`, `1119-132052-ab-e929` |
+
+**C, the merge protocol** (branch `t3/kf-rich-map-king-formations`, bot code = `t3/kf-arm-c`; main `b962918`):
+- `goal` gain, δ 0.05, seed base 7107: H0, +0.006 [+0.000, +0.020] (158 cells: 2 better, 0 worse) (`1119-132722-ab-84c9`).
+  Rose is one map of 95; at +0.40 there the expected gain on `goal` is about +0.4 pp, below what δ 0.05 resolves.
+- `goal` harm, seed base 7103: no harm, +0.004 [+0.000, +0.011] (137 cells, 1 / 0) (`1119-132052-ab-e929`).
+- `teammade` harm, seed base 7105: no harm, +0.014 [+0.000, +0.043] (71 cells, 2 / 0) (`1119-132529-ab-4f5f`).
+- Gauntlet (`1119-132722-gauntlet-629d`): no harm against OBG (101 cells, all equal), GST (+0.007, 147 cells, 2 / 0)
+  and 10 of the 11 others; `awubot_us` inconclusive at the cap (32 cells, 1 worse: TheHeist seat A, a cooperation
+  game past r800 with one king, lost 2 kings to 3 at r1067 where main won 2 to 2).
+- Smoke (`1119-132723-ab-9ab3`): 8 cells unchanged, none of our robots killed by its own exception.
 
 ## 4. What binds
 

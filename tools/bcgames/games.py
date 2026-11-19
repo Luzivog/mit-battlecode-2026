@@ -12,6 +12,8 @@
   tools/games replay ID GAME                 replay one game of a run, with a replay file
   tools/games replays ID [--cells ...]       replay files for a run's cells, after the fact
   tools/games build [BOT...]                 build the native binaries tests of these bots need, ahead of the tests
+  tools/games keep ID [--off]                keep a run's replays past the sweep (a day, 15 GB in all)
+  tools/games sweep [--dry-run]              free disk now (runs hourly on its own when tools/games starts)
   tools/games list | stop ID | pools | simulate
 
 Exit codes of wait/show/ab --fg: 0 passed (gain test: H1, better; harm test and gauntlet: H0, no harm), 3 failed
@@ -32,7 +34,7 @@ import threading
 import time
 from pathlib import Path
 
-from . import imperial, native, play, pools, stats, store
+from . import imperial, native, play, pools, retain, stats, store
 
 RUNS = store.DATA / "runs"
 EXIT = {"pass": 0, "fail": 3, "inconclusive": 4, "running": 5, "error": 1}
@@ -886,6 +888,37 @@ def cmd_stop(args) -> int:
     return 0
 
 
+def cmd_keep(args) -> int:
+    """A run kept: its replays outlive the sweep's age and cap (retain.py); --off: kept no more."""
+    d = run_dir(args.id)
+    if args.off:
+        (d / "keep").unlink(missing_ok=True)
+        print(f"{d.name}: not kept; its replays go {retain.REPLAY_KEEP_S // 3600} h after its last activity")
+    else:
+        (d / "keep").touch()
+        print(f"{d.name}: kept; its replays stay until `tools/games keep {d.name} --off`")
+    return 0
+
+
+def cmd_sweep(args) -> int:
+    """Every retention step now (retain.py, and this checkout's runs/ packed), saying what it frees."""
+    if str(store.ROOT) not in sys.path:
+        sys.path.insert(0, str(store.ROOT))
+    from tools import runs as R
+    out = retain.sweep(force=True, dry=args.dry_run)
+    out["run results packed (this checkout's runs/)"] = R.compact_local(store.ROOT / "runs", dry=args.dry_run,
+                                                                         force=True)
+    total = 0
+    for what, gone in out.items():
+        n = sum(b for _, b in gone)
+        total += n
+        print(f"{what}: {len(gone)}, {n / 1e9:.2f} GB" + (" (dry run: nothing removed)" if args.dry_run else ""))
+        for name, b in gone[:args.list]:
+            print(f"  {name} {b / 1e6:.0f} MB")
+    print(f"total {total / 1e9:.2f} GB")
+    return 0
+
+
 def find_jar(class_hash: str) -> Path | None:
     for meta in (store.DATA / "bots").glob("*.json"):
         if json.loads(meta.read_text()).get("class_hash") == class_hash:
@@ -1214,6 +1247,13 @@ def main(argv=None) -> int:
     sp.add_argument("--min-cells", type=int, default=16)
     sp.add_argument("--max-cells", type=int, default=2000)
     sp.add_argument("--runs", type=int, default=1000)
+    sp = sub.add_parser("keep", help="keep a run's replays past the sweep (retain.py); --off undoes it")
+    sp.add_argument("id")
+    sp.add_argument("--off", action="store_true")
+    sp = sub.add_parser("sweep", help="free disk now: old replays, unused binaries, dead engine build trees, "
+                                      "leftover ship folders, this checkout's old run results (done hourly anyway)")
+    sp.add_argument("--dry-run", action="store_true", help="say what would go, remove nothing")
+    sp.add_argument("--list", type=int, default=0, metavar="N", help="name the first N of each")
     sp = sub.add_parser("_drive")
     sp.add_argument("id")
     args = ap.parse_args(argv)
@@ -1243,8 +1283,13 @@ def main(argv=None) -> int:
             return start("gauntlet", params, args.fg)
         if args.cmd == "_drive":
             return drive(run_dir(args.id))
+        if args.cmd not in ("sweep", "keep"):
+            try:  # at most hourly: bounded disk (retain.py)
+                retain.sweep(say=lambda m: print(f"tools/games: {m}", file=sys.stderr))
+            except OSError as e:
+                print(f"tools/games: sweep: {e}", file=sys.stderr)
         return {"wait": cmd_wait, "show": cmd_show, "list": cmd_list, "stop": cmd_stop, "replay": cmd_replay,
-                "replays": cmd_replays, "retry": cmd_retry, "build": cmd_build,
+                "replays": cmd_replays, "retry": cmd_retry, "build": cmd_build, "keep": cmd_keep, "sweep": cmd_sweep,
                 "diff": cmd_diff, "pools": cmd_pools, "simulate": cmd_simulate}[args.cmd](args)
     except store.SetupError as e:
         print(f"tools/games: {e}", file=sys.stderr)

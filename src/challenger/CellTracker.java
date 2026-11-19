@@ -5835,18 +5835,18 @@ public class CellTracker {
 
     public static void storeVisibleCellsKing() throws GameActionException {
         var infos = rc.senseNearbyMapInfos();
-        int x = myLocX, y = myLocY;
-        long onMap = (1l << mapWidth) - 1;
-        kingMask0 = 1l << x;
-        kingMask3 = (x >= 3 ? 0x7fl << (x - 3) : 0x7fl >>> (3 - x)) & onMap;
-        kingMask4 = (x >= 4 ? 0x1ffl << (x - 4) : 0x1ffl >>> (4 - x)) & onMap;
-        kingMask5 = (x >= 5 ? 0x7ffl << (x - 5) : 0x7ffl >>> (5 - x)) & onMap;
         if (Tune.PM_SYM_B != 0 && kingScanOrder < 0) {
             // chirality 1 (seat B) reverses y on HORIZONTAL maps (order 1), x on VERTICAL (2), both on ROTATIONAL (3):
             // the symmetry codes 3, 2, 1 (docs/rules.md §7). The king's postTick shares it through the array.
             kingScanOrder = findKingScanOrder(infos);
             if (kingScanOrder != 0) setSymmetry(4 - kingScanOrder);
         }
+        int x = myLocX, y = myLocY;
+        long onMap = (1l << mapWidth) - 1;
+        kingMask0 = 1l << x;
+        kingMask3 = (x >= 3 ? 0x7fl << (x - 3) : 0x7fl >>> (3 - x)) & onMap;
+        kingMask4 = (x >= 4 ? 0x1ffl << (x - 4) : 0x1ffl >>> (4 - x)) & onMap;
+        kingMask5 = (x >= 5 ? 0x7ffl << (x - 5) : 0x7ffl >>> (5 - x)) & onMap;
         if (!kingRowsSeen(y)) {
             // a cell seen for the first time: the full scan registers walls and mines in the engine's order
             for (var info : infos) {

@@ -20,6 +20,8 @@ and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcga
 | harm test against every sparring bot, paired with main's games | `tools/games gauntlet` |
 | games whose result changed between two runs | `tools/games diff OLD_ID NEW_ID` |
 | replay files for a run's cells, after the fact | `tools/games replays ID [--cells decisive\|lost\|changed\|all] [--remote]` |
+| keep a run's replays past the sweep (cite them in a doc: keep them) | `tools/games keep ID [--off]` |
+| free disk now (it runs hourly on its own); what it would free | `tools/games sweep [--dry-run] [--list N]` |
 | the replay of one game | `tools/games replay ID GAME` |
 | runs, stop one, pools, SPRT sample sizes | `tools/games list`, `stop ID`, `pools [-v]`, `simulate` |
 | build the native binaries a test will need, ahead of it (default: your challenger and main's) | `tools/games build [BOT...] [--remote]` |
@@ -45,7 +47,8 @@ You are woken when the test stops, and the exit code is the verdict:
 Options of `ab` and `gauntlet`: `--pool` (below), `--ref`, `--test gain|harm`, `--delta` (default 0.10),
 `--alpha`, `--beta` (0.05), `--min-cells` (default one pass over the pool), `--max-cells` (4/δ²: 400 at δ 0.10, 1600
 at 0.05; smoke: one pass), `--seed-base` (below), `--engine` (1.2.6), `--workers` (local games at once, 8; remote:
-games in flight, 256), `--replays losses|all`, `--fg` (foreground, prints the report), `--remote`, `--backend
+games in flight, 256), `--replays losses|all` (kept a day after the run, while all replays stay under 15 GB, unless
+`tools/games keep ID`: tools/bcgames/AGENTS.md "Disk"), `--fg` (foreground, prints the report), `--remote`, `--backend
 native|java` (default native), `--guard RATE` (the guard's sample, default 1/32), `--no-cache` (play every game,
 for measurements).
 

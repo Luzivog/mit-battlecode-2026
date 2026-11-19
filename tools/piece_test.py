@@ -375,3 +375,21 @@ def test_its_tasks_share_a_cache(tmp_path: Path) -> None:
     run_piece(tmp_path, run, cpus=1)
     (_, _, o0), (_, _, o1) = result(run, 0), result(run, 1)
     assert o0["out/c"] == o1["out/c"] and o1["out/l"].split() == [b"x0", b"x1"]
+
+
+def test_a_checkout_is_made_only_for_a_claimed_task(tmp_path: Path, monkeypatch) -> None:
+    """fill(): the room check, then the claim, then the checkout; a checkout made before a claim that failed (or pruned
+    by the room check before its task started) was made again for every claim."""
+    run = make_run(tmp_path, [stamp(str(i)) for i in range(4)])
+    for k, v in env(tmp_path, cpus=4).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(run)
+    calls: list[str] = []
+    monkeypatch.setattr(p, "room", lambda: calls.append("room") or True)
+    monkeypatch.setattr(p, "claim", lambda r, n: calls.append(f"claim {n}") or n == 2)  # only task 2 is free
+    monkeypatch.setattr(p, "ready", lambda r: calls.append("ready") or True)
+    monkeypatch.setattr(p, "starts", lambda r, n: 0)
+    monkeypatch.setattr(p, "start", lambda r, n: calls.append(f"start {n}"))
+    assert p.fill() == 1
+    assert calls == ["room", "room", "claim 0", "room", "claim 1", "room", "claim 2", "ready", "start 2", "room",
+                     "claim 3"]

@@ -35,7 +35,9 @@ from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_
 REPO = Path(__file__).resolve().parent.parent
 LOCAL_RUNS = REPO / "runs"
 WHERES = (*B.WHERES, *(("local",) if LOCAL else ()))  # local: tests only, a job run here by bash
-ID_TAIL = r"-\d{4}-\d{6}-[0-9a-f]{4}"
+# a second's ids differ by 6 hex digits (4 until 19 Nov, still read): two runs placing 40 pieces each in one second
+# drew the same id (an mkdir on the volume refused the whole placement)
+ID_TAIL = r"-\d{4}-\d{6}-[0-9a-f]{4,6}"
 JOB_ID = rf"({'|'.join(WHERES)}){ID_TAIL}"
 HELD, ENDED_UNRECORDED = 3, 4  # wait's and logs -f's codes for a held job and one that ended with no exit file
 # between two reads of a job being waited for: light on the login nodes (BC26_POLL_S: tests' stand-in remote only)
@@ -192,7 +194,7 @@ class Job:
 
 
 def new_id(where: str) -> str:
-    return f"{where}-{time.strftime('%m%d-%H%M%S')}-{secrets.token_hex(2)}"
+    return f"{where}-{time.strftime('%m%d-%H%M%S')}-{secrets.token_hex(3)}"
 
 
 def job(job_id: str) -> Job:
@@ -626,20 +628,59 @@ def pull(job_id: str, dest: Path | None = None) -> Path:
 
 def cancel(job_id: str) -> str:
     """Ends the job for good, `cancelled` written first, so a reader that sees it end knows why."""
-    j = job(job_id)
-    hosts = hosts_of(j.where)
-    bid = login(f"touch {j.dir}/cancelled && cat {j.dir}/backend-id", hosts=hosts).split()
-    if not bid:
-        return f"{j.id}: never queued"
-    if j.where in B.SLURMS:
-        said = login(f"scancel {int(bid[0])} && echo cancelled Slurm job {int(bid[0])}", hosts=hosts).strip()
-    elif j.where == "condor":
-        said = submit_host(f"condor_rm -name {bid[0]} {int(bid[1])}").strip()
-    else:
-        try:
-            os.killpg(int(bid[-1]), 15)
-        except ProcessLookupError:
-            pass
-        said = f"killed process group {bid[-1]}"
-    login(f"rm -f {' '.join(f'{j.dir}/{n}' for n in INPUTS)}", hosts=hosts)
-    return said
+    return cancel_many([job_id])[job_id]
+
+
+# condor_rm's answers. For one cluster: "All jobs in cluster N have been marked for removal", or "Couldn't
+# find/remove all jobs in cluster N" (it left the queue: nothing to cancel). For several it matches a constraint,
+# "(ClusterId == A || ClusterId == B ...)", and answers once for all of them: "Couldn't find/remove all jobs matching
+# constraint (...)" when any had left. Either way none of them is left queued.
+CONDOR_DONE = re.compile(r"All jobs (?:in cluster \d+|matching constraint \([^)]*\)) have been marked for removal")
+CONDOR_GONE = re.compile(r"Couldn't find/remove all jobs (?:in cluster \d+|matching constraint \([^)]*\))")
+
+
+def cancel_many(job_ids: list[str]) -> dict[str, str]:
+    """Each job ended for good (`cancelled` written first), in one login a cluster and one removal a scheduler:
+    condor_rm of every Condor cluster at once, scancel of every Slurm job of a cluster at once. A job the scheduler no
+    longer has (condor_rm's "Couldn't find/remove", scancel's "Invalid job id") counts as cancelled. What each one
+    says, by id."""
+    out: dict[str, str] = {}
+    by_hosts: dict[tuple[str, ...], list[Job]] = {}
+    for jid in dict.fromkeys(job_ids):
+        j = job(jid)
+        by_hosts.setdefault(hosts_of(j.where), []).append(j)
+    for hosts, js in by_hosts.items():
+        listing = login("; ".join(f"touch {j.dir}/cancelled && echo {j.id} $(cat {j.dir}/backend-id 2>/dev/null)"
+                                  for j in js), hosts=hosts)
+        bids = {x.split()[0]: x.split()[1:] for x in listing.splitlines() if x.split()}
+        condor: dict[str, dict[int, str]] = {}
+        slurm: dict[int, str] = {}
+        for j in js:
+            bid = bids.get(j.id, [])
+            if not bid:
+                out[j.id] = f"{j.id}: never queued"
+            elif j.where in B.SLURMS:
+                slurm[int(bid[0])] = j.id
+            elif j.where == "condor":
+                condor.setdefault(bid[0], {})[int(bid[1])] = j.id
+            else:
+                try:
+                    os.killpg(int(bid[-1]), 15)
+                except ProcessLookupError:
+                    pass
+                out[j.id] = f"killed process group {bid[-1]}"
+        if slurm:
+            said = login(f"scancel {' '.join(map(str, slurm))} 2>&1; true", hosts=hosts)
+            gone = {int(x) for x in re.findall(r"job id (\d+): Invalid job id", said)}
+            for sid, jid in slurm.items():
+                out[jid] = f"Slurm job {sid} " + ("already gone" if sid in gone else "cancelled")
+        for schedd, clusters in condor.items():
+            said = submit_host(f"condor_rm -name {shlex.quote(schedd)} {' '.join(map(str, clusters))} 2>&1; true")
+            done = {int(x) for m in CONDOR_DONE.findall(said) for x in re.findall(r"\d+", m)}
+            gone = {int(x) for m in CONDOR_GONE.findall(said) for x in re.findall(r"\d+", m)}
+            for c, jid in clusters.items():
+                out[jid] = (f"Condor cluster {c} marked for removal" if c in done else
+                            f"Condor cluster {c} removed or already gone" if c in gone else
+                            f"Condor cluster {c}: condor_rm said {said.strip()[-300:]!r}")
+        login(f"rm -f {' '.join(f'{j.dir}/{n}' for j in js for n in INPUTS)}", hosts=hosts)
+    return out

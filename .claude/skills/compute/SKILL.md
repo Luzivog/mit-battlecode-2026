@@ -51,6 +51,8 @@ tools/compute wait "$RUN" --json          # run_in_background; exit = the run's 
 - `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs.
 - `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run: its tasks stop, its queued pieces are
   cancelled; its running pieces go on with other runs' tasks, or end).
+- When a run's last task is done its follower writes `summary.json` first, then cancels the pieces that never
+  started, all in one `condor_rm` and one `scancel`: read the summary, not the follower's exit.
 
 ## Games at scale
 

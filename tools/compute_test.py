@@ -321,3 +321,49 @@ def test_content_keys_ignore_times_and_snapshots_repeat(tmp_path: Path) -> None:
     heads = subprocess.run([*g, "bundle", "list-heads", str(tmp_path / "b.bundle")], capture_output=True, text=True,
                            check=True).stdout
     assert a.commit in heads and "refs/heads/main" in heads
+
+
+def test_cancel_many_is_one_removal_a_scheduler(monkeypatch: pytest.MonkeyPatch) -> None:
+    """jobs.cancel_many: one login a cluster for `cancelled` and the backend ids, one condor_rm for every cluster and
+    one scancel for every Slurm job; a cluster condor_rm can't find (it left the queue) counts as cancelled."""
+    ids = ["condor-1119-180715-6bbe", "condor-1119-180715-50ac", "condor-1119-180715-f328", "slurm-1119-180811-8b25",
+           "condor-1119-180715-0000"]
+    bid = {ids[0]: "ash04.doc.ic.ac.uk 48192", ids[1]: "ash04.doc.ic.ac.uk 48190", ids[2]: "ash04.doc.ic.ac.uk 48553",
+           ids[3]: "1265700", ids[4]: ""}
+    logins: list[str] = []
+    removals: list[str] = []
+
+    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = (), stream: int = 0) -> str:
+        logins.append(cmd)
+        if cmd.startswith("touch") or "; touch" in cmd:
+            return "".join(f"{j} {bid[j]}\n" for j in ids if f"jobs/{j}/cancelled" in cmd)
+        if cmd.startswith("scancel"):
+            removals.append(cmd)
+            return ""
+        return ""
+
+    def submit_host(cmd: str, ticket: bool = True) -> str:
+        removals.append(cmd)
+        # condor_rm's answer for several clusters, captured on ash04 (19 Nov): one line for all of them
+        return "\nCouldn't find/remove all jobs matching constraint (ClusterId == 48192 || ClusterId == 48190 || " \
+               "ClusterId == 48553)\n"
+    monkeypatch.setattr(J, "login", login)
+    monkeypatch.setattr(J, "submit_host", submit_host)
+    said = J.cancel_many(ids)
+    assert sorted(removals) == ["condor_rm -name ash04.doc.ic.ac.uk 48192 48190 48553 2>&1; true",
+                                "scancel 1265700 2>&1; true"]
+    assert len(logins) == 3  # cancelled + ids, scancel, inputs removed: one login for the cluster's every job
+    assert said[ids[0]] == "Condor cluster 48192 removed or already gone"
+    assert said[ids[2]] == "Condor cluster 48553 removed or already gone"
+    assert said[ids[3]] == "Slurm job 1265700 cancelled"
+    assert said[ids[4]] == f"{ids[4]}: never queued"
+
+
+def test_ids_have_six_hex_digits_and_old_ones_still_read() -> None:
+    """Two runs placing 40 pieces each in one second drew the same 4-digit id (19 Nov): ids now end in 6."""
+    from tools import runs as R
+    assert len(J.new_id("condor").rsplit("-", 1)[1]) == 6 and len(R.new_run_id().rsplit("-", 1)[1]) == 6
+    for jid in ("condor-1119-180715-6bbe", "condor-1119-180715-6bbe12"):
+        assert J.job(jid).where == "condor"
+    assert R.run_dir("run-1119-180652-dd6e").endswith("dd6e") and R.run_dir("run-1119-180652-dd6e01")
+    assert R.submitted("slurm-1119-180811-8b25aa") == R.submitted("slurm-1119-180811-8b25") > 0

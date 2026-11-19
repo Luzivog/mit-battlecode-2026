@@ -542,6 +542,51 @@ class ShipFolderTest(unittest.TestCase):
         self.assertFalse(r.ship.exists())
 
 
+class FollowTest(unittest.TestCase):
+    def test_a_failed_task_is_its_games_failure_at_once(self):
+        """A task that ended without a result (here: code 1, its jar missing on the node) fails its game as soon as
+        its folder appears, and following ends once every game and check is delivered, while the follower still
+        runs (cancelling the run's unstarted pieces: 33 min on 19 Nov)."""
+        import shutil
+        from bcgames import imperial
+        rid = f"run-1119-000000-{os.getpid() % 10000:04d}"
+        local = store.ROOT / "runs" / rid
+        self.addCleanup(lambda: shutil.rmtree(local, ignore_errors=True))
+        for n, (res, code, log) in enumerate([(dict(result(), id="g0", key=KEY), 0, "ok"), (None, 1, "no classes"),
+                                              (None, 1, "boom")]):
+            (local / str(n) / "out").mkdir(parents=True)
+            (local / str(n) / "result.json").write_text(json.dumps({"task": n, "code": code}))
+            (local / str(n) / "log").write_text(f"tools/play: {log}\n")
+            if res:
+                (local / str(n) / "out" / "results.jsonl").write_text(json.dumps(res) + "\n")
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock, r.cache_lock, r.stopping = threading.Lock(), threading.Lock(), threading.Event()
+        r.cache = store.Cache(Path(tempfile.mkdtemp()) / "c.sqlite")
+        r.mismatches, r.got = [], []
+        r.on_guard = lambda job, g: r.got.append(g)
+        r._say = lambda msg: None
+        r.guards_pending = 1
+        jobs, out = {}, []
+        for gid in ("g0", "g1"):
+            jobs[gid] = (play.Job(spec={"id": gid, "a": "x", "b": "y", "map": "m"}, key=KEY, meta={"key": KEY}),
+                         out.append)
+        b = {"run": rid, "jobs": jobs, "guards": {"g1~guard": jobs["g1"][0]}, "done": set(), "ended": False,
+             "gstate": {"g1~guard": {"left": 1, "done": False, "err": None}}, "ids": ["g0", "g1", "g1~guard"],
+             "proc": type("P", (), {"poll": lambda self: None})()}  # the follower still running
+        old = imperial.POLL_S
+        imperial.POLL_S = 0.01
+        try:
+            r._follow(b)
+        finally:
+            imperial.POLL_S = old
+        self.assertTrue(b["complete"])
+        got = {x["id"]: x.get("error") for x in out}
+        self.assertIsNone(got["g0"])
+        self.assertIn("task 1 ended 1 with no result: tools/play: no classes", got["g1"])
+        self.assertEqual((r.got[0]["verdict"], r.guards_pending), ("java-error", 0))
+        self.assertIn("boom", r.got[0]["error"])
+
+
 class FinishTest(unittest.TestCase):
     def test_backend_of_old_cache_entries_is_java(self):
         job = play.Job(spec={"id": "g"}, key="k", meta={"key": "k"})

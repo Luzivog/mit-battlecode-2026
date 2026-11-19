@@ -185,6 +185,8 @@ class ImperialRunner:
         self.stopping.set()
         self.wake.set()
         for b in self.batches:
+            if b.get("complete"):  # its follower closes the run and cancels its unstarted pieces itself
+                continue
             if b.get("proc") and b["proc"].poll() is None:
                 b["proc"].kill()
             if b.get("run") and not b.get("ended"):
@@ -318,7 +320,7 @@ class ImperialRunner:
             self.log.write(err)
             raise store.SetupError(f"tools/run exit {proc.returncode}: {(run + out + err).strip()[-500:]}")
         b = {"run": run, "jobs": {j.spec["id"]: (j, cb) for j, cb in batch}, "guards": guards, "done": set(),
-             "ended": False, "gstate": {}}
+             "ended": False, "gstate": {}, "ids": [json.loads(x)["id"] for x in lines]}
         for gid in guards:
             st = b["gstate"].setdefault(gid.removesuffix(TWIN), {"left": 0, "done": False, "err": None})
             st["left"] += 1
@@ -387,23 +389,59 @@ class ImperialRunner:
         self.log.flush()
 
     def _follow(self, b: dict) -> None:
+        """B's results read as tools/compute wait fetches them: each task's folder once, when it appears (whole:
+        runs.fetch renames it in). A task that ended without a result for its game (it failed, or lost its machine at
+        every start) is that game's failure at once. Following ends when every game and check is delivered (the
+        follower may still be cancelling the run's unstarted pieces: that is not waited for) or the follower ends."""
         local = store.ROOT / "runs" / b["run"]
+        seen: set[str] = set()
         while not self.stopping.is_set():
             ended = b["proc"].poll() is not None
-            for f in sorted(local.glob("*/out/results.jsonl")):
-                for line in f.read_text().splitlines():
+            try:
+                names = os.listdir(local)
+            except OSError:
+                names = []
+            for name in names:
+                if not name.isdigit() or name in seen:
+                    continue
+                seen.add(name)
+                t = local / name
+                try:
+                    lines = (t / "out" / "results.jsonl").read_text().splitlines()
+                except OSError:
+                    lines = []
+                for line in lines:
                     self._deliver(b, json.loads(line))
+                for gid in b["ids"][int(name) * CHUNK:(int(name) + 1) * CHUNK]:
+                    if gid not in b["done"]:
+                        self._deliver(b, self._failure(b, gid, t))
+            if all(gid in b["done"] for gid in b["ids"]):
+                b["complete"] = True
+                break
             if ended:
                 break
             self.stopping.wait(POLL_S)
         b["ended"] = True
-        for gid, (job, cb) in b["jobs"].items():
+        for gid in b["ids"]:
             if gid not in b["done"] and not self.stopping.is_set():
-                b["done"].add(gid)
-                cb(play.finish(job, {"error": f"imperial run {b['run']}: no result (runs/{b['run']}/*/log)"}, False))
-        for gid in b["guards"]:
-            if gid not in b["done"] and not self.stopping.is_set():
-                self._deliver(b, {"id": gid, "guard": {"verdict": "java-error", "error": "no result"}})
+                self._deliver(b, {"id": gid, "error": f"imperial run {b['run']}: no result (runs/{b['run']}/*/log)"})
+
+    @staticmethod
+    def _failure(b: dict, gid: str, t: Path) -> dict:
+        """GID's result when its task's folder T holds none: the task's code and the end of its log."""
+        try:
+            code = json.loads((t / "result.json").read_text()).get("code")
+        except (OSError, ValueError):
+            code = None
+        try:
+            tail = (t / "log").read_text(errors="replace").strip().splitlines()[-1:]
+        except OSError:
+            tail = []
+        why = f"imperial run {b['run']} task {t.name} ended {code} with no result" + (f": {tail[0][-300:]}"
+                                                                                       if tail else "")
+        if gid in b["guards"]:
+            return {"id": gid, "guard": {"verdict": "java-error", "error": why}}
+        return {"id": gid, "error": why}
 
     def _guard_result(self, b: dict, gid: str, r: dict) -> None:
         """A guard task's verdict (its game's result came from its own task). Of a guard's copies the first verdict

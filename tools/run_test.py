@@ -299,3 +299,20 @@ def test_old_run_results_are_packed(tmp_path: Path) -> None:
         os.utime(p, (t, t))
     assert R.compact_local(tmp_path) == []  # within the hour
     assert [r for r, _ in R.compact_local(tmp_path, force=True)] == [new.name]
+
+
+def test_the_summary_is_written_before_the_cancels(world: tuple[Path, dict[str, str]]) -> None:
+    """A follower whose run is done writes summary.json, then cancels the pieces that never started: a reader sees the
+    run done whatever the cancels take."""
+    repo, env = world
+    (repo / "one.txt").write_text("x\n")
+    rid = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
+               "true").stdout.strip()
+    code = ("import sys; sys.path.insert(0, '.'); from tools import runs as R; "
+            "R.cancel_unstarted = lambda rid, pieces: print('summary before the cancels:', "
+            "(R.J.LOCAL_RUNS / rid / 'summary.json').exists()); "
+            f"print(R.follow({rid!r}, 0.3)['ok'])")
+    p = subprocess.run([sys.executable, "-c", code], cwd=repo, env=env, capture_output=True, text=True,
+                       timeout=BOUND_S)
+    assert p.returncode == 0, p.stderr
+    assert p.stdout.split("\n")[:2] == ["summary before the cancels: True", "1"], p.stdout

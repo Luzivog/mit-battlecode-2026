@@ -63,8 +63,12 @@ after the last submit. When nothing is free, 4 Condor pieces wait in its queue. 
 it (appended to `pieces`).
 
 The follower (`runs.follow`, behind `tools/run` and `tools/compute wait RUN`) polls every 30 s: fetches new
-`done/` tars over one tar stream, reads the pieces' states, and when every task is done writes `closed` and cancels
-pieces that never started. When no piece is left and tasks remain: a held piece stops the follower with exit 3, the
+`done/` tars over one tar stream (each unpacked aside and renamed into `N/`, so a reader sees a task's folder whole),
+reads the pieces' states, and when every task is done writes `closed`, then `summary.json`, then cancels the pieces
+that never started, all at once (`jobs.cancel_many`: one login a cluster, one `condor_rm` for every Condor cluster,
+one `scancel` for every Slurm job; a cluster `condor_rm` can't find has left the queue and counts as done). One
+cancel a piece took four logins, two to the submit host: 150 pieces took 33 min after a run's last task (19 Nov);
+one `condor_rm` of 165 clusters takes 3.5 s, as one of one cluster does. When no piece is left and tasks remain: a held piece stops the follower with exit 3, the
 run left open (a hold is reported, never routed around); a piece that ended with a code other than 0 or 75 stops the
 run (its log shown: it would fail again); otherwise a replacement round is submitted, once unclaimed tasks exist or
 the dead claims are stale, at most 3 rounds (`mkdir replace.K` lets one follower submit each). A pooled run follows
@@ -98,7 +102,10 @@ pieces serve every pooled run, and every pooled piece serves it.
   among equals. A run with nothing running is beaten only by older runs with nothing running, which are finitely many
   and finite, so no run waits forever; a newcomer beats every run that has a task running, so a small batch behind a
   big one starts at the next free slots.
-- **Another run's checkout.** A task runs in its run's checkout: the piece's own (job.sh's) for its run and runs of
+- **Another run's checkout.** A piece makes a checkout only for a task it has claimed (the room check, the claim,
+  then the checkout): made before the claim, it was made for claims that failed, and the room check's prune could
+  take it before its task started, so one piece remade one run's checkout every 5 s for 4 minutes (19 Nov). A task
+  runs in its run's checkout: the piece's own (job.sh's) for its run and runs of
   the same content and kit; else one the piece makes in its scratch from that run's `code.bundle` and `with.tgz`,
   job.sh's way (2.0 s on a lab machine, 19 Nov), kept for later runs of that content (`CHECKOUTS` unused ones at
   most, besides those tasks run in; one is ~350 MB). A kit run's `kit` file names its jars; the task gets that run's

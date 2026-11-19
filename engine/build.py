@@ -41,7 +41,8 @@ ENTRY = ("bcx/NativeMain.play(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Str
          "Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;JZ)Ljava/lang/String;")
 # -ffp-exception-behavior=strict: no compile-time folding of an FP operation that can raise (clang folds
 # -inf*0 to +NaN; the CPU, so the JVM, gives -NaN)
-CXXFLAGS = ["-std=c++20", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",
+# -flto=thin: the translated code calls many small methods across files (getters, index arithmetic); the link inlines
+CXXFLAGS = ["-std=c++20", "-flto=thin", "-g1", "-fwrapv", "-fno-strict-aliasing", "-ffp-contract=off", "-ffp-exception-behavior=strict",
             "-fno-rtti", "-fno-exceptions", "-w"]
 
 
@@ -193,7 +194,8 @@ def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None,
              f"rule cxxglue\n  command = clang++ {' '.join(CXXFLAGS)} {glue_opt or opt} {inc} -MMD -MF $out.d -c $in -o $out\n"
              "  depfile = $out.d\n  deps = gcc",
              "rule cc\n  command = clang -O2 -ffp-contract=off -fno-fast-math -msse4.1 -c $in -o $out",
-             f"rule link\n  command = clang++ -static -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
+             f"rule link\n  command = clang++ -static -flto=thin -fuse-ld=lld -Wl,--thinlto-jobs={jobs} "
+             f"-Wl,--thinlto-cache-dir={gen / 'lto-cache'} {opt} -o $out $in {gci / 'lib' / 'libgc.a'} -lz"]
     objs = []
     for s in srcs:
         o = gen / "obj" / (s.stem + ("_rt" if s.parent == rt else "") + ".o")

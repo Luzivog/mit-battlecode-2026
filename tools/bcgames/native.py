@@ -451,25 +451,36 @@ def gc() -> None:
 # ---------------------------------------------------------------------------------------------------------- games
 
 def local_binary(path: str) -> Path:
-    """A binary a spec names (a remote node: on the shared volume, maybe gzip'd), copied once to this machine's temp
-    folder (the task's TMPDIR, shared by the tasks of one piece), so games don't page it in over the network."""
+    """A binary a spec names (a remote node: on the shared volume, maybe gzip'd), copied once to this machine's disk
+    (the task's TMPDIR, shared by the tasks of one piece), so games don't page it in over the network. When that disk
+    is full (seen on DoC), into the run's own folder (BCGAMES_DATA, on the volume): slower, never elsewhere."""
     src = Path(path)
     name = src.name[:-3] if src.name.endswith(".gz") else src.name
-    final = Path(tempfile.gettempdir()) / "bcx" / name
-    if not final.exists():
-        final.parent.mkdir(parents=True, exist_ok=True)
-        fd, tmp = tempfile.mkstemp(prefix=name + ".", dir=final.parent)
-        with os.fdopen(fd, "wb") as out:
-            if src.name.endswith(".gz"):
-                import gzip
-                with gzip.open(src) as f:
-                    shutil.copyfileobj(f, out, 1 << 20)
-            else:
-                with open(src, "rb") as f:
-                    shutil.copyfileobj(f, out, 1 << 20)
-        os.chmod(tmp, 0o700)
-        os.replace(tmp, final)
-    return final
+    errors = []
+    for d in dict.fromkeys([tempfile.gettempdir(), str(store.DATA)]):
+        final = Path(d) / "bcx" / name
+        if final.exists():
+            return final
+        tmp = None
+        try:
+            final.parent.mkdir(parents=True, exist_ok=True)
+            fd, tmp = tempfile.mkstemp(prefix=name + ".", dir=final.parent)
+            with os.fdopen(fd, "wb") as out:
+                if src.name.endswith(".gz"):
+                    import gzip
+                    with gzip.open(src) as f:
+                        shutil.copyfileobj(f, out, 1 << 20)
+                else:
+                    with open(src, "rb") as f:
+                        shutil.copyfileobj(f, out, 1 << 20)
+            os.chmod(tmp, 0o700)
+            os.replace(tmp, final)
+            return final
+        except OSError as e:  # a full disk (seen on DoC): the next place
+            errors.append(f"{d}: {e}")
+            if tmp:
+                Path(tmp).unlink(missing_ok=True)
+    raise OSError("; ".join(errors))
 
 
 SPEC_FIELDS = ("id", "a", "b", "map", "engine", "classes", "classes_a", "classes_b", "replay", "indicators", "bcx")

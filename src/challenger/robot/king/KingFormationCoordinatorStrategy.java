@@ -40,7 +40,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private MapLocation targetMine = null;
     private int coordinationStartTurn = 0;
     private int kingCount = 1;
-    private int lastSeenKingCount = 1;
     private int kings = 1;
     private boolean lockIn = false;
     private RobotInfo nearestCat = null;
@@ -149,11 +148,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        // A king whose turn overran misses one liveness write and reads as dead for one round (GlobalArray
-        // updateRatKingTurnCounters): count a king as gone only when it is missing two rounds in a row.
-        int mySeenKingCount = GlobalArray.countRatKings();
-        int myKingCount = Math.max(mySeenKingCount, lastSeenKingCount);
-        lastSeenKingCount = mySeenKingCount;
+        int myKingCount = GlobalArray.countRatKings();
         kings = myKingCount;
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
 

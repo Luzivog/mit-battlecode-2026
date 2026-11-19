@@ -244,9 +244,10 @@ if (!(project.findProperty("onSaturn") ?: "false").toBoolean()) {
     into 'client/'
   }
 
+  // Not a dependency of build: every worktree's build unpacked its own 280 MB client. The viewer, when wanted:
+  // ./gradlew unpackClient
   build.configure {
     group 'battlecode'
-    dependsOn unpackClient
   }
 }
 

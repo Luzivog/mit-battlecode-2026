@@ -70,6 +70,14 @@ run (its log shown: it would fail again); otherwise a replacement round is submi
 the dead claims are stale, at most 3 rounds (`mkdir replace.K` lets one follower submit each). A pooled run follows
 the pool's rule below instead. A run no piece could be submitted for is closed at once.
 
+## Local results
+
+`runs.compact_local` (from `sweep_daily`, so at most hourly when `tools/run` or `tools/compute run` starts) packs
+each run under the checkout's `runs/` that has not changed for a day (`COMPACT_S`): its per-task folders into
+`tasks.tgz`, their `result.json` into `tasks.jsonl`, then removes them. A run's thousands of tiny files took ten
+times their size on disk (a worktree's `runs/`: 312 MB to 17 MB; another's 126,000 files, 140 MB of data, 1.2 GB on
+disk). A follower started again on a packed run fetches its results again while the volume still has them.
+
 ## The pool
 
 A run of tasks of a set size (not `--whole`) and no `--max-cpus` is pooled (`run.json`'s `pool`, `pool_v`): its

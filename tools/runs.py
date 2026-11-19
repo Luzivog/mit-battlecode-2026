@@ -21,9 +21,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import secrets
 import shlex
+import shutil
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -710,6 +712,59 @@ def summarize(s: Settings, out: Path, finals: dict[str, J.State], pieces: list[s
         "exit": exit_code(codes)}
     (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
     return summary
+
+
+COMPACT_S = 24 * 3600  # a run's results, a day after they last changed, are packed: their per-task folders in one file
+COMPACT_EVERY_S = 3600
+
+
+def compact_local(out_root: Path = J.LOCAL_RUNS, dry: bool = False, force: bool = False) -> list[tuple[str, int]]:
+    """Every run under OUT_ROOT unchanged for COMPACT_S (its summary, its newest task; tools/games stops following its
+    batches without a summary): its per-task folders (N/: result.json, log, out/)
+    packed into tasks.tgz, each task's result.json a line of tasks.jsonl, the folders removed; summary.json, run.json
+    and gathered files stay. A run of 800 tasks held 2,400 small files and 3,200 folders: ~2.6 MB on disk for ~0.3 MB
+    of data. At most every COMPACT_EVERY_S unless FORCE. Returns (run, bytes freed on disk)."""
+    import tarfile
+    stamp = out_root / ".compacted"
+    now = time.time()
+    try:
+        if not force and now - stamp.stat().st_mtime < COMPACT_EVERY_S:
+            return []
+    except OSError:
+        pass
+    if not out_root.is_dir():
+        return []
+    if not dry:
+        stamp.touch()
+    out = []
+    for d in sorted(out_root.iterdir()):
+        if not (d.is_dir() and re.fullmatch(RUN_ID, d.name)):
+            continue
+        tasks = sorted((x for x in d.iterdir() if x.name.isdigit() and x.is_dir()), key=lambda x: int(x.name))
+        if not tasks:
+            continue
+        last = max([x.stat().st_mtime for x in tasks] + [(d / f).stat().st_mtime for f in ("summary.json", "run.json")
+                                                          if (d / f).exists()])
+        if now - last < COMPACT_S:
+            continue
+        used = sum(os.lstat(os.path.join(p, f)).st_blocks * 512 for x in tasks for p, _, fs in os.walk(x) for f in fs) \
+            + sum(os.lstat(p).st_blocks * 512 for x in tasks for p, _, _ in os.walk(x))
+        if dry:
+            out.append((d.name, used))
+            continue
+        tmp = d / ".tasks.tgz.tmp"
+        with tarfile.open(tmp, "w:gz") as tar:
+            for x in tasks:
+                tar.add(x, x.name)
+        with open(d / ".tasks.jsonl.tmp", "w") as f:
+            for x in tasks:
+                f.write(json.dumps(result_of(d, int(x.name))) + "\n")
+        os.replace(d / ".tasks.jsonl.tmp", d / "tasks.jsonl")
+        os.replace(tmp, d / "tasks.tgz")
+        for x in tasks:
+            shutil.rmtree(x, ignore_errors=True)
+        out.append((d.name, used - (d / "tasks.tgz").stat().st_blocks * 512 - (d / "tasks.jsonl").stat().st_blocks * 512))
+    return out
 
 
 def exit_code(codes: list[object]) -> int:

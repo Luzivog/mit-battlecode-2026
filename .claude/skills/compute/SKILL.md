@@ -20,7 +20,9 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
   gives the same classpath here).
 - Tokens: `{}` the line, `{file}` a file of the task's lines, `{out}` its OUT, `{cpus}` its CPUs. Write results to
   `$OUT`. They come back to `runs/RUN/N/out/`, the output to `runs/RUN/N/log`. `--gather NAME` concatenates every
-  task's `out/NAME`, in task order, into `runs/RUN/NAME`.
+  task's `out/NAME`, in task order, into `runs/RUN/NAME`. A day after a run's results last changed, its `N/` folders
+  are packed into `runs/RUN/tasks.tgz` (`tar -xzf` it to read them) and each `result.json` is a line of
+  `runs/RUN/tasks.jsonl`; the gathered files and `summary.json` stay.
 - A task gets `JOB_CPUS` CPUs (`--task-cpus`, default 1) and `JOB_MEM_MB` (`--task-mem`, default 1700M: a game's JVM
   peaks at 0.5-1.6 GB). A machine runs as many tasks at once as its CPUs and its memory both hold.
 - `--with PATH` ships another git-ignored file or folder. `--where condor,slurm,cpucluster1` limits the backends.

@@ -37,7 +37,7 @@ from pathlib import Path
 
 from . import native, play, store
 
-SHIP = store.ROOT / ".bcgames-ship"
+SHIPS = store.ROOT / ".bcgames-ship"  # a test's own folder in it (ImperialRunner.ship), removed when it ends
 # A batch goes out as soon as jobs wait (after COALESCE_S, so a wave goes as one batch), but no sooner than FLUSH_S
 # after the run's previous batch: each batch is a tools/run call and a poller against the login nodes. Measured
 # (docs/evaluation.md): a batch's oldest job waits 5-7 s, mostly the tools/run call; at 10 s and at 30 s a test made
@@ -77,6 +77,18 @@ def ship_binary(key: str, path: Path) -> str:
     return dest
 
 
+def link(src, dest) -> None:
+    """DEST a hard link to SRC (no space; same filesystem), else a copy; made whole under a temporary name."""
+    src, dest = Path(src), Path(dest)
+    tmp = dest.with_name(f".{dest.name}.{os.getpid()}")
+    tmp.unlink(missing_ok=True)
+    try:
+        os.link(src, tmp)
+    except OSError:
+        shutil.copy2(src, tmp)
+    os.replace(tmp, dest)
+
+
 class ImperialRunner:
     """Same interface as play.Runner: resolver, cached(job), submit(job, callback), close(wait), mismatches."""
 
@@ -98,6 +110,7 @@ class ImperialRunner:
         self.cache_lock = threading.Lock()
         self.outdir = outdir / "imperial"
         self.outdir.mkdir(parents=True, exist_ok=True)
+        self.ship = SHIPS / f"{outdir.name}-{os.urandom(2).hex()}"
         self.where, self.timeout = where, timeout
         self.pending: list[tuple[play.Job, object]] = []
         self.batches: list[dict] = []
@@ -188,8 +201,13 @@ class ImperialRunner:
                        stdout=self.log, stderr=self.log)
 
     def drain(self) -> None:
+        """The cancels done; this test's ship folder removed (every batch's tools/run has shipped it by now)."""
         for t in self.closing:
             t.join()
+        for b in self.batches:
+            if b.get("place"):
+                b["place"].join()
+        shutil.rmtree(self.ship, ignore_errors=True)
 
     # ------------------------------------------------------------------------------------------------------ batches
 
@@ -257,21 +275,22 @@ class ImperialRunner:
         return False
 
     def _ship(self, jobs: list[play.Job]) -> dict[str, str]:
-        """Copies what the nodes need into .bcgames-ship; returns jar path -> its path in the ship."""
-        (SHIP / "engines").mkdir(parents=True, exist_ok=True)
-        (SHIP / "bots").mkdir(exist_ok=True)
+        """Links (or copies) what the nodes need into this test's ship folder; returns jar path -> its path there."""
+        ship = self.ship
+        (ship / "engines").mkdir(parents=True, exist_ok=True)
+        (ship / "bots").mkdir(exist_ok=True)
         for v in {j.spec["engine"] for j in jobs}:
             src = store.engine_jar(v)
-            if not (SHIP / "engines" / src.name).exists():
-                shutil.copy2(src, SHIP / "engines" / src.name)
+            if not (ship / "engines" / src.name).exists():
+                link(src, ship / "engines" / src.name)
         runner = self.resolver.runner_dir
-        if not (SHIP / "runner" / runner.name).exists():
-            shutil.copytree(runner, SHIP / "runner" / runner.name)
+        if not (ship / "runner" / runner.name).exists():
+            shutil.copytree(runner, ship / "runner" / runner.name, copy_function=link)
         jars = {}
         for jar, _ in self.resolver.bots.values():
-            dest = SHIP / "bots" / Path(jar).name
+            dest = ship / "bots" / Path(jar).name
             if not dest.exists():
-                shutil.copy2(jar, dest)
+                link(Path(jar), dest)
             jars[str(jar)] = str(dest.relative_to(store.ROOT))
         return jars
 
@@ -284,10 +303,10 @@ class ImperialRunner:
         specs.write_text("".join(x + "\n" for x in lines))
         cmd = [str(store.ROOT / "tools" / "run"), "--detach", "--each", str(specs), "--chunk",
                str(CHUNK), "--gather", "results.jsonl",
-               "--with", str(SHIP.relative_to(store.ROOT))]
+               "--with", str(self.ship.relative_to(store.ROOT))]
         if self.where:
             cmd += ["--where", self.where]
-        cmd += ["--", "env", f"BCGAMES_DATA={SHIP.relative_to(store.ROOT)}", "BCGAMES_SLOTS=0", "tools/play",
+        cmd += ["--", "env", f"BCGAMES_DATA={self.ship.relative_to(store.ROOT)}", "BCGAMES_SLOTS=0", "tools/play",
                 "{file}", "{out}", "--workers", "1", "--no-cache", "--timeout", str(int(self.timeout)),
                 "--backend", "native" if is_native else "java", "--guard", "0", "--give-back"]
         proc = subprocess.Popen(cmd, cwd=store.ROOT, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,

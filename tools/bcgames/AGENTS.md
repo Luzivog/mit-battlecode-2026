@@ -15,7 +15,8 @@ How to use them: `docs/evaluation.md`. This file is for changing them.
 | `stats.py` | GSPRT (multinomial, fishtest's MLE form), Elo, LOS, bootstrap over maps, SPRT simulation |
 | `pools.py` | map pools; the holdout list lives only in `~/battlecode26-data/games/SEALED-TEST-DO-NOT-READ/` |
 | `mapclass.py` | T4's map classes (docs/theory/t4-maps.md §3), reproduced exactly on all 150 maps, stdlib only |
-| `imperial.py` | the `--remote` backend: batches through track C's `tools/run`, ships `.bcgames-ship/` and native binaries (to the volume, once each) |
+| `imperial.py` | the `--remote` backend: batches through track C's `tools/run`, ships a test's own `.bcgames-ship/<test>/` (hard links, removed when the test ends) and native binaries (to the volume, once each) |
+| `retain.py` | bounded disk: old replays, unused binaries, dead engine build trees, leftover ship folders (`sweep`, hourly at `tools/games` start) |
 | `games.py` | runs: paired tests, scheduling, reports, `tools/games` |
 | `*_test.py` | `python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'` (`play_test.py` plays real games on both engines: a few minutes; its native tests skip unless the shared native store holds a binary for them) |
 
@@ -54,6 +55,27 @@ Python is stdlib only (it runs on remote nodes too). Data: `~/battlecode26-data/
    (`imperial.guard_ahead`), counted pending from then.
 8. **Pools never hold a sealed map**: every visible pool, class pool and list pool is checked against
    `pools.visible()`.
+
+## Disk
+
+Everything a tool writes is bounded, pruned on its own (`retain.sweep` when `tools/games` starts, at most hourly;
+`tools/games sweep [--dry-run] [--list N]` now). What goes, and what never does:
+
+| what | rule | never removed |
+|---|---|---|
+| a run's `replays/` (`games/runs/ID/`, also the sealed runs', by file times alone) | 24 h after the run's last activity (its state, its replays, their index); sooner, oldest first, while all replays exceed 15 GB | a run marked `tools/games keep ID` (`--off` undoes it); one active within 2 h; the results: `tools/games replays ID` plays the games again |
+| native binaries (`native/bin/`) | the most recently used kept: 24, or any used within 6 h, up to 4 GiB in all (`BCGAMES_NATIVE_KEEP_BYTES`) | one used within 30 min; one a live process holds (`native.hold`: a shared flock on `bin/KEY.use`, taken by every process that plays or ships it) |
+| engine build trees (`~/battlecode26-data/engine/build/gen-VERSION-H`, H = sha256 of the checkout's path) | once no checkout of this repository (`git worktree list`) nor enginebench's export of main has H, after a day without a build | a live checkout's tree |
+| this checkout's `.bcgames-ship/` | a remote test ships its own folder of hard links and removes it when it ends; a folder idle a day goes (its driver died, or the old shared layout) | |
+| this checkout's `runs/` (`tools/run`'s results) | a run unchanged for a day: its per-task folders packed into `RUN/tasks.tgz`, each `result.json` a line of `RUN/tasks.jsonl` (`runs.compact_local`, at most hourly when `tools/run` or `tools/compute run` starts) | `summary.json`, `run.json`, gathered files |
+
+Measured on 19 Nov (`tools/games sweep --dry-run`): replays 20.4 GB, all under a day old, 4.65 GB of them over the
+cap; binaries 13 of 52 (1.32 GB); a worktree's `runs/` 312 MB to 17 MB packed (126,000 files of 1 KB were 1.2 GB on
+disk in one worktree); `./gradlew build` no longer unpacks the 280 MB client into each worktree (`./gradlew
+unpackClient` when wanted).
+
+Not pruned: the bot jars (`bots/`, 2.6 GB: `tools/games replays` needs the jars that played a game), bots' class
+folders (`native/classes/`, 1.3 GB), the build slots (`native/gen/`, two a version, needed whole), the cache.
 
 ## Changing it
 

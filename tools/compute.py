@@ -224,7 +224,15 @@ def sweep(force: bool = True) -> str:
 
 
 def sweep_daily() -> None:
-    """sweep() at most once a day; a failure only said."""
+    """sweep() at most once a day, and this checkout's old run results packed (runs.compact_local, at most hourly); a
+    failure only said."""
+    try:
+        packed = R.compact_local()
+        if packed:
+            J.say(f"compute: {len(packed)} runs' results packed under runs/ (RUN/tasks.tgz), "
+                  f"{sum(n for _, n in packed) / 1e6:.0f} MB freed")
+    except OSError as e:
+        J.say(f"compute: packing old run results: {e}")
     try:
         said = sweep(force=False)
         if "deleted" in said and not said.startswith("0 jobs and 0 runs deleted, 0 stored"):

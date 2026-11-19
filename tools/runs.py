@@ -546,9 +546,10 @@ def cancel_unstarted(rid: str, pieces: list[str]) -> None:
     except Refused as e:
         J.say(f"run {rid}: cancelling {len(unstarted)} pieces that never started: {e}")
         return
-    gone = sum("already gone" in x for x in said.values())
-    J.say(f"run {rid}: {len(unstarted)} pieces that never started cancelled"
-          + (f" ({gone} had already left the queue)" if gone else ""))
+    odd = [x for x in said.values() if "condor_rm said" in x]
+    for x in odd[:3]:
+        J.say(f"run {rid}: {x}")
+    J.say(f"run {rid}: {len(unstarted)} pieces that never started cancelled at once")
 
 
 def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) -> dict[str, object]:

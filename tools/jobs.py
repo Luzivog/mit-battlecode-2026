@@ -629,9 +629,12 @@ def cancel(job_id: str) -> str:
     return cancel_many([job_id])[job_id]
 
 
-# condor_rm's word for a cluster no longer in the queue (it ended, or was removed): nothing left to cancel
-CONDOR_GONE = re.compile(r"Couldn't find/remove all jobs (?:in|of) cluster (\d+)")
-CONDOR_DONE = re.compile(r"(?:All jobs in cluster|Cluster) (\d+) (?:have|has) been marked for removal")
+# condor_rm's answers. For one cluster: "All jobs in cluster N have been marked for removal", or "Couldn't
+# find/remove all jobs in cluster N" (it left the queue: nothing to cancel). For several it matches a constraint,
+# "(ClusterId == A || ClusterId == B ...)", and answers once for all of them: "Couldn't find/remove all jobs matching
+# constraint (...)" when any had left. Either way none of them is left queued.
+CONDOR_DONE = re.compile(r"All jobs (?:in cluster \d+|matching constraint \([^)]*\)) have been marked for removal")
+CONDOR_GONE = re.compile(r"Couldn't find/remove all jobs (?:in cluster \d+|matching constraint \([^)]*\))")
 
 
 def cancel_many(job_ids: list[str]) -> dict[str, str]:
@@ -671,11 +674,11 @@ def cancel_many(job_ids: list[str]) -> dict[str, str]:
                 out[jid] = f"Slurm job {sid} " + ("already gone" if sid in gone else "cancelled")
         for schedd, clusters in condor.items():
             said = submit_host(f"condor_rm -name {shlex.quote(schedd)} {' '.join(map(str, clusters))} 2>&1; true")
-            done = {int(x) for x in CONDOR_DONE.findall(said)}
-            gone = {int(x) for x in CONDOR_GONE.findall(said)}
+            done = {int(x) for m in CONDOR_DONE.findall(said) for x in re.findall(r"\d+", m)}
+            gone = {int(x) for m in CONDOR_GONE.findall(said) for x in re.findall(r"\d+", m)}
             for c, jid in clusters.items():
                 out[jid] = (f"Condor cluster {c} marked for removal" if c in done else
-                            f"Condor cluster {c} already gone" if c in gone else
+                            f"Condor cluster {c} removed or already gone" if c in gone else
                             f"Condor cluster {c}: condor_rm said {said.strip()[-300:]!r}")
         login(f"rm -f {' '.join(f'{j.dir}/{n}' for j in js for n in INPUTS)}", hosts=hosts)
     return out

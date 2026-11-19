@@ -344,16 +344,16 @@ def test_cancel_many_is_one_removal_a_scheduler(monkeypatch: pytest.MonkeyPatch)
 
     def submit_host(cmd: str, ticket: bool = True) -> str:
         removals.append(cmd)
-        return ("All jobs in cluster 48192 have been marked for removal\n"
-                "All jobs in cluster 48190 have been marked for removal\n"
-                "Couldn't find/remove all jobs in cluster 48553\n")
+        # condor_rm's answer for several clusters, captured on ash04 (19 Nov): one line for all of them
+        return "\nCouldn't find/remove all jobs matching constraint (ClusterId == 48192 || ClusterId == 48190 || " \
+               "ClusterId == 48553)\n"
     monkeypatch.setattr(J, "login", login)
     monkeypatch.setattr(J, "submit_host", submit_host)
     said = J.cancel_many(ids)
     assert sorted(removals) == ["condor_rm -name ash04.doc.ic.ac.uk 48192 48190 48553 2>&1; true",
                                 "scancel 1265700 2>&1; true"]
     assert len(logins) == 3  # cancelled + ids, scancel, inputs removed: one login for the cluster's every job
-    assert said[ids[0]] == "Condor cluster 48192 marked for removal"
-    assert said[ids[2]] == "Condor cluster 48553 already gone"
+    assert said[ids[0]] == "Condor cluster 48192 removed or already gone"
+    assert said[ids[2]] == "Condor cluster 48553 removed or already gone"
     assert said[ids[3]] == "Slurm job 1265700 cancelled"
     assert said[ids[4]] == f"{ids[4]}: never queued"

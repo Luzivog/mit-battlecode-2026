@@ -782,6 +782,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 | JS | Joint combat search | one pass scoring nap, attack and fight per (move, facing): "move + nap + reposition", "throw then bite" | combat H12 |
 | AB | Ablations | remove champion features one at a time: anti-glorp troll, eternal exploration, ally-sacrifice gate | lessons§9 |
 
+- **AB result** (2026-11-19; `docs/closed.md`): 13 ablations, none gains. Load-bearing: the squeaked-enemy chase
+  (−0.087 without it), eternal exploration (−0.041), the rich spawn lines (−0.093). Ten deletions are neutral alone,
+  but eight of them bundled lose to OBG (−0.045): small losses add up. Only the dead-code deletion (no logic change)
+  is a merge candidate. Ablation is mostly exhausted outside other packages' code.
+
 ## 5. Order to 90%
 
 ### 5.1 Loss model on `goal`

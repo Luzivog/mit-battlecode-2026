@@ -12,7 +12,7 @@ Related docs: rules.md (engine truth, especially §4 cooldowns, §8 actions, §9
 
 1. **The whole micro is built around ratnapping.** An enemy can grab you if it has strictly more HP than you, or if it stands where you can't see it (rules.md §8 `carryRat`). `CombatTracker` precomputes, for every (move, facing) pair, whether any enemy could step next to you and grab you next turn (§4). Every candidate action adds `-100` if it would leave you grabbable. The result: rats approach, bite and grab only when they can't be grabbed back. They also turn to face the enemy (+2 for turning, and facing choices point at the target), so enemies with equal or lower HP can never grab them from the front.
 2. **HP ordering is the currency.** Bites cost 2 cheese for 12 damage (`CombatStrategy:440`) instead of 10. Whoever lands the first bite goes ahead in HP, and from then on can grab the opponent while being immune to grabs from its front. The pipeline tries a grab before a bite (`CombatStrategy:236-256`).
-3. **Grab, then throw.** A grabbed enemy is out of the fight (it can't act, and it is immune to bites). Two turns later it is thrown. In observed throws, 41% hit a wall or dirt (≈34–42 damage, +20 stun), 29% hit a second enemy rat (up to 42 damage to each) and 3.5% hit an enemy king (§13). A grab is worth about a 42-damage hit plus a stun, while a bite is 12.
+3. **Grab, hold, throw for value.** A grabbed enemy is out of the fight (it can't act, and it is immune to bites). From two turns later it is thrown as soon as the line collides at step 2 (42 damage), hits a king or feeds a cat; otherwise the carrier holds it, acts with its free action, and lines up the next throw, up to 8 rounds (§6.1). Before CW, every carry was thrown at two turns and 22% landed in the open; with CW, 6% (L-combat). A grab is worth about a 42-damage hit plus a stun, while a bite is 12.
 4. **Move and act in the same turn.** Each candidate is a (move, facing, action-before-or-after-move) triple, ranked by a hand-tuned score. The rat can step in and bite, or bite and back off ("secondary" moves), within the cooldown rules.
 5. **Bytecode-dense code generation.** Byte-packed SIMD-style threat counters (8 neighbours per `long`) and fully unrolled per-(move × facing × throw-direction) evaluators fit the whole search into about 10–14k of the 17.5k bytecode limit (§13).
 
@@ -22,15 +22,15 @@ Related docs: rules.md (engine truth, especially §4 cooldowns, §8 actions, §9
 
 | Template (`src/challenger/...`) | Generated lines | What is unrolled |
 |---|---|---|
-| `robot/rat/combat/CombatStrategy.java.jinja2` (510) | 500 | Barely templated. Contains the pipeline, `performMoves`, `shouldFight` and bite damage. |
+| `robot/rat/combat/CombatStrategy.java.jinja2` (533) | 523 | Barely templated. Contains the pipeline, the carry decision (hold or throw), `performMoves`, `shouldFight` and bite damage. |
 | `robot/rat/combat/CombatTracker.java.jinja2` (462) | 15,960 | 5×5 `t_dx_dy` booleans; `low/high/moveThreat` × 9 moves; `threat{move}{facing}` 9×8 longs; `registerEnemyLow/High`: switch dx(−3..3) × dy(−3..3) × facing(8) → constant masks for 9 moves; `enemyMaskForMove`: 7×7×8×9 = 3,528 constant returns (the largest method, ≈32.6 KB, see codegen.md). |
 | `robot/rat/combat/CombatCommon.java.jinja2` (74) | 72 | `canMove{N..NW,C}` booleans |
-| `moves/TryThrow.java.jinja2` (711) | 34,831 | 9×9 `occ_dx_dy` occupancy grid (`grid_radius=4`, :21). 288 methods: `tryThrow{move9}{throw8}`, `tryThrowSecondary…`, `tryThrowAlly…`, `tryThrowSecondaryAlly…`. Each has a ray scan unrolled at compile time with constant offsets. `markKingZone`: 81 cases × 3×3 writes. |
+| `moves/TryThrow.java.jinja2` (768) | 36,930 | 9×9 `occ_dx_dy` occupancy grid (`grid_radius=4`): rats, kings' 3×3 and cats' 2×2. 288 methods: `tryThrow{move9}{throw8}`, `tryThrowSecondary…`, `tryThrowAlly…`, `tryThrowSecondaryAlly…`. Each has a ray scan unrolled at compile time with constant offsets. `markKingZone`: 81 cases × 3×3 writes. |
 | `moves/TryTrap.java.jinja2` (459) | 5,203 | 5×5 `w_dx_dy` weights; `applyEnemyWeight` switch dx × dy × facing with the cone test done at template time; `face{F}{M}` / `place{P}{F}{M}` methods; `applyTrapWeights` switch on count (29..1) |
 | `moves/TryAttack.java.jinja2` (213) | 1,345 | `selectMoves` switch on `myDir` (8) × 9 ordered moves; `move{X}` (9); `face{F}` (8) |
 | `moves/TryRatNap.java.jinja2` (230) | 1,332 | Same shape as TryAttack |
 | `moves/TryFight.java.jinja2` (160) | 1,209 | Same shape (no secondary moves) |
-| `moves/TryPosition.java.jinja2` (96) | 987 | Same shape |
+| `moves/TryPosition.java.jinja2` (115) | 1,013 | Same shape |
 | `robot/king/KingCombatStrategy.java.jinja2` (278) | 664 | `processCell` ring, per-direction score switch, per-move cat-lane terms |
 
 Related helpers (internals are in architecture.md): `RobotTracker.sortedEnemies/sortedAllies/sortedCats` (nearest first by center dist², cats kept separate), `Util.canSense(dx,dy,dir)` (rat cone, r² 20), `Util.canCatSense` (cat cone r² 17, 180°, from the 2×2 centre), `Util.chebyshevDistance(loc, RobotInfo)` (aware of 3×3 kings and 2×2 cats), `Pathfinder.multisourceBfs` (`Pathfinder.java.jinja2:924`), `EnemyManager.knownEnemies` (squeaked enemies), `GlobalArray.nearestRatKing`.
@@ -47,7 +47,7 @@ Engine truth is in rules.md. These are only the numbers the scores refer to.
 - Bite: `10 + ceil(sqrt(cheese))`. `getCheeseNeeded(k) = (k−1)²+1` (`CombatStrategy:484`) is the minimum cheese that buys +k damage. Kings and cats always get 10 (`BabyRat.java:246`).
 - Grab legality: target adjacent and inside **my** 3-tile front cone, and (target HP < mine, or target can't see me, or ally). Enemy kings and cats can't be grabbed.
 - A baby rat sees exactly 3 of its 8 neighbours (front and front diagonals). "Hidden" neighbours = the other 5.
-- Throw (rules.md §9): flies in the thrower's facing. A collision deals `10 + 4·rem` to **both** the flier and the robot hit: 42 at most on the throw turn (the first tile must be empty, rules.md §9), 38/34 on the next. Landing on open ground or at the map edge deals 10. A rat thrown into a cat is **eaten**, and the cat sleeps 2 turns. Throw collisions never trigger a backstab.
+- Throw (rules.md §9): flies in the thrower's facing. A collision deals `10 + 4·rem` to **both** the flier and the robot hit: 42 at step 2 on the throw turn (the first tile must be empty, rules.md §9), then 38/34/30/26/22/18 if the flier acts before the thrower, 30/26/22/18 if after. Landing on open ground or at the map edge deals 10. A rat thrown into a cat is **eaten**, and the cat sleeps 2 turns. Throw collisions never trigger a backstab.
 - Rat trap: cost 20 (engine), damage 50, movement cooldown set to 30. It triggers when an enemy *enters* any tile of its 3×3.
 - Cat: 4,000 HP, scratch 20 damage anywhere in its cone (r² 17, 180°), pounce r² 13 kills every rat on the landing tiles (rules.md §12).
 
@@ -95,8 +95,14 @@ if not carrying, or carrying an ALLY:                     # :149 (carrying an EN
     if funnyTarget and bfsIters <= 5: turn(toward funnyTarget)   # :201
 precomp(): CombatCommon.precomp() (canMove×9); CombatTracker.tick(); computeCellScores() (dead, returns at :349)
 isLastMove = true      # suppresses RobotTracker/CellTracker refresh after each move (saves bytecode)
-if carrying:                                               # :216
-    TryThrow.run() || TryPosition.run(); return true       # always true while carrying ("bruh", :231)
+if carrying an ally:                                       # :216
+    TryThrow.run() || TryPosition.run(); return true
+if carrying an enemy (§6.1): always returns true
+    action ready and a legal line: TryThrow.search()
+        best >= 42 (a step-2 collision or better), or carry age >= 8, or HP <= 24: throw
+        else hold: TryTrap.run() || TryAttack.run() ||
+                   TryPosition aimed at the best line, if a tile is safe from grabs || throw
+    action not ready: TryThrow.scan() (lines only), TryPosition aimed at the best line
 if TryRatNap.run(): return true
 if TryTrap.run():   return true
 if TryAttack.run(): return true
@@ -193,49 +199,60 @@ else:                strafe, then turn
 
 ## 6. The move generators
 
-### 6.1 TryThrow (`moves/TryThrow`), run when carrying and action-ready
+### 6.1 TryThrow (`moves/TryThrow`) and the carry decision (`CombatStrategy:216-240`)
 
 ```
-run(): budget = min(9000, left-2000)                       # :76
-  populateThrowGrid(): occ 9×9 = visible enemy/ally baby rats; kings mark their full 3×3;
-                       own nearest king's 3×3 too            # :258-293   (CATS ARE NOT MARKED)
-  carrying ally ? selectMovesAlly() : selectMoves()
-  for move m in movement order (all 9), for throwDir d in related_map[myDir] (myDir, ±45° only):
+search(): action ready; budget = min(9000, left-2000)
+  populateThrowGrid(): occ 9×9 = visible enemy/ally baby rats; kings mark their full 3×3; cats their 2×2;
+                       own nearest king's 3×3 from its shared-array location, seen or not
+  carrying ally ? selectMovesAlly() : selectMoves(secondary = true)
+  for move m in movement order (all 9), for throwDir d in related_map[myDir] (myDir, ±45°),
+      and for m in {C, F} the other 5 directions after those 3:
       tryThrow{m}{d}; and after m==F also tryThrowSecondary{dir}{d} for dir,d in related_map[myDir]
-  if none: return false (-> TryPosition)
-  if best < 0: enemy carried -> THROW ANYWAY; ally carried -> return false     # :91-95
-  play: secondary ? (turn d; throw; performMoves(md,d)) : (performMoves(md,d); throw)
+  the best line: md, td, best, isSecondary; the best primary line: aimMove, aimFacing, aimBest
+scan(): the same without the action check and without secondaries, for the turn after a grab
+execute(): secondary ? (turn d; throw; performMoves(md,d)) : (performMoves(md,d); throw)
+run() (ally carries): search; abort if best < 0; execute
 ```
 
-Score of one candidate (`tryThrow`, `:297-396`). The landing cell `me+m+d` must be free: if it is inside my current 3×3 this is checked with `canMove`, otherwise with sense + occupancy + passable. The scan then follows the ray from the post-move cell at steps 2..5 (`rem = 9,8,7,6`, :320). The first cell to hit decides:
+An enemy carry (`CombatStrategy:216-240`) is thrown when `best ≥ STEP2_HIT` (42: a collision at step 2, a king or a
+cat), when the carry is 8 rounds old (`Game.carryStartTime`; the last possible throw is at grab + 10 in either turn
+order, and a bite or trap with raw cheese can leave the action unready for a turn), or at HP ≤ 24 (two 12-damage
+bites). Otherwise the carrier holds it: TryTrap, then TryAttack, unchanged, act with the free action; else TryPosition
+moves to a tile safe from grabs, aimed at the best primary line; with no safe tile, the carrier throws its best line.
 
-| Hit at step s (rem = 11−s) | Score | Stop? | Template |
-|---|---|---|---|
-| Unseen cell (`'\0'`) | +0 | stop | :328 |
-| Wall | +10 + 4·rem (46, 42, 38, 34; each 4 above the real damage, which tops out at 42) | stop | :333 |
-| Off map | +10 (normal landing) | stop | :337 |
-| Own king zone | = −1000 | stop | :346 |
-| Own rat, s=2 | −4·rem = −36 | stop | :350 |
-| Own rat, s≥3 | −2·rem (−16, −14, −12) | **continue** (it may move away) | :353 |
-| Enemy king zone | +300 | stop | :358 |
-| Enemy rat, s=2 | +2(10+4·9)+10 = **102**, sets `enemyHit` | stop | :362 |
-| Enemy rat, s≥3 | (10+4rem)/(10−rem) = 21.0, 12.67, 8.5 (Jinja float division) | continue | :366 |
-| Dirt | +4·rem (36, 32, 28, 24). Note: no +10, unlike walls, although the engine treats dirt as a collision too. | stop | :374 |
-| Nothing hit in steps 2–5 | 0 | – | |
+Score of one candidate (`tryThrow`). The landing cell `me+m+d` must be free: if it is inside my current 3×3 this is checked with `canMove`, otherwise with sense + occupancy (cats included) + passable. The scan then follows the ray from the post-move cell at steps 2..5. Collision values are the engine's damage when the flier acts after the thrower (6 tiles: 42, 30, 26, 22), the lower bound of the two turn orders. The first cell to hit decides:
 
-Then add `getCellScoreFor(m,d[,enemyHit])` (−100 if grab-able after the move with facing `d`; `enemyHit` is excluded from the threat) (:380). Cells more than 4 tiles from my current position (step 4 or 5, depending on the move) fall outside the 9×9 occupancy grid, so only terrain is checked there.
+| Hit at step s | Score | Stop? |
+|---|---|---|
+| Unseen cell (`'\0'`) | +0 | stop |
+| Wall or dirt | +42, 30, 26, 22 | stop |
+| Off map | +10 (normal landing) | stop |
+| Own king zone | = −1000 | stop |
+| Own rat, s=2 | −36 | stop |
+| Own rat, s≥3 | −16, −14, −12 | **continue** (it may move away) |
+| Cat | +400: the flier is eaten, a kill, and the cat sleeps 2 turns (above the king) | stop |
+| Enemy king zone | +300 | stop |
+| Enemy rat, s=2 | +84 (42 to each), sets `enemyHit` | stop |
+| Enemy rat, s≥3 | damage/(s−1) = 15.0, 8.67, 5.5 | continue |
+| Nothing hit in steps 2–5 | 0 | – |
 
-**Ally throws** (`:501-608`): the carried rat is an ally (§6.3). Only step 2 is scanned (`range(9,8,-1)`, :524). The throw is accepted **only** if step 2 holds an enemy rat (+102) or an enemy king zone (+300). Anything else (unseen, wall, ally, dirt, empty, off-map) rejects. The cell score still applies. Note 102−100 = 2 ≥ 0, so **a threatened ally throw is still taken**: 16 of 64 observed ally throws scored exactly 2.0.
+Then add `getCellScoreFor(m,d[,enemyHit])` (−100 if grab-able after the move with facing `d`; `enemyHit` is excluded from the threat). Cells more than 4 tiles from my current position (step 4 or 5, depending on the move) fall outside the 9×9 occupancy grid, so only terrain is checked there. Lines outside `related_map[myDir]` pass tiles the carrier cannot see: only remembered terrain and the own king's zone are known there.
 
-### 6.2 TryPosition (`moves/TryPosition`), when carrying and the throw is not possible
+**Ally throws** (`tryThrowAlly…`): the carried rat is an ally (§6.3). Only step 2 is scanned. The throw is accepted **only** if step 2 holds an enemy rat (+102) or an enemy king zone (+300). Anything else (unseen, wall, ally, dirt, cat, empty, off-map) rejects. The cell score still applies. Note 102−100 = 2 ≥ 0, so **a threatened ally throw is still taken**: 16 of 64 observed ally throws scored exactly 2.0.
+
+### 6.2 TryPosition (`moves/TryPosition`), when carrying and not throwing
 
 ```
-if !movementReady: return false   (CombatStrategy then returns true anyway = "CARRYIDLE")
-for m in 9 moves, f in related_map[myDir]:
+run(): if !movementReady: return false; search(); execute()
+search(): for m in 9 moves, f in related_map[myDir]:
     score = 10·[non-strafe] + 5·[m != CENTER] + (-100 if threat(m,f)) + 2·[f != myDir]
+            + aimValue if score >= 0 and (m, f) == (aimMove, aimFacing)
+  true when the best score is >= 0 (a tile safe from grabs); the aim is used once
 ```
 
-**It has no goal term.** Ties resolve by evaluation order, so the winner is usually "turn ±45° and move that way" (17 points). **(inference)** Carriers drift in a small arc instead of setting up the next turn's throw. This is the forced t+1 turn after every grab (§2). See §14 H2.
+The aim is TryThrow's best primary line when it scores > 0: moving m and facing f puts the carrier where that line
+starts, so next turn it can throw along f, or step forward along f and throw.
 
 ### 6.3 TryRatNap (`moves/TryRatNap`)
 
@@ -330,7 +347,7 @@ Typical values: a safe forward approach scores 42, holding scores 10–12, a saf
 - Rats engage cats only via `shouldFight(cat)`: the cat is within dist² 36 of our nearest king, or the late/rich hunting rule (§3.3).
 - TryFight and TryAttack approach and bite **only from cells outside the cat's vision cone** (`canCatSense`). The cat's AI targets rats it sees, so this keeps biters out of its targeting **(inference)**.
 - With enemy rats around, nothing keeps rats away from cats. The combat BFS (`multisourceBfs`) doesn't use the cat-avoidance masks that normal pathing uses (`Pathfinder.java.jinja2:678-725`).
-- **TryThrow ignores cats completely.** Cats are not in the occupancy grid and their tiles look like open floor, so feeding enemies to cats is never scored, even though it is an instant kill plus a 2-turn cat sleep. Worse, a cat on a distance-2 landing tile passes the throw-legality check, and `assert(rc.canThrowRat())` then kills the thrower **(inference for the cause; the AssertionError was observed with a cat in view)**.
+- **TryThrow feeds enemies to cats.** A cat's 2×2 is in the occupancy grid: on the step-1 tile it blocks the throw, on the line at step ≥ 2 it scores 400 (the flier is eaten and the cat sleeps 2 turns), and ally throws never go into a cat (§6.1).
 - Outside combat code: panic squeaks lure cats away from the king. A rat that saw a cat in the last 4 turns squeaks a no-op if the cat is within dist² 25 of our nearest king (`Squeaker.java:172-178`). Otherwise rats near cats stay silent. `BabyRat.considerPlacingCatTrap` (`BabyRat.java:34-77`) only runs in cooperation with no enemies known.
 
 **Enemy kings:**
@@ -447,21 +464,23 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 
 | Name | Value | Location | Meaning | Sens. |
 |---|---|---|---|---|
-| budget | min(9000, left−2000) | `moves/TryThrow:76` | | L |
-| occupancy grid radius | 4 | `:21` | Rats beyond ±4 invisible to the scan | L |
-| scan steps | s = 2..5 (rem 9..6) | `:320` | Ray length considered | M |
-| wall hit | +10 + 4·rem | `:333` | Collision damage estimate | H |
-| off-map | +10 | `:337` | Normal landing | L |
-| own king | −1000 | `:346` | Never | – |
-| own rat at s=2 | −4·rem (−36) | `:350` | Friendly collision | M |
-| own rat s≥3 | −2·rem, continue | `:353` | | L |
-| enemy king | +300 | `:358` | King hit (the actual damage is ≤ 42) | M |
-| enemy rat at s=2 | 2(10+4rem)+10 = 102 | `:362` | Double collision | H |
-| enemy rat s≥3 | (10+4rem)/(10−rem) | `:366` | Discounted because it may move | L |
-| dirt hit | +4·rem (no +10) | `:374` | Undervalued compared with walls | L |
-| negative-score policy | enemy: throw anyway; ally: abort | `:91-95` | | M |
-| ally scan | step 2 only; enemy rat 102 / king 300 | `:524,567,571` | | M |
-| throw directions | `related_map[myDir]` (3 of 8) | `:166,183` | Search width | M |
+| budget | min(9000, left−2000) | `moves/TryThrow` `start()` | | L |
+| occupancy grid radius | 4 | `grid_radius` | Rats and cats beyond ±4 invisible to the scan | L |
+| scan steps | s = 2..5 | `hit_damage` | Ray length considered | M |
+| wall or dirt hit | 42, 30, 26, 22 (`hit_damage`) | | Engine damage, flier after the thrower (rules.md §9) | H |
+| off-map | +10 | | Normal landing | L |
+| own king | −1000 | | Never | – |
+| own rat at s=2 | −36 | | Friendly collision | M |
+| own rat s≥3 | −16/−14/−12, continue | | | L |
+| cat | +400 (`feed_score`) | | A feed: a kill, ranked above the king | M |
+| enemy king | +300 | | King hit (the actual damage is ≤ 42) | M |
+| enemy rat at s=2 | 2·42 = 84 | | Double collision | H |
+| enemy rat s≥3 | damage/(s−1) | | Discounted because it may move | L |
+| throw threshold | `STEP2_HIT` = 42 | `CombatStrategy` carry branch | Below it an enemy is held | H |
+| carry deadline | age ≥ 8 rounds | `CombatStrategy.mustThrow` | Last throw at grab + 10 | M |
+| carrier HP floor | ≤ 24 | `CombatStrategy.mustThrow` | Two 12-damage bites | L |
+| ally scan | step 2 only; enemy rat 102 / king 300 | `tryThrowAlly…` | | M |
+| throw directions | `related_map[myDir]`; all 8 for moves C and F | `move{X}` | Search width | M |
 
 ### TryPosition
 
@@ -470,7 +489,8 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | non-strafe | +10 | `moves/TryPosition:83` | L |
 | moving | +5 | `:84` | L |
 | turning | +2 | `:87` | L |
-| budget | min(3000, left−1000) | `:33` | L |
+| aim | + TryThrow's best primary line score, safe tiles only | `face{F}` | M |
+| budget | min(3000, left−1000) | `search()` | L |
 
 ### TryRatNap
 
@@ -568,7 +588,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 
 | # | Where | Issue | Impact |
 |---|---|---|---|
-| B1 | `TryThrow:308-315` + `:106` | Throw-target legality ignores cats (and anything else not in the occupancy grid) for non-adjacent landing cells. The failing `assert(rc.canThrowRat())` then **kills the rat** | Observed once in 12 games (DefaultMedium, r159) |
+| B1 | `TryThrow` | **Fixed (S1, CW).** Throw-target legality ignored cats for non-adjacent landing cells, and the failing `assert(rc.canThrowRat())` killed the rat. Cats are now in the occupancy grid and a failed check skips the throw | Observed once in 12 games (DefaultMedium, r159) |
 | B2 | `TryTrap:357-361` | `moveC()` is empty (`related_map[8]`): stay-and-place is never scored | Fewer and worse traps |
 | B3 | `KingCombatStrategy:116-117` | **Fixed (K1).** The ring cells for N/NW were `(2,-2)` and `(1,-2)`; they are `(-2,2)` and `(-1,2)` | King escape errors |
 | B4 | `TryFight:70` | `md==null` → NPE | Rare, turn lost |
@@ -576,7 +596,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | B6 | `TryRatNap:55` | Uses 10 instead of `getBiteDamage()` (12) | 11–12 HP enemies are grabbed instead of killed |
 | B7 | `TryRatNap:206-207` | "Looking at us" test is inverted (priority only) | L |
 | B8 | `KingSpawningStrategy.java:44-46` | Neighbour count always 0 | L |
-| B9 | `TryThrow:374` | Dirt collision scored without the +10 that walls get | L |
+| B9 | `TryThrow` | **Fixed (CW).** Dirt collisions scored without the +10 that walls got; both now score the engine's damage | L |
 | B10 | `BabyRat.java:249` via `TryAttack:69-70` | A move can trigger `tryTransferCheese`, which uses the action before the bite | Observed 2× |
 | B11 | `Pathfinder.java.jinja2:936-945` | In the combat BFS, visible allies are not obstacles. `RobotTracker.allyCount` is reset to 0 in `updateRobots` (preTick). Before combat runs, only `Squeaker.processMessage` refills it, adding each squeak's source tile (`Squeaker.java:88`). The full ally list comes from `RobotTracker.reset()`, which `BabyRat.run` calls only after combat (`BabyRat.java:109`). Own-king tiles are cleared in the wrong mask. So `moveMask` can point through ally blobs | **(inference)** Rats queue behind allies instead of flanking; TryFight's +30 goes to blocked cells |
 
@@ -649,17 +669,17 @@ There were no overruns.
 
 Each item lists the claim, then the evidence, then how to test it. The order is expected value / effort **(inference)**.
 
-**H1. Feed enemies to cats and make throws cat-aware.**
+**H1. Feed enemies to cats and make throws cat-aware.** Done (CW, §6.1).
 - Evidence: TryThrow has no cat term (§6.1, `TryThrow:258-293`). A thrown rat that hits a cat dies outright and the cat sleeps 2 turns (rules.md §9). That would replace a 34–42-damage throw with a 100-HP kill. B1 shows that a cat on the throw tile currently kills the carrier (failed `assert(rc.canThrowRat())`).
 - Implementation: mark the cat's 2×2 in the occupancy grid as "cat" and score it high (≥ the +300 king value). Treat cat-occupied landing cells as illegal. Have TryPosition carry toward cats when one is within ~4 tiles.
 - Test on cat maps, against awubot, both sides.
 
-**H2. Goal-directed carrying (TryPosition).**
+**H2. Goal-directed carrying (TryPosition).** Done (CW): the aim of §6.2, with the hold of §6.1.
 - Evidence: every grab forces one movement-only turn (+20 carry cooldown, §2). POSITION ≈ THROW (1,279 vs 1,321). The move has no objective (§6.2). 16% of enemy throws hit nothing (0 points) and 2% are threatened.
 - Implementation: score positions by the best next-turn throw from that cell. That could be a cheap version of TryThrow's scan: nearest wall, enemy or king in 3 directions. Alternatives are moving toward allies so the drop lands among them, or toward cats.
 - Watch the bytecode: POSITION turns use the least (7.5k median), so there is room.
 
-**H3. All 8 throw directions.**
+**H3. All 8 throw directions.** Done (CW) for moves C and F.
 - Evidence: TryThrow only considers `myDir±45°` (`:166`), but a rat may turn to any direction before throwing.
 - Implementation: extend to 8 directions only for `m ∈ {C, F}`, or prefilter with a cheap wall/enemy-in-line check. The budget is 9k and THROW decisions sit at a p90 of ≈13.9k total.
 
@@ -709,7 +729,9 @@ Each item lists the claim, then the evidence, then how to test it. The order is 
 ```
 [gate] sources? reachable within BFS? (else macro)
 precomp: canMove×9, CombatTracker masks
-carrying? -> TryThrow (score ray hits; enemy: always throw if legal) -> else TryPosition (goal-less move)
+carrying? -> ally: TryThrow (step-2 enemy or king only) -> else TryPosition
+            enemy: throw if best line >= 42, age >= 8 or HP <= 24; else hold: TryTrap, TryAttack,
+                   TryPosition aimed at the best line (throw if no tile is safe)
 else:
   TryRatNap   weight 30 (enemy) / 10 (ally ≤22hp)  - strafe + (-100 if grab-able, target excluded)   >= 0.5
   TryTrap     only if (≥24 rats | raw≥20 | strong enemy near); hidden trap on the enemy's next step   > 0.5

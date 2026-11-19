@@ -29,6 +29,7 @@ STALE_DAYS = 2  # a run nothing has touched for this long is deleted, closed or 
 CAS_KEEP_H = 6  # a stored bundle or shipped file no run or job holds is deleted this long after its last use
 SWEEP_EVERY_MIN = 60  # `run` and `tools/run` sweep at most this often
 QUOTA_GB = 55
+SWEEP_S = 600.0  # the sweep's bound: it walks every job and run folder
 
 
 def size_mb(spec: str) -> int:
@@ -225,7 +226,7 @@ def sweep(force: bool = True) -> str:
            f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mmin +{CAS_KEEP_H * 60} -print -delete 2>/dev/null "
            f"| wc -l); "
            f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"")
-    return login(cmd).strip().replace("\n", "; ") + " in use"
+    return login(cmd, timeout=SWEEP_S).strip().replace("\n", "; ") + " in use"
 
 
 def sweep_daily() -> None:

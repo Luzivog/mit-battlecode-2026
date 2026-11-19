@@ -361,6 +361,14 @@ Typical values: a safe forward approach scores 42, holding scores 10–12, a saf
 - `shouldFight` returns true for every enemy when I'm within dist² 36 of our king, and for cats within 36 of the king.
 - TryThrow never throws into our king's zone (−1000).
 - Spawning aims new rats at the nearest visible enemy, facing it. After damage it allows panic spawns with a +10/+20 cheese threshold (`KingSpawningStrategy.java:38-71`). Note that its "≤1 neighbour" filter is dead: `senseNearbyRobots(loc,2,enemyTeam)` never returns our own team, so `cnt` is always 0 and it targets the nearest enemy.
+- Measured (CC+CK, main against awubot on `faceoff` ∪ `L-combat`; `docs/closed.md`):
+  - 70% of awubot's throws into our king (2.6 of 3.7 a game) fly one of our rats spawned in the last 10 rounds, grabbed
+    next to the king that spawned it toward the enemy. Spawning on the far side instead cut those to 0.85, but doubled
+    the bites our king took (13 → 26 a game) and lost 10 points: near-side spawns hold the ring tiles enemies bite from.
+  - Of awubot's ~12 rescues a game (it grabs our carrier, which drops its victim), 1.2 come after a hold of 3 rounds or
+    more: the exposure is the two rounds between our grab and the earliest throw, not CW's longer hold.
+  - A rat on an enemy carrier's line near our king takes the throw in the king's place: keeping rats off carriers'
+    step-2 tiles cut awubot's double hits on them by 2 a game and raised the throw HP into our king by 13–16.
 
 **Cooperation/backstab:** combat code never checks `rc.isCooperation()`. The first bite or grab on an enemy starts the backstab. Observed first backstab at rounds 3–34 in every instrumented game. The strategic consequences are covered in strategy.md and rules.md §2.
 

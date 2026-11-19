@@ -728,6 +728,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 - **Size.** 200–400 template lines. Depends on CT.
 
 #### CC+CK. Carrier discipline, king assault and throw shield (one bundle)
+- **Closed, not merged** (2026-11-19; `docs/closed.md`). Ten arms and two bundles, every diagnostic moved as intended,
+  no win gain: the full bundle on `goal` read +0.001 [−0.033, +0.034] over 345 cells. Each lever shifts rats between
+  jobs (shield, bites, rescues). T4 WP4's far-side spawn is refuted (−0.100): near-side spawns are what keep enemies
+  off the king's ring. The king assault turns bites into throws; damage to the enemy king is limited by how many rats
+  reach it. Drop CC+CK's +2 to +6 pp from the forecast.
 - **Change.**
   - CC: while an enemy carries one of our rats:
     - do not end a turn on the carrier's step-2 tiles (its facing ±45°, after one move);

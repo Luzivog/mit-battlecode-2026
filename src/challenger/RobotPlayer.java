@@ -83,6 +83,7 @@ public class RobotPlayer {
                 Game.postTick();
             } catch (Throwable t) {
             } finally {// println
+                if (isRatKing) GlobalArray.endTurn();
                 Clock.yield();
             }
         }

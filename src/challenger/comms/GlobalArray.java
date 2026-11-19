@@ -83,6 +83,7 @@ public class GlobalArray {
     private static int cheeseQueueHead = 0;
     private static int cheeseQueueSize = 0;
 
+    private static int markedRound = -1;
     private static MapLocation toSpawn0 = null, toSpawn1 = null;
     private static int pendingPayload0 = -1, pendingPayload1 = -1;
 
@@ -177,7 +178,7 @@ public class GlobalArray {
     public static void initRatKing() throws GameActionException {
         kingId = findRatKingSlot();
         writeMyLoc();
-        markKingAlive();
+        markKingAlive(time);
         seedCheeseQueueFromSet();
     }
 
@@ -187,17 +188,13 @@ public class GlobalArray {
         numberOfRatsAlive = rc.readSharedArray(ALIVE_RAT_COUNT);
         readMapChunks();
         if (isRatKing) {
-            if (isFirstKingInRound()) {
-                for (int i = RAT_SPAWN_INFO; i < RAT_SPAWN_INFO + 10; i++) {
-                    writeSharedArray(i, 1023);
-                }
-            }
+            if (isFirstKingInRound(time)) clearSpawnInfo();
             toSpawn0 = toSpawn1;
             pendingPayload0 = pendingPayload1;
             toSpawn1 = null;
             pendingPayload1 = -1;
             writeMyLoc();
-            markKingAlive();
+            markKingAlive(time);
             updateRatKingTurnCounters();
         }
         checkSymmetry();
@@ -205,13 +202,19 @@ public class GlobalArray {
         findNearestRatKing();
     }
 
-    public static boolean isFirstKingInRound() throws GameActionException {
-        int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);  
+    private static boolean isFirstKingInRound(int round) throws GameActionException {
+        int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
         for (int i = 0; i < 5; i++, x >>>= 2) {
             int bits = x & 0b11;
-            if (bits == time % 3) return false;
+            if (bits == round % 3) return false;
         }
         return true;
+    }
+
+    private static void clearSpawnInfo() throws GameActionException {
+        for (int i = RAT_SPAWN_INFO; i < RAT_SPAWN_INFO + 10; i++) {
+            writeSharedArray(i, 1023);
+        }
     }
 
     public static void postTick() throws GameActionException {
@@ -477,13 +480,28 @@ public class GlobalArray {
         return CellTracker.Symmetry.values()[cur_sym];
     }
 
-    public static void markKingAlive() throws GameActionException {
+    private static void markKingAlive(int round) throws GameActionException {
         // cycle counter
         int x = rc.readSharedArray(RAT_KING_TURN_COUNTER);
-        int t = time % 3;
+        int t = round % 3;
         x &= ~(0b11 << (2 * kingId));
         x |= t << (2 * kingId);
         writeSharedArray(RAT_KING_TURN_COUNTER, x);
+        markedRound = round;
+    }
+
+    // A king's turn that runs out of bytecode ends in the next round, without that round's preTick, and so does a baby's
+    // turn that converts it (Game.convertKing yields). Kings before it in the turn order would read the missing mark as
+    // its death in the round after (updateRatKingTurnCounters) and clear its slots until its own turn. So a king marks
+    // every round it runs in, and does the first king's duty if no king has run yet. Called at the end of every turn.
+    public static void endTurn() {
+        int round = rc.getRoundNum();
+        if (markedRound == round) return;
+        try {
+            if (isFirstKingInRound(round)) clearSpawnInfo();
+            markKingAlive(round);
+        } catch (GameActionException e) {
+        }
     }
 
     public static void writeMyLoc() throws GameActionException {

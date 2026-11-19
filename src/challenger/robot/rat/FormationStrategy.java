@@ -24,6 +24,7 @@ public class FormationStrategy extends Strategy {
     private MapLocation formationTarget = null;
     private int formationStartTurn = 0;
     private boolean active = false;
+    private boolean danger = false;
 
     private boolean isComplete() throws GameActionException {
         if(!active) return true;
@@ -33,6 +34,7 @@ public class FormationStrategy extends Strategy {
             active = false;
             return true;
         }
+        if(danger) return false;
         for(int i = 0; i < 4; i++) {
             int angle;
             if(i == time % 4) {
@@ -51,11 +53,19 @@ public class FormationStrategy extends Strategy {
         return false;
     }
 
+    // A danger formation (our only king is about to die) runs before combat (BabyRat), ignores cats and keeps the
+    // cheese a rat carries: the formation puts it in the bank.
+    public boolean runDanger() throws GameActionException {
+        if (!tryActivate() || !danger) return false;
+        RobotTracker.reset();
+        return runTick();
+    }
+
     @Override
     public boolean runTick() throws GameActionException {
         tryActivate();
         if(isComplete()) return false;
-        if(rc.getRawCheese() > 0) {
+        if(!danger && rc.getRawCheese() > 0) {
             var distToFormation = myLoc.distanceSquaredTo(formationTarget);
             var distToHome = myLoc.distanceSquaredTo(GlobalArray.nearestRatKing);
             if(rc.getRawCheese() >= 40 && distToHome < distToFormation - 25) {
@@ -108,6 +118,7 @@ public class FormationStrategy extends Strategy {
         }
 
         formationTarget = target;
+        danger = GlobalArray.isDangerFormation();
 
         if (active) {
             return true;

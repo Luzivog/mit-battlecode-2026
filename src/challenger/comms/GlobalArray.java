@@ -563,8 +563,15 @@ public class GlobalArray {
         return decodeExact(slot1, slot2);
     }
 
+    // Slot 9 holds the coordinator's kingId (0-4) and, in bit 3, whether the formation is a danger formation (KD).
+    public static final int DANGER_FORMATION = 8;
+
     public static int getFormationCoordinator() throws GameActionException {
-        return rc.readSharedArray(FORMATION_COORDINATOR);
+        return rc.readSharedArray(FORMATION_COORDINATOR) & 7;
+    }
+
+    public static boolean isDangerFormation() throws GameActionException {
+        return (rc.readSharedArray(FORMATION_COORDINATOR) & DANGER_FORMATION) != 0;
     }
 
     public static boolean tryClaimFormationCoordinator(int aKingId) throws GameActionException {

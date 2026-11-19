@@ -17,7 +17,7 @@ import challenger.comms.EnemyManager;
 public class BabyRat {
     private static Direction lastGlance;
     public static boolean shouldGlance;
-    public static Strategy primaryStrategy;
+    public static MinerStrategy primaryStrategy;
     public static CombatStrategy combatStrategy;
 
     public static boolean transferSwitch = false;
@@ -98,6 +98,10 @@ public class BabyRat {
         }
 
         if (rc.isBeingThrown()) {
+            return;
+        }
+
+        if (GlobalArray.isDangerFormation() && primaryStrategy.formationStrategy.runDanger()) {
             return;
         }
 

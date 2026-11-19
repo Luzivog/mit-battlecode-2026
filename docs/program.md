@@ -15,7 +15,7 @@ against the other top public bots (`src/opp_*`, `docs/opponents.md`). Progress: 
 | XE | engine-speed eval (the `evaluation` skill): cost over a fixed game corpus, `INVALID` unless every output matches | `tools/enginebench/` | running | 1, xhigh |
 | XC | engine-speed climb | a branch | XE | 1 climber, Opus 5.5 high |
 | T | theory: the dominant strategy from first principles, models of the top bots, gaps, work packages | `docs/theory/`, `docs/plan.md` | done (plan reviewed by a critic, fixes applied) | 5 lenses + synthesis + critic, xhigh |
-| B | bot improvement: one work package an agent, judged on Imperial, win rates reported | branches merged into main | running: wave 1 (RB, S1, K1, E2 arm 1a, S2 merged; KL, CT, CW, CB in progress); wave 2 started (E3, K2) | many, xhigh |
+| B | bot improvement: one work package an agent, judged on Imperial, win rates reported | branches merged into main | running: wave 1 (RB, S1, K1, E2 arm 1a, S2, KL merged; CT, CW, CB in progress); wave 2 started (E3, K2) | many, xhigh |
 
 ## How work flows
 

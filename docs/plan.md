@@ -393,6 +393,14 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - Why it should work there: formations complete when the bot is "rich or uncontested" (strategy§6.3), and the r1100
     points seats hold 786–2122 global (T3§3.5).
   - Cat-lane exclusion: none in arm A; the coordinator's cat abort is dead code (strategy§3), and K2 adds lanes later.
+- **Merged: arm A at T_lock 800, K_target 3** (2026-11-19, 6349ecd), with three measured additions: a king counts as
+  gone only after two rounds missing (an overrun king misses one liveness write); lock-in formations before r1200 need
+  1000 global cheese; and they keep the known-mine thresholds (lock-in lost 15 net games of 62 on ≤ 4-mine maps). `L-late`
+  gain +0.055 [+0.008, +0.106] vs main (1119-024054-ab-925a); `goal` harm passed (1119-032401-ab-0db4). Two
+  confirmatory tests were run, so the false-accept chance is about 0.10. Seats with ≥ 3 kings at r1200: 47 of 293
+  (main 9); a single king at r1500: 42 of 252 (main 120). Expected on `goal`: +1 to +2 pp, below the estimate.
+  K_target 5 scored −0.05 to −0.06. **Starvation is the limit**, not completion: forming beside our own king
+  completed 77% of attempts and scored −0.140, because kings sharing a mine starve. Arm B is not built as specified.
 - **Arm B (only if arm A's formation-success diagnostic fails, < 70% of attempts completing).** Budding (DS§4.3):
   - new `KingBudStrategy` and `BudStrategy`, payload role 2 (§2.1);
   - the old coordinator and `FormationStrategy` are deleted (rule 7), with the r1800+ endgame behaviour reproduced
@@ -618,6 +626,8 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 
   On maps likely to end in cooperation (no enemy seen by r100): form before r150 (T3 P3c). This is the arm that can
   reach TheHeist and peaceinourtime.
+- **KL's finding applies:** a king beside another king starves on the shared mine (−0.140 on `L-late`); the new
+  king's site must be its own mine.
 - **Rests on.** T1§2.7: kings are cheapest early, and in 15% of kill games the winner's king ended below 300 HP.
   T3§4.2: 2v1 is +10 in cooperation. T3§3.2: peaceinourtime was decided by a second king.
 - **Effect.** +2 to +6 pp; the sign is uncertain, because the opening loses presence (first contact r4–25).

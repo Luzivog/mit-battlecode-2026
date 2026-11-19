@@ -214,5 +214,7 @@ runs/
 
 # native engine build outputs
 engine/build/
+engine/.ninja_deps
+engine/.ninja_log
 # tools/games: what the Imperial backend ships to the nodes
 .bcgames-ship/

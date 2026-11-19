@@ -15,3 +15,5 @@
 {"t": 1795078615, "score": 20.0456, "kept": true, "what": "BFS inner loop as a C++ native (FastPath.bfs) over the validated tables"}
 {"t": 1795079199, "score": 15.7214, "kept": true, "what": "ThinLTO (clang -flto=thin, lld) for the generated code and runtime; GC roots from writable PT_LOAD segments"}
 {"t": 1795079889, "score": 14.5835, "kept": true, "what": "fast path for BcxStateHash.tiles: same absorbs from GameWorld's tile arrays, no MapLocation or accessor call per tile"}
+{"t": 1795080478, "score": null, "kept": false, "what": "INVALID: inline free lists, atomic lists untraced and sizes one granule short (crash)"}
+{"t": 1795080755, "score": 14.4124, "kept": true, "what": "small pointerful objects from our own free lists refilled by GC_generic_malloc_many"}

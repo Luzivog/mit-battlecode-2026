@@ -8,6 +8,7 @@
 #include <string>
 
 #include "gc.h"
+#include "gc/gc_inline.h"
 #include "sched.h"
 
 Obj* g_exc;
@@ -40,8 +41,29 @@ static size_t elem_size(char e) {
     }
 }
 
+// Small pointerful objects come from free lists of our own, refilled a block at a time by GC_generic_malloc_many
+// (the collector's own fast path, gc_inline.h): a pop instead of a call. The lists' heads are in .bss and each
+// object links the next through its first word, so the collector sees them all as live (pointer-free objects would
+// hide their links from it, so those stay with GC_MALLOC_ATOMIC). The size classes are GC_malloc's: with interior
+// pointers on, one byte more (GC_generic_malloc_many takes the whole granules).
+static void* g_fl[GC_TINY_FREELISTS];
+static inline void* fast_alloc(size_t bytes) {
+    size_t g = (bytes + 1 + GC_GRANULE_BYTES - 1) / GC_GRANULE_BYTES;
+    if (UNLIKELY(g >= GC_TINY_FREELISTS)) return GC_MALLOC(bytes);
+    void** fl = &g_fl[g];
+    void* p = *fl;
+    if (UNLIKELY(!p)) {
+        GC_generic_malloc_many(g * GC_GRANULE_BYTES, GC_I_NORMAL, fl);  // whole granules, the extra byte included
+        p = *fl;
+        if (!p) return nullptr;
+    }
+    *fl = *(void**)p;
+    *(void**)p = nullptr;  // the link; the rest is clear
+    return p;
+}
+
 Obj* rt_new(Klass* k) {
-    Obj* o = (Obj*)GC_MALLOC(k->size < (int)sizeof(Obj) ? sizeof(Obj) : k->size);
+    Obj* o = (Obj*)fast_alloc(k->size < (int)sizeof(Obj) ? sizeof(Obj) : k->size);
     if (!o) rt_fatal("out of memory allocating %s", k->name);
     o->klass = k;
     return o;
@@ -54,7 +76,7 @@ Obj* rt_newarray(Klass* ak, jint n) {
     // an array of a system enum holds only its constants (or null), which the enum's statics keep alive: the
     // collector need not scan it (the cats' BFS tables are such arrays, tiles squared of them)
     Klass* c = ak->component;
-    if (ak->elem == 'L' && !((c->flags & KF_ENUM) && c->module == 0)) a = (Obj*)GC_MALLOC(bytes);
+    if (ak->elem == 'L' && !((c->flags & KF_ENUM) && c->module == 0)) a = (Obj*)fast_alloc(bytes);
     else {
         a = (Obj*)GC_MALLOC_ATOMIC(bytes);
         if (a) memset(a, 0, bytes);

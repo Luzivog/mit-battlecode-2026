@@ -25,6 +25,12 @@ agent adds its H0s here; the integrator adds them when an agent did not. Diffs a
 | 2026-11-19 | K2 | D': A plus no mining step into a known lane | `L-cat`, 0.08, fresh seeds | +0.021 [−0.038, +0.075], H0 | cat-involved king deaths −30% but all king deaths −1%: enemies kill the kings the cats no longer do; one clear cluster (bed 12 better, 1 worse). `goal` harm passed twice; kept on the branch, not accepted |
 | 2026-11-19 | K2 | D2: D' plus marking 4 steps along a seen cat's facing | `L-cat`, 0.08, fresh seeds | −0.051 [−0.157, +0.042], H0 (39 cells) | cone scratch −27% (D': −12%) with no more wins |
 | 2026-11-19 | E3 | change 0: the mine squeak decoder reads all 3 mines (a bug fix) | `goal` harm, 0.05, on CW main; and vs `opp_obg` | vs awubot −0.005 [−0.024, +0.016] (14 of 190 cells changed); vs OBG −0.014 [−0.030, +0.001] (393 cells), and −0.026 [−0.052, +0.000] in E3's gauntlet | kings learn mines from their own vision, so their knowledge barely moves (same on 14 of 18 maps); only rat gossip speeds up, and it leans against us vs OBG twice. Not merged; branch `t3/e3-territory-miners-deficit` |
+| 2026-11-19 | CB | CB1: skip the cheese transfer so the planned bite happens; "correct" B5 (next-best move); B6 | `goal` harm, 0.05 | +0.041 first, then −0.025 [−0.047, −0.003] over 539 cells on the E2 main | changes game actions at out-of-cone events; not certain-sign |
+| 2026-11-19 | CB | CB1b: transfer keeps priority, "correct" B5 | `goal` harm, 0.05 | 7 better / 15 worse, −0.017 | as above |
+| 2026-11-19 | CB | bite damage capped at 13 (kill now, flip HP order, win 1v1 races) | `L-combat`, 0.05 | +0.027, H0 | pure 1v1 duels happen ~0.5 a game: winning them does not move the score |
+| 2026-11-19 | CB | damage cap 16 | `L-combat`, 0.05 | −0.048, H0 | extra ~67 cheese a game spent on bites |
+| 2026-11-19 | CB | cap 16 with main's target choice (16p) | `L-combat`, then `goal` confirmatory | H0; confirmatory −0.002 | duels won 0.74 vs 0.49, no score; widening TryAttack's one-tap weight to 13–16 HP pulls rats off kings |
+| 2026-11-19 | CB | kings bitten at 12; plus finishing bites | `L-combat`, 0.05 | +0.025 / +0.020, H0 | kings take ~18 bites a game, +2 damage each kills no faster |
 
 Code of the rejected arms: the packages' revert commits and side branches (`e3-c2` holds a working spawn-payload
 role switch with S2's both-or-neither write, for KB or K3 to reuse).

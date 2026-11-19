@@ -590,6 +590,12 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - **Kill:** duels won unchanged.
 - **Size.** 40–100 lines.
 
+- **Merged: CB1c only** (2026-11-19, f809bf3): after a combat move the bite or grab runs only if the action is ready,
+  and an out-of-cone secondary target ends the combat turn. Game actions are main's; only the lost turn tails come back
+  (`BabyRat.attack` throws 149 → 18 per 192 games). Every damage-policy and king-bite arm ended H0 (`docs/closed.md`):
+  bite races are not a lever. Left: `TryAttack.miniRun` has no cone check (13 throws per 192 games). There is no
+  bite-damage function on main: PT's cat case goes in `BabyRat.attack`, where cats are forced to 10.
+
 #### PT. Endgame points conversion (bundle with cat-bite cheese)
 - **Change.**
   - `MinerStrategy.java:175-213`: from t ≥ 2000 − (distance to the nearest king + 20), any raw > 0 goes home. No

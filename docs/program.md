@@ -17,7 +17,7 @@ against the other top public bots (`src/opp_*`, `docs/opponents.md`). Progress: 
 | C2 | warm shared compute pool: pieces take tasks from any open run, submission reuses live capacity, fair across agents | `tools/compute`, `tools/run`, `tools/piece.py` | done (submission to first task: median 20 s → 3 s; sequential tests about half the wall time; one game per task) | 1, xhigh |
 | EN | native backend for `tools/games`: games on `engine/build/bcx`, with a same-machine exactness sample on every run | `tools/bcgames/` | running | 1, xhigh |
 | T | theory: the dominant strategy from first principles, models of the top bots, gaps, work packages | `docs/theory/`, `docs/plan.md` | done (plan reviewed by a critic, fixes applied) | 5 lenses + synthesis + critic, xhigh |
-| B | bot improvement: one work package an agent, judged on Imperial, win rates reported | branches merged into main | running: wave 1 (RB, S1, K1, E2 arm 1a, S2, KL, CW, CT merged; CB, E1 in progress); wave 2 started (CC+CK, KB, PT, CX, KS: a king site reachable for a 3×3; E3 and K2 closed, neither merged); S3 merged (king liveness, torn chunks) | many, xhigh |
+| B | bot improvement: one work package an agent, judged on Imperial, win rates reported | branches merged into main | running: wave 1 (RB, S1, K1, E2 arm 1a, S2, KL, CW, CT, CB1c merged; E1 in progress); wave 2 started (CC+CK, KB, PT, CX, KS: a king site reachable for a 3×3; E3 and K2 closed, neither merged); S3 merged (king liveness, torn chunks) | many, xhigh |
 
 ## How work flows
 

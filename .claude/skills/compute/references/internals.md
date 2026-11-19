@@ -4,7 +4,8 @@ For changing `tools/compute`, `tools/run`, `tools/job.sh` or `tools/piece.py`. T
 
 No daemon and no state of our own: Slurm, Condor and the folders of our workspace `/vol/gpudata/user-bc26` are the record.
 Ported from the previous project's tooling (prior-battlecode-tooling, `tools/compute`, `tools/job.sh`), trimmed
-to what a Java bot repo needs: no test queue and no follower service.
+to what a Java bot repo needs: no test queue. A run's follower is `tools/run` itself or `tools/compute wait`, a
+process of the agent's, not a service.
 
 ## Files
 
@@ -19,6 +20,25 @@ to what a Java bot repo needs: no test queue and no follower service.
 | `tools/compute.py`, `tools/grid.py` | the CLIs `tools/compute` and `tools/run` |
 | `tools/kitgame` | a smoke game runner: the same game here and on a node |
 | `tools/fixtures/` | reads captured from DoC (18 Nov 2026), the verification games, `launchcost.sh` |
+
+## Remote calls (`tools/remote.py`)
+
+- **Bounded, both sides.** `login` gives a call `READ_S` (20 s), plus 1 s a MB it uploads; `login_into` (a bulk
+  transfer) `BULK_S` (600 s); a call on the submit host `SUBMIT_S` (120 s); the sbatch probes and the sweep pass
+  their own. Here ssh is killed `SLACK_S` after the bound; there the command runs in a session of its own beside a
+  `sleep` of the bound, and at the bound that whole session is killed, children included (`BOUND_SH`). A call that ran
+  out of time is `Unreachable`, as a lost connection is: a follower keeps following.
+- **One kept connection a login node, never more sessions than it holds.** sshd allows 10 sessions a connection. Every
+  process of ours on this machine takes one of `SESSIONS` (8) slots a host before a session, at most `BULK_SESSIONS`
+  (3) of them for bulk transfers, and `SUBMIT_SESSIONS` (4) logins at once to the submit host: slots are lock files
+  under `~/battlecode26-data/compute/ssh/`, freed when the process ends. A call waits its turn for a slot
+  (`SLOT_WAIT_S`, 300 s), then is `Unreachable`.
+- **No fall-off.** A client runs with `ControlMaster=no`, the connection's socket as ssh resolves it (`ssh -G`: `%C`
+  hashes the jump host), and `ProxyCommand=/bin/false`: a session the master refuses ends 255 instead of opening a
+  connection of its own. A refused session ("Session open refused by peer") never ran, so it is asked again with a
+  backoff while the slot wait lasts. A connection that is gone is made again once (`start_master`, one process at a
+  time, under a lock; `ControlPersist=10m`). `gpucluster3` is tried when `gpucluster2` can't be reached; a name whose
+  connection was already tried is skipped.
 
 ## A job
 

@@ -40,8 +40,8 @@ ENGINE_DATA = Path.home() / "battlecode26-data" / "engine"
 KINDS = {"visible": DATA / "visible", "sealed": DATA / "SEALED-TEST-DO-NOT-READ"}
 # sha256 of each manifest.json: the scenarios, their weights and caps, and the reference's outputs (pinned)
 MANIFEST_SHA256 = {
-    "visible": "63b20fa8d966a2b0c184adc1a4a8935088d92d4fe5193b64d1455a460d842c6f",
-    "sealed": "2539939b7be53d6cec9e75e13bf3c197b9f1a3c821b42e7df61edb547d396977",
+    "visible": "b623229a72557c1c5503b4f0dcaf2a0dacdb2eaba50632bd463400bf54d0180d",
+    "sealed": "6561ef677caca2d233dabbb8ac674814a3164cd9481e60ab9635831a473ca11e",
 }
 ENGINE_VERSION = "1.2.6"
 # the bots compiled into the scored binary: every frozen package of the agreement corpus (engine/test/corpus.py)

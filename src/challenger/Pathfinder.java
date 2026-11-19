@@ -1832,7 +1832,8 @@ public class Pathfinder {
                 if (team == Team.A) return true;
                 if (o != 0) return o != 2;
                 return CellTracker.getSymmetry() != CellTracker.Symmetry.Vertical;
-            default: return team == Team.A;
+            case 6: return team == Team.A;
+            default: return team == Team.A || o == 1 || o == 3;
         }
     }
     static int lastDist = 0;

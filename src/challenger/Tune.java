@@ -87,8 +87,9 @@ public final class Tune {
     // KR: the king's bug hand (Pathfinder; docs/theory/kr-king-routes.md). Main's king always starts left-handed; a
     // mirror reverses that, so on reflective maps the two seats' kings go round mirrored walls on opposite sides.
     // 0: left (main); 1: right; 2: right for chirality 1; 3: right for chirality 1 on VERTICAL and HORIZONTAL maps;
-    // 4: right for chirality 1 on VERTICAL maps; 5: right for team B on VERTICAL maps; 6: right for team B. The king
-    // reads its chirality and, for chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0
-    // king of team B knows the symmetry once the rats find it.
-    public static final int KING_HAND = 0; // tune: 1 [0, 6] the kings' bug hand (above): 0 left, 1 right
+    // 4: right for chirality 1 on VERTICAL maps; 5: right for team B on VERTICAL maps; 6: right for team B; 7: right for
+    // team B except a chirality-1 king on HORIZONTAL or ROTATIONAL maps. The king reads its chirality and, for
+    // chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0 king of team B knows the
+    // symmetry once the rats find it.
+    public static final int KING_HAND = 0; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
 }

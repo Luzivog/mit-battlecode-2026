@@ -260,6 +260,12 @@ forced) and three sequential ones (`quick`, 16 to 64 cells), main's tools (1119-
 | pieces requested, the four tests | 34 | 21 (refill batches: none; 64% of tasks ran on another run's piece) |
 
 - A refill batch found free slots on live pieces every time and started in 1.3 to 13.4 s.
+- Then a task a game (`tools/games`' CHUNK 1; a task's own start costs 2.1 s median against a 58.6 s game, 411 tasks),
+  the same four tests (1119-060800-ab-6d10, 1119-060801-ab-36af, 1119-060801-ab-d280, 1119-060801-ab-bada): every
+  refill batch started 1.4 to 2.0 s after submission with no piece of its own; the 380-game test took 448 s; the
+  sequential tests 3.7 to 3.9 s of wall a game played (5.3 to 6.0 with 3 games a task, 8.3 to 26.8 on main's tools);
+  pieces requested 49 (31 for the 380-game test, now 256 tasks at once instead of 86); 68% of tasks ran on another
+  run's piece.
 - No idle grace: in both pooled experiments no run asked for a piece within 300 s after a piece ended (0 of 4 and
   0 of 13 piece requests); every request came while the pool was full.
 - Fairness under contention, with the real `piece.py` on a fixed 6 slots (three pieces) busy with a 60-task run (20 s

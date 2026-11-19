@@ -12,6 +12,7 @@ and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcga
 |---|---|
 | **is my branch better than main?** Prints the run's ID at once | `tools/games ab challenger awubot --pool POOL` |
 | wait for it: **run it in the background**; it exits when the test stops | `tools/games wait ID` |
+| several tests: wake at each one's end (its report and exit code, and the IDs still running) | `tools/games wait --any ID ID...` |
 | the report so far; every game; one game's record and timeline | `tools/games show ID`, `--games`, `--game GAME` |
 | is my branch worse than main? (certain-sign fixes, class pools a change must not hurt) | `tools/games ab challenger awubot --test harm --pool POOL` |
 | A against B alone, no reference (the integrator's progress rows) | `tools/games ab challenger awubot --ref none --pool goal` |
@@ -27,6 +28,10 @@ and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcga
 | any of `ab`, `gauntlet`, `replays` on DoC's machines (compute skill) | add `--remote [--where condor,slurm]` |
 
 In Claude Code: run `tools/games ab ...`, then `tools/games wait ID` with the Bash tool's `run_in_background: true`.
+With several tests running, wait on all of them in one background `tools/games wait --any ID ID...`: it returns
+when the first one stops (at once if one has), with that test's report and exit code and the IDs still running; read
+it, act, then start `wait --any` again on those. `tools/games wait ID ID...` without `--any` returns when all have
+stopped, a verdict line each (exit 0 only if every one passed).
 You are woken when the test stops, and the exit code is the verdict:
 
 | exit | gain test (default) | harm test (`--test harm`), gauntlet |
@@ -157,7 +162,11 @@ the ref's own score on the same cells and the paired difference with its CI.
   - `--workers` becomes the games in flight (default 256). Each test sends at most one pass (or 32 cells) beyond its
     scored prefix, its next decision point. A batch goes out as soon as games wait, at least 10 s after the test's
     previous batch (`imperial.FLUSH_S`); each task plays one game with `tools/play` (`imperial.CHUNK`), native or
-    Java. Results are read as `tools/compute wait` fetches them (every 30 s a batch).
+    Java. Results are read as `tools/compute wait` fetches them (every 30 s a batch), from the moment `tools/run`
+    has made the batch's run: its placement of pieces goes on beside the follower.
+  - A node with under 2 GB free where its games write takes no task, and a game that fails there for want of disk
+    goes back to the pool unplayed (`tools/play --give-back`, compute internals "Room to write"), not to Java on
+    that node.
   - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. It prints the same JDK
     fingerprint as Ubuntu's 21.0.13 here, so remote and local games share one cache. Verified: remote games
     byte-identical to local ones (replay digests, Slurm and Condor).
@@ -187,7 +196,10 @@ the ref's own score on the same cells and the paired difference with its CI.
 - **Exactness guard.** Each run also plays some of its native games on Java, on the same machine: every binary's
   first game in the run, and 1 in 32 of the rest, chosen by game key. Locally the Java twin runs beside the run;
   remotely a separate task plays the game on both engines on one machine. Neither holds up a cell, and the run does
-  not conclude (or print a verdict) until every check has come back. When the replays differ, Java plays it
+  not conclude (or print a verdict) until every check has come back. Remotely the checks go first: the sampled games
+  of every cell a test will play whatever happens (its first `--min-cells`) are checked from its binary's first
+  batch, each check twice on two machines (the first verdict counts; a mismatch from either stops the run), and a
+  batch's checks come before its games. When the replays differ, Java plays it
   again. If its two runs differ and one equals the native game, the Java engine's own nondeterminism explains it
   (engine/AGENTS.md "Known gaps") and the native result stands. Otherwise the run stops with an error (exit 1), the
   binary is marked bad and never used again, and its results leave the cache. Report it, and rerun with

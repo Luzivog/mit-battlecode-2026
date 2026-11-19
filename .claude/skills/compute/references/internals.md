@@ -93,7 +93,16 @@ pieces serve every pooled run, and every pooled piece serves it.
 - **Another run's checkout.** A task runs in its run's checkout: the piece's own (job.sh's) for its run and runs of
   the same content and kit; else one the piece makes in its scratch from that run's `code.bundle` and `with.tgz`,
   job.sh's way (2.0 s on a lab machine, 19 Nov), kept for later runs of that content (`CHECKOUTS` unused ones at
-  most). A kit run's `kit` file names its jars; the task gets that run's `BC_CLASSPATH` and `BC_ENGINE_JARS`.
+  most, besides those tasks run in; one is ~350 MB). A kit run's `kit` file names its jars; the task gets that run's
+  `BC_CLASSPATH` and `BC_ENGINE_JARS`. Until 19 Nov the prune counted busy checkouts too, so a piece serving more
+  than 4 other contents deleted each new checkout at once and made it again for every claim: 281,305 checkouts for
+  339,682 task starts that day, main loops stalled for minutes (no beats, no reaps), their claims taken over as dead
+  (start 2, 300-420 s later) and a start that found its checkout gone killed the piece.
+- **Room to write.** A piece claims a task only while its scratch's filesystem has `DISK_MIN_MB` (2 GB) free, after
+  pruning its unused checkouts when short (a lab machine's execute folder is on its root: 8.4 GB free on ash09, 19
+  Nov). A task that ends `GIVE_BACK` (75: `tools/play --give-back`, a game that found no room to write) has its claim
+  given back at once, unrun, for another piece, and its piece takes no more tasks. The tasks of a piece share
+  `JOB_CACHE` (its scratch's `cache/`): a native binary is unpacked there once a piece, not 100 MB a task.
 - **The exit rule.** A piece ends as soon as it runs nothing and a last look at every run (skips ignored) finds
   nothing it may claim: no idle grace. A run's `closed` stops that run's tasks on every piece (checked every
   `CLOSED_S`, 5 s), and the piece goes on with other runs' tasks.
@@ -102,6 +111,9 @@ pieces serve every pooled run, and every pooled piece serves it.
   its end; one older than 90 s (by the volume's clock) is a dead piece's.
 - **Placement.** A new pooled run asks for pieces for its tasks less the free slots of the live pieces that would
   serve it (`runs.place`); `tools/run` says so (`2 live pieces have 9 free slots: no new piece`).
+- **Placement beside the follower.** `tools/run` prints the run's id before it places pieces and touches `placed`
+  after; a follower started at the id (`tools/games` follows each batch at once) adds no piece before `placed`, or
+  `PLACE_S` (10 min) after the run's creation.
 - **Following.** The follower adds pieces (`replace.K`, `POOL_ROUNDS` 8 at most) when tasks wait (unclaimed, or
   claimed by dead pieces while none of its own pieces runs) beyond the live pieces' free slots, never while one of its
   pieces is queued or held, or just started, and at most every `GRACE_S` (20 s). Its own pieces' end stops a pooled

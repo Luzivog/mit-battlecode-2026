@@ -14,7 +14,9 @@ Result (one JSON object per line, in completion order): the spec's fields plus w
 win_type, round, wall_ms, cpu_s, digest (sha256 of the replay bytes), per team A/B {cheese_transferred, cat_damage,
 rats, kings, cheese, crashed}, engine_errors, cat_rng_draws, series (each team's [cheese_transferred, rats, kings, cat_damage] every 100 rounds
 and at the end), backend, key, runner, cached, error, replay.
-"crashed": robots the engine destroyed because their code threw (an uncaught Error) or returned from run().
+"crashed": robots the engine destroyed because their code threw (an uncaught Error) or returned from run(). A thrown
+crash is attributed by the package of the trace's first frame, so in a mirror (the same package on both sides) every
+thrown crash counts for A. The native engine (engine/) counts per robot and has no such limit.
 """
 from __future__ import annotations
 

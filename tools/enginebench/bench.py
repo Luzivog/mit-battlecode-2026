@@ -1,7 +1,7 @@
 """enginebench: the native engine's cost over a fixed slice of the agreement corpus (tools/enginebench/AGENTS.md).
 
-    tools/enginebench/enginebench score [-j N] [--json] [--main] [--sealed]
-    tools/enginebench/enginebench explain [ID] [--profile ID]
+    tools/enginebench/enginebench score [-j N] [--json] [--only ID[,ID]] [--main] [--sealed]
+    tools/enginebench/enginebench explain [--profile ID]
     tools/enginebench/enginebench scenarios [--json]
 
 score: builds the checkout's engine (engine/build.py, the pinned bots), plays every visible scenario once in a
@@ -35,7 +35,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
-DATA = Path(os.environ.get("ENGINEBENCH_DATA", str(Path.home() / "battlecode26-data" / "enginebench")))
+DATA = Path.home() / "battlecode26-data" / "enginebench"
 ENGINE_DATA = Path.home() / "battlecode26-data" / "engine"
 KINDS = {"visible": DATA / "visible", "sealed": DATA / "SEALED-TEST-DO-NOT-READ"}
 # sha256 of each manifest.json: the scenarios, their weights and caps, and the reference's outputs (pinned)
@@ -203,11 +203,11 @@ def check_names(repo: Path, scenarios: list) -> list[str]:
         base = ""
         if rel in main_files:
             base = sh(["git", "show", f"origin/main:{rel}"], cwd=repo, check=False)
-        for i, ln in enumerate(text.splitlines(), 1):
-            mt = lit.search(ln)
-            if mt and mt.group(0) not in base:
-                reasons.append(f"{rel}:{i} names {mt.group(0)!r} (the eval or a scenario): code under test must not")
-                break
+        hits = [(i, mt.group(0)) for i, ln in enumerate(text.splitlines(), 1) for mt in lit.finditer(ln)
+                if mt.group(0) not in base]
+        if hits:
+            i, name = hits[0]
+            reasons.append(f"{rel}:{i} names {name!r} (the eval or a scenario): code under test must not")
     return reasons
 
 
@@ -216,7 +216,7 @@ def check_portable(repo: Path, ninja: Path | None) -> list[str]:
     if ninja is None:
         return ["cannot find the build's build.ninja to check its compiler flags"]
     for ln in ninja.read_text().splitlines():
-        if ln.startswith(("cxxflags", "  command")):
+        if not ln.startswith("build "):
             mt = ISA_FLAG.search(ln)
             if mt:
                 reasons.append(f"build flag {mt.group(0)} ties the binary to a CPU or to inexact math "
@@ -469,21 +469,28 @@ def main_reading(repo: Path, kind: str, m: dict) -> dict | None:
 
 
 def export_main(repo: Path) -> Path:
-    """origin/main's tree in a fixed folder of the data dir (so its engine builds incrementally), bots' classes
-    from the eval's frozen copy."""
+    """origin/main's engine/ in a fixed folder of the data dir, so it builds incrementally: a file whose bytes did
+    not change is left alone (git archive stamps every file with the commit's time, which would rebuild all)."""
     dest = DATA / "main" / "checkout"
     commit = sh(["git", "rev-parse", "origin/main"], cwd=repo).strip()
-    kept = dest / ".engine-build"
-    if (dest / "engine" / "build").exists():
-        shutil.rmtree(kept, ignore_errors=True)
-        (dest / "engine" / "build").rename(kept)
-    shutil.rmtree(dest / "engine", ignore_errors=True)
-    dest.mkdir(parents=True, exist_ok=True)
     tar = subprocess.run(["git", "archive", "origin/main", "engine"], cwd=repo, capture_output=True, check=True).stdout
+    seen = set()
     with tarfile.open(fileobj=io.BytesIO(tar)) as t:
-        t.extractall(dest, filter="data")
-    if kept.exists():
-        kept.rename(dest / "engine" / "build")
+        for mem in t.getmembers():
+            if not mem.isfile():
+                continue
+            seen.add(mem.name)
+            data = t.extractfile(mem).read()
+            p = dest / mem.name
+            if p.is_file() and p.read_bytes() == data:
+                continue
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_bytes(data)
+            p.chmod(mem.mode)
+    for p in sorted((dest / "engine").rglob("*")):
+        rel = str(p.relative_to(dest))
+        if p.is_file() and not rel.startswith("engine/build/") and rel not in seen:
+            p.unlink()
     (dest / "COMMIT").write_text(commit + "\n")
     return dest
 

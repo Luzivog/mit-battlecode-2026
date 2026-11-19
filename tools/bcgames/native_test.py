@@ -106,6 +106,21 @@ class StoreTest(unittest.TestCase):
         finally:
             native.BUILDS = old
 
+    def test_a_remote_binary_is_unpacked_once_to_local_disk(self):
+        import gzip
+        src = Path(self.tmp.name) / "k9.gz"
+        src.write_bytes(gzip.compress(b"binary" * 100))
+        old = tempfile.tempdir
+        tempfile.tempdir = str(Path(self.tmp.name) / "local")
+        try:
+            (Path(self.tmp.name) / "local").mkdir()
+            got = native.local_binary(str(src))
+            self.assertEqual((got.name, got.read_bytes()), ("k9", b"binary" * 100))
+            src.unlink()  # a second task of the piece finds it there
+            self.assertEqual(native.local_binary(str(src)), got)
+        finally:
+            tempfile.tempdir = old
+
     def test_purge_removes_one_binarys_results(self):
         cache = store.Cache(Path(self.tmp.name) / "c.sqlite")
         cache.put("k1", {"winner": "A", "backend": "native", "native_build": "b1"})

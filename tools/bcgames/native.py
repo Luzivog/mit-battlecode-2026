@@ -450,6 +450,28 @@ def gc() -> None:
 
 # ---------------------------------------------------------------------------------------------------------- games
 
+def local_binary(path: str) -> Path:
+    """A binary a spec names (a remote node: on the shared volume, maybe gzip'd), copied once to this machine's temp
+    folder (the task's TMPDIR, shared by the tasks of one piece), so games don't page it in over the network."""
+    src = Path(path)
+    name = src.name[:-3] if src.name.endswith(".gz") else src.name
+    final = Path(tempfile.gettempdir()) / "bcx" / name
+    if not final.exists():
+        final.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp = tempfile.mkstemp(prefix=name + ".", dir=final.parent)
+        with os.fdopen(fd, "wb") as out:
+            if src.name.endswith(".gz"):
+                import gzip
+                with gzip.open(src) as f:
+                    shutil.copyfileobj(f, out, 1 << 20)
+            else:
+                with open(src, "rb") as f:
+                    shutil.copyfileobj(f, out, 1 << 20)
+        os.chmod(tmp, 0o700)
+        os.replace(tmp, final)
+    return final
+
+
 SPEC_FIELDS = ("id", "a", "b", "map", "engine", "classes", "classes_a", "classes_b", "replay", "indicators", "bcx")
 
 
@@ -528,7 +550,8 @@ class Backend:
     def _prepare(self, plan: Plan) -> None:
         try:
             if plan.binary:
-                got = (Path(plan.binary).name, Path(plan.binary))
+                local = local_binary(plan.binary)
+                got = (local.name, local)
             else:
                 got = build(plan)
             for b in plan.bots:

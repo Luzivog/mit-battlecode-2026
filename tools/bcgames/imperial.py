@@ -37,14 +37,20 @@ REMOTE_KEEP_DAYS = 3
 
 
 def ship_binary(key: str, path: Path) -> str:
-    """The binary's path on the volume, uploaded when missing (touched when there, so it stays)."""
+    """The binary's path on the volume, gzip'd (30 MB, not 100), uploaded when missing and touched when there, so it
+    stays. A node unpacks it to its own disk once (native.local_binary): run from the volume, every task paid about
+    70 s of page faults over NFS."""
     if str(store.ROOT) not in sys.path:
         sys.path.insert(0, str(store.ROOT))
     from tools import remote  # track C's login (ssh to a GPU-cluster login node; the volume is shared)
     d = f"{remote.RUNTIME}/bcx"
-    dest = f"{d}/{key}"
-    if remote.login(f"test -x {dest} && touch {dest} && echo yes; true").strip() == "yes":
+    dest = f"{d}/{key}.gz"
+    if remote.login(f"test -s {dest} && touch {dest} && echo yes; true").strip() == "yes":
         return dest
+    data = gzip.compress(path.read_bytes(), 1)
+    remote.login(f'mkdir -p {d} && t=$(mktemp {dest}.XXXXXX) && cat > "$t" && mv -f "$t" {dest} && '
+                 f'find {d} -maxdepth 1 -type f -mtime +{REMOTE_KEEP_DAYS} -delete', data, stream=2)
+    return dest
     data = gzip.compress(path.read_bytes(), 1)
     remote.login(f'mkdir -p {d} && t=$(mktemp {dest}.XXXXXX) && gunzip -c > "$t" && chmod 700 "$t" && '
                  f'mv -f "$t" {dest} && find {d} -maxdepth 1 -type f -mtime +{REMOTE_KEEP_DAYS} -delete',

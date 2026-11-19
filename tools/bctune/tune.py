@@ -301,31 +301,41 @@ def cmd_play(a) -> int:
     if todo and not any(r["variant"] == REF and {k: r[k] for k in key} == key
                         and run_cells(r["id"]) in ("running", a.cells) for r in c["runs"]):
         todo = [{"label": REF, "bot": ref}] + todo
+    failed = 0
     for v in todo:
         bot = v.get("bot") or f"challenger@{v['commit'][:12]}"
-        if not a.local:
-            # one build at a time: the host's other build slot stays free for other agents
-            b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
-                               text=True)
-            if b.returncode != 0:
-                print(f"{v['label']}: build failed:\n{b.stdout[-2000:]}{b.stderr[-2000:]}", file=sys.stderr)
-                return 1
         cmd = [str(GAMES), "ab", bot, "awubot", "--ref", "none", "--pool", a.pool, "--seed-base", str(a.seed_base),
                "--min-cells", str(a.cells), "--max-cells", str(a.cells), "--engine", a.engine]
         if not a.local:
             cmd.append("--remote")
             if a.where:
                 cmd += ["--where", a.where]
-        p = subprocess.run(cmd, capture_output=True, text=True)
-        rid = p.stdout.strip().splitlines()[0] if p.returncode == 0 and p.stdout.strip() else None
+        rid = None
+        for attempt in range(3):  # a transient error (the volume, the login node) should not end a campaign
+            if attempt:
+                time.sleep(30)
+            if not a.local:
+                # one build at a time: the host's other build slot stays free for other agents
+                b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
+                                   text=True)
+                if b.returncode != 0:
+                    print(f"{v['label']}: build failed (try {attempt + 1}):\n{b.stderr[-1500:]}", file=sys.stderr)
+                    continue
+            p = subprocess.run(cmd, capture_output=True, text=True)
+            rid = p.stdout.strip().splitlines()[0] if p.returncode == 0 and p.stdout.strip() else None
+            if rid:
+                break
+            print(f"{v['label']}: tools/games ab failed (try {attempt + 1}):\n{p.stderr[-1500:]}", file=sys.stderr)
         if not rid:
-            print(f"{v['label']}: tools/games ab failed:\n{p.stdout[-2000:]}{p.stderr[-2000:]}", file=sys.stderr)
-            return 1
+            failed += 1
+            continue
         c = load(a.name)  # another play may have written meanwhile
         c["runs"].append(dict(key, variant=v["label"], id=rid, started=time.time()))
         save(c)
         print(f"{v['label']}: {bot} run {rid}", flush=True)
-    return 0
+    if failed:
+        print(f"{failed} variants not started: run play again", file=sys.stderr)
+    return 1 if failed else 0
 
 
 def cmd_wait(a) -> int:

@@ -165,7 +165,8 @@ Gain tests against main (`challenger@b962918`), awubot, `mines-ge8`, seed base 7
 - `teammade` harm, seed base 7105: no harm, +0.014 [+0.000, +0.043] (71 cells, 2 / 0) (`1119-132529-ab-4f5f`).
 - Gauntlet (`1119-132722-gauntlet-629d`): no harm against OBG (101 cells, all equal), GST (+0.007, 147 cells, 2 / 0)
   and 10 of the 11 others; `awubot_us` inconclusive at the cap (32 cells, 1 worse: TheHeist seat A, a cooperation
-  game past r800 with one king, lost 2 kings to 3 at r1067 where main won 2 to 2).
+  game past r800 with one king, lost 2 kings to 3 at r1067 where main won 2 to 2); a harm test against `awubot_us` on
+  `quick` at seed base 7108 passed with all 32 cells unchanged (`1119-134929-ab-88df`).
 - Smoke (`1119-132723-ab-9ab3`): 8 cells unchanged, none of our robots killed by its own exception.
 
 ## 4. What binds

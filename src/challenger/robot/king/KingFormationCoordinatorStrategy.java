@@ -20,6 +20,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int LOCK_IN_ROUND = 800;
     private static final int KING_TARGET = 3;
     private static final int LOCK_IN_MIN_RATS = 12;
+    // A lock-in king pays upkeep to the end and its formation consumes ~8 rats to rebuild: before the cutoff, form only
+    // with a 120-round upkeep reserve for 3 kings (720) + the formation (50) + the rebuild (~280). Measured: lock-in
+    // formations started below 1000 global starved 22 of 38 games and won 5 fewer than main, above it 12 more.
+    private static final int LOCK_IN_MIN_CHEESE = 1000;
 
     private static int MIN_DIST_FROM_KINGS_SQ;
 
@@ -203,7 +207,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         } else {
             // indicate("A");
             int myGlobalCheese = rc.getGlobalCheese();
-            if(myGlobalCheese < UPGRADE_COST + 100) return;
+            if(myGlobalCheese < (lockIn && time <= GameConstants.RAT_KING_CUTOFF_ROUND ? LOCK_IN_MIN_CHEESE : UPGRADE_COST + 100)) return;
             // indicate("B");
             int myKingCount = kings;
             if (myKingCount == 5) return;

@@ -76,7 +76,7 @@ public final class TryTrap {
     }
 
     public static boolean shouldTrap(RobotInfo info) throws GameActionException {
-        if (info.getHealth() >= 80 && info.getHealth() >= rc.getHealth() + CombatStrategy.getBiteDamage() || info.getHealth() == 100) {
+        if (info.getHealth() >= challenger.Tune.TRAP_STRONG_HP && info.getHealth() >= rc.getHealth() + CombatStrategy.getBiteDamage() || info.getHealth() == 100) {
             // println("ACCEPEETD CONIDIOTOINIS A;PLOSDKJF;LKAJSDAF;LKJASDA;LKFJDSA;DLKFJSD;LKFJA;SLKDFJ;SLAKJDFL;K");
             return true;
         }
@@ -98,17 +98,15 @@ public final class TryTrap {
     // they take on every map, but score +0.15 on maps with >= 8 mines and -0.19 on maps with <= 4, where the starting
     // cheese drains into traps and the king starves. A known count of 5 (E2's rich threshold) can never hold on those
     // maps and comes earliest on rich ones (gated at 8 instead, the gain on >= 8 mines fell to +0.02).
-    static final int BAND_GLOBAL_CHEESE = challenger.Tune.BAND_GLOBAL_CHEESE;
-    static final int BAND_MIN_MINES = 5;
     static boolean bandMap;
     static RobotInfo bandEnemy;
 
-    // The nearest enemy baby rat, if it is in the band, the map is known to hold BAND_MIN_MINES mines, and we can pay
+    // The nearest enemy baby rat, if it is in the band, the map is known to hold Tune.BAND_MIN_MINES mines, and we can pay
     // for a trap from raw cheese or a rich global.
     private static RobotInfo findBandEnemy() {
-        if (!bandMap && MineEstimate.atLeast(BAND_MIN_MINES) < BAND_MIN_MINES) return null;
+        if (!bandMap && MineEstimate.atLeast(challenger.Tune.BAND_MIN_MINES) < challenger.Tune.BAND_MIN_MINES) return null;
         bandMap = true;
-        if (rc.getRawCheese() < challenger.Tune.TRAP_RAW && rc.getGlobalCheese() < BAND_GLOBAL_CHEESE) return null;
+        if (rc.getRawCheese() < challenger.Tune.TRAP_RAW && rc.getGlobalCheese() < challenger.Tune.BAND_GLOBAL_CHEESE) return null;
         for (int i = 0; i < RobotTracker.numEnemies; i++) {
             RobotInfo info = RobotTracker.sortedEnemies[i];
             if (info.getType() != UnitType.BABY_RAT) continue;
@@ -575,9 +573,9 @@ public final class TryTrap {
         if (bandEnemy != null) {
             // the tile between first, else ±45°; above any cone sum, but not enough to undo a −100 or −1000
             Direction d = myLoc.directionTo(bandEnemy.location);
-            addAdjacentWeight(d, 20);
-            addAdjacentWeight(d.rotateLeft(), 10);
-            addAdjacentWeight(d.rotateRight(), 10);
+            addAdjacentWeight(d, challenger.Tune.BAND_W);
+            addAdjacentWeight(d.rotateLeft(), challenger.Tune.BAND_W_SIDE);
+            addAdjacentWeight(d.rotateRight(), challenger.Tune.BAND_W_SIDE);
         }
 
     }

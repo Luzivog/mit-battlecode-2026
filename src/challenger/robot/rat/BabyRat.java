@@ -90,7 +90,7 @@ public class BabyRat {
         tryTransferCheese();
 
         if (rc.isBeingCarried()) {
-            if (rc.getHealth() < 15 && rc.senseRobotAtLocation(myLoc).getTeam() != team) {
+            if (rc.getHealth() < challenger.Tune.DISINTEGRATE_HP && rc.senseRobotAtLocation(myLoc).getTeam() != team) {
                 rc.disintegrate();
                 Clock.yield();
             }

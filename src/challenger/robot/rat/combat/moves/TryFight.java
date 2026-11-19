@@ -1016,17 +1016,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTH);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.NORTH);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.NORTH != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1039,17 +1039,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHEAST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.NORTHEAST);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.NORTHEAST != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1062,17 +1062,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.EAST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.EAST);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.EAST);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.EAST != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1085,17 +1085,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHEAST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.SOUTHEAST);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.SOUTHEAST != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1108,17 +1108,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTH);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.SOUTH);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.SOUTH != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1131,17 +1131,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.SOUTHWEST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.SOUTHWEST);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.SOUTHWEST != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1154,17 +1154,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.WEST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.WEST);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.WEST);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.WEST != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;
@@ -1177,17 +1177,17 @@ public final class TryFight {
         int moveCost = CombatCommon.movementCost(moveDir, Direction.NORTHWEST);
         if (moveCost == -1) return;
         score = CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST);
-        if (moveCost == 1) score += 10;
+        if (moveCost == 1) score += challenger.Tune.FIGHT_NOSTRAFE;
         facingTarget = canSense(dxToTarget, dyToTarget, Direction.NORTHWEST);
         if (!facingTarget) {
-            score -= 5;
+            score -= challenger.Tune.FIGHT_FACE;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
             score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.NORTHWEST != myDir) {
             // prefer turning
-            score += 2;
+            score += challenger.Tune.FIGHT_TURN;
         }
         if (score > best) {
             best = score;

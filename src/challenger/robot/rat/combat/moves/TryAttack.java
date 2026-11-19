@@ -85,9 +85,9 @@ public final class TryAttack {
         if (chebyshevDistance(myLoc, info) > 2) return;
 
         t = info.location;
-        weight = 10;
+        weight = challenger.Tune.ATTACK_W;
         if (info.getHealth() <= CombatStrategy.getBiteDamage()) {
-            weight += 30; // prefer one tapping
+            weight += challenger.Tune.ATTACK_KILL; // prefer one tapping
         }
 
         selectMoves();
@@ -1134,7 +1134,7 @@ public final class TryAttack {
         if (Direction.NORTH != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTH, info, CombatStrategy.getBiteDamage());
@@ -1156,7 +1156,7 @@ public final class TryAttack {
         if (Direction.NORTHEAST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHEAST, info, CombatStrategy.getBiteDamage());
@@ -1178,7 +1178,7 @@ public final class TryAttack {
         if (Direction.EAST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.EAST, info, CombatStrategy.getBiteDamage());
@@ -1200,7 +1200,7 @@ public final class TryAttack {
         if (Direction.SOUTHEAST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHEAST, info, CombatStrategy.getBiteDamage());
@@ -1222,7 +1222,7 @@ public final class TryAttack {
         if (Direction.SOUTH != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTH, info, CombatStrategy.getBiteDamage());
@@ -1244,7 +1244,7 @@ public final class TryAttack {
         if (Direction.SOUTHWEST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.SOUTHWEST, info, CombatStrategy.getBiteDamage());
@@ -1266,7 +1266,7 @@ public final class TryAttack {
         if (Direction.WEST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.WEST, info, CombatStrategy.getBiteDamage());
@@ -1288,7 +1288,7 @@ public final class TryAttack {
         if (Direction.NORTHWEST != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, Direction.NORTHWEST, info, CombatStrategy.getBiteDamage());
@@ -1310,7 +1310,7 @@ public final class TryAttack {
         if (facing != myDir) {
             score += 2; // prefer turning
         }
-        if (rc.getHealth() <= 24) {
+        if (rc.getHealth() <= challenger.Tune.ATTACK_LOWHP) {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info);
         } else {
             score += CombatStrategy.getCellScoreFor(moveDir, facing, info, CombatStrategy.getBiteDamage());

@@ -188,7 +188,7 @@ facing==myDir:       strafe (18)
 else:                strafe, then turn
 ```
 
-`CombatCommon.movementCost(m,f)` (`CombatCommon:63`) returns −1 (impossible), 0 (strafe) or 1 (forward, turn-move, or CENTER). Candidates with 0 pay `strafeCost()` = 3 if the movement cooldown is < 2, else 8 (`CombatCommon:42`). The idea: a strafe from cooldown 0–1 still leaves the next turn's move available, while from 2–9 it costs that move.
+`CombatCommon.movementCost(m,f)` (`CombatCommon:63`) returns −1 (impossible), 0 (strafe) or 1 (forward, turn-move, or CENTER). Candidates with 0 pay `strafeCost()` = `Tune.STRAFE_LO` (0; 3 before FL) if the movement cooldown is < 2, else `Tune.STRAFE_HI` (8) (`CombatCommon:42`). The idea: a strafe from cooldown 0–1 still leaves the next turn's move available, so it costs nothing, while from 2–9 it costs that move.
 
 - **Primary** = move, turn, then act from the new cell (TryAttack/TryRatNap/TryTrap `move{X}` → `face{F}`).
 - **Secondary** = act from the current cell, then step backward (`F+4, F±3`) facing `myDir±1`: hit-and-run. TryAttack only allows it if the target is already adjacent (`:92`). TryRatNap requires adjacency and (my HP > target HP, or the target can't see me) (`:105`). TryTrap always allows it. TryThrow's secondary is "throw from here, then move F/F±1".
@@ -453,7 +453,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | shouldFight: HP race | `enemy.hp − bite ≤ myHp` | `CombatStrategy:459` | Fight if not behind by more than one bite | H |
 | shouldFight: near king | dist²(me, king) ≤ 36 | `CombatStrategy:461` | Always defend near our king | M |
 | shouldFight: numbers | numAllies > numEnemies (visible) | `CombatStrategy:462` | Fight when outnumbering | M |
-| strafe cost | 3 if movement cooldown < 2 else 8 | `CombatCommon:43` | Penalty for 18-cooldown moves | M |
+| strafe cost | `Tune.STRAFE_LO` 0 if movement cooldown < 2, else `Tune.STRAFE_HI` 8 | `CombatCommon:43` | Penalty for 18-cooldown moves | M; FL: 3 → 0 +0.017 [+0.006, +0.028] (3,000 fresh `goal` cells); `STRAFE_HI` flat (+0.22 pp per +4) |
 | low-HP desperation | myHp ≤ 24 | `moves/TryAttack:154,177` | Ignore the target's own grab threat | M |
 | carried suicide | hp < 15 and carrier is enemy | `BabyRat.java:91` | Disintegrate while held | L |
 

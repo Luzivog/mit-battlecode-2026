@@ -43,4 +43,44 @@ public final class Tune {
     public static final int BITE_BONUS_CHEESE = 300; // tune: 150 [0, 2000] bites deal 12 (2 cheese) from this cheese, else 10
     public static final int TRAP_RAW = 20; // tune: 10 [0, 100] rats carrying this raw cheese place traps (TryTrap)
     public static final int BAND_GLOBAL_CHEESE = 400; // tune: 200 [0, 2000] band traps paid from global above this (TryTrap)
+
+    // The rest of the micro's scores and gates (docs/combat.md §10; the fight lab, docs/theory/fl-fight-lab.md). A score is
+    // compared only with the other scores of its own move generator (and its accept threshold, 0.5), so each step reaches
+    // the nearest value where an order between two of them flips.
+    // TryFight: a candidate scores FIGHT_NOSTRAFE for a non-strafe (forward, turn-move or hold), FIGHT_STEP on a BFS step
+    // toward the fight, -FIGHT_FACE when the final facing does not see the target, +FIGHT_TURN for a facing change.
+    public static final int FIGHT_NOSTRAFE = 10; // tune: 8 [-40, 60] TryFight's score of a move that is not a strafe
+    public static final int FIGHT_FACE = 5; // tune: 5 [0, 40] TryFight's loss when the final facing does not see the target
+    public static final int FIGHT_TURN = 2; // tune: 2 [0, 20] TryFight's score of a facing change
+    // TryAttack: a bite scores ATTACK_W (+ATTACK_KILL if it kills), minus the strafe cost, +2 for a facing change.
+    public static final int ATTACK_W = 10; // tune: 6 [1, 60] TryAttack's score of a bite (accepted from 0.5)
+    public static final int ATTACK_KILL = 30; // tune: 20 [0, 100] TryAttack's extra score of a bite that kills
+    public static final int ATTACK_LOWHP = 24; // tune: 12 [0, 100] at this HP or less a biter ignores its target's grab threat
+    // TryRatNap: the ally sacrifice (an ally of ALLY_HP or less, with >= 8 rats) and the grab-then-step-back bonus.
+    public static final int RATNAP_ALLY_W = 10; // tune: 8 [0, 60] TryRatNap's score of a grab of a weak ally (to throw)
+    public static final int RATNAP_ALLY_HP = 22; // tune: 10 [0, 60] the ally sacrifice takes allies at this HP or less
+    public static final int RATNAP_BACK = 5; // tune: 5 [0, 40] TryRatNap's extra score of grabbing, then stepping back
+    // The strafe cost of TryAttack, TryRatNap and TryTrap: low when the movement cooldown is < 2 (the next move stays).
+    public static final int STRAFE_LO = 0; // tune: 3 [0, 30] strafe cost from a movement cooldown < 2 (FL: 3 -> 0, +1.7 pp on 3,000 fresh cells)
+    public static final int STRAFE_HI = 8; // tune: 4 [0, 40] strafe cost from a movement cooldown of 2 or more
+    // Carrying an enemy (CombatStrategy): throw when the best line scores THROW_HOLD (42: a collision at step 2), else hold
+    // and act with the free action; throw whatever the line once the carry is CARRY_AGE rounds old or at CARRY_HP.
+    public static final int THROW_HOLD = 42; // tune: 20 [-1000, 300] the best line's score that throws a carried enemy
+    public static final int CARRY_AGE = 8; // tune: 3 [2, 10] rounds of carrying after which any line is thrown
+    public static final int CARRY_HP = 24; // tune: 12 [0, 100] carrier HP at or below which any line is thrown
+    // TryThrow's scores of what a line hits (a wall at step 2 is the engine's 42).
+    public static final int THROW_KING = 300; // tune: 150 [0, 1000] a line into an enemy king's 3x3
+    public static final int THROW_FEED = 400; // tune: 200 [0, 1000] a line into a cat (the flier is eaten)
+    public static final int THROW_RAT2 = 84; // tune: 40 [0, 400] a line into an enemy rat at step 2 (42 to each)
+    // TryTrap: the band trap (the tile between us and an enemy rat at Chebyshev 2) once the map holds BAND_MIN_MINES
+    // known mines (a large value: never); TRAP_STRONG_HP marks an enemy worth a trap outside the band and trap mode.
+    public static final int BAND_MIN_MINES = 5; // tune: 3 [0, 99] known mines from which rats place band traps
+    public static final int BAND_W = 20; // tune: 10 [0, 200] the band tile's trap weight (its two neighbours BAND_W_SIDE)
+    public static final int BAND_W_SIDE = 10; // tune: 10 [0, 200] the trap weight of the band tile's neighbours
+    public static final int TRAP_STRONG_HP = 80; // tune: 10 [0, 100] an enemy at this HP and a bite above ours is trapped
+    // shouldFight: a rat fights any enemy within KING_DEF_DSQ of our king, and a cat within CAT_DEF_DSQ of it.
+    public static final int KING_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight any enemy
+    public static final int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
+    // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
+    public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
 }

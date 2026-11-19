@@ -263,11 +263,13 @@ so the test stops at H0 after one pass, 95 cells; every game played, none from t
 | clankerland, Java | 4583 s | 387 | 45.2 s | 17473 s | `1119-054226-ab-4440` |
 | Imperial, native | 584 s | 424 | 9.2 s | 3916 + 663 s | `1119-051034-ab-c173` |
 | Imperial, Java | 1608 s | 681 | 74.5 s | 50741 s | `1119-051035-ab-6278` |
+| Imperial, native, C2's dispatch (a game a task), guards in their own tasks | 745 s | 636 | 14.1 s | 8886 s + 27 guard tasks | `1119-090957-ab-7475` |
 
 - A game takes 8.1x less CPU natively on DoC's machines, 4.0x less on clankerland at load 30-50 (the native engine's
   allocation-heavy world suffers more from a full box than the JVM).
 - Remote runs play past the decision point (424 and 681 games for a 380-game decision): batches land at once.
-  These ran before track C2's dispatch changes, with tasks of 8 native or 3 Java games (now one).
+  The first four ran before track C2's dispatch changes, with tasks of 8 native or 3 Java games (now one). In the
+  last, 8 games fell back to Java: a node's disk was full (now unpacked on the volume instead).
 - Every game two of these runs share is the same game (replay digest): local native against local Java 190 of 190
   game keys, remote native against remote Java 212 of 212, local native against remote native 190 of 190.
 
@@ -300,9 +302,9 @@ so the test stops at H0 after one pass, 95 cells; every game played, none from t
 
 **Exactness guard**: 1 in 32 by game key plus each binary's first game of the run guarded 1.7% of native games
 (7 of 380 locally, 7 of 424 remotely), at 13% (local) and 17% (remote) more CPU than the native games alone. Every
-guarded pair played the same game: 26 on clankerland and 496 on DoC (476 of them one remote run with `--guard 1`,
+guarded pair played the same game: 26 on clankerland and 523 on DoC (476 of them one remote run with `--guard 1`,
 every game on both engines in the same task, `1119-054304-ab-de6d`); no Java game had to be played a second time.
-False alarms: 0 of 522 pairs. A pair the Java engine's own nondeterminism splits (engine/AGENTS.md: 8 of ~18,500
+False alarms: 0 of 549 pairs. A pair the Java engine's own nondeterminism splits (engine/AGENTS.md: 8 of ~18,500
 reference runs on DoC) is played on Java a second time and explained, so a run stops falsely only if Java misbehaves
 twice on one game.
 

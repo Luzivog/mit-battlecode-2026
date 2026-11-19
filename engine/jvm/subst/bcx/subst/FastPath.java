@@ -8,4 +8,7 @@ public final class FastPath {
     private static native boolean check0();
 
     public static native void fail(String what);
+
+    /** A java.util.Random's 48-bit state, its seed left as it is; clears haveNextNextGaussian as setSeed does. */
+    public static native long randomState(java.util.Random r);
 }

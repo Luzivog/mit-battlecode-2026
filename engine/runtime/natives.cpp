@@ -310,6 +310,11 @@ void rt_fastpath_fail(Obj* what) {
     fflush(stderr);
     abort();
 }
+jlong rt_fastpath_random_state(Obj* r) {
+    c0_java_util_Random* rr = (c0_java_util_Random*)r;
+    rr->f_haveNextNextGaussian = 0;
+    return ((c0_java_util_concurrent_atomic_AtomicLong*)rr->f_seed)->f_value;
+}
 jboolean rt_io_exists(Obj* path) {
     struct stat st;
     return stat(utf8(path).c_str(), &st) == 0;

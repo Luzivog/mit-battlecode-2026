@@ -229,4 +229,6 @@ sys java/lang/Class forName (Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/la
 # ---- fast paths: hand-written replacements, the original kept as NAME$orig (engine/AGENTS.md, "The checks")
 sys bcx/subst/FastPath check0 ()Z rt_fastpath_check nothrow
 sys bcx/subst/FastPath fail (Ljava/lang/String;)V rt_fastpath_fail
+sys bcx/subst/FastPath randomState (Ljava/util/Random;)J rt_fastpath_random_state nothrow
 patch battlecode/world/GameWorld bcx/subst/GameWorld_p
+patch battlecode/world/BcxStateHash bcx/subst/BcxStateHash_p

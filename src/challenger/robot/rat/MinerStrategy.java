@@ -130,7 +130,7 @@ public class MinerStrategy extends Strategy {
             // not too close to a king
             for (int j = 0; j < 5; j++) {
                 var kingLoc = GlobalArray.getRatKing(j);
-                if (kingLoc != null && kingLoc.distanceSquaredTo(target) <= 36) {
+                if (kingLoc != null && kingLoc.distanceSquaredTo(target) <= Tune.EXPLORE_KING_DSQ) {
                     continue outerLoop;
                 }
             }

@@ -32,9 +32,13 @@ from pathlib import Path
 from . import native, play, store
 
 SHIP = store.ROOT / ".bcgames-ship"
-FLUSH_S = 30          # a batch every 30 s at most
-POLL_S = 15           # reading finished tasks' results
+# A batch goes out as soon as jobs wait (after COALESCE_S, so a wave goes as one batch), but no sooner than FLUSH_S
+# after the run's previous batch: each batch is a tools/run call and a poller against the login nodes.
+FLUSH_S = float(os.environ.get("BCGAMES_FLUSH_S", "30"))
+COALESCE_S = 1.0
+POLL_S = 3            # reading finished tasks' results (local files, which tools/compute wait fetches)
 CHUNK = 1             # games a task: one, so a batch ends with its longest game (a task starts in 2 s, median)
+CHUNK_NATIVE = int(os.environ.get("BCGAMES_CHUNK_NATIVE", str(CHUNK)))
 REMOTE_KEEP_DAYS = 3
 
 
@@ -83,6 +87,7 @@ class ImperialRunner:
         self.batches: list[dict] = []
         self.lock = threading.Lock()
         self.stopping = threading.Event()
+        self.wake = threading.Event()  # jobs to send: submitted, or their binary is ready
         self.log = open(self.outdir / "imperial.log", "a")
         threading.Thread(target=self._flusher, daemon=True).start()
 
@@ -106,6 +111,7 @@ class ImperialRunner:
                 self.binaries[plan] = {"state": "building"}
                 threading.Thread(target=self._prepare, args=(plan,), daemon=True).start()
             self.pending.append((job, callback))
+        self.wake.set()
 
     def _prepare(self, plan: native.Plan) -> None:
         """Builds the plan's binary here and puts it on the volume."""
@@ -118,9 +124,11 @@ class ImperialRunner:
             self._say(f"native binary failed, its games go to Java: {st['error']}")
         with self.lock:
             self.binaries[plan] = st
+        self.wake.set()
 
     def close(self, wait: bool = True) -> None:
         self.stopping.set()
+        self.wake.set()
         for b in self.batches:
             if b.get("proc") and b["proc"].poll() is None:
                 b["proc"].kill()
@@ -135,7 +143,12 @@ class ImperialRunner:
         self.log.flush()
 
     def _flusher(self) -> None:
-        while not self.stopping.wait(FLUSH_S):
+        last = 0.0
+        while True:
+            self.wake.wait()
+            if self.stopping.wait(max(COALESCE_S, FLUSH_S - (time.time() - last))):
+                return
+            self.wake.clear()
             java, nat, wait = [], [], []
             with self.lock:
                 for job, cb in self.pending:
@@ -151,6 +164,7 @@ class ImperialRunner:
             for batch, is_native in ((java, False), (nat, True)):
                 if not batch:
                     continue
+                last = time.time()
                 try:
                     self._launch(batch, is_native)
                 except Exception as e:  # noqa: BLE001 - every game of the batch fails with the reason
@@ -205,7 +219,7 @@ class ImperialRunner:
                         f.write(json.dumps(dict(spec, id=gid, guard=True, replay=False)) + "\n")
                 f.write(json.dumps(spec) + "\n")
         cmd = [str(store.ROOT / "tools" / "run"), "--detach", "--each", str(specs), "--chunk",
-               str(CHUNK), "--gather", "results.jsonl",
+               str(CHUNK_NATIVE if is_native else CHUNK), "--gather", "results.jsonl",
                "--with", str(SHIP.relative_to(store.ROOT))]
         if self.where:
             cmd += ["--where", self.where]

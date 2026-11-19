@@ -21,6 +21,7 @@ and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcga
 | replay files for a run's cells, after the fact | `tools/games replays ID [--cells decisive\|lost\|changed\|all] [--remote]` |
 | the replay of one game | `tools/games replay ID GAME` |
 | runs, stop one, pools, SPRT sample sizes | `tools/games list`, `stop ID`, `pools [-v]`, `simulate` |
+| build the native binaries a test will need, ahead of it (default: your challenger and main's) | `tools/games build [BOT...] [--remote]` |
 | play any games from a spec file | `tools/play SPECS.jsonl OUTDIR [--workers N] [--engine 1.2.6\|1.2.5] [--replays none\|losses\|all] [--backend native\|java]` |
 | any of these on the official Java engine only | add `--backend java` |
 | any of `ab`, `gauntlet`, `replays` on DoC's machines (compute skill) | add `--remote [--where condor,slurm]` |
@@ -169,8 +170,9 @@ the ref's own score on the same cells and the paired difference with its CI.
   engine's sources, and kept for every later run and agent (`~/battlecode26-data/games/native/bin/`, the 24 most
   recently used). A run plays its cached games and its games of existing binaries while a missing one builds; a
   second run asking for the same binary waits for the first's build. Builds run niced, at most 2 at once on the
-  host, 8 compile jobs each. A new challenger build takes about 95 s; a change to `engine/` rebuilds everything once
-  per build slot (about 5 min).
+  host, 8 compile jobs each. A new challenger build takes about 95 s; a change to `engine/` or the JDK rebuilds
+  everything once per build slot (about 5 min). `tools/games build` builds them ahead of a test: after a merge,
+  `tools/games build challenger@origin/main` spares the next tests main's build.
 - **Exactness guard.** Each run also plays some of its native games on Java, on the same machine (Imperial: in the
   same task): every binary's first game in the run, and 1 in 32 of the rest, chosen by game key. A guarded game
   counts only once compared, so a test never scores it before its check. When the replays differ, Java plays it
@@ -247,6 +249,60 @@ holdout results are slightly optimistic. Never tune a constant on those games.
 - **Map orientation**: the 31 final-tournament maps are the official repo's files. The other 47 recovered maps come
   from replays. A replay of an alternate-order game swaps the teams of the initial bodies, so some of those maps may
   have A and B exchanged. Both seats are always played, so this only relabels the seats.
+
+## Measured: the native engine (2026-11-19)
+
+**One test on all four**: `tools/games ab challenger awubot --test harm --pool goal --no-cache` (challenger = main's,
+so the test stops at H0 after one pass, 95 cells; every game played, none from the cache). clankerland at load
+28-50 (other projects and the XE bench), all 8 local slots ours; Imperial: Condor.
+
+| where, engine | wall | games | CPU a game | CPU: games + guard | run |
+|---|---|---|---|---|---|
+| clankerland, native | 1153 s (+83 s when the binary is new) | 380 | 11.2 s | 4256 + 552 s | `1119-052236-ab-8cca` |
+| clankerland, Java | 4583 s | 387 | 45.2 s | 17473 s | `1119-054226-ab-4440` |
+| Imperial, native | 584 s | 424 | 9.2 s | 3916 + 663 s | `1119-051034-ab-c173` |
+| Imperial, Java | 1608 s | 681 | 74.5 s | 50741 s | `1119-051035-ab-6278` |
+
+- A game takes 8.1x less CPU natively on DoC's machines, 4.0x less on clankerland at load 30-50 (the native engine's
+  allocation-heavy world suffers more from a full box than the JVM).
+- Remote runs play past the decision point (424 and 681 games for a 380-game decision): batches land at once.
+- Every game two of these runs share is the same game (replay digest): local native against local Java 190 of 190
+  game keys, remote native against remote Java 212 of 212, local native against remote native 190 of 190.
+
+**Small tests**: the same test on each backend, wall time:
+
+| test | clankerland, native | Imperial, native | Imperial, Java |
+|---|---|---|---|
+| `--pool smoke` harm, challenger = main (32 games) | 72 s (128 s when main's binary was new) | 491 s | 959 s |
+| `--pool quick` harm, challenger behind main (H1 after 52-69 cells) | 405 s, 228 games | 1135 s, 216 games | 1505 s, 276 games |
+
+- Below a few hundred games a local native test finishes first: Imperial's per-batch startup (1-4 min a batch,
+  being reworked by track C2) dominates, and native games are short. On `goal` (380+ games) Imperial's parallelism
+  wins at this load (584 s against 1153 s).
+- Runs `1119-075646-ab-6b7c`, `1119-080013-ab-2c4a`, `1119-050004-ab-b371`, `1119-054917-ab-0c94`,
+  `1119-080707-ab-58f6`, `1119-080708-ab-3640`. The local `quick` run and the remote Java one share 228 of 228
+  games, all the same.
+
+**Builds** (`~/battlecode26-data/games/native/bin/*/build.json`), niced, 8 compile jobs:
+- From nothing (14 sparring bots and challenger), or after any change to `engine/` or the JDK: 279-315 s, 1626-1707
+  CPU s, once per build slot.
+- A challenger change: 83-98 s (315-348 CPU s) at load 20-30: the translation (about 40 s, single-threaded), then all
+  ~105 challenger files (their shared header changes with almost any edit), then the link.
+- Under load 50, four builds started at once (four agents' challengers) on the two slots: ready after 272, 593, 700
+  and 769 s, one of them the second slot's first build (691 s).
+- A translation peaks at 3.7 GB with the serial collector (4.9 GB without), so translations run one at a time; the
+  host's OOM killer took two concurrent ones on 19 Nov.
+- `klasses.cpp` is compiled at -O1: at -O2 it alone took 177-238 s of each build.
+- The host's JDK was upgraded by apt on 19 Nov (21.0.13.0.3 to 21.0.13.1): binaries are keyed by the JDK, so all were
+  rebuilt; the game key's JDK fingerprint did not change.
+
+**Exactness guard**: 1 in 32 by game key plus each binary's first game of the run guarded 1.7% of native games
+(7 of 380 locally, 7 of 424 remotely), at 13% (local) and 17% (remote) more CPU than the native games alone. Every
+guarded pair played the same game: 26 on clankerland and 496 on DoC (476 of them one remote run with `--guard 1`,
+every game on both engines in the same task, `1119-054304-ab-de6d`); no Java game had to be played a second time.
+False alarms: 0 of 522 pairs. A pair the Java engine's own nondeterminism splits (engine/AGENTS.md: 8 of ~18,500
+reference runs on DoC) is played on Java a second time and explained, so a run stops falsely only if Java misbehaves
+twice on one game.
 
 ## Measured (2026-11-18)
 

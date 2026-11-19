@@ -5,7 +5,8 @@
 
 Steps: fetch the jars and bdwgc once (~/battlecode26-data/engine/), compile the translator (engine/jvm), translate
 the official engine and every bot package (each package under src/ with a RobotPlayer, from build/classes: run
-./gradlew classes first) to C++ in ~/battlecode26-data/engine/build/gen-VERSION/, compile it with ninja and link.
+./gradlew classes first) to C++ in ~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/, compile it with ninja and
+link.
 Generated files are rewritten only when they change, so a rebuild recompiles only what moved.
 """
 import argparse
@@ -138,7 +139,8 @@ def build(version: str, bots, jobs: int, opt: str):
     if bots == ["all"]:
         bots = bot_packages(classes)
     cp = translator(version)
-    gen = DATA / "build" / f"gen-{version}"
+    # one folder per checkout: builds in two worktrees at once must not share generated files
+    gen = DATA / "build" / f"gen-{version}-{hashlib.sha256(str(REPO).encode()).hexdigest()[:8]}"
     gen.mkdir(parents=True, exist_ok=True)
     cmd = ["java", "-Xss64m", "-Xmx8g", "-cp", cp, "bcx.tr.Main", "--out", str(gen), "--natives",
            str(ENGINE / "jvm" / "natives.txt"), "--entry", ENTRY]

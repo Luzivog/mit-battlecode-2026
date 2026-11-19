@@ -118,8 +118,9 @@ python3 engine/test/imperial.py report RUN         # its agreement and CPU time,
   spec whose bot class files differ from the ones compiled in (rebuild). It reads `maps/` of the checkout it was
   built in (`--root REPO` or `BCX_ROOT` for another), then the jar's maps (`engine/build/maps-VERSION/`).
 - `build.py` fetches the jars and bdwgc once into `~/battlecode26-data/engine/`, compiles `engine/jvm`, translates
-  into `~/battlecode26-data/engine/build/gen-VERSION/` and compiles with ninja (`-j`, default 8). Needs clang, ninja,
-  cmake, a JDK 21, zlib. The binary is static, so it runs on any x86-64 Linux node.
+  into `~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/` (one per checkout, so worktrees build at once) and
+  compiles with ninja (`-j`, default 8). Needs clang, ninja, cmake, a JDK 21, zlib. The binary is static, so it runs
+  on any x86-64 Linux node.
 - Builds are incremental: method files (`m_MODULE_N.cpp`) and headers (`types.h` for the engine and the JDK,
   `types_PKG.h` per bot) are per module and rewritten only when they change. Measured on 8 cores: everything,
   6 to 8 min (about 25 CPU-min); nothing changed, 38 s (the translation); one bot changed, 43 s, when the change

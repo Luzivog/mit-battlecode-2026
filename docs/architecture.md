@@ -32,7 +32,7 @@ run(rc)                                                once per robot
       GlobalArray.postTick()  kings only: symmetry, 2 map chunks, whole cheese list, loc, delayed spawn info, counters
       Game.postTick()
     } catch (Exception e) {}   swallowed: the rest of the turn is skipped (+500 bytecode penalty)
-      finally { Clock.yield(); }
+      finally { kings: GlobalArray.endTurn(); Clock.yield(); }   endTurn marks the round the turn ends in (§4.1, slot 8)
 ```
 
 ### 1.2 Baby rat turn: `BabyRat.run` (robot/rat/BabyRat.java:79-121)
@@ -75,7 +75,7 @@ isLastMove=true; executeGlance()           turn ±90° if the turn cooldown is u
 
 1. `FormationStrategy.runTick` calls `rc.becomeRatKing()` and then `Game.convertKing()` (Game.java:57).
 2. `convertKing` sets `isRatKing=true` and `hasInitialisedRobot=false`, calls `GlobalArray.initRatKing()` (claim a slot, write loc, mark alive, seed the cheese queue), `MapManager.onConvertKing()` and `Pathfinder.bug.clearPath()`, and then **calls `Clock.yield()` in the middle of the turn**.
-3. In the next round, execution resumes inside the old baby call stack. No preTicks run. `combatStrategy.miniTick()` and `executeGlance()` run as a king, followed by `Squeaker.postTick` and `GlobalArray.postTick` (now in king mode).
+3. In the next round, execution resumes inside the old baby call stack. No preTicks run. `combatStrategy.miniTick()` and `executeGlance()` run as a king, followed by `Squeaker.postTick`, `GlobalArray.postTick` (now in king mode) and `GlobalArray.endTurn`, which marks the king alive for this round.
 4. `RatKing.init()`/`run()` start the round after that.
 
 ### 1.5 Parts that run only if bytecode remains
@@ -183,7 +183,7 @@ There are 64 slots of 0–1023. **Only kings may write** (50 bytecodes per write
 | 1 | `SYMMETRY` | 0 unknown, 1 Rotational, 2 Horizontal (x→W−1−x), 3 Vertical (y→H−1−y) (`CellTracker.Symmetry` ordinal) | king postTick when it knows the symmetry and has read 0 | everyone: preTick `checkSymmetry` → `CellTracker.setSymmetry` |
 | 2–6 | `RAT_KING_LOC`+k | `encode2x2` = `(x>>1) \| (y>>1)<<5` (≤ 957); 1023 = no king | king k (`writeMyLoc`, pre+post: both slots in one round, or neither); reaper writes 1023 | `getRatKing(k)` (2 reads = 20 bytecodes per call, called very often) |
 | 7 | `RAT_KING_LSBS` | bits 2k / 2k+1 = x&1 / y&1 of king k | king k | `getRatKing` |
-| 8 | `RAT_KING_TURN_COUNTER` | bits 2k..2k+1 = `round%3` of king k's last turn; `0b11` = free/dead | `markKingAlive` (preTick). The reaper marks k dead when its value == `(round+1)%3`, i.e. it missed 2 rounds | `findRatKingSlot`, `isFirstKingInRound` |
+| 8 | `RAT_KING_TURN_COUNTER` | bits 2k..2k+1 = `round%3` of king k's last turn; `0b11` = free/dead | `markKingAlive` in preTick, and `endTurn` when a turn ends in a later round (an overrun, the conversion turn): a living king marks every round it runs in. The reaper (each king's preTick) marks k dead and clears its location when its value == `(round+1)%3`, i.e. k has no mark for the previous round | `findRatKingSlot`, `isFirstKingInRound` (the first king to run in a round, preTick or `endTurn`, clears the spawn slots) |
 | 9 | `FORMATION_COORDINATOR` | kingId; 0 = none (**ambiguous with king 0**) | `writeFormationTarget`, `clearFormation` | `abortFormation` |
 | 10–11 | `FORMATION_TARGET` | (x+1, y+1); (0,0) = none | coordinator king; cleared by it, or by the baby that became king exactly on the target | FormationStrategy |
 | 12–13 | `FORMATION_MINE` | (x+1, y+1) | same | FormationStrategy (join if dist² ≤ 625) |
@@ -192,7 +192,7 @@ There are 64 slots of 0–1023. **Only kings may write** (50 bytecodes per write
 | 16–20 | `KING_MINE_ASSIGNMENT`+k | `encode2x2(mine)+1`; 0 = none; **never cleared when a king dies** | KingMiningStrategy (own k); the formation coordinator writes slot k+1 | kings: `isMineAssignedToAnyKing` (dist² < 25) |
 | 21 | `KING_EXPAND` | bit k = king k is 5×5 | `expandKing()` after 17 stuck turns (`contractKing` unused) | `RobotTracker.reset` → `isKingExpanded(i)`. **Bug:** it tests bit `kingId`, not `i`; babies have kingId −1, so the result is always false |
 | 22–31 | `RAT_SPAWN_INFO`+2k, +2k+1 | A = `hi3<<7 \| marker`, where `marker=(dx+4)*9+(dy+4)` is the spawn cell relative to king k; B = low 10 bits of a 13-bit payload; 1023 = empty | king k in the postTick of the **round after** `buildRat` (`toSpawn1→toSpawn0` delay). The first king of each round resets all 10 slots to 1023 | `BabyRat.init → loadSpawnInfo()`: finds the king whose marker equals its own position |
-| 32–34, 35–37 | `MAP_CHUNK_START` | Two 30-bit values, little-endian 10/10/10. Bit 29 = empty flag; bits 0–28 = `MapTracker.encodeChunk` = `cx<<27 \| cy<<25 \| 25-bit unit mask` | every king postTick: 2 chunks per turn, round-robin over the chunks it has seen. The last king in turn order wins | everyone preTick → `MapManager.applyGlobalChunk` |
+| 32–34, 35–37 | `MAP_CHUNK_START` | Two 30-bit values, little-endian 10/10/10. Bit 29 = empty flag; bits 0–28 = `MapTracker.encodeChunk` = `cx<<27 \| cy<<25 \| 25-bit unit mask` | every king postTick: 2 chunks per turn, round-robin over the chunks it has seen, each chunk's 3 slots all or none (`CHUNK_WRITES_COST`). The last king in turn order wins | everyone preTick → `MapManager.applyGlobalChunk` |
 | 38–63 | cheese list (`MIN_CHEESE`=38) | `encode2x2(mine)` from 63 downward, then a 1023 terminator; with ≥ 26 mines the 26 slots hold a rotating window | every king rewrites its **whole** queue each postTick, terminator first, then the mines bottom up | everyone preTick `readCheeseMines` (stops at 1023) |
 
 **Spawn payload channel (works, but unused).** `KingSpawningStrategy.trySpawn` (:93) sends `Rng.mcg() & 8191`. A probe confirmed that every newborn receives exactly its payload (63/63) in its first turn, one round after the spawn. `BabyRat.init` throws it away. This is a ready-made **13-bit king→newborn order** (role assignment) for one spawn per king per round.
@@ -432,8 +432,8 @@ Cheesefarm (rounds 1–570) matches these numbers to within ~15% on every row. T
 3. Shared-array writes only from kings, only in owned slots, values 0–1023. Spawn slots are cleared by the first king each round.
    A value spread over several slots must never be read half-written. The engine charges an engine call before running it
    and pauses there when the turn is out of bytecode; robots acting until the turn resumes read whatever is in the array.
-   So either write all slots only with enough bytecode left (`writeMyLoc`), or write in an order whose every prefix reads
-   as a valid value (`writeCheeseMines`). Not yet done: the map chunks (3 slots) and the spawn info (2 slots).
+   So either write all slots only with enough bytecode left (`writeMyLoc`, `writeChunkPayload`), or write in an order whose
+   every prefix reads as a valid value (`writeCheeseMines`). Not yet done: the spawn info (2 slots).
 4. One squeak per turn. All squeaking goes through `Squeaker.postTick` (EnemyManager is called from there).
 5. `BabyRat.isLastMove` must be true before the final action of the turn, otherwise you pay for useless rescans.
 6. Keep templates and generated `.java` in sync (codegen.md).

@@ -191,7 +191,7 @@ The rat also goes home if:
 
 ### 6.1 Count and lifecycle
 - One king at the start. More come only from baby-rat formation. Engine limits: ≤ 5 kings, and no new king after round 1200 if the team has ≥ 2 (rules.md §6). The coordinator aborts on the same rule (round > 1200 with ≥ 2 kings).
-- Each king writes its position every turn. Liveness uses a mod-3 turn counter (`GlobalArray.java:339-354`); a king that misses a turn is declared dead and its slot is freed. A king whose turn overran (about 0.1% of king turns) misses one write and reads as dead for one round, then rewrites its slot; the formation coordinator counts a king gone only after two rounds missing.
+- Each king writes its position every turn. Liveness uses a mod-3 turn counter (`GlobalArray` `markKingAlive`, `updateRatKingTurnCounters`): a king marks every round it runs in, including the round an overrun or conversion turn ends in (`GlobalArray.endTurn`), and a king with no mark for the previous round is declared dead and its slot is freed.
 - **Points**: in backstab state, `% living kings` is worth 0.5. Ending with 2 kings against 1 is +16.7 points, which outweighs most cheese or cat-damage gaps.
 
 ### 6.2 Movement and mining (`KingMiningStrategy.java.jinja2`)
@@ -206,13 +206,13 @@ The rat also goes home if:
 
 Coordinator side (`robot/king/KingFormationCoordinatorStrategy.java`), on every king every turn:
 ```
-kings = max(king slots alive now, alive last round)    // an overrun king misses one liveness write   (:152-157)
+kings = king slots alive now                                                                          (:151)
 numRats = 4·⌊n/4⌋ ; req = (W·H ≤ 1200) ? 8 : 12
-lockIn = t ≥ 800 and kings < 3                                                                        (:164)
+lockIn = t ≥ 800 and kings < 3                                                                        (:159)
 ABORT (clears if I'm coordinator) if kings ≥ 5 or (t > 1200 and kings ≥ 2)
-      or numRats < (lockIn ? 12 : req·kings)                                                          (:165-174)
-ABORT if the king count just rose (a formation completed)                                             (:176-181)
-IDLE → tryStartFormation (:204-248):
+      or numRats < (lockIn ? 12 : req·kings)                                                          (:160-169)
+ABORT if the king count just rose (a formation completed)                                             (:171-176)
+IDLE → tryStartFormation (:199-243):
    danger = (hp < 100 and kings == 1)        // skips the checks below (not the aborts above)
    else need: global ≥ (lockIn and t ≤ 1200 ? 1000 : 150); kings < 5;
         t ≤ 1200: knownMines ≥ MINE_THRESHOLDS[kings] = {_,5,9,15,∞}[kings]
@@ -352,19 +352,19 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | near-mine radius | d² < 5, cheese within d² 13 | `KingMiningStrategy.java.jinja2:256,260` | local cheese chase | L |
 | known-mine scan | first 10 | `KingMiningStrategy.java.jinja2:283`; `KingFormationCoordinatorStrategy.java:228` | bytecode guard (later mines ignored) | M |
 | mine dedup radius | d² < 25 | `comms/GlobalArray.java:569` | one king per mine | M |
-| `MINE_THRESHOLDS` | {3, 5, 9, 15, 1e7} indexed by #kings | `robot/king/KingFormationCoordinatorStrategy.java:13,221` | known mines needed for the next king, until round 1200 | **H** |
-| `UPGRADE_COST`+100 | global ≥ 150 to start | `KingFormationCoordinatorStrategy.java:14,212` | formation cheese gate (outside the lock-in, and the lone-king refill after round 1200) | L |
-| `LOCK_IN_ROUND`, `KING_TARGET` | 800, 3 | `KingFormationCoordinatorStrategy.java:21-22,164` | lock-in window and king target | **H** |
-| `LOCK_IN_MIN_RATS` | 12 | `KingFormationCoordinatorStrategy.java:23,165,230` | lock-in rat floor (start and abort) | M |
-| `LOCK_IN_MIN_CHEESE` | 1000 | `KingFormationCoordinatorStrategy.java:27,212` | lock-in cheese gate before round 1200 | **H** |
+| `MINE_THRESHOLDS` | {3, 5, 9, 15, 1e7} indexed by #kings | `robot/king/KingFormationCoordinatorStrategy.java:13,216` | known mines needed for the next king, until round 1200 | **H** |
+| `UPGRADE_COST`+100 | global ≥ 150 to start | `KingFormationCoordinatorStrategy.java:14,207` | formation cheese gate (outside the lock-in, and the lone-king refill after round 1200) | L |
+| `LOCK_IN_ROUND`, `KING_TARGET` | 800, 3 | `KingFormationCoordinatorStrategy.java:21-22,159` | lock-in window and king target | **H** |
+| `LOCK_IN_MIN_RATS` | 12 | `KingFormationCoordinatorStrategy.java:23,160,225` | lock-in rat floor (start and abort) | M |
+| `LOCK_IN_MIN_CHEESE` | 1000 | `KingFormationCoordinatorStrategy.java:27,207` | lock-in cheese gate before round 1200 | **H** |
 | `MAX_FORMATION_DIST_TO_MINE_SQ` | 25 (unused) | `KingFormationCoordinatorStrategy.java:15` | dead | – |
-| `COORDINATION_TIMEOUT` | 120 | `KingFormationCoordinatorStrategy.java:16,337` | king-side formation timeout | M |
+| `COORDINATION_TIMEOUT` | 120 | `KingFormationCoordinatorStrategy.java:16,332` | king-side formation timeout | M |
 | `MIN_DIST_FROM_KINGS_SQ` | `max(400, W·H/5)` | `KingFormationCoordinatorStrategy.java:41,254` | new king far from existing ones | **H** |
 | isNormal constants | 16, 36, 150, 25, 8, 250 | `KingFormationCoordinatorStrategy.java:69-71,118,126` | dead (call commented out) | – |
-| `req` | 12, or 8 if W·H ≤ 1200 | `KingFormationCoordinatorStrategy.java:160-163` | abort if `numRats < req·kings` | M |
-| late-king abort | t > 1200 && kings ≥ 2 | `KingFormationCoordinatorStrategy.java:167` | the engine's rule | – |
-| danger formation | hp < 100 and 1 king | `KingFormationCoordinatorStrategy.java:206` | emergency second king | M |
-| formation rat gate | `numRats ≥ 20·kings` (area > 1200) or `20·kings−4` | `KingFormationCoordinatorStrategy.java:223-228` | **unreachable at the 16 cap**; skipped in the lock-in | **H** |
+| `req` | 12, or 8 if W·H ≤ 1200 | `KingFormationCoordinatorStrategy.java:155-158` | abort if `numRats < req·kings` | M |
+| late-king abort | t > 1200 && kings ≥ 2 | `KingFormationCoordinatorStrategy.java:162` | the engine's rule | – |
+| danger formation | hp < 100 and 1 king | `KingFormationCoordinatorStrategy.java:201` | emergency second king | M |
+| formation rat gate | `numRats ≥ 20·kings` (area > 1200) or `20·kings−4` | `KingFormationCoordinatorStrategy.java:218-223` | **unreachable at the 16 cap**; skipped in the lock-in | **H** |
 | lock-in rat gate | lockIn → numRats ≥ 12 only | `KingFormationCoordinatorStrategy.java:230` | 2nd and 3rd king from round 800; lone-king refill after 1200 | M |
 | score floor | not lockIn && best < −40000 → none | `KingFormationCoordinatorStrategy.java:268` | require a far mine | M |
 | mine score terms | −50000 (too close), −Σd²(kings), −d²(centre), −50 if d²(self) > 400 | `KingFormationCoordinatorStrategy.java:250-269` | formation site choice | M |

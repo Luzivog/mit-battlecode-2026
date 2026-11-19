@@ -140,7 +140,17 @@ public final class GameWorld_p {
         if (chirality == 1) sym = getGameMap().getSymmetry();
         if (origin == null || center == null || (chirality == 1 && sym == null))
             return getAllLocationsWithinConeRadiusSquaredWithoutMap$orig(origin, width, height, center, dir, angle, r2, chirality);
-        int r = (int) Math.ceil(Math.sqrt((double) r2)) + 1;
+        // the test is a function of the offset from center (the coordinates enter it as exact doubles and, for
+        // offsets within r, exact ints), r2, dir and angle: each (r2, angle, dir) has a mask of the test's own
+        // answers, evaluated at once, and each column's range of accepted offsets
+        boolean memo = dir != null && angle == angle && r2 >= 0 && r2 <= 1 << 20 && center.x > -(1 << 28)
+                && center.x < 1 << 28 && center.y > -(1 << 28) && center.y < 1 << 28;
+        byte[] mask = null;
+        int r;
+        if (memo) {
+            mask = bcxConeMask(dir, angle, r2, false);
+            r = bcxMaskR;
+        } else r = (int) Math.ceil(Math.sqrt((double) r2)) + 1;
         int x0 = Math.max(center.x - r, origin.x), y0 = Math.max(center.y - r, origin.y);
         int x1 = Math.min(center.x + r, origin.x + width - 1), y1 = Math.min(center.y + r, origin.y + height - 1);
         long nx = (long) x1 - x0 + 1, ny = (long) y1 - y0 + 1;
@@ -152,7 +162,7 @@ public final class GameWorld_p {
         MapLocation[] buf = bcxConeBuf;
         if (buf == null || buf.length < nx * ny) bcxConeBuf = buf = new MapLocation[(int) (nx * ny)];
         int n = 0;
-        if (dir == null || angle != angle || r > 1 << 10) {
+        if (!memo) {
             for (int i = 0; i < nx; i++) {
                 int x = revX ? x1 - i : x0 + i;
                 for (int j = 0; j < ny; j++) {
@@ -161,24 +171,19 @@ public final class GameWorld_p {
                 }
             }
         } else {
-            // the test is a function of the offset from center (the coordinates enter it as exact doubles and, for
-            // offsets within r, exact ints), r2, dir and angle: each offset's answer is the test's own, remembered
             int side = 2 * r + 1;
-            byte[] mask = bcxConeMask(dir, angle, r2, false);
+            int[] cols = bcxConeCols(mask, side, center, dir, angle, r2);
+            int cx = center.x, cy = center.y;
             for (int i = 0; i < nx; i++) {
                 int x = revX ? x1 - i : x0 + i;
-                int row = (x - center.x + r) * side - center.y + r;
-                for (int j = 0; j < ny; j++) {
-                    int y = revY ? y1 - j : y0 + j;
-                    byte m = mask[row + y];
-                    if (m == 1) continue;
-                    MapLocation loc = new MapLocation(x, y);
-                    if (m == 0) {
-                        m = center.isWithinDistanceSquared(loc, r2, dir, angle) ? (byte) 2 : (byte) 1;
-                        mask[row + y] = m;
-                        if (m == 1) continue;
-                    }
-                    buf[n++] = loc;
+                int c = x - cx + r;
+                int lo = Math.max(y0, cy + cols[2 * c]), hi = Math.min(y1, cy + cols[2 * c + 1]);
+                if (lo > hi) continue;
+                int row = c * side - cy + r;
+                if (revY) {
+                    for (int y = hi; y >= lo; y--) if (mask[row + y] == 2) buf[n++] = new MapLocation(x, y);
+                } else {
+                    for (int y = lo; y <= hi; y++) if (mask[row + y] == 2) buf[n++] = new MapLocation(x, y);
                 }
             }
         }
@@ -196,6 +201,7 @@ public final class GameWorld_p {
     private boolean[] bcxShapeBl;
     private int[] bcxShapeRadius;
     private byte[][][] bcxShapeMasks;
+    private int[][][] bcxShapeCols;  // per shape and direction: per column, the lowest and highest accepted offset
     private int bcxShapeN, bcxShapeLast;
     public int bcxMaskR;
 
@@ -216,6 +222,37 @@ public final class GameWorld_p {
         return m;
     }
 
+    /** The column ranges of the last mask bcxConeMask returned (bottomLeft false), evaluating the whole mask at
+     *  center + offset on first use: per column dx + r, the lowest and highest dy whose test is true (empty: lo > hi). */
+    private int[] bcxConeCols(byte[] mask, int side, MapLocation center, Direction dir, double angle, int r2) {
+        int[][] byDir = bcxShapeCols[bcxShapeLast];
+        int d = dir.ordinal();
+        int[] cols = byDir[d];
+        if (cols != null) return cols;
+        int r = (side - 1) / 2;
+        cols = new int[2 * side];
+        for (int c = 0; c < side; c++) {
+            int lo = r + 1, hi = -r - 1;
+            for (int e = 0; e < side; e++) {
+                int k = c * side + e;
+                byte m = mask[k];
+                if (m == 0) {
+                    MapLocation loc = new MapLocation(center.x + c - r, center.y + e - r);
+                    m = center.isWithinDistanceSquared(loc, r2, dir, angle, false) ? (byte) 2 : (byte) 1;
+                    mask[k] = m;
+                }
+                if (m == 2) {
+                    if (e - r < lo) lo = e - r;
+                    hi = e - r;
+                }
+            }
+            cols[2 * c] = lo;
+            cols[2 * c + 1] = hi;
+        }
+        byDir[d] = cols;
+        return cols;
+    }
+
     private void bcxAddShape(double angle, int r2, boolean bl) {
         int n = bcxShapeN;
         if (bcxShapeAngle == null || n == bcxShapeAngle.length) {
@@ -225,9 +262,12 @@ public final class GameWorld_p {
             boolean[] b = new boolean[cap];
             int[] r = new int[cap];
             byte[][][] m = new byte[cap][][];
+            int[][][] cl = new int[cap][][];
             for (int i = 0; i < n; i++) {
                 a[i] = bcxShapeAngle[i]; q[i] = bcxShapeR2[i]; b[i] = bcxShapeBl[i]; r[i] = bcxShapeRadius[i]; m[i] = bcxShapeMasks[i];
+                cl[i] = bcxShapeCols[i];
             }
+            bcxShapeCols = cl;
             bcxShapeRadius = r;
             bcxShapeAngle = a;
             bcxShapeR2 = q;
@@ -239,6 +279,7 @@ public final class GameWorld_p {
         bcxShapeBl[n] = bl;
         bcxShapeRadius[n] = (int) Math.ceil(Math.sqrt((double) r2)) + 1;
         bcxShapeMasks[n] = new byte[Direction.values().length][];
+        bcxShapeCols[n] = new int[Direction.values().length][];
         bcxShapeN = n + 1;
     }
 

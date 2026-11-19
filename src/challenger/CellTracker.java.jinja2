@@ -134,6 +134,26 @@ public class CellTracker {
         }
     }
 
+    // The 3x3 around loc is on the map and was seen free of walls, and of dirt when last seen.
+    public static boolean isFree3x3(MapLocation loc) {
+        if(loc.y >= mapHeight - 1 || loc.x < 1 || loc.x >= mapWidth - 1) return false;
+        switch(loc.y) {
+            {% for i in range(1, MAX_MAP_SIZE - 1) %}
+            case {{i}} -> {
+                var rowMask = 0x7l << (loc.x - 1);
+                return (rowMask
+                        & passable{{i}}
+                        & passable{{i - 1}}
+                        & passable{{i + 1}}
+                        & ~(dirt{{i}} | dirt{{i - 1}} | dirt{{i + 1}})) == rowMask;
+            }
+            {% endfor %}
+            default -> {
+                return false;
+            }
+        }
+    }
+
     public static boolean isKingPassable(MapLocation loc) {
         if(RatKing.is5x5) {
             return isPassable5x5(loc);

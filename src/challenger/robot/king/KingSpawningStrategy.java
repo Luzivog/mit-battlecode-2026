@@ -32,10 +32,11 @@ public class KingSpawningStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        // A danger formation (KD) beside this king: spawn into it, whatever the cap, while the bank keeps its cost.
+        // A danger formation (KD) beside this king: spawn into it, whatever the cap, while the bank keeps the formation's
+        // 50 and 25 rounds of upkeep.
         MapLocation mySite = KingFormationCoordinatorStrategy.dangerSite;
         if (mySite != null) {
-            if (rc.getGlobalCheese() - rc.getCurrentRatCost() >= 50) trySpawn(mySite);
+            if (rc.getGlobalCheese() - rc.getCurrentRatCost() >= 100) trySpawn(mySite);
             return true;
         }
         // indicate("spawned " + numSpawned);

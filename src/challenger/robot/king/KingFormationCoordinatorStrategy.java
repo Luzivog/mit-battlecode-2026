@@ -313,52 +313,51 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         // indicate("FORMATION: coordinating at " + formationTarget);
     }
 
-    // A free 3x3 beside the king (Chebyshev 3: clear of the king's own 3x3), scored by our babies within d2 8 of it,
-    // enemy babies within d2 13, cats and enemy kings overlapping or near it, and the distance to the nearest enemy.
+    // A free 3x3 beside the king, clear of its own 3x3: the nearest ring (Chebyshev 3, then 4, then 5) holding one, and
+    // in it the best by our babies within d2 8 of it, enemy babies within d2 13, cats within d2 25, and the distance to
+    // the nearest enemy or cat.
     private MapLocation selectDangerSite() throws GameActionException {
-        MapLocation myBest = null;
-        int myBestScore = Integer.MIN_VALUE;
-        for (int myDx = -3; myDx <= 3; myDx++) {
-            for (int myDy = -3; myDy <= 3; myDy += (myDx == -3 || myDx == 3) ? 1 : 6) {
-                MapLocation myCentre = myLoc.translate(myDx, myDy);
-                if (!isFreeDangerSite(myCentre)) continue;
-                int myScore = 0;
-                int myNearest = 64;
-                for (int i = RobotTracker.numAllies; --i >= 0; ) {
-                    RobotInfo myAlly = RobotTracker.sortedAllies[i];
-                    if (myAlly.type == UnitType.BABY_RAT && myAlly.location.distanceSquaredTo(myCentre) <= 8) myScore += 16;
-                }
-                for (int i = RobotTracker.numEnemies; --i >= 0; ) {
-                    RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
-                    int myDist = myEnemy.location.distanceSquaredTo(myCentre);
-                    if (myEnemy.type == UnitType.RAT_KING) myDist -= 8;
-                    if (myDist <= 13) myScore -= 32;
-                    if (myDist < myNearest) myNearest = myDist;
-                }
-                for (int i = RobotTracker.numCats; --i >= 0; ) {
-                    int myDist = RobotTracker.sortedCats[i].location.distanceSquaredTo(myCentre);
-                    if (myDist <= 25) myScore -= 64;
-                    if (myDist < myNearest) myNearest = myDist;
-                }
-                myScore += myNearest;
-                if (myScore > myBestScore) {
-                    myBestScore = myScore;
-                    myBest = myCentre;
+        for (int myRing = 3; myRing <= 5; myRing++) {
+            MapLocation myBest = null;
+            int myBestScore = Integer.MIN_VALUE;
+            for (int myDx = -myRing; myDx <= myRing; myDx++) {
+                for (int myDy = -myRing; myDy <= myRing; myDy += (myDx == -myRing || myDx == myRing) ? 1 : 2 * myRing) {
+                    MapLocation myCentre = myLoc.translate(myDx, myDy);
+                    if (!isFreeDangerSite(myCentre)) continue;
+                    int myScore = 0;
+                    int myNearest = 64;
+                    for (int i = RobotTracker.numAllies; --i >= 0; ) {
+                        RobotInfo myAlly = RobotTracker.sortedAllies[i];
+                        if (myAlly.type == UnitType.BABY_RAT && myAlly.location.distanceSquaredTo(myCentre) <= 8) myScore += 16;
+                    }
+                    for (int i = RobotTracker.numEnemies; --i >= 0; ) {
+                        RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
+                        int myDist = myEnemy.location.distanceSquaredTo(myCentre);
+                        if (myEnemy.type == UnitType.RAT_KING) myDist -= 8;
+                        if (myDist <= 13) myScore -= 32;
+                        if (myDist < myNearest) myNearest = myDist;
+                    }
+                    for (int i = RobotTracker.numCats; --i >= 0; ) {
+                        int myDist = RobotTracker.sortedCats[i].location.distanceSquaredTo(myCentre);
+                        if (myDist <= 25) myScore -= 64;
+                        if (myDist < myNearest) myNearest = myDist;
+                    }
+                    myScore += myNearest;
+                    if (myScore > myBestScore) {
+                        myBestScore = myScore;
+                        myBest = myCentre;
+                    }
                 }
             }
+            if (myBest != null) return myBest;
         }
-        return myBest;
+        return null;
     }
 
-    // The 3x3 is on the map, every tile in sight and free of walls and dirt, and no enemy king or cat on it.
+    // The 3x3 was seen free of walls and dirt, it is clear of this king's 3x3, and no enemy king or cat in sight is on it.
     private boolean isFreeDangerSite(MapLocation aCentre) throws GameActionException {
-        if (aCentre.x < 1 || aCentre.y < 1 || aCentre.x >= mapWidth - 1 || aCentre.y >= mapHeight - 1) return false;
-        for (int myDx = -1; myDx <= 1; myDx++) {
-            for (int myDy = -1; myDy <= 1; myDy++) {
-                MapLocation myTile = aCentre.translate(myDx, myDy);
-                if (!rc.canSenseLocation(myTile) || !rc.sensePassability(myTile)) return false;
-            }
-        }
+        if (Math.abs(aCentre.x - myLocX) < 3 && Math.abs(aCentre.y - myLocY) < 3) return false;
+        if (!CellTracker.isFree3x3(aCentre)) return false;
         for (int i = RobotTracker.numEnemies; --i >= 0; ) {
             RobotInfo myEnemy = RobotTracker.sortedEnemies[i];
             if (myEnemy.type == UnitType.RAT_KING && Math.abs(myEnemy.location.x - aCentre.x) <= 2
@@ -467,8 +466,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     }
 
     private void monitorFormation() throws GameActionException {
-        if (dangerSite != null && (time - coordinationStartTurn > DANGER_TIMEOUT
-            || (rc.canSenseLocation(dangerSite) && !isFreeDangerSite(dangerSite)))) {
+        if (dangerSite != null && (time - coordinationStartTurn > DANGER_TIMEOUT || !isFreeDangerSite(dangerSite))) {
             abortFormation();
             return;
         }

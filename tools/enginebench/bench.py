@@ -303,7 +303,7 @@ def play(sc: dict, binary: Path, m: dict, rundir: Path, env: dict, timeout: floa
     spec = dict(sc["spec"], classes="/bench/classes", indicators=False, replay=True)
     (out / "spec.jsonl").write_text(json.dumps(spec) + "\n")
     stat = d / "perf.txt"
-    pre = perf or ["perf", "stat", "-x", ",", "-e", "instructions:u,instructions:k", "-o", str(stat), "--"]
+    pre = perf or ["perf", "stat", "-x", ",", "-e", "instructions:u,instructions:k,task-clock", "-o", str(stat), "--"]
     rfd, wfd = os.pipe()
     cmd = pre + sandbox_cmd(binary, Path(m["dir"]), Path(m["classes_dir"]), out, tmp, home, env, wfd)
     t = time.time()
@@ -322,8 +322,7 @@ def play(sc: dict, binary: Path, m: dict, rundir: Path, env: dict, timeout: floa
     wall = time.time() - t
     with os.fdopen(rfd) as f:
         reading = f.read().split()
-    r = {"id": sc["id"], "wall_s": round(wall, 2), "rss_kb": None, "exit": None,
-         "cpu_s": round(ru.ru_utime + ru.ru_stime, 2), "dir": str(d), "timeout": killed}
+    r = {"id": sc["id"], "wall_s": round(wall, 2), "rss_kb": None, "exit": None, "dir": str(d), "timeout": killed}
     if len(reading) == 2:
         r["rss_kb"], r["exit"] = int(reading[0]), int(reading[1])
     if perf is None:
@@ -332,12 +331,18 @@ def play(sc: dict, binary: Path, m: dict, rundir: Path, env: dict, timeout: floa
 
 
 def read_perf(p: Path) -> dict:
+    """instructions:u and :k, and task-clock (the tree's CPU seconds, a diagnostic)."""
     got = {}
     try:
         for ln in p.read_text().splitlines():
             f = ln.split(",")
             if len(f) > 2 and f[2] in ("instructions:u", "instructions:k"):
                 got["instr_" + f[2][-1]] = int(f[0]) if f[0].isdigit() else None
+            elif len(f) > 2 and f[2] == "task-clock":
+                try:
+                    got["cpu_s"] = round(float(f[0]) / 1000, 2)
+                except ValueError:
+                    pass
     except OSError:
         pass
     return got
@@ -367,9 +372,9 @@ def validate(sc: dict, r: dict, m: dict) -> list[str]:
     except (OSError, ValueError):
         res = None
         reasons.append(f"no result.json (exit {r['exit']}; see {r['dir']}/stderr.txt)")
-    if res is not None:
-        if "error" in res:
-            reasons.append(f"the game ended in an error: {res['error']}")
+    if res is not None and "error" in res:
+        reasons.append(f"the game ended in an error: {res['error']}")
+    elif res is not None:
         want = sc["ref"]["result"]
         bad = [k for k in sorted(want) if k not in NOT_COMPARED and res.get(k) != want[k]]
         if bad:
@@ -551,11 +556,11 @@ def cmd_score(args) -> int:
            "main_score": ref["score"] if ref else None, "unit": "G instructions:u per corpus game (lower is better)",
            "invalid": invalid_all, "build_s": round(build_s, 1), "games_s": round(games_s, 1),
            "wall_s": round(time.time() - t0, 1), "jobs": args.jobs, "only": args.only, "rows": rows,
-           "instr_k": sum(r.get("instr_k") or 0 for r in rows)}
+           "instr_k": sum(r.get("instr_k") or 0 for r in rows), "cpu_s": round(sum(r.get("cpu_s") or 0 for r in rows), 1)}
     if not args.json:
         w = 8 if sealed else max(len(sc["id"]) for sc in scenarios)
         print(f"{'scenario':{w}s} {'stratum':9s} {'weight':>7s} {'Ginstr':>9s} {'main':>9s} {'ratio':>7s} "
-              f"{'RSS MB':>7s} {'cap':>6s} {'wall s':>7s}  status")
+              f"{'RSS MB':>7s} {'cap':>6s} {'cpu s':>6s}  status")
         for i, sc in enumerate(scenarios):
             r = rows[i]
             name = f"S{i + 1:02d}" if sealed else sc["id"]
@@ -564,7 +569,7 @@ def cmd_score(args) -> int:
             ratio = f"{g / mr:7.4f}" if g and mr else f"{'-':>7s}"
             print(f"{name:{w}s} {sc['stratum']:9s} {sc['weight']:7.4f} {g / 1e9 if g else float('nan'):9.4f} "
                   f"{mr / 1e9 if mr else float('nan'):9.4f} {ratio} {r['rss_kb'] / 1024:7.0f} "
-                  f"{sc.get('rss_cap_kb', 0) / 1024:6.0f} {r['wall_s']:7.1f}  "
+                  f"{sc.get('rss_cap_kb', 0) / 1024:6.0f} {r.get('cpu_s') or 0:6.1f}  "
                   f"{'ok' if not r['invalid'] else 'INVALID'}")
         for i, r in enumerate(rows):
             for reason in r["invalid"]:
@@ -579,7 +584,7 @@ def cmd_score(args) -> int:
                 mline += f"; {ref['score'] / score:.4f}x main's speed"
             print(f"score: {sline if valid else 'INVALID (' + sline + ' if it were valid)'} G instructions:u per "
                   f"corpus game, lower is better ({mline})")
-        print(f"kernel instructions (not scored): {out['instr_k'] / 1e9:.3f} G over these scenarios")
+        print(f"not scored: kernel instructions {out['instr_k'] / 1e9:.3f} G, CPU {out['cpu_s']} s over these games")
         print(f"wall: {out['wall_s']} s (build {build_s:.1f} s, games {games_s:.1f} s at {args.jobs} at once)")
     else:
         print(json.dumps(out))

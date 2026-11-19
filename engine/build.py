@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the native engine: engine/build/bcx (engine 1.2.6) and, with --engine 1.2.5, engine/build/bcx-1.2.5.
 
-    engine/build.py [--engine 1.2.6|1.2.5|all] [--bots PKG,PKG|all] [-j N] [--opt -O2]
+    engine/build.py [--engine 1.2.6|1.2.5|all] [--bots PKG,PKG|all] [-j N] [--opt -O3]
     engine/build.py --engine 1.2.6 --team PKG=CLASSES_DIR... --gen DIR --out FILE    (tools/bcgames/native.py)
 
 Steps: fetch the jars and bdwgc once (~/battlecode26-data/engine/), compile the translator (engine/jvm), translate
@@ -210,7 +210,9 @@ def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None,
     exe = exe or OUT / ("bcx" if version == "1.2.6" else f"bcx-{version}")
     lines = [f"cxxflags = {' '.join(CXXFLAGS)} {opt} {inc}",
              "rule cxx\n  command = clang++ $cxxflags -MMD -MF $out.d -c $in -o $out\n  depfile = $out.d\n  deps = gcc",
-             f"rule cxxglue\n  command = clang++ {' '.join(CXXFLAGS)} {glue_opt or opt} {inc} -MMD -MF $out.d -c $in -o $out\n"
+             # with its own optimization, klasses.cpp is a plain object: under ThinLTO the link would redo it at OPT
+             f"rule cxxglue\n  command = clang++ {' '.join(f for f in CXXFLAGS if not (glue_opt and f.startswith('-flto')))} "
+             f"{glue_opt or opt} {inc} -MMD -MF $out.d -c $in -o $out\n"
              "  depfile = $out.d\n  deps = gcc",
              "rule cc\n  command = clang -O2 -ffp-contract=off -fno-fast-math -msse4.1 -c $in -o $out",
              f"rule link\n  command = clang++ -static -flto=thin -fuse-ld=lld -Wl,--thinlto-jobs={jobs} "

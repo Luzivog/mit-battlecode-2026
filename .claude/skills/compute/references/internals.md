@@ -2,7 +2,7 @@
 
 For changing `tools/compute`, `tools/run`, `tools/job.sh` or `tools/piece.py`. To run work, read `../SKILL.md`.
 
-No daemon and no state of our own: Slurm, Condor and the folders on `/vol/bitbucket/user/bc26` are the record.
+No daemon and no state of our own: Slurm, Condor and the folders of our workspace `/vol/gpudata/user-bc26` are the record.
 Ported from the previous project's tooling (prior-battlecode-tooling, `tools/compute`, `tools/job.sh`), trimmed
 to what a Java bot repo needs: no test queue and no follower service.
 
@@ -182,7 +182,7 @@ tools/compute wait RUN --json      # in the background; exit 0 when every task e
   condor_submit whose answer was lost is reconciled with the queue (read through a login node): a job Condor holds
   gets its backend-id, any other folder is removed. `request_cpus = 1` takes the machine's one static slot, so every core; requirements
   are our releases (Ubuntu 18.04 to 26.04), the task's CPUs and memory; rank by the tasks the machine holds, the
-  machine of the last start last. No file transfer: everything is on `/vol/bitbucket`. `--time` becomes
+  machine of the last start last. No file transfer: everything is on the shared volume. `--time` becomes
   `periodic_remove`. An eviction's SIGTERM leaves no exit file, and Condor runs the job again. The one hold Condor
   releases itself (HoldReasonCode 7, subcode 2: the first machine couldn't see the new folder yet) is waited through.
 - **Slurm** (the GPU cluster's CPUs, `--where slurm`): login nodes `gpucluster2`, `gpucluster3`. A CPU job holds one
@@ -228,11 +228,15 @@ three rounds at most. These are yours:
   longer need.
 - **Few launches per machine**: DoC logs every program launch on a lab machine (auditd and process accounting are
   active: measured below), so a job starts few processes per game.
-- **Bounded writes on /vol/bitbucket**, DoC's shared NFS scratch with no per-user quota (99% full, 2.9 TB free on 18
-  Nov). A job's log stops at 64 MB, a task's log at 1 MB and its OUT at 1 GB; ended jobs and closed runs are deleted
-  after 7 days, a run nothing touched for 30 days too, and a closed run's code bundle at once (`tools/compute
-  sweep`, run by `tools/run` and `tools/compute run` at most once a day). A stored bundle or shipped file in `cas/`
-  that no run or job links any more goes 2 days after its last use; `pool/pieces` files silent for a day go. Never
+- **Bounded writes in our workspace on /vol/gpudata** (`/vol/gpudata/user-bc26`, from `ws_allocate bc26 365` on
+  gpucluster2: CephFS, mounted on the GPU cluster's nodes, cpucluster1 and the lab machines; a 55 GB quota, read
+  without a walk by `getfattr -n ceph.dir.rbytes`). Until 19 Nov the folders were on /vol/bitbucket, DoC's NFS
+  scratch: it is full (1.6 TB of 160 free) and a small file operation took 250 ms and more there against 1–6 ms
+  here; with 45 runs open, the reads of `pool/pieces` stopped answering and every tool hung behind them. A job's
+  log stops at 64 MB, a task's log at 1 MB and its OUT at 1 GB; ended jobs and closed runs are deleted after 6
+  hours, a run nothing touched for 2 days too, and a closed run's code bundle at once (`tools/compute sweep`, run
+  by `tools/run` and `tools/compute run` at most once an hour). A stored bundle or shipped file in `cas/` that no
+  run or job links any more goes 6 hours after its last use; `pool/pieces` files silent for an hour go. Never
   `chmod` anything open.
 - **Quotas are facts.** The NFS home has a quota; nothing of ours writes to it (HOME is scratch in a job).
 - **First jobs small**: a first job on a backend, or of a new kind, runs under 10 minutes.

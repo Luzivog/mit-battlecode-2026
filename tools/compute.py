@@ -1,6 +1,6 @@
 """tools/compute: heavy work on DoC's Condor lab machines, the GPU cluster's CPUs and cpucluster1, for one job at a
 time (`run`), and the commands that watch jobs and runs (`tools/run`'s). No daemon and no state of its own: Slurm,
-Condor and the folders on /vol/bitbucket are the record. The compute skill says how to use it; its
+Condor and the folders of our workspace on /vol/gpudata are the record. The compute skill says how to use it; its
 references/internals.md how it works.
 
 Exit codes: 2 when refused or a backend can't be reached. `wait` and `logs -f` exit with the job's own code, 3 when
@@ -22,9 +22,13 @@ from tools import jobs as J
 from tools import runs as R
 from tools.remote import LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS, Refused, login
 
-KEEP_DAYS = 7  # an ended job's or a closed run's folder is deleted this long after its end (sweep)
-STALE_DAYS = 30  # a run nothing has touched for this long is deleted, closed or not
-CAS_KEEP_DAYS = 2  # a stored bundle or shipped file no run or job holds is deleted this long after its last use
+# The workspace holds 55 GB (remote.REMOTE_ROOT), and a day of tests wrote more than that with the retention below in
+# days: results are pulled as they come, so what has ended goes within hours
+KEEP_H = 6  # an ended job's or a closed run's folder is deleted this long after its end (sweep)
+STALE_DAYS = 2  # a run nothing has touched for this long is deleted, closed or not
+CAS_KEEP_H = 6  # a stored bundle or shipped file no run or job holds is deleted this long after its last use
+SWEEP_EVERY_MIN = 60  # `run` and `tools/run` sweep at most this often
+QUOTA_GB = 55
 
 
 def size_mb(spec: str) -> int:
@@ -201,30 +205,31 @@ def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
 
 # ---- sweep ----
 def sweep(force: bool = True) -> str:
-    """Deletes our job folders ended (an exit code written) or cancelled, and our runs closed, KEEP_DAYS ago, and runs
+    """Deletes our job folders ended (an exit code written) or cancelled, and our runs closed, KEEP_H ago, and runs
     nothing has touched for STALE_DAYS (no follower ever closed them): every write on the volume is bounded. Stored
-    bundles and shipped files (REMOTE_CAS) no run or job links any more go CAS_KEEP_DAYS after their last use; the pool
-    forgets closed or deleted runs and pieces silent for a day. Without FORCE, at most once a day (`.swept`'s age):
+    bundles and shipped files (REMOTE_CAS) no run or job links any more go CAS_KEEP_H after their last use; the pool
+    forgets closed or deleted runs and pieces silent for an hour. Its last words: the workspace's size, as Ceph
+    counts it (no walk). Without FORCE, at most every SWEEP_EVERY_MIN (`.swept`'s age):
     `run` and `tools/run` call it so."""
-    once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -1440 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
+    once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -{SWEEP_EVERY_MIN} 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
     cmd = (f"{once}touch {REMOTE_ROOT}/.swept; n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
-           f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mtime +{KEEP_DAYS})\" ]; }} || "
-           f"{{ [ -e $d/cancelled ] && [ -n \"$(find $d/cancelled -mtime +{KEEP_DAYS})\" ]; }}; "
+           f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mmin +{KEEP_H * 60})\" ]; }} || "
+           f"{{ [ -e $d/cancelled ] && [ -n \"$(find $d/cancelled -mmin +{KEEP_H * 60})\" ]; }}; "
            f"then rm -rf $d && n=$((n+1)); fi; done; "
            f"m=0; for d in {REMOTE_RUNS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
-           f"if {{ [ -e $d/closed ] && [ -n \"$(find $d/closed -mtime +{KEEP_DAYS})\" ]; }} || "
+           f"if {{ [ -e $d/closed ] && [ -n \"$(find $d/closed -mmin +{KEEP_H * 60})\" ]; }} || "
            f"[ -z \"$(find $d $d/done -maxdepth 0 -mtime -{STALE_DAYS})\" ]; then rm -rf $d && m=$((m+1)); fi; done; "
            f"for f in {REMOTE_POOL}/open/*; do [ -e \"$f\" ] || continue; r={REMOTE_RUNS}/${{f##*/}}; "
            f"{{ [ -d $r ] && [ ! -e $r/closed ]; }} || rm -f \"$f\"; done; "
-           f"find {REMOTE_POOL}/pieces -maxdepth 1 -type f -mmin +1440 -delete 2>/dev/null; "
-           f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mtime +{CAS_KEEP_DAYS} -print -delete 2>/dev/null "
+           f"find {REMOTE_POOL}/pieces -maxdepth 1 -type f -mmin +60 -delete 2>/dev/null; "
+           f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mmin +{CAS_KEEP_H * 60} -print -delete 2>/dev/null "
            f"| wc -l); "
-           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; du -sh {REMOTE_ROOT} 2>/dev/null | cut -f1")
+           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"")
     return login(cmd).strip().replace("\n", "; ") + " in use"
 
 
 def sweep_daily() -> None:
-    """sweep() at most once a day, and this checkout's old run results packed (runs.compact_local, at most hourly); a
+    """sweep() at most once an hour, and this checkout's old run results packed (runs.compact_local, at most hourly); a
     failure only said."""
     try:
         packed = R.compact_local()
@@ -277,7 +282,7 @@ def main(argv: list[str] | None = None) -> int:
     pl.add_argument("id")
     cn = sub.add_parser("cancel", help="end a job, or a run and its pieces, for good")
     cn.add_argument("id")
-    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_DAYS} days")
+    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_H} hours")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "status":

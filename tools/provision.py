@@ -1,4 +1,4 @@
-"""What every remote job runs on, put once in the runtime folder on /vol/bitbucket (remote.RUNTIME), never per job:
+"""What every remote job runs on, put once in the runtime folder on the shared volume (remote.RUNTIME), never per job:
 
 - Temurin's JDK 21 (TEMURIN), from Adoptium's release, checked by its sha256: `java` on every node, whatever the node
   has (cpucluster1's is 11, the GPU cluster's 25).

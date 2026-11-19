@@ -1,4 +1,4 @@
-"""Runs: many tasks spread over every free remote CPU (`tools/run`). No daemon: the run's folder on /vol/bitbucket is
+"""Runs: many tasks spread over every free remote CPU (`tools/run`). No daemon: the run's folder on the shared volume is
 the record, pieces (jobs.py jobs running tools/piece.py) claim its tasks, and whoever follows it (`tools/run` itself,
 or `tools/compute wait RUN`) fetches results, adds pieces while its tasks wait, and closes it.
 

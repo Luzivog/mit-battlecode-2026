@@ -599,7 +599,7 @@ def read_condor() -> Condor:
 
 def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int | None, remove_s: int | None) -> str:
     """The submit description: request_cpus = 1 (a lab machine is one static slot, so this claims all of it, DoC's
-    rule) on a machine of our releases with CPUS cores and MEM_MB MiB, read and written in place on /vol/bitbucket.
+    rule) on a machine of our releases with CPUS cores and MEM_MB MiB, read and written in place on the shared volume.
     Ranked by the workers it runs (SLOT_MB a worker: the CPUs its memory holds; None: its CPUs), the machine of its
     last start last. REMOVE_S: removed once it has run that long (a bound, for a first job)."""
     release = " || ".join(f'OpSysAndVer == "{o}"' for o in CONDOR_OSES)

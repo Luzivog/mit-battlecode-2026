@@ -17,8 +17,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 LOCAL = os.environ.get("BC26_LOCAL_REMOTE", "")  # tests: a folder here standing in for REMOTE_ROOT
-# Our folder on /vol/bitbucket, apart from every other project's: every job's code bundle lies under it
-REMOTE_ROOT = LOCAL or "/vol/bitbucket/user/bc26"
+# Our workspace on /vol/gpudata (made by `ws_allocate bc26 365` on gpucluster2; a 55 GB quota), apart from every other
+# project's: every job's code bundle lies under it. Until 19 Nov it was /vol/bitbucket/user/bc26: that volume is full
+# and a small file operation there took 250 ms and more against 1-6 ms here, on login nodes and lab machines alike
+REMOTE_ROOT = LOCAL or "/vol/gpudata/user-bc26"
 REMOTE_JOBS = f"{REMOTE_ROOT}/jobs"
 REMOTE_RUNS = f"{REMOTE_ROOT}/runs"
 REMOTE_POOL = f"{REMOTE_ROOT}/pool"  # open/RUN: the runs pooled pieces serve; pieces/JOB: each live piece's state

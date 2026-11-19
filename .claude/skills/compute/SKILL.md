@@ -98,8 +98,9 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
 - No idle allocations: runs close themselves and cancel pieces that never started; cancel a job you no longer need.
 - One partition a job; a Condor job takes its whole machine (`request_cpus = 1`). The tools enforce both.
 - A first job on a backend, or of a new kind, is small and under 10 minutes (`--time 10m`).
-- Our files on `/vol/bitbucket/user/bc26` only (0700, written with umask 077); never another project's folders,
-  jobs or services. Ended jobs and closed runs are deleted after 7 days (`tools/compute sweep`).
+- Our files in our workspace `/vol/gpudata/user-bc26` only (0700, written with umask 077; a 55 GB quota); never
+  another project's folders, workspaces, jobs or services. Ended jobs and closed runs are deleted after 6 hours
+  (`tools/compute sweep`). Nothing new goes on `/vol/bitbucket`: it is full and slow.
 - Never work around a limit. If a backend refuses, report its exact error.
 
 ## Changing the tools

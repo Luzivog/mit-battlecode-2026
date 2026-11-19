@@ -159,7 +159,9 @@ A newborn reads its payload on its first turn, still on its spawn tile (arch§4.
 | 3 | cat defender | – | K3 |
 | 4–7 | reserved | – | – |
 
-Payload 0 keeps today's behaviour. The first package to merge adds the role switch in `BabyRat.init` and an encoder
+Payload 0 keeps today's behaviour. Two stale cases to handle (S2, S3): the 2-slot spawn-info write can tear (write
+both or neither), and a king's turn resumed after an overrun writes spawn info for a rat that already had its first
+turn; if another king cleared the slots that round, the stale entry stays readable for a round. The first package to merge adds the role switch in `BabyRat.init` and an encoder
 next to `GlobalArray.registerSpawnedRat` (`C:comms/GlobalArray.java:86-104`); later packages add their case. Dropping
 the `Rng.mcg()` call shifts the king's random stream, which is expected (arch§3).
 
@@ -394,7 +396,8 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
     points seats hold 786–2122 global (T3§3.5).
   - Cat-lane exclusion: none in arm A; the coordinator's cat abort is dead code (strategy§3), and K2 adds lanes later.
 - **Merged: arm A at T_lock 800, K_target 3** (2026-11-19, 6349ecd), with three measured additions: a king counts as
-  gone only after two rounds missing (an overrun king misses one liveness write); lock-in formations before r1200 need
+  gone only after two rounds missing (an overrun king misses one liveness write; S3 fixed the root in `GlobalArray`
+  and removed this filter); lock-in formations before r1200 need
   1000 global cheese; and they keep the known-mine thresholds (lock-in lost 15 net games of 62 on ≤ 4-mine maps). `L-late`
   gain +0.055 [+0.008, +0.106] vs main (1119-024054-ab-925a); `goal` harm passed (1119-032401-ab-0db4). Two
   confirmatory tests were run, so the false-accept chance is about 0.10. Seats with ≥ 3 kings at r1200: 47 of 293

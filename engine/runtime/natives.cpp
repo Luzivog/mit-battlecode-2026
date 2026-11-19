@@ -90,6 +90,13 @@ static void aioobe(const char* fmt, jint a, Obj* arr) {
 }
 
 void rt_System_arraycopy(Obj* src, jint sp, Obj* dst, jint dp, jint n) {
+    // the common case: arrays of one class, in bounds (no store checks: an element of one is one of the other)
+    if (LIKELY(src && dst && src->klass == dst->klass && (src->klass->flags & KF_ARRAY) && (sp | dp | n) >= 0 &&
+               (jlong)sp + n <= ALEN(src) && (jlong)dp + n <= ALEN(dst))) {
+        size_t es = esize(src->klass->elem);
+        memmove(ADATA(char, dst) + (size_t)dp * es, ADATA(char, src) + (size_t)sp * es, (size_t)n * es);
+        return;
+    }
     if (!src || !dst) { rt_throw_npe(); return; }
     Klass *sk = src->klass, *dk = dst->klass;
     if (!(sk->flags & KF_ARRAY) || !(dk->flags & KF_ARRAY)) { rt_throw_new_ase(rt_cstring("arraycopy: source or destination is not an array")); return; }

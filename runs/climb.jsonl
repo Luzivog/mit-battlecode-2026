@@ -23,3 +23,5 @@
 {"t": 1795083101, "score": 12.6489, "kept": true, "what": "fast path for InternalRobot.getAllRatLocations: plain loops instead of boxed offset lists"}
 {"t": 1795084009, "score": 12.5224, "kept": true, "what": "-O3 by default (compile and ThinLTO link)"}
 {"t": 1795084885, "score": 12.0827, "kept": true, "what": "cone fast path: whole mask on first use, per-column accepted ranges, radius from the shape table"}
+{"t": 1795085243, "score": 12.1645, "kept": false, "what": "pointer-free small objects from traced pointer stacks refilled by GC_generic_malloc_many"}
+{"t": 1795085525, "score": 11.9707, "kept": true, "what": "System.arraycopy fast path: same class, in bounds -> one memmove"}

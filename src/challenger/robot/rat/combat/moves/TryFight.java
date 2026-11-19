@@ -1022,7 +1022,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.NORTH != myDir) {
             // prefer turning
@@ -1045,7 +1045,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.NORTHEAST != myDir) {
             // prefer turning
@@ -1068,7 +1068,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.EAST != myDir) {
             // prefer turning
@@ -1091,7 +1091,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.SOUTHEAST != myDir) {
             // prefer turning
@@ -1114,7 +1114,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.SOUTH != myDir) {
             // prefer turning
@@ -1137,7 +1137,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.SOUTHWEST != myDir) {
             // prefer turning
@@ -1160,7 +1160,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.WEST != myDir) {
             // prefer turning
@@ -1183,7 +1183,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if (Direction.NORTHWEST != myDir) {
             // prefer turning

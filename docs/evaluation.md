@@ -359,6 +359,33 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
   some batches in s2; `tools/games retry` and a second `tools/tune play` (it plays again a variant short of its cells)
   filled them from the cache.
 
+**TN2** (19 Nov, main with KF and EXPLORE_P 0.6; seed bases 61011-61013):
+- **The mine-rich gate.** `MineEstimate.reached(Tune.RICH_MAP_MINES)` (8, latched) picks `EXPLORE_P_RICH` over
+  `EXPLORE_P` for miners and `SPAWN_CAP_RICH` over `SPAWN_CAP` for kings. Its cost at neutral values (both rich
+  constants equal to their plain ones), measured on the 760 cells of s6 (seed base 61012):
+  - score against main −0.006 [−0.019, +0.007]; 43% of its games equal main's;
+  - bytecode on synced turns (PairBc over the 1,520 replay pairs): rats +1.3 a turn (10,605 vs 10,604), kings +42
+    (median +53: until it latches, the king asks the estimate every turn); overruns unchanged (kings 106 vs 109,
+    rats 3,574 vs 3,552 in 7.0 M turns);
+  - when it starts to act (FirstDiff, EXPLORE_P_RICH 1.0 against the centre): on ≥ 8-mine maps 720 of 816 games
+    diverge, the first divergent round at p10 r54, p25 r79, median r127, p75 r216, p90 r354; 96 never latch. On the
+    other maps no game diverges: the estimate is a lower bound and never reaches 8 there.
+- **s5** (seed base 61011): 16 constants ± a step around main with the gate, 32 variants + the centre × 380 cells.
+  Curvature −0.048 [−0.071, −0.025]: main sits near a local optimum in this box. Load-bearing as they are: the
+  grab weight (lowering it to 5 costs about 2.3 pp) and the threat penalty (40 costs about 1.2 pp). The formation and
+  lock-in constants re-screened after KF are flat (|effect| ≤ 0.26 pp a step), and so are the exploration radius and
+  the rich-map cap. Leads at |z| ≥ 1.5: `EXPLORE_P_RICH` and `EXPLORE_P` up, `FIGHT_STEP` and `SPAWN_FLOOR` down,
+  `MINES_KING2` up.
+- **s6, s7** (seed bases 61012, 61013): the leads as single points against the gated centre, 760 cells each. None
+  gained: the best read +0.005 (rich share 0.7, mines 7); both bundles ±0.01. Two of the screen's leads changed sign.
+- **Result: no constant moved.** The gate was reverted; the branch keeps the newly tunable constants in Tune.java
+  (main's instructions unchanged). Within the box these screens cover, main is at a local optimum except where TN
+  already moved `EXPLORE_P`.
+- Cost of s5-s7: 47 variant builds and 50,173 games on Imperial (647,000 CPU s), plus 4,560 replays for the gate's
+  bytecode and latch measurements. Main moved
+  between two `play` calls of s5 (docs-only commits) and the second re-pinned it, replaying 20 runs from the cache:
+  `play` now keeps a campaign's first reference.
+
 ## Measured: the native engine (2026-11-19)
 
 **One test on all four**: `tools/games ab challenger awubot --test harm --pool goal --no-cache` (challenger = main's,

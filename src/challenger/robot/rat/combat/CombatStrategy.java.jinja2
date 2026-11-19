@@ -288,17 +288,17 @@ public class CombatStrategy extends Strategy {
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target, int damage) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -100;
+        if (CombatTracker.hasThreat(moveDir, facing, target, damage)) return -challenger.Tune.THREAT_PENALTY;
         return 0;
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing, RobotInfo target) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing, target)) return -100;
+        if (CombatTracker.hasThreat(moveDir, facing, target)) return -challenger.Tune.THREAT_PENALTY;
         return 0;
     }
 
     public static double getCellScoreFor(Direction moveDir, Direction facing) throws GameActionException {
-        if (CombatTracker.hasThreat(moveDir, facing)) return -100;
+        if (CombatTracker.hasThreat(moveDir, facing)) return -challenger.Tune.THREAT_PENALTY;
         return 0;
     }
 

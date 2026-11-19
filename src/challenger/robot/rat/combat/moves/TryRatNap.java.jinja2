@@ -55,7 +55,7 @@ public final class TryRatNap {
             if (info.getHealth() <= GameConstants.RAT_BITE_DAMAGE) continue; // just kill
             if (info.getType() != UnitType.BABY_RAT) continue;
             // double weight = scoreEnemy(info);
-            weight = 30;
+            weight = challenger.Tune.RATNAP_W;
             selectMoves();
             if (Clock.getBytecodeNum() - bytecodeStart > bytecodeBudget) break;
 

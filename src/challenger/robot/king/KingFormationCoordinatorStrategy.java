@@ -21,8 +21,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form without the 20-per-king rat gate and
     // the far-mine floor.
     private static final int LOCK_IN_ROUND = Tune.LOCK_IN_ROUND;
-    private static final int KING_TARGET = 3;
-    private static final int LOCK_IN_MIN_RATS = 12;
+    private static final int KING_TARGET = Tune.KING_TARGET;
+    private static final int LOCK_IN_MIN_RATS = Tune.LOCK_IN_MIN_RATS;
     // A lock-in king pays upkeep to the end and its formation consumes ~8 rats to rebuild: before the cutoff, form only
     // with a 120-round upkeep reserve for 3 kings (720) + the formation (50) + the rebuild (~280). Measured: lock-in
     // formations started below 1000 global starved 22 of 38 games and won 5 fewer than main, above it 12 more.

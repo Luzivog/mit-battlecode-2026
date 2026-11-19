@@ -286,7 +286,10 @@ def pin_ref(ref: str) -> str:
 
 def cmd_play(a) -> int:
     c = load(a.name)
-    ref = pin_ref(a.ref)
+    # a campaign keeps the reference its first runs at these settings pinned (main moves between plays)
+    same = [r["ref"] for r in c["runs"] if (r["pool"], r["seed_base"], r["cells"], r["engine"])
+            == (a.pool, a.seed_base, a.cells, a.engine)]
+    ref = same[0] if same and a.ref == "challenger@origin/main" else pin_ref(a.ref)
     key = {"pool": a.pool, "seed_base": a.seed_base, "cells": a.cells, "ref": ref, "engine": a.engine}
     # a variant is played again when its run stopped short of its cells (failed batches): the new run reads the
     # games already played from the cache
@@ -301,31 +304,41 @@ def cmd_play(a) -> int:
     if todo and not any(r["variant"] == REF and {k: r[k] for k in key} == key
                         and run_cells(r["id"]) in ("running", a.cells) for r in c["runs"]):
         todo = [{"label": REF, "bot": ref}] + todo
+    failed = 0
     for v in todo:
         bot = v.get("bot") or f"challenger@{v['commit'][:12]}"
-        if not a.local:
-            # one build at a time: the host's other build slot stays free for other agents
-            b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
-                               text=True)
-            if b.returncode != 0:
-                print(f"{v['label']}: build failed:\n{b.stdout[-2000:]}{b.stderr[-2000:]}", file=sys.stderr)
-                return 1
         cmd = [str(GAMES), "ab", bot, "awubot", "--ref", "none", "--pool", a.pool, "--seed-base", str(a.seed_base),
                "--min-cells", str(a.cells), "--max-cells", str(a.cells), "--engine", a.engine]
         if not a.local:
             cmd.append("--remote")
             if a.where:
                 cmd += ["--where", a.where]
-        p = subprocess.run(cmd, capture_output=True, text=True)
-        rid = p.stdout.strip().splitlines()[0] if p.returncode == 0 and p.stdout.strip() else None
+        rid = None
+        for attempt in range(3):  # a transient error (the volume, the login node) should not end a campaign
+            if attempt:
+                time.sleep(30)
+            if not a.local:
+                # one build at a time: the host's other build slot stays free for other agents
+                b = subprocess.run([str(GAMES), "build", bot, "--engine", a.engine, "--remote"], capture_output=True,
+                                   text=True)
+                if b.returncode != 0:
+                    print(f"{v['label']}: build failed (try {attempt + 1}):\n{b.stderr[-1500:]}", file=sys.stderr)
+                    continue
+            p = subprocess.run(cmd, capture_output=True, text=True)
+            rid = p.stdout.strip().splitlines()[0] if p.returncode == 0 and p.stdout.strip() else None
+            if rid:
+                break
+            print(f"{v['label']}: tools/games ab failed (try {attempt + 1}):\n{p.stderr[-1500:]}", file=sys.stderr)
         if not rid:
-            print(f"{v['label']}: tools/games ab failed:\n{p.stdout[-2000:]}{p.stderr[-2000:]}", file=sys.stderr)
-            return 1
+            failed += 1
+            continue
         c = load(a.name)  # another play may have written meanwhile
         c["runs"].append(dict(key, variant=v["label"], id=rid, started=time.time()))
         save(c)
         print(f"{v['label']}: {bot} run {rid}", flush=True)
-    return 0
+    if failed:
+        print(f"{failed} variants not started: run play again", file=sys.stderr)
+    return 1 if failed else 0
 
 
 def cmd_wait(a) -> int:
@@ -432,7 +445,7 @@ def pool_maps(pool: str) -> set[str]:
 
 def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: int = 2000,
                  maps: set[str] | None = None, exclude: bool = False, seed: int = 1, metric: str = "win",
-                 drop: set[str] = frozenset()) -> dict:
+                 drop: set[str] = frozenset(), vs: str | None = None) -> dict:
     runs = [r for r in c["runs"] if (seed_base is None or r["seed_base"] == seed_base)
             and (pool is None or r["pool"] == pool) and r["variant"] not in drop]
     if not runs:
@@ -453,6 +466,10 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
             # the same game twice: equal unless two runs played it on CPUs whose Math stubs differ (engine/AGENTS.md)
             if ref.setdefault(cell, s) != s:
                 ref_mismatch += 1
+    if vs is not None:  # a variant is the reference: diffs pair every other variant with it
+        if vs not in by_variant:
+            raise TuneError(f"no runs of variant {vs}")
+        ref, ref_outs = by_variant.pop(vs), outs.pop(vs)
     labels = [v["label"] for v in c["variants"] if v["label"] in by_variant]
     cells = set(ref)
     for lab in labels:
@@ -478,7 +495,7 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
     out = {"campaign": c["name"], "metric": metric, "cells": len(cells), "maps": len(mlist), "variants": [],
            "effects": [], "ref_mismatch": ref_mismatch,
            "seed_base": sorted({r["seed_base"] for r in runs}), "pool": sorted({r["pool"] for r in runs}),
-           "ref_id": runs[0]["ref"]}
+           "ref_id": vs or runs[0]["ref"]}
     rng = random.Random(seed)
     draws = [[rng.randrange(len(mlist)) for _ in mlist] for _ in range(boot)]
 
@@ -569,7 +586,7 @@ def cmd_fit(a) -> int:
     fits = []
     for title, m, ex in parts:
         f = fit_campaign(c, a.seed_base, a.pool, a.boot, maps=m, exclude=ex, metric=a.metric,
-                         drop=set(filter(None, (a.drop or "").split(","))))
+                         drop=set(filter(None, (a.drop or "").split(","))), vs=a.vs)
         f["part"] = title
         fits.append(f)
         if not a.json:
@@ -654,6 +671,7 @@ def main(argv=None) -> int:
                     "transferred at round N, a diagnostic")
     sp.add_argument("--boot", type=int, default=2000)
     sp.add_argument("--drop", help="comma-separated variants to leave out (a failed run)")
+    sp.add_argument("--vs", metavar="LABEL", help="pair the variants with this one instead of the reference")
     sp.add_argument("--json", action="store_true")
     sp.set_defaults(fn=cmd_fit)
     sp = sub.add_parser("apply", help="write a variant's values into this checkout's Tune.java")

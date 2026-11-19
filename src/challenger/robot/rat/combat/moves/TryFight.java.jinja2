@@ -132,7 +132,7 @@ public final class TryFight {
             score -= 5;
         }
         if ((CombatStrategy.moveMask & (1 << moveDir.ordinal())) != 0) {
-            score += 30;
+            score += challenger.Tune.FIGHT_STEP;
         }
         if ({{ face_dir }} != myDir) {
             // prefer turning

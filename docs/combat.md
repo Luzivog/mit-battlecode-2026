@@ -445,7 +445,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | BFS depth / window | ≤6 expansions, 11×11 | `Pathfinder.java.jinja2:946-975` | Combat is entered only if an enemy or fightable cat is reachable within ≈7 steps | M |
 | funny-target turn | `bfsIters <= 5` | `CombatStrategy:201` | Turn toward a squeaked enemy | L |
 | troll selector | `id % 10 == 7`, once per lifetime | `CombatStrategy:183` | §3.4 | L |
-| threat penalty | −100 | `CombatStrategy:367,373,379` | Grab-threat cost, binary | H |
+| threat penalty | −100 (`Tune.THREAT_PENALTY`) | `CombatStrategy.getCellScoreFor` | Grab-threat cost, binary; every choice is the same above ~50 (the positive scores sum to ≤ 47) | **H, measured** (TN2 s5): 40 costs about 1.2 pp (+0.60 [+0.07, +1.14] per +60) |
 | bite damage | 10 if allCheese < 300 (`Tune.BITE_BONUS_CHEESE`) else 12 | `CombatStrategy.getBiteDamage` | Damage and cheese per bite (2 cheese for +2) | H; the 300 flat (TN): −0.07 [−0.54, +0.44] pp per +150 (strategy.md §9) |
 | cheese per +k damage | `(k−1)²+1` | `CombatStrategy:484-488` | Exact engine minimum, do not change | – |
 | shouldFight: cat near king | dist²(cat, king) ≤ 36 | `CombatStrategy:455` | King defence vs cats | M |
@@ -504,7 +504,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 
 | Name | Value | Location | Meaning | Sens. |
 |---|---|---|---|---|
-| enemy weight | 30 | `moves/TryRatNap:58` | Grab value (beats a 10-point bite) | H |
+| enemy weight | 30 (`Tune.RATNAP_W`) | `moves/TryRatNap` | Grab value; shifts every candidate alike, so it matters only below ~9 (strafes) or the ally's 10 | **H, measured** (TN2 s5): 5 costs about 2.3 pp (+1.17 [+0.59, +1.79] per +25) |
 | ally weight | 10 | `:70` | Ally-sacrifice grab | M |
 | candidates | nearest 3 enemies, cheb ≤ 2 | `:50,54` | | M |
 | "just kill" skip | hp ≤ 10 (`RAT_BITE_DAMAGE`) | `:55` | Should arguably be `getBiteDamage()` | L |
@@ -544,7 +544,7 @@ Sensitivity: **H** = changes outcomes in most fights, **M** = situational, **L**
 | miniRun | nearest 2, adjacent | `:202-204` | | L |
 | fight non-strafe | +10 | `moves/TryFight:132` | | M |
 | fight facing | −5 if target not visible | `:135` | | M |
-| fight BFS step | +30 if move ∈ moveMask | `:138` | Approach drive | H |
+| fight BFS step | +30 if move ∈ moveMask (`Tune.FIGHT_STEP`) | `moves/TryFight` | Approach drive; above ~17 an approach always wins | not confirmed (TN2): 10 read +1.3 pp in s5 (−0.64 [−1.40, +0.04] per +20), then −0.006 [−0.026, +0.014] against 30 on fresh seeds (s7) |
 | fight turning | +2 | `:142` | | L |
 | cat-fight cooldown | 10 rounds | `:45` | | L |
 | cat approach | strictly closer and outside the cat cone | `:102,109` | | M |

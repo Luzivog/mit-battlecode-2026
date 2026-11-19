@@ -247,7 +247,7 @@ The per-map book (tools/book/AGENTS.md) switches Tune constants and sets per-map
 the first king keys on its team, the map's size and its location; on a key of a book map-seat it reads its r² 25
 view into wall and dirt masks and compares them and its ID with the map file's, and on a match writes the map's
 id to slot 15. Every robot after it reads slot 15 in its first turn; `Book.map` is the id (0 off the book),
-`Book.seat` 0 for team A, 1 for B. A converted king keeps its baby's statics, so nothing runs again.
+`Book.seat` 0 for team A, 1 for B, `Book.symmetry` the map's symmetry (slot 1's encoding). A converted king keeps its baby's statics, so nothing runs again.
 Invariants:
 - `Book.init` is the first call after `Game.init`: no class that reads `Tune` may load before it, so a booked
   constant's value reaches every use, `static final` copies included. A booked constant must never be read into

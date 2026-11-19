@@ -35,6 +35,10 @@ One JSON object a line (blank lines and `#` lines skipped):
 - `set`: a tune constant of `src/challenger/Tune.java`; `value` within its `[MIN, MAX]`, an int for an int.
 - `data`: a datum declared by a `declare` line: `tiles` (`MapLocation[]`) or `ints` (`int[]`), `Book.NAME` in the bot,
   null wherever no entry sets it.
+- Built in, on every map-seat the book identifies: `Book.symmetry`, the map's symmetry from its file as
+  `CellTracker.Symmetry`'s ordinal (1 rotational, 2 Horizontal = x -> W-1-x, the engine's VERTICAL, 3 Vertical).
+  Its use is a switch like any other (e.g. a Tune constant that calls `CellTracker.setSymmetry(Book.symmetry)`), so
+  an entry of that switch on a map is what makes the map known.
 - `evidence`: the run IDs that chose and confirmed the value (docs/evaluation.md "The book"). `by`, `note`: free.
 - `twins`: maps of `maps/` that look the same at round 1 (below), named to accept that the entry plays there too.
 - One value per (map, seat, name).

@@ -33,6 +33,9 @@ TUNE = TOOLS / "tune"
 SEATS = {"A": ["A"], "B": ["B"], "both": ["A", "B"]}
 DATA_TYPES = {"tiles": "MapLocation[]", "ints": "int[]"}
 VIEW_R2 = 25  # the king's vision, 360 degrees from its centre (docs/rules.md §7)
+# the engine's symmetry -> CellTracker.Symmetry's ordinal (the bot's Horizontal is x -> W-1-x, the engine's VERTICAL;
+# checked on the grids of all 150 maps)
+SYMMETRY = {"ROTATIONAL": 1, "VERTICAL": 2, "HORIZONTAL": 3}
 KEY_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
 
@@ -69,7 +72,7 @@ def view_of(m: dict, team: str) -> dict:
                 masks[c] |= 1 << ((dx + 5) * 11 + dy + 5)
     split = lambda v: [v & (2 ** 64 - 1), v >> 64]  # noqa: E731
     return {"key": (1 if team == "B" else 0) << 24 | w << 18 | h << 12 | x << 6 | y, "id": k["id"],
-            "walls": split(masks["#"]), "dirt": split(masks["d"])}
+            "walls": split(masks["#"]), "dirt": split(masks["d"]), "symmetry": SYMMETRY[m["symmetry"]]}
 
 
 def views(names: list[str]) -> dict[str, dict[str, dict]]:
@@ -243,7 +246,8 @@ def render_book(book: dict, params: dict, vs: dict) -> str:
          "// slot read. init runs right after Game.init, before any class that reads Tune is loaded.",
          "public final class Book {",
          "    public static int map; // the map's id (tools/book/book ids) on a map-seat with entries, else 0",
-         "    public static int seat; // 0 team A, 1 team B (set where map != 0)"]
+         "    public static int seat; // 0 team A, 1 team B (set where map != 0)",
+         "    public static int symmetry; // the map's CellTracker.Symmetry ordinal (1 R, 2 H: x -> W-1-x, 3 V), 0 where map is 0"]
     for name, d in sorted(book["declare"].items()):
         L.append(f"    public static {DATA_TYPES[d['type']]} {name}; // {d['meaning']} (null off the book)")
     L += ["",
@@ -293,6 +297,7 @@ def render_book(book: dict, params: dict, vs: dict) -> str:
           "        switch (map << 1 | seat) {"]
     for m, t in seats:
         L.append(f"            case {map_id(m) << 1 | (t == 'B')} -> {{ // {m} seat {t}")
+        L.append(f"                symmetry = {vs[m][t]['symmetry']};")
         for e in book["entries"]:
             if e["map"] == m and t in SEATS[e["seat"]]:
                 if "set" in e:

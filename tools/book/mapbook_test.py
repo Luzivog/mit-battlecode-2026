@@ -20,7 +20,7 @@ def grid_map(name="m", w=20, h=20, a=(3, 3), b=(16, 16), cells=()):
     g = [["."] * w for _ in range(h)]
     for x, y, c in cells:
         g[y][x] = c
-    return {"name": name, "width": w, "height": h, "grid": ["".join(r) for r in g],
+    return {"name": name, "width": w, "height": h, "symmetry": "ROTATIONAL", "grid": ["".join(r) for r in g],
             "body_list": [{"id": 1, "team": "A", "type": "RAT_KING", "x": a[0], "y": a[1]},
                           {"id": 2, "team": "B", "type": "RAT_KING", "x": b[0], "y": b[1]}]}
 
@@ -63,6 +63,17 @@ class View(unittest.TestCase):
     def test_off_map_clipped(self):
         m = grid_map(a=(0, 0))
         self.assertEqual(mb.view_of(m, "A")["walls"], [0, 0])
+
+    def test_symmetry_matches_grids(self):
+        """The engine's symmetry name -> the transform its grid obeys -> the bot's ordinal (CellTracker.checkHor
+        reverses x for Horizontal)."""
+        from bcgames import mapclass
+        flip = {1: lambda x, y, w, h: (w - 1 - x, h - 1 - y), 2: lambda x, y, w, h: (w - 1 - x, y),
+                3: lambda x, y, w, h: (x, h - 1 - y)}
+        for m in mapclass.dump(["DefaultSmall", "arrows", "evileye", "bed", "rift", "jail"]).values():
+            f, w, h, g = flip[mb.SYMMETRY[m["symmetry"]]], m["width"], m["height"], m["grid"]
+            self.assertTrue(all(g[y][x] == g[f(x, y, w, h)[1]][f(x, y, w, h)[0]] for y in range(h) for x in range(w)),
+                            m["name"])
 
     def test_twins(self):
         a = grid_map("a", cells=[(3, 4, "#")])
@@ -120,7 +131,7 @@ class Render(unittest.TestCase):
         i = mb.map_id("bed")
         self.assertIn(f"case {vs['bed']['A']['key']} -> {{", java)
         self.assertIn(f"case {vs['bed']['B']['key']} -> {{", java)
-        self.assertIn(f"case {i << 1 | 1} -> {{ // bed seat B\n                Tune.A = 50;\n"
+        self.assertIn(f"case {i << 1 | 1} -> {{ // bed seat B\n                symmetry = 1;\n                Tune.A = 50;\n"
                       f"                SITE = new MapLocation[] {{new MapLocation(1, 2)}};", java)
         self.assertNotIn(f"case {i << 1} -> {{ // bed seat A\n                Tune.A", java)
         self.assertIn("public static MapLocation[] SITE;", java)

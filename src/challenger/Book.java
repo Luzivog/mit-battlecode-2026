@@ -10,6 +10,7 @@ import battlecode.common.*;
 public final class Book {
     public static int map; // the map's id (tools/book/book ids) on a map-seat with entries, else 0
     public static int seat; // 0 team A, 1 team B (set where map != 0)
+    public static int symmetry; // the map's CellTracker.Symmetry ordinal (1 R, 2 H: x -> W-1-x, 3 V), 0 where map is 0
 
     public static void init() throws GameActionException {
         if (Game.isRatKing && Game.time == 1) {

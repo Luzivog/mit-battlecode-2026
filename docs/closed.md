@@ -44,6 +44,17 @@ agent adds its H0s here; the integrator adds them when an agent did not. Diffs a
 | 2026-11-19 | CK | A10: rats near our king hold its ring tiles on the enemy's side (TryFight +30) | `faceoff` ∪ `L-combat`, 0.05 | −0.003 [−0.039, +0.035], H0 | bites on our king 12.5 → 11.2 a game in the first 150 games, no more wins |
 | 2026-11-19 | CK | CK bundle: A1 + A4c + A6 | `faceoff` ∪ `L-combat`, 0.05, fresh seeds | −0.012 [−0.057, +0.034], H0 | |
 | 2026-11-19 | CC+CK | full bundle: A1 + A4c + A6 + A35r | `goal`, 0.05, fresh seeds | +0.001 [−0.033, +0.034], H0 (345 cells) | every diagnostic moved as meant (our king's deaths 0.45 → 0.34 a game, its HP lost 372 → 324, throw HP into their king 78 → 108, double hits on our rats 12.8 → 11.4), wins did not; gauntlet no harm (OBG −0.028, GST −0.004) |
+| 2026-11-19 | E1 | arm H = 30: reserve max(100, 2·kings·30); spawns (cost-10 exempt), rat traps, rat and king digs and the formation start leave global ≥ reserve after paying | `L-starve`, 0.08 | −0.037 [−0.075, +0.000], H0 (95 cells) | king starvation turns −0.4 a game [−2.3, +1.3]; cost-10 spawns +1.4; 5–7-mine maps −0.10 in wins. Branch `t3/e1-h30` |
+| 2026-11-19 | E1 | arm H = 60 (as above) | `L-starve`, 0.08 | −0.012 [−0.059, +0.035], H0 (84 cells) | starvation turns −1.3 [−3.0, +0.3]: down on ≤ 4-mine maps (−1.6) with no more wins there; 5–7-mine maps −0.11. Branch `t3/e1-h60` |
+| 2026-11-19 | E1 | arm H = 120 (as above) | `L-starve`, 0.08 | −0.078 [−0.128, −0.030] (103 cells) | the army collapses: cost-10 spawns +3.5 a game, cheese transferred −240, starvation turns +3.6 on 5–7-mine maps (−2.3 on ≤ 4). Branch `t3/e1-h120` |
+
+Why E1 cannot gain (all three arms, paired replays): the spawn cap is already a reserve. `thresh = min(global/10 + 10, …)`
+builds a cost-c rat only with global ≥ 10·(c − 10): 100 for cost 20, 200 for 30, 300 for 40. Outside the +10 to +30
+raises when the king is hit or cats are near, global stays ≥ 80 after any spawn but a cost-10 one. With one king, a reserve of 2·K·H binds only on cost-20 rats at global 100–139, which
+leaves a 4–7-rat army that cannot earn its way back (squaresaremodernart: 4 rats from r300 to r700, main rebuilt to 9;
+the same cells lose in every arm). The trap, dig and formation gates almost never bind (traps 79 vs 79 a game). Most
+remaining starvation follows a lost income share (cheddarchokehold: 4,660 transferred against awubot's 17,770), which a
+reserve only delays. Diagnostics: `~/battlecode26-data/scratch/e1/` (`E1Stats.java`, `e1_diag.py`, `paired.py`).
 
 Code of the rejected arms: the packages' revert commits and side branches (`e3-c2` holds a working spawn-payload
 role switch with S2's both-or-neither write, for KB or K3 to reuse; `t3/cc-a*` hold CC+CK's arms and `t3/cc-bundle` its

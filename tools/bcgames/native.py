@@ -453,12 +453,11 @@ def gc() -> None:
 def local_binary(path: str) -> Path:
     """A binary a spec names (a remote node: on the shared volume, maybe gzip'd), copied once to this machine's disk
     (the task's TMPDIR, shared by the tasks of one piece), so games don't page it in over the network. When that disk
-    is full (seen on DoC), into the run's own folder (BCGAMES_DATA, on the volume): slower, never elsewhere."""
+    is full (seen on DoC), unpacked next to it on the volume, once for every node: slower, never elsewhere."""
     src = Path(path)
     name = src.name[:-3] if src.name.endswith(".gz") else src.name
     errors = []
-    for d in dict.fromkeys([tempfile.gettempdir(), str(store.DATA)]):
-        final = Path(d) / "bcx" / name
+    for final in dict.fromkeys([Path(tempfile.gettempdir()) / "bcx" / name, src.parent / name]):
         if final.exists():
             return final
         tmp = None
@@ -477,7 +476,7 @@ def local_binary(path: str) -> Path:
             os.replace(tmp, final)
             return final
         except OSError as e:  # a full disk (seen on DoC): the next place
-            errors.append(f"{d}: {e}")
+            errors.append(f"{final.parent}: {e}")
             if tmp:
                 Path(tmp).unlink(missing_ok=True)
     raise OSError("; ".join(errors))

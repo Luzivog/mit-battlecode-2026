@@ -1,6 +1,7 @@
 """The native backend's planning, build slots, cache records and exactness guard, without building or playing.
 python3 -m unittest discover -s tools/bcgames -t tools -p '*_test.py'"""
 import json
+import os
 import tempfile
 import threading
 import unittest
@@ -118,7 +119,12 @@ class StoreTest(unittest.TestCase):
             self.assertEqual((got.name, got.read_bytes()), ("k9", b"binary" * 100))
             src.unlink()  # a second task of the piece finds it there
             self.assertEqual(native.local_binary(str(src)), got)
+            src = Path(self.tmp.name) / "k8.gz"  # a full local disk: unpacked beside it on the volume
+            src.write_bytes(gzip.compress(b"other"))
+            os.chmod(Path(self.tmp.name) / "local" / "bcx", 0o500)
+            self.assertEqual(native.local_binary(str(src)), Path(self.tmp.name) / "k8")
         finally:
+            os.chmod(Path(self.tmp.name) / "local" / "bcx", 0o700)
             tempfile.tempdir = old
 
     def test_purge_removes_one_binarys_results(self):

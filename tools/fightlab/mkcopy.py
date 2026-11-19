@@ -37,9 +37,14 @@ LOADER = """
         on = true;
         String s = System.getProperty("bc.testing.fl.set");
         if (s == null || s.isEmpty()) return;
-        for (String kv : s.split(",")) {
-            int e = kv.indexOf('=');
-            set(kv.substring(0, e), kv.substring(e + 1));
+        // no String.split: past 10 parts its ArrayList grows by reflection, which the sandbox refuses
+        int i = 0;
+        while (i < s.length()) {
+            int c = s.indexOf(',', i);
+            if (c < 0) c = s.length();
+            int e = s.indexOf('=', i);
+            set(s.substring(i, e), s.substring(e + 1, c));
+            i = c + 1;
         }
     }
 

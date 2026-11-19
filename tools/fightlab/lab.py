@@ -136,6 +136,13 @@ def cmd_arms(a) -> None:
     out = d(a.name) / a.set
     out.mkdir(exist_ok=True)
     forks = load(DATA / a.name / "forks.jsonl")
+    if a.first_per_game:
+        seen, keep = set(), []
+        for f in forks:
+            if f["game"] not in seen:
+                seen.add(f["game"])
+                keep.append(f)
+        forks = keep
     if a.limit:
         forks = forks[:a.limit]
     arms = {"null": ""}
@@ -150,8 +157,8 @@ def cmd_arms(a) -> None:
                 st = (vals + "," if vals else "") + f"salt={s}"
                 j = {"id": f"{f['fork']}.{label}.{s}", "fork": f["fork"], "arm": label, "salt": s, "seat": f["seat"],
                      "cell": f["cell"], "map": f["map"], "a": f["a"], "b": f["b"], "r0": f["r0"], "set": st,
-                     "marks": [f["r0"] - 1] + [f["r0"] + w for w in MARKS], "cx": f["cx"], "cy": f["cy"],
-                     "stop": 0 if a.to_end else f["r0"] + MARKS[-1]}
+                     "marks": sorted({f["r0"] - 1, *(f["r0"] + w for w in MARKS), *([a.at] if a.at > f["r0"] else [])}),
+                     "cx": f["cx"], "cy": f["cy"], "stop": 0 if a.to_end else max(f["r0"] + MARKS[-1], a.at)}
                 if f.get("seed") is not None:
                     j["seed"] = f["seed"]
                 jobs.append(j)
@@ -195,7 +202,7 @@ def feats(r: dict, w: int):
     def ut(m):
         return (m["A"], m["B"]) if seat == "A" else (m["B"], m["A"])
     u0, t0 = ut(ms[r0 - 1])
-    u, t = ut(ms.get(r0 + w) or r["end"])
+    u, t = ut(ms.get(r0 + w if w > 0 else -w) or r["end"])  # w <= 0: the absolute round -w
     base = [u0[BAB] - t0[BAB], (u0[BHP] - t0[BHP]) / 100, u0[KNG] - t0[KNG], (u0[KHP] - t0[KHP]) / 100,
             (u0[GLB] - t0[GLB]) / 1000, (u0[XFR] - t0[XFR]) / 1000, r0 / 1000]
     def g(i, x):
@@ -405,6 +412,8 @@ def main() -> int:
         s.add_argument("name"); s.add_argument("set"); s.add_argument("--arm", action="append", default=[])
         s.add_argument("--salts", type=int, default=2 if nm == "arms" else 1); s.add_argument("--to-end", action="store_true")
         s.add_argument("--limit", type=int, default=0); s.add_argument("--chunk", type=int, default=8)
+        s.add_argument("--first-per-game", action="store_true", help="only each game's first fork")
+        s.add_argument("--at", type=int, default=0, help="also mark (and play to) this absolute round")
         if nm == "screen":
             s.add_argument("--params", required=True); s.add_argument("--steps", default="")
     s = sp.add_parser("fetch")

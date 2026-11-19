@@ -168,11 +168,16 @@ def add_variant(c: dict, label: str, values: dict, x: list | None = None, t: flo
     return v
 
 
+def step(c: dict, name: str):
+    """The campaign's step for NAME: its own (screen --steps), else Tune.java's."""
+    return c.get("steps", {}).get(name, c["params"][name]["step"])
+
+
 def coded_values(c: dict, x: list[float], scale: float = 1.0) -> dict:
     out = {}
     for name, xi in zip(c["factors"], x):
         p = c["params"][name]
-        v = p["value"] + xi * p["step"] * scale
+        v = p["value"] + xi * step(c, name) * scale
         out[name] = int(round(v)) if p["type"] == "int" else round(v, 6)
     return out
 
@@ -192,9 +197,17 @@ def cmd_screen(a) -> int:
     if unknown or len(set(names)) != len(names):
         raise TuneError(f"unknown or repeated constants: {unknown or names}")
     c["factors"], c["scale"] = names, a.scale
+    c["steps"] = {}
+    for item in filter(None, (a.steps or "").split(",")):
+        k, _, v = item.partition("=")
+        if k not in names:
+            raise TuneError(f"--steps names {k}, which is not among --params")
+        c["steps"][k] = int(v) if c["params"][k]["type"] == "int" else float(v)
     design = screen_design(len(names))
     for i, x in enumerate(design):
         add_variant(c, f"v{i:02d}", coded_values(c, x, a.scale), x=x)
+    if a.center:
+        add_variant(c, "c", {}, x=[0] * len(names))
     save(c)
     print(f"campaign {a.name}: {len(design)} variants of {c['base'][:12]} over {len(names)} constants "
           f"({campaign_path(a.name)})")
@@ -456,21 +469,25 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
         out["variants"].append({"label": lab, "values": variants[lab]["values"], "t": variants[lab].get("t"),
                                 "score": sum(sums[lab]) / len(cells), "diff": d, "lo": lo, "hi": hi,
                                 "same": same[lab] / (2 * len(by_variant[lab]))})
-    xs = [variants[lab]["x"] for lab in labels]
-    if c["factors"] and all(x is not None for x in xs) and len(labels) > len(c["factors"]):
-        P = projector(xs)
+    # the design's rows; a centre point (every x 0) is compared with them instead
+    rows = [lab for lab in labels if variants[lab]["x"] is not None and any(variants[lab]["x"])]
+    centres = [lab for lab in labels if variants[lab]["x"] is not None and not any(variants[lab]["x"])]
+    if c["factors"] and len(rows) > len(c["factors"]):
+        P = projector([variants[lab]["x"] for lab in rows])
         # coefficient i = sum_v P[i][v] * mean_v = per map: sum_v P[i][v] * sums[v][m], over the cell count
         for i, name in enumerate(["(intercept)"] + c["factors"]):
-            per_map = [sum(P[i][v] * sums[labels[v]][j] for v in range(len(labels))) for j in range(len(mlist))]
+            per_map = [sum(P[i][v] * sums[rows[v]][j] for v in range(len(rows))) for j in range(len(mlist))]
             if i == 0:
                 est, lo, hi = ci([p - r for p, r in zip(per_map, rsum)])
                 out["curvature"] = {"est": est, "lo": lo, "hi": hi}
+                for lab in centres:
+                    out.setdefault("centre", {})[lab] = ci([s - p for s, p in zip(sums[lab], per_map)])
                 continue
             est, lo, hi = ci(per_map)
             se = (hi - lo) / 3.92 or 1e-9
             p = c["params"][name]
-            out["effects"].append({"name": name, "value": p["value"], "step": p["step"], "effect": est, "lo": lo,
-                                   "hi": hi, "z": est / se})
+            out["effects"].append({"name": name, "value": p["value"], "step": step(c, name), "effect": est,
+                                   "lo": lo, "hi": hi, "z": est / se})
     ts = [variants[lab].get("t") for lab in labels]
     if all(t is not None for t in ts) and len(set(ts)) >= 3:
         # score along the path: quadratic in t, with the reference at t = 0
@@ -503,7 +520,9 @@ def print_fit(f: dict, c: dict) -> None:
     print(f"  mean share of games equal to the ref's: {sum(sames) / len(sames):.2f}")
     if f["effects"]:
         cv = f["curvature"]
-        print(f"\ncurvature (mean of the variants - ref): {cv['est']:+.3f} [{cv['lo']:+.3f}, {cv['hi']:+.3f}]")
+        print(f"\ncurvature (mean of the design's variants - ref): {cv['est']:+.3f} [{cv['lo']:+.3f}, {cv['hi']:+.3f}]")
+        for lab, (est, lo, hi) in f.get("centre", {}).items():
+            print(f"centre {lab} - mean of the design's variants: {est:+.3f} [{lo:+.3f}, {hi:+.3f}]")
         print("effects: score change for one step up (+step), 95% CI by map, z; worst-to-best by z")
         for e in sorted(f["effects"], key=lambda e: e["z"]):
             p = c["params"][e["name"]]
@@ -560,6 +579,8 @@ def main(argv=None) -> int:
     sp.add_argument("--params", required=True, help="comma-separated constants")
     sp.add_argument("--rev", help="the base (default HEAD)")
     sp.add_argument("--scale", type=float, default=1.0, help="half-swing in steps (default 1)")
+    sp.add_argument("--steps", help="this campaign's steps instead of Tune.java's: NAME=STEP,...")
+    sp.add_argument("--center", action="store_true", help="also a variant at the base values (label c)")
     sp.set_defaults(fn=cmd_screen)
     sp = sub.add_parser("points", help="variants at given values")
     sp.add_argument("name")

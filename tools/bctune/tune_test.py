@@ -148,6 +148,7 @@ class Fit(unittest.TestCase):
              "params": {n: {"type": "int", "value": 10, "step": 1} for n in names}}
         for i, x in enumerate(tune.screen_design(len(names))):
             c["variants"].append({"label": f"v{i:02d}", "x": x, "values": {}})
+        c["variants"].append({"label": "c", "x": [0] * len(names), "values": {}})
         effects = {"A": 0.06, "C": -0.04}
         with tempfile.TemporaryDirectory() as tmp:
             old = tune.GAMES_DATA
@@ -166,8 +167,10 @@ class Fit(unittest.TestCase):
         self.assertGreater(got["A"]["z"], 3)
         self.assertLess(got["C"]["z"], -2)
         self.assertLess(abs(got["B"]["z"]), 3)
-        # every variant pays nothing at the centre: curvature near 0
+        # every variant pays nothing at the centre: curvature near 0, and the centre point equals the corners' mean
         self.assertLess(abs(f["curvature"]["est"]), 0.03)
+        self.assertLess(abs(f["centre"]["c"][0]), 0.04)
+        self.assertEqual(len(f["variants"]), 17)
 
     def test_path_fit_finds_the_peak(self):
         rng = random.Random(3)

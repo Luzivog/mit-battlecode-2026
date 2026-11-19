@@ -41,6 +41,7 @@ public class MinerStrategy extends Strategy {
         if (BabyRat.transferSwitch) {
             bannedMines = new FastIndexedIntSet();
             BabyRat.transferSwitch = false;
+            if (Tune.SQ_PAIR) transfers++;
         }
         if(rc.getRawCheese() == 0) {
             goHomeStrategy = null;
@@ -67,6 +68,8 @@ public class MinerStrategy extends Strategy {
             return true;
         }
 
+        if (Tune.SQ_PAIR && follow()) return true;
+
         while(goSomewhereStrategy == null || !goSomewhereStrategy.runTick()) {
             MapLocation target;
 
@@ -87,6 +90,53 @@ public class MinerStrategy extends Strategy {
         }
 
         return true;
+    }
+
+    // SQ pairs (Tune.SQ_PAIR): the leader's id & 4095, plus 1 (0: no leader); its id once sensed, where and when last seen.
+    private int leaderBits, leaderId, leaderSeen, transfers;
+    private MapLocation leaderLoc;
+
+    public void pairWith(int idBits) {
+        leaderBits = idBits + 1;
+        leaderSeen = time;
+    }
+
+    // Step toward the leader while farther than 1 tile; false once unpaired or while the leader is not yet identified.
+    private boolean follow() throws GameActionException {
+        if (leaderBits == 0) return false;
+        if (transfers >= Tune.SQ_PAIR_TRIPS || time >= Tune.SQ_PAIR_ROUND || time - leaderSeen > 5) {
+            leaderBits = 0;
+            return false;
+        }
+        senseLeader();
+        if (leaderLoc == null || leaderBits == 0) return false;
+        if (myLoc.distanceSquaredTo(leaderLoc) > 2) {
+            BabyRat.autoMove(Pathfinder.getMove(leaderLoc));
+            senseLeader();
+        }
+        goSomewhereStrategy = null;
+        return true;
+    }
+
+    private void senseLeader() throws GameActionException {
+        if (leaderId == 0) {
+            for (RobotInfo r : rc.senseNearbyRobots(-1, team)) {
+                if ((r.getID() & 4095) + 1 == leaderBits && r.getType() == UnitType.BABY_RAT) {
+                    leaderId = r.getID();
+                    break;
+                }
+            }
+            if (leaderId == 0) return;
+        }
+        if (rc.canSenseRobot(leaderId)) {
+            RobotInfo r = rc.senseRobot(leaderId);
+            if (r.getType() != UnitType.BABY_RAT) {
+                leaderBits = 0;
+                return;
+            }
+            leaderLoc = r.getLocation();
+            leaderSeen = time;
+        }
     }
 
     private MapLocation pickSeenMine() {

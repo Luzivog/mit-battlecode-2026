@@ -78,6 +78,20 @@ public class KingSpawningStrategy extends Strategy {
     }
 
 
+    // SQ pairs: the payload of a follower is 4096 | (its leader's id & 4095), else 0.
+    private static int lastId, lastRound;
+    private static boolean lastFollower;
+
+    static int pairPayload(MapLocation loc) throws GameActionException {
+        RobotInfo r = rc.senseRobotAtLocation(loc);
+        int payload = 0;
+        if (!lastFollower && lastId != 0 && time - lastRound <= 2 && time < Tune.SQ_PAIR_ROUND) payload = 4096 | (lastId & 4095);
+        lastFollower = payload != 0;
+        lastId = r == null ? 0 : r.getID();
+        lastRound = time;
+        return payload;
+    }
+
     void trySpawn(MapLocation target) throws GameActionException {
         MapLocation best = null;
         for (int dx = -2; dx <= 2; dx++) {
@@ -96,7 +110,7 @@ public class KingSpawningStrategy extends Strategy {
             if (facing != Direction.CENTER && rc.canTurn()) RatKing.turn(facing);
             rc.buildRat(best);
             RobotTracker.addAlly(best);
-            GlobalArray.registerSpawnedRat(best, Rng.mcg() & ((1 << 13) - 1));
+            GlobalArray.registerSpawnedRat(best, Tune.SQ_PAIR ? pairPayload(best) : Rng.mcg() & ((1 << 13) - 1));
             numSpawned++;
             RatKing.spawnedThisTurn = true;
         }

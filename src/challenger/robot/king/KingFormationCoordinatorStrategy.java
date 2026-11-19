@@ -229,7 +229,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         if (GlobalArray.getFormationTarget() != null) return;
 
-        MapLocation formationTarget = selectBestMineForFormation();
+        MapLocation formationTarget = lockIn ? selectSiteBesideMe() : selectBestMineForFormation();
         if (formationTarget == null) return;
 
         targetMine = formationTarget;
@@ -240,6 +240,33 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         GlobalArray.writeKingMineAssignment(kingId + 1, miningStrategy.getMineTarget());
 
         // indicate("FORMATION: coordinating at " + formationTarget);
+    }
+
+    // A lock-in king must live to the end: form it where the army already is, on a clear 3x3 beside this king (its
+    // centre 3 tiles out, the nearest that cannot overlap a king), on the side away from the map centre.
+    private MapLocation selectSiteBesideMe() throws GameActionException {
+        MapLocation myMapCentre = new MapLocation(mapWidth / 2, mapHeight / 2);
+        MapLocation myBest = null;
+        for (Direction myDir : Direction.cardinalDirections()) {
+            MapLocation mySite = myLoc.translate(3 * myDir.dx, 3 * myDir.dy);
+            if (!isClearBlock(mySite)) continue;
+            if (myBest == null || mySite.distanceSquaredTo(myMapCentre) > myBest.distanceSquaredTo(myMapCentre)) myBest = mySite;
+        }
+        return myBest;
+    }
+
+    private boolean isClearBlock(MapLocation aCentre) throws GameActionException {
+        for (int myDx = -1; myDx <= 1; myDx++) {
+            for (int myDy = -1; myDy <= 1; myDy++) {
+                MapLocation myTile = aCentre.translate(myDx, myDy);
+                if (!rc.onTheMap(myTile) || !rc.canSenseLocation(myTile) || !rc.senseMapInfo(myTile).isPassable()) return false;
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            MapLocation myKingLoc = GlobalArray.getRatKing(i);
+            if (myKingLoc != null && Math.max(Math.abs(myKingLoc.x - aCentre.x), Math.abs(myKingLoc.y - aCentre.y)) < 3) return false;
+        }
+        return true;
     }
 
     private MapLocation selectBestMineForFormation() throws GameActionException {

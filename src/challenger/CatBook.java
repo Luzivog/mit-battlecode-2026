@@ -12,7 +12,9 @@ public class CatBook {
     // Second-king sites (Tune.CM_KING2_ROUND), x, y pairs in order of preference: 3x3 centres off every cat loop.
     private static int[] king2Sites() {
         boolean a = rc.getTeam() == Team.A;
-        if (mapWidth == 60 && mapHeight == 50) return a ? new int[]{12, 13} : new int[]{12, 36}; // tminusten
+        if (mapWidth == 60 && mapHeight == 50) return a ? new int[]{12, 15} : new int[]{12, 34}; // tminusten
+        if (mapWidth == 60 && mapHeight == 40) return a ? new int[]{19, 23} : new int[]{19, 16}; // sunandmoon
+        if (mapWidth == 35 && mapHeight == 50) return a ? new int[]{11, 31, 14, 34} : new int[]{23, 31, 20, 34}; // peaceinourtime
         return null;
     }
 

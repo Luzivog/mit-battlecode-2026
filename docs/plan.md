@@ -905,11 +905,26 @@ At most 10 lanes run in parallel in wave 1. Merges are always serial.
 - Lead, unmeasured (CX): our rats send no enemy squeaks for 4 turns after seeing a cat, nor on turns with ≤ 1,000
   bytecode left; half the grabs on our rats come from enemies the victim never saw.
 
-Found by packages outside their files; each is a small fix judged by its diagnostic plus a `goal` harm test.
-- `TryAttack.miniRun` has no cone check: 13 lost turn tails per 192 games (CB).
-- The formation coordinator writes its own mine into slot `kingId+1`; it looks like a typo for `targetMine` (KS).
-- On corridorofdoomanddespair both kings start with dirt inside their 3×3 and never move: `digDirtInDirection` digs
-  only two tiles ahead (KS; main wins the map 4/4 anyway).
+Found by packages outside their files; each is a small fix judged by its diagnostic plus a `goal` harm test. S4's
+probe counts them on 380 `goal` games (own seeds and seed 7, both seats; `~/battlecode26-data/scratch/s4/`).
+- Fixed (S4): `TryAttack.miniRun` bit the tile toward the nearest adjacent enemy's centre without asking the engine.
+  9 throws per 380 games, each losing the turn tail: 4 kings sensed through a tile in the cone while the centre's
+  tile is outside it, 4 enemies listed on our own tile or on an empty tile, 1 turn resumed after an overrun. It asks
+  `canAttack` first: 0 throws. Harm `1119-080920-ab-9afe` PASS (97 cells, none changed).
+- Fixed (S4): the formation coordinator wrote its own mine into slot `kingId+1`, left from when a new king took
+  id = king count. It misled only the coordinator, which saw its own mine as another king's: 423 king turns per 380
+  games, 5 target changes. On t_minus_five_minutes it can make the first and the cooperation king each target the
+  other's mine and stand still ~20 rounds at ~18k bytecode. Deleted: 0. Harm `1119-080920-ab-b37b` PASS (1 cell
+  worse, t_minus_five_minutes seat A); that map on 30 fresh seeds, `1119-082919-ab-006e`: 2 better, 0 worse.
+- Not fixed: on corridorofdoomanddespair both kings start with dirt inside their 3×3, and `digDirtInDirection` digs
+  only the tiles that enter the 3×3. It is 1 of the 150 map files in `maps/`; our king never moves there and main
+  wins both seats by KILL (r322, r339). Dirt cannot enter a king's 3×3 later (`placeDirt` needs a tile with no ground
+  robot), so a fix would only cost bytecode on every king move.
+- Open, under 1 per 100 games each (S4 probe on the fixed branch, 380 games): `TryAttack.run`'s bite after its move
+  finds no robot (3), `TryRatNap.run`'s fallback bite finds no robot (3), a move into an occupied tile (`Game._rawMove`
+  from `BabyRat.rawMove(dir)`, 2), a rescan outside vision (`CellTracker`, 1), and `BabyRat.run`'s carried-rat check
+  reads a null carrier (1). The probe saw an enemy listed on the biter's own tile, and one sensed on a tile the robot
+  grid holds empty: robots off the grid but not carried (cause not established).
 
 ## 6. If a wave stalls
 

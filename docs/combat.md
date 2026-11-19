@@ -321,7 +321,7 @@ accept best >= 0.5; bite costs getCheeseNeeded(2)=2 cheese when allCheese >= 300
 
 - **HP ≤ 24 rule.** At low HP the rat ignores the target's own grab threat (only other enemies count). **(inference)** It is near death anyway, and `BabyRat` disintegrates at < 15 HP when carried.
 - **No focus fire.** Targets are scored flat 10, plus 30 for a one-hit kill. Kings get no bonus and no cheese damage. `scoreEnemy()` (`CombatStrategy:467`: king 5, one-tap 3, ≤30 HP 1.3) is dead code.
-- **`miniRun`** (`:200-212`) bites the nearest enemy if it is adjacent (it only looks at the first 2 and breaks at the first non-adjacent one). There is no vision check; if the enemy is not visible, the exception aborts the turn.
+- **`miniRun`** (`:203-218`) bites the nearest enemy if it is adjacent (it only looks at the first 2 and breaks at the first non-adjacent one), on the tile toward its centre. When `canAttack` refuses that tile (a king sensed through another tile, so the centre's direction is outside the cone), it bites nothing and ends the mini step.
 
 ### 6.6 TryFight (`moves/TryFight`): approach and kite, the default move
 

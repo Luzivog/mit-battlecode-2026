@@ -401,6 +401,32 @@ score per step, 95% CI by map; tables: docs/strategy.md §9, docs/closed.md):
   between two `play` calls of s5 (docs-only commits) and the second re-pinned it, replaying 20 runs from the cache:
   `play` now keeps a campaign's first reference.
 
+## Measured: time to verdict (track TL, 2026-11-19)
+
+**What the tail was** (185 remote native tests of 19 Nov, 152,896 tasks; `~/battlecode26-data/scratch/tl/`:
+`collect.py` joins each test's batches to their tasks, `measure.py` and `summary.py` read tests):
+- A guard task ended last in 130 of 173 finished tests, a restarted task (start 2) in 99.
+- Restarts: 3,191 tasks (2.1%) ran a second time, 427 s after their batch at the median: 61% of the slowest 1% of
+  tasks. Their pieces were alive but stalled: a piece serving more than 4 other runs' contents deleted each checkout
+  it had just made and made it again for every claim (281,305 checkouts for 339,682 task starts on 19 Nov; one piece
+  399 in a row), so for minutes it neither beat nor reaped; other pieces took its claims as dead after 300 s. A
+  start that found its checkout gone killed the piece. The same stalls made 96% of the game tasks over 120 s: the
+  game took 19 s, the task 132 s more.
+- Guards: a guard task takes 78 s at the median (214 s p90), its Java game 2-3 times slower on the slowest DoC CPUs
+  than on the fastest; a test's guards went out with their games, so the last batch's guards ended last.
+- Placement: `tools/run --detach` took 16 s at the median (74 s p90, 314 s p99) placing pieces before it returned,
+  and the next batch waited behind it; 31% of tasks had ended before their batch's follower started.
+- Hosts that can't write: 111 native games failed for want of disk on 4 lab machines (betta 87) and played again on
+  Java there, 78 s median, up to 358 s; betta also timed out 25 native games at 600 s. A lab machine's execute
+  folder is on its root (8.4 GB free on ash09); each task unpacked its own 100 MB binary, each checkout ~350 MB.
+- A binary upload whose prune `find` saw another upload's temporary file vanish failed, and sent every game of two
+  tests to Java (424 games).
+
+**The fixes**: the checkout prune keeps the new checkout (compute internals "Another run's checkout"); a piece takes
+no task under 2 GB free and gives back a task whose game found no room ("Room to write"); a piece's tasks unpack a
+binary once (`JOB_CACHE`); guards ahead, twice, first in their batch ("Engines"); a batch is followed as soon as its
+run exists; the cancels come after the verdict; a test's sure games go out at once; the upload's prune can't fail it.
+
 ## Measured: the native engine (2026-11-19)
 
 **One test on all four**: `tools/games ab challenger awubot --test harm --pool goal --no-cache` (challenger = main's,

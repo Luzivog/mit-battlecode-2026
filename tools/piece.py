@@ -54,10 +54,10 @@ MAX_STARTS = 3  # a task's starts, the first included
 LOG_BYTES = 1 << 20  # the end of a task's output kept
 OUT_CAP = 1 << 30  # the most a task's OUT may hold: a run's writes on the shared volume are bounded
 LOST = -1  # the code of a task whose every start was lost
-# The pool's protocol: a piece serves only runs that speak its version. GIVE_BACK and JOB_CACHE need no new one: a
-# piece without them reports a task's GIVE_BACK as its code (tools/games plays that game again) and gives no
-# JOB_CACHE (each task unpacks its binary into its TMPDIR, as before).
-POOL_V = 1
+# The pool's protocol: a piece serves only runs that speak its version. 2: pieces of version 1 lose their checkouts
+# (prune_checkouts) and stall or crash, and the runs they serve lose their tasks for 300 s or more (19 Nov: tasks run
+# a third time after two such pieces), so runs of version 2 are served by pieces of version 2 alone; GIVE_BACK.
+POOL_V = 2
 SCAN_S = 2.0  # between two looks for work while a slot is free and the last look found none
 FULL_S = 30.0  # a run found with nothing claimable is looked at again after this long
 STALE_CHECK_S = 120.0  # a run's claims are read for dead pieces' at most this often

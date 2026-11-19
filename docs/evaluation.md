@@ -174,6 +174,11 @@ holdout results are slightly optimistic. Never tune a constant on those games.
 - With seed base 0 (the default), pass 0 plays each map's own seed: the official game. Later passes play seeds derived
   from (base, pass, entry). A `map:seed` entry plays its seed in pass 0 of seed base 0 only; any other base derives
   every seed, so a confirmatory test on a fresh base never replays the cells an arm was chosen on.
+- **A pool of a main's own losses is biased at seed base 0.** Its listed cells were chosen because main lost them, so
+  against that main, or any later main that still plays those games the same way, any change looks like a gain:
+  the flips that W0.1 measured on every change regress to the mean (E2b: +0.16 on `L1-early` for arms that read
+  ≤ 0 on fresh seeds). Run gain tests on loss pools with a fresh `--seed-base`; the pool then means "these maps,
+  weighted by their losses". Seed base 0 on a loss pool is only for reading the listed games.
 - Each pass visits every entry once, in a new fixed random order. An early stop has covered the pool once
   (`--min-cells` defaults to one pass).
 - Seeds are applied by rewriting the map file's seed field into a cached copy, so the official engine stays

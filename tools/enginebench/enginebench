@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""The native engine's speed eval: tools/enginebench/AGENTS.md, and enginebench --help."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bench import main  # noqa: E402
+
+sys.exit(main())

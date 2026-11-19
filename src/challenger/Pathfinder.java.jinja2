@@ -591,7 +591,7 @@ public class Pathfinder {
     }
     {% endmacro %}
 
-    {% macro bfsIteration(mask, localPassable) %}
+    {% macro dilate(mask) %}
     // we don't need to worry about the "seam" here because it's at the cell we are standing on
     {{mask}}0 |= ({{mask}}0 & 0xfbff7feffdffbffl) << 1;
     {{mask}}1 |= ({{mask}}1 & 0x7feffdffbff7fefl) << 1;
@@ -602,6 +602,10 @@ public class Pathfinder {
     {{mask}}0 |= ({{mask}}0 & 0x3ffffffffffffl) << 11;
     {{mask}}0 |= ({{mask}}0 >> 11) | (({{mask}}1 & 0x7ffl) << 50);
     {{mask}}1 |= {{mask}}1 >> 11;
+    {% endmacro %}
+
+    {% macro bfsIteration(mask, localPassable) %}
+    {{ dilate(mask) }}
     {{mask}}0 &= {{localPassable}}0;
     {{mask}}1 &= {{localPassable}}1;
     {% endmacro %}
@@ -996,5 +1000,36 @@ public class Pathfinder {
         // }
         {{ bfsIteration("reach", "localPassable") }}
         {% endfor %}
+    }
+
+    // The cells a baby rat can pick cheese up from after at most 6 steps through passable cells (allies block, and
+    // dirt unless dirt pathing is on): the reached cells grown by one ring, plus its own 3x3 (a turn reaches those).
+    public static long pickable0, pickable1;
+    public static void computePickable() {
+        CellTracker.computeLocalBfsMasks();
+        var localPassable0 = CellTracker.localPassable0;
+        var localPassable1 = CellTracker.localPassable1;
+        if (!Config.allowDirt()) {
+            localPassable0 &= ~CellTracker.localDirt0;
+            localPassable1 &= ~CellTracker.localDirt1;
+        }
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+            var ally = RobotTracker.allies[i];
+            {{ writePos("ally", "localPassable", 0, True) }}
+        }
+        pickable0 = 0x807000000000000l & localPassable0;
+        pickable1 = 0xe01 & localPassable1;
+        {% for i in range(5) %}
+        {{ bfsIteration("pickable", "localPassable") }}
+        {% endfor %}
+        {{ dilate("pickable") }}
+        pickable0 |= 0x1807000000000000l;
+        pickable1 |= 0xe01;
+    }
+
+    // loc must be in this rat's vision (within 4 cells): computePickable's window.
+    public static boolean isPickable(MapLocation loc) {
+        int idx = (loc.y - myLocY + 5) * 11 + loc.x - myLocX + 5;
+        return idx < 61 ? (pickable0 & (1l << idx)) != 0 : (pickable1 & (1l << (idx - 61))) != 0;
     }
 }

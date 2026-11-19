@@ -1939,6 +1939,7 @@ public class Pathfinder {
 
 
 
+
     private static int catPenalty(MapLocation loc) {
         // prefer avoiding cat vision range; weight visible cats more heavily
         int score = 0;
@@ -3817,7 +3818,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
     d01 |= (d01 & 0x7feffdffbff7fefl) << 1;
     d00 |= (d00 & 0x1f7feffdffbff7fel) >> 1;
@@ -3827,6 +3828,7 @@ public class Pathfinder {
     d00 |= (d00 & 0x3ffffffffffffl) << 11;
     d00 |= (d00 >> 11) | ((d01 & 0x7ffl) << 50);
     d01 |= d01 >> 11;
+
     d00 &= localPassableExceptAllies0;
     d01 &= localPassableExceptAllies1;
 
@@ -4325,7 +4327,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
     d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
     d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
@@ -4335,6 +4337,7 @@ public class Pathfinder {
     d10 |= (d10 & 0x3ffffffffffffl) << 11;
     d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
     d11 |= d11 >> 11;
+
     d10 &= localPassableExceptAllies0;
     d11 &= localPassableExceptAllies1;
 
@@ -4859,7 +4862,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
     d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
     d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
@@ -4869,6 +4872,7 @@ public class Pathfinder {
     d20 |= (d20 & 0x3ffffffffffffl) << 11;
     d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
     d21 |= d21 >> 11;
+
     d20 &= localPassableExceptAllies0;
     d21 &= localPassableExceptAllies1;
 
@@ -5367,7 +5371,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
     d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
     d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
@@ -5377,6 +5381,7 @@ public class Pathfinder {
     d30 |= (d30 & 0x3ffffffffffffl) << 11;
     d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
     d31 |= d31 >> 11;
+
     d30 &= localPassableExceptAllies0;
     d31 &= localPassableExceptAllies1;
 
@@ -5901,7 +5906,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
     d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
     d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
@@ -5911,6 +5916,7 @@ public class Pathfinder {
     d40 |= (d40 & 0x3ffffffffffffl) << 11;
     d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
     d41 |= d41 >> 11;
+
     d40 &= localPassableExceptAllies0;
     d41 &= localPassableExceptAllies1;
 
@@ -6409,7 +6415,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
     d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
     d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
@@ -6419,6 +6425,7 @@ public class Pathfinder {
     d50 |= (d50 & 0x3ffffffffffffl) << 11;
     d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
     d51 |= d51 >> 11;
+
     d50 &= localPassableExceptAllies0;
     d51 &= localPassableExceptAllies1;
 
@@ -6943,7 +6950,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
     d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
     d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
@@ -6953,6 +6960,7 @@ public class Pathfinder {
     d60 |= (d60 & 0x3ffffffffffffl) << 11;
     d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
     d61 |= d61 >> 11;
+
     d60 &= localPassableExceptAllies0;
     d61 &= localPassableExceptAllies1;
 
@@ -7451,7 +7459,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
     d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
     d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
@@ -7461,6 +7469,7 @@ public class Pathfinder {
     d70 |= (d70 & 0x3ffffffffffffl) << 11;
     d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
     d71 |= d71 >> 11;
+
     d70 &= localPassableExceptAllies0;
     d71 &= localPassableExceptAllies1;
 
@@ -7985,7 +7994,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
     d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
     d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
@@ -7995,6 +8004,7 @@ public class Pathfinder {
     d80 |= (d80 & 0x3ffffffffffffl) << 11;
     d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
     d81 |= d81 >> 11;
+
     d80 &= localPassableExceptAllies0;
     d81 &= localPassableExceptAllies1;
 
@@ -8493,7 +8503,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
     d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
     d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
@@ -8503,6 +8513,7 @@ public class Pathfinder {
     d90 |= (d90 & 0x3ffffffffffffl) << 11;
     d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
     d91 |= d91 >> 11;
+
     d90 &= localPassableExceptAllies0;
     d91 &= localPassableExceptAllies1;
 
@@ -9027,7 +9038,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
     d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
     d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
@@ -9037,6 +9048,7 @@ public class Pathfinder {
     d100 |= (d100 & 0x3ffffffffffffl) << 11;
     d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
     d101 |= d101 >> 11;
+
     d100 &= localPassableExceptAllies0;
     d101 &= localPassableExceptAllies1;
 
@@ -9535,7 +9547,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
     d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
     d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
@@ -9545,6 +9557,7 @@ public class Pathfinder {
     d110 |= (d110 & 0x3ffffffffffffl) << 11;
     d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
     d111 |= d111 >> 11;
+
     d110 &= localPassableExceptAllies0;
     d111 &= localPassableExceptAllies1;
 
@@ -10069,7 +10082,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
     d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
     d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
@@ -10079,6 +10092,7 @@ public class Pathfinder {
     d120 |= (d120 & 0x3ffffffffffffl) << 11;
     d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
     d121 |= d121 >> 11;
+
     d120 &= localPassableExceptAllies0;
     d121 &= localPassableExceptAllies1;
 
@@ -11820,7 +11834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d00 |= (d00 & 0xfbff7feffdffbffl) << 1;
     d01 |= (d01 & 0x7feffdffbff7fefl) << 1;
     d00 |= (d00 & 0x1f7feffdffbff7fel) >> 1;
@@ -11830,6 +11844,7 @@ public class Pathfinder {
     d00 |= (d00 & 0x3ffffffffffffl) << 11;
     d00 |= (d00 >> 11) | ((d01 & 0x7ffl) << 50);
     d01 |= d01 >> 11;
+
     d00 &= localPassableExceptAllies0;
     d01 &= localPassableExceptAllies1;
 
@@ -12319,7 +12334,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d10 |= (d10 & 0xfbff7feffdffbffl) << 1;
     d11 |= (d11 & 0x7feffdffbff7fefl) << 1;
     d10 |= (d10 & 0x1f7feffdffbff7fel) >> 1;
@@ -12329,6 +12344,7 @@ public class Pathfinder {
     d10 |= (d10 & 0x3ffffffffffffl) << 11;
     d10 |= (d10 >> 11) | ((d11 & 0x7ffl) << 50);
     d11 |= d11 >> 11;
+
     d10 &= localPassableExceptAllies0;
     d11 &= localPassableExceptAllies1;
 
@@ -12818,7 +12834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d20 |= (d20 & 0xfbff7feffdffbffl) << 1;
     d21 |= (d21 & 0x7feffdffbff7fefl) << 1;
     d20 |= (d20 & 0x1f7feffdffbff7fel) >> 1;
@@ -12828,6 +12844,7 @@ public class Pathfinder {
     d20 |= (d20 & 0x3ffffffffffffl) << 11;
     d20 |= (d20 >> 11) | ((d21 & 0x7ffl) << 50);
     d21 |= d21 >> 11;
+
     d20 &= localPassableExceptAllies0;
     d21 &= localPassableExceptAllies1;
 
@@ -13317,7 +13334,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d30 |= (d30 & 0xfbff7feffdffbffl) << 1;
     d31 |= (d31 & 0x7feffdffbff7fefl) << 1;
     d30 |= (d30 & 0x1f7feffdffbff7fel) >> 1;
@@ -13327,6 +13344,7 @@ public class Pathfinder {
     d30 |= (d30 & 0x3ffffffffffffl) << 11;
     d30 |= (d30 >> 11) | ((d31 & 0x7ffl) << 50);
     d31 |= d31 >> 11;
+
     d30 &= localPassableExceptAllies0;
     d31 &= localPassableExceptAllies1;
 
@@ -13816,7 +13834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d40 |= (d40 & 0xfbff7feffdffbffl) << 1;
     d41 |= (d41 & 0x7feffdffbff7fefl) << 1;
     d40 |= (d40 & 0x1f7feffdffbff7fel) >> 1;
@@ -13826,6 +13844,7 @@ public class Pathfinder {
     d40 |= (d40 & 0x3ffffffffffffl) << 11;
     d40 |= (d40 >> 11) | ((d41 & 0x7ffl) << 50);
     d41 |= d41 >> 11;
+
     d40 &= localPassableExceptAllies0;
     d41 &= localPassableExceptAllies1;
 
@@ -14315,7 +14334,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d50 |= (d50 & 0xfbff7feffdffbffl) << 1;
     d51 |= (d51 & 0x7feffdffbff7fefl) << 1;
     d50 |= (d50 & 0x1f7feffdffbff7fel) >> 1;
@@ -14325,6 +14344,7 @@ public class Pathfinder {
     d50 |= (d50 & 0x3ffffffffffffl) << 11;
     d50 |= (d50 >> 11) | ((d51 & 0x7ffl) << 50);
     d51 |= d51 >> 11;
+
     d50 &= localPassableExceptAllies0;
     d51 &= localPassableExceptAllies1;
 
@@ -14814,7 +14834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d60 |= (d60 & 0xfbff7feffdffbffl) << 1;
     d61 |= (d61 & 0x7feffdffbff7fefl) << 1;
     d60 |= (d60 & 0x1f7feffdffbff7fel) >> 1;
@@ -14824,6 +14844,7 @@ public class Pathfinder {
     d60 |= (d60 & 0x3ffffffffffffl) << 11;
     d60 |= (d60 >> 11) | ((d61 & 0x7ffl) << 50);
     d61 |= d61 >> 11;
+
     d60 &= localPassableExceptAllies0;
     d61 &= localPassableExceptAllies1;
 
@@ -15313,7 +15334,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d70 |= (d70 & 0xfbff7feffdffbffl) << 1;
     d71 |= (d71 & 0x7feffdffbff7fefl) << 1;
     d70 |= (d70 & 0x1f7feffdffbff7fel) >> 1;
@@ -15323,6 +15344,7 @@ public class Pathfinder {
     d70 |= (d70 & 0x3ffffffffffffl) << 11;
     d70 |= (d70 >> 11) | ((d71 & 0x7ffl) << 50);
     d71 |= d71 >> 11;
+
     d70 &= localPassableExceptAllies0;
     d71 &= localPassableExceptAllies1;
 
@@ -15812,7 +15834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d80 |= (d80 & 0xfbff7feffdffbffl) << 1;
     d81 |= (d81 & 0x7feffdffbff7fefl) << 1;
     d80 |= (d80 & 0x1f7feffdffbff7fel) >> 1;
@@ -15822,6 +15844,7 @@ public class Pathfinder {
     d80 |= (d80 & 0x3ffffffffffffl) << 11;
     d80 |= (d80 >> 11) | ((d81 & 0x7ffl) << 50);
     d81 |= d81 >> 11;
+
     d80 &= localPassableExceptAllies0;
     d81 &= localPassableExceptAllies1;
 
@@ -16311,7 +16334,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d90 |= (d90 & 0xfbff7feffdffbffl) << 1;
     d91 |= (d91 & 0x7feffdffbff7fefl) << 1;
     d90 |= (d90 & 0x1f7feffdffbff7fel) >> 1;
@@ -16321,6 +16344,7 @@ public class Pathfinder {
     d90 |= (d90 & 0x3ffffffffffffl) << 11;
     d90 |= (d90 >> 11) | ((d91 & 0x7ffl) << 50);
     d91 |= d91 >> 11;
+
     d90 &= localPassableExceptAllies0;
     d91 &= localPassableExceptAllies1;
 
@@ -16810,7 +16834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d100 |= (d100 & 0xfbff7feffdffbffl) << 1;
     d101 |= (d101 & 0x7feffdffbff7fefl) << 1;
     d100 |= (d100 & 0x1f7feffdffbff7fel) >> 1;
@@ -16820,6 +16844,7 @@ public class Pathfinder {
     d100 |= (d100 & 0x3ffffffffffffl) << 11;
     d100 |= (d100 >> 11) | ((d101 & 0x7ffl) << 50);
     d101 |= d101 >> 11;
+
     d100 &= localPassableExceptAllies0;
     d101 &= localPassableExceptAllies1;
 
@@ -17309,7 +17334,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d110 |= (d110 & 0xfbff7feffdffbffl) << 1;
     d111 |= (d111 & 0x7feffdffbff7fefl) << 1;
     d110 |= (d110 & 0x1f7feffdffbff7fel) >> 1;
@@ -17319,6 +17344,7 @@ public class Pathfinder {
     d110 |= (d110 & 0x3ffffffffffffl) << 11;
     d110 |= (d110 >> 11) | ((d111 & 0x7ffl) << 50);
     d111 |= d111 >> 11;
+
     d110 &= localPassableExceptAllies0;
     d111 &= localPassableExceptAllies1;
 
@@ -17808,7 +17834,7 @@ public class Pathfinder {
 
             // // Profiler.begin();
 
-                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                    // we don't need to worry about the "seam" here because it's at the cell we are standing on
     d120 |= (d120 & 0xfbff7feffdffbffl) << 1;
     d121 |= (d121 & 0x7feffdffbff7fefl) << 1;
     d120 |= (d120 & 0x1f7feffdffbff7fel) >> 1;
@@ -17818,6 +17844,7 @@ public class Pathfinder {
     d120 |= (d120 & 0x3ffffffffffffl) << 11;
     d120 |= (d120 >> 11) | ((d121 & 0x7ffl) << 50);
     d121 |= d121 >> 11;
+
     d120 &= localPassableExceptAllies0;
     d121 &= localPassableExceptAllies1;
 
@@ -18068,7 +18095,7 @@ public class Pathfinder {
             }
             return new int[] {res, 0};
         }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18078,6 +18105,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18126,7 +18154,7 @@ public class Pathfinder {
             }
             return new int[] {res, 1};
         }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18136,6 +18164,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18184,7 +18213,7 @@ public class Pathfinder {
             }
             return new int[] {res, 2};
         }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18194,6 +18223,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18242,7 +18272,7 @@ public class Pathfinder {
             }
             return new int[] {res, 3};
         }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18252,6 +18282,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18300,7 +18331,7 @@ public class Pathfinder {
             }
             return new int[] {res, 4};
         }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18310,6 +18341,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18358,7 +18390,7 @@ public class Pathfinder {
             }
             return new int[] {res, 5};
         }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18368,6 +18400,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18449,7 +18482,7 @@ public class Pathfinder {
         //     CellTracker.printLocalMask(reach0, reach1);
         //     Clock.yield();
         // }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18459,6 +18492,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18467,7 +18501,7 @@ public class Pathfinder {
         //     CellTracker.printLocalMask(reach0, reach1);
         //     Clock.yield();
         // }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18477,6 +18511,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18485,7 +18520,7 @@ public class Pathfinder {
         //     CellTracker.printLocalMask(reach0, reach1);
         //     Clock.yield();
         // }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18495,6 +18530,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18503,7 +18539,7 @@ public class Pathfinder {
         //     CellTracker.printLocalMask(reach0, reach1);
         //     Clock.yield();
         // }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18513,6 +18549,7 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
@@ -18521,7 +18558,7 @@ public class Pathfinder {
         //     CellTracker.printLocalMask(reach0, reach1);
         //     Clock.yield();
         // }
-            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
     reach0 |= (reach0 & 0xfbff7feffdffbffl) << 1;
     reach1 |= (reach1 & 0x7feffdffbff7fefl) << 1;
     reach0 |= (reach0 & 0x1f7feffdffbff7fel) >> 1;
@@ -18531,8 +18568,131 @@ public class Pathfinder {
     reach0 |= (reach0 & 0x3ffffffffffffl) << 11;
     reach0 |= (reach0 >> 11) | ((reach1 & 0x7ffl) << 50);
     reach1 |= reach1 >> 11;
+
     reach0 &= localPassable0;
     reach1 &= localPassable1;
 
+    }
+
+    // The cells a baby rat can pick cheese up from after at most 6 steps through passable cells (allies block, and
+    // dirt unless dirt pathing is on): the reached cells grown by one ring, plus its own 3x3 (a turn reaches those).
+    public static long pickable0, pickable1;
+    public static void computePickable() {
+        CellTracker.computeLocalBfsMasks();
+        var localPassable0 = CellTracker.localPassable0;
+        var localPassable1 = CellTracker.localPassable1;
+        if (!Config.allowDirt()) {
+            localPassable0 &= ~CellTracker.localDirt0;
+            localPassable1 &= ~CellTracker.localDirt1;
+        }
+        for(int i = RobotTracker.allyCount - 1; i >= 0; i--) {
+            var ally = RobotTracker.allies[i];
+                {
+        var pos = ally;
+        int xi = pos.x - myLocX + 5;
+        int yi = pos.y - myLocY + 5;
+        if(xi >= 0 && xi < 11 && yi >= 0 && yi < 11)
+        {
+            int idx = yi * 11 + xi;
+            if(idx < 61) {
+                localPassable0 &= ~ (1l << idx);
+            } else {
+                localPassable1 &= ~ (1l << (idx - 61));
+            }
+        }
+    }
+
+        }
+        pickable0 = 0x807000000000000l & localPassable0;
+        pickable1 = 0xe01 & localPassable1;
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    pickable0 |= (pickable0 & 0xfbff7feffdffbffl) << 1;
+    pickable1 |= (pickable1 & 0x7feffdffbff7fefl) << 1;
+    pickable0 |= (pickable0 & 0x1f7feffdffbff7fel) >> 1;
+    pickable1 |= (pickable1 & 0xffdffbff7feffdel) >> 1;
+
+    pickable1 |= ((pickable1 & 0x1ffffffffffffl) << 11) | (pickable0 >> 50);
+    pickable0 |= (pickable0 & 0x3ffffffffffffl) << 11;
+    pickable0 |= (pickable0 >> 11) | ((pickable1 & 0x7ffl) << 50);
+    pickable1 |= pickable1 >> 11;
+
+    pickable0 &= localPassable0;
+    pickable1 &= localPassable1;
+
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    pickable0 |= (pickable0 & 0xfbff7feffdffbffl) << 1;
+    pickable1 |= (pickable1 & 0x7feffdffbff7fefl) << 1;
+    pickable0 |= (pickable0 & 0x1f7feffdffbff7fel) >> 1;
+    pickable1 |= (pickable1 & 0xffdffbff7feffdel) >> 1;
+
+    pickable1 |= ((pickable1 & 0x1ffffffffffffl) << 11) | (pickable0 >> 50);
+    pickable0 |= (pickable0 & 0x3ffffffffffffl) << 11;
+    pickable0 |= (pickable0 >> 11) | ((pickable1 & 0x7ffl) << 50);
+    pickable1 |= pickable1 >> 11;
+
+    pickable0 &= localPassable0;
+    pickable1 &= localPassable1;
+
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    pickable0 |= (pickable0 & 0xfbff7feffdffbffl) << 1;
+    pickable1 |= (pickable1 & 0x7feffdffbff7fefl) << 1;
+    pickable0 |= (pickable0 & 0x1f7feffdffbff7fel) >> 1;
+    pickable1 |= (pickable1 & 0xffdffbff7feffdel) >> 1;
+
+    pickable1 |= ((pickable1 & 0x1ffffffffffffl) << 11) | (pickable0 >> 50);
+    pickable0 |= (pickable0 & 0x3ffffffffffffl) << 11;
+    pickable0 |= (pickable0 >> 11) | ((pickable1 & 0x7ffl) << 50);
+    pickable1 |= pickable1 >> 11;
+
+    pickable0 &= localPassable0;
+    pickable1 &= localPassable1;
+
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    pickable0 |= (pickable0 & 0xfbff7feffdffbffl) << 1;
+    pickable1 |= (pickable1 & 0x7feffdffbff7fefl) << 1;
+    pickable0 |= (pickable0 & 0x1f7feffdffbff7fel) >> 1;
+    pickable1 |= (pickable1 & 0xffdffbff7feffdel) >> 1;
+
+    pickable1 |= ((pickable1 & 0x1ffffffffffffl) << 11) | (pickable0 >> 50);
+    pickable0 |= (pickable0 & 0x3ffffffffffffl) << 11;
+    pickable0 |= (pickable0 >> 11) | ((pickable1 & 0x7ffl) << 50);
+    pickable1 |= pickable1 >> 11;
+
+    pickable0 &= localPassable0;
+    pickable1 &= localPassable1;
+
+                // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    pickable0 |= (pickable0 & 0xfbff7feffdffbffl) << 1;
+    pickable1 |= (pickable1 & 0x7feffdffbff7fefl) << 1;
+    pickable0 |= (pickable0 & 0x1f7feffdffbff7fel) >> 1;
+    pickable1 |= (pickable1 & 0xffdffbff7feffdel) >> 1;
+
+    pickable1 |= ((pickable1 & 0x1ffffffffffffl) << 11) | (pickable0 >> 50);
+    pickable0 |= (pickable0 & 0x3ffffffffffffl) << 11;
+    pickable0 |= (pickable0 >> 11) | ((pickable1 & 0x7ffl) << 50);
+    pickable1 |= pickable1 >> 11;
+
+    pickable0 &= localPassable0;
+    pickable1 &= localPassable1;
+
+            // we don't need to worry about the "seam" here because it's at the cell we are standing on
+    pickable0 |= (pickable0 & 0xfbff7feffdffbffl) << 1;
+    pickable1 |= (pickable1 & 0x7feffdffbff7fefl) << 1;
+    pickable0 |= (pickable0 & 0x1f7feffdffbff7fel) >> 1;
+    pickable1 |= (pickable1 & 0xffdffbff7feffdel) >> 1;
+
+    pickable1 |= ((pickable1 & 0x1ffffffffffffl) << 11) | (pickable0 >> 50);
+    pickable0 |= (pickable0 & 0x3ffffffffffffl) << 11;
+    pickable0 |= (pickable0 >> 11) | ((pickable1 & 0x7ffl) << 50);
+    pickable1 |= pickable1 >> 11;
+
+        pickable0 |= 0x1807000000000000l;
+        pickable1 |= 0xe01;
+    }
+
+    // loc must be in this rat's vision (within 4 cells): computePickable's window.
+    public static boolean isPickable(MapLocation loc) {
+        int idx = (loc.y - myLocY + 5) * 11 + loc.x - myLocX + 5;
+        return idx < 61 ? (pickable0 & (1l << idx)) != 0 : (pickable1 & (1l << (idx - 61))) != 0;
     }
 }

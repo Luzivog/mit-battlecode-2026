@@ -35,9 +35,16 @@ public class CheeseStrategy extends Strategy {
         }
         if(cheeseTarget != null) return;
         int bestAmount = 0;
+        boolean pickableKnown = false;
         for (var info : rc.senseNearbyMapInfos()) {
             var amt = info.getCheeseAmount();
             if(amt > 0 && (cheeseTarget == null || amt > bestAmount)) {
+                // Vision ignores walls and dirt: a pile seen across them took ~30 turns of chasing for 0.4 cheese a turn.
+                if (!pickableKnown) {
+                    Pathfinder.computePickable();
+                    pickableKnown = true;
+                }
+                if (!Pathfinder.isPickable(info.getMapLocation())) continue;
                 cheeseTarget = info.getMapLocation();
                 bestAmount = amt;
             }

@@ -264,6 +264,23 @@ void rt_Unsafe_putByte(Obj*, Obj* o, jlong off, jbyte v) { AT(jbyte, o, off) = v
 jchar rt_Unsafe_getChar(Obj*, Obj* o, jlong off) { return AT(jchar, o, off); }
 void rt_Unsafe_putChar(Obj*, Obj* o, jlong off, jchar v) { AT(jchar, o, off) = v; }
 jshort rt_Unsafe_getShort(Obj*, Obj* o, jlong off) { return AT(jshort, o, off); }
+// FastPath.unaligned{Short,Int,Long}(o, off, bigEndian), for Unsafe_p: with UnsafeConstants.BIG_ENDIAN false,
+// Unsafe's Java reads the value little-endian (aligned or byte by byte) and reverses its bytes for bigEndian
+jshort rt_fastpath_unaligned_short(Obj* o, jlong off, jboolean big) {
+    uint16_t v;
+    memcpy(&v, (char*)o + off, sizeof v);
+    return (jshort)(big ? __builtin_bswap16(v) : v);
+}
+jint rt_fastpath_unaligned_int(Obj* o, jlong off, jboolean big) {
+    uint32_t v;
+    memcpy(&v, (char*)o + off, sizeof v);
+    return (jint)(big ? __builtin_bswap32(v) : v);
+}
+jlong rt_fastpath_unaligned_long(Obj* o, jlong off, jboolean big) {
+    uint64_t v;
+    memcpy(&v, (char*)o + off, sizeof v);
+    return (jlong)(big ? __builtin_bswap64(v) : v);
+}
 void rt_Unsafe_putShort(Obj*, Obj* o, jlong off, jshort v) { AT(jshort, o, off) = v; }
 jboolean rt_Unsafe_casInt(Obj*, Obj* o, jlong off, jint e, jint v) { if (AT(jint, o, off) != e) return 0; AT(jint, o, off) = v; return 1; }
 jboolean rt_Unsafe_casLong(Obj*, Obj* o, jlong off, jlong e, jlong v) { if (AT(jlong, o, off) != e) return 0; AT(jlong, o, off) = v; return 1; }

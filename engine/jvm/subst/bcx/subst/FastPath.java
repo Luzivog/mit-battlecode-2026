@@ -17,4 +17,11 @@ public final class FastPath {
      *  present and as long as the tile count, nbr's tiles are below it, queue holds it. */
     public static native void bfs(int[] nbr, battlecode.common.Direction[][] table, battlecode.common.Direction[] back,
                                   int[] queue, int t, battlecode.common.Direction center);
+
+    /** Unsafe.get{Short,Int,Long}Unaligned(o, offset, bigEndian), read directly (Unsafe_p). */
+    public static native short unalignedShort(Object o, long offset, boolean bigEndian);
+
+    public static native int unalignedInt(Object o, long offset, boolean bigEndian);
+
+    public static native long unalignedLong(Object o, long offset, boolean bigEndian);
 }

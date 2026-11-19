@@ -26,3 +26,5 @@
 {"t": 1795085243, "score": 12.1645, "kept": false, "what": "pointer-free small objects from traced pointer stacks refilled by GC_generic_malloc_many"}
 {"t": 1795085525, "score": 11.9707, "kept": true, "what": "System.arraycopy fast path: same class, in bounds -> one memmove"}
 {"t": 1795086360, "score": 11.5553, "kept": true, "what": "fast path for MapLocation.toString: the String.format text built directly"}
+{"t": 1795087092, "score": 11.5553, "kept": false, "what": "getAllRobotsWithinConeRadiusSquared fast path (unreachable in these games: no change)"}
+{"t": 1795088029, "score": 11.4796, "kept": true, "what": "fast paths for Unsafe.get{Short,Int,Long}Unaligned(o, off, bigEndian): one native read"}

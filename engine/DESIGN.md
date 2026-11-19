@@ -86,4 +86,13 @@ replace a translated method only behind the differential check in `AGENTS.md`.
 
 ## 4. Measured result
 
-See `AGENTS.md`, "Speed".
+The full corpus (8388 games: awubot against itself, its 4 older snapshots and 9 other teams' bots on all 150 maps,
+both seats, two seeds; the 4 fuzz bots on 6 maps) plays the reference's games: 8387 agree in result, every round's
+state hash and the replay bytes; in the other the reference disagreed with itself across machines (`AGENTS.md`,
+"Known gaps"). On DoC's lab machines a game costs 11.1 CPU s natively against 86.6 for the official engine (7.8×;
+median per game 10.5×, from about 2× on large mazes to 45× on small maps).
+
+The estimate in §2 assumed the world would stay a small share. It does not: translated, the world's start (the
+cats' BFS tables, quadratic in tiles) and the collector behind its allocations take most of the native time, where
+the JVM's compiled code and young-generation collector made them cheap (the BFS tables were 6.4 s of an 85 s
+DefaultLarge game, §1). The per-robot class costs and the JVM are gone as planned. Details: `AGENTS.md`, "Speed".

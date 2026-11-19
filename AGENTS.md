@@ -72,6 +72,7 @@ tools/run --kit -- CMD                                      # one command on a w
 tools/compute wait ID --json                                # run in the background: its exit wakes you
 ./gradlew classes && .venv/bin/python engine/build.py      # build the native engine with every bot (engine/build/bcx)
 engine/build/bcx play SPECS.jsonl OUTDIR --no-indicators  # native games; same specs and results as tools/play
+tools/enginebench/enginebench score                        # the engine-speed eval (tools/enginebench/AGENTS.md)
 ```
 
 Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot --pool POOL` (gain test: the branch against

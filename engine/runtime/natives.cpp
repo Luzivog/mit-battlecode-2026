@@ -310,6 +310,26 @@ void rt_fastpath_fail(Obj* what) {
     fflush(stderr);
     abort();
 }
+void rt_fastpath_bfs(Obj* nbrA, Obj* tableA, Obj* backA, Obj* queueA, jint t, Obj* center) {
+    const jint* nbr = ADATA(jint, nbrA);
+    Obj** rows = ADATA(Obj*, tableA);
+    Obj** back = ADATA(Obj*, backA);
+    jint* q = ADATA(jint, queueA);
+    ADATA(Obj*, rows[t])[t] = center;
+    q[0] = t;
+    jint head = 0, tail = 1;
+    while (head < tail) {
+        const jint* nb = nbr + 8 * q[head++];
+        for (int k = 0; k < 8; k++) {
+            jint ni = nb[k];
+            if (ni < 0) continue;
+            Obj** row = ADATA(Obj*, rows[ni]);
+            if (row[t]) continue;
+            row[t] = back[k];
+            q[tail++] = ni;
+        }
+    }
+}
 jlong rt_fastpath_random_state(Obj* r) {
     c0_java_util_Random* rr = (c0_java_util_Random*)r;
     rr->f_haveNextNextGaussian = 0;

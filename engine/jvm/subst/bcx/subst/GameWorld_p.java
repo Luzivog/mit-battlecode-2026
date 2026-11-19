@@ -21,6 +21,7 @@ public final class GameWorld_p {
     private int[][] bcxBfsNbr;  // per tile, its 8 steps' tiles in the original's order, -1 off the map or not passable
     private Direction[][] bcxBfsBack;
     private int[] bcxBfsQueue;
+    private Direction[][][] bcxBfsRows;  // per symmetry, the table whose rows were checked for the native loop
     private boolean[] bcxBfsWalls;
 
     public void bfsFromTarget(MapLocation target, int sym) {
@@ -53,24 +54,12 @@ public final class GameWorld_p {
         int n = w * h;
         if (bfs.length != n || walls.length != n) return false;
         if (bcxBfsNbr == null || bcxBfsWalls != walls || bcxBfsQueue.length != n) bcxBfsSetup(w, h);
-        int[] nbr = bcxBfsNbr[sym];
-        Direction[] back = bcxBfsBack[sym];
-        int[] q = bcxBfsQueue;
-        int t = tx + ty * w;
-        bfs[t][t] = Direction.CENTER;
-        q[0] = t;
-        int head = 0, tail = 1;
-        while (head < tail) {
-            int base = q[head++] << 3;
-            for (int k = 0; k < 8; k++) {
-                int ni = nbr[base + k];
-                if (ni < 0) continue;
-                Direction[] row = bfs[ni];
-                if (row[t] != null) continue;
-                row[t] = back[k];
-                q[tail++] = ni;
-            }
+        if (bcxBfsRows[sym] != bfs) {
+            // the native loop reads rows unchecked: every row present and n long
+            for (int i = 0; i < n; i++) if (bfs[i] == null || bfs[i].length != n) return false;
+            bcxBfsRows[sym] = bfs;
         }
+        FastPath.bfs(bcxBfsNbr[sym], bfs, bcxBfsBack[sym], bcxBfsQueue, tx + ty * w, Direction.CENTER);
         return true;
     }
 
@@ -114,6 +103,7 @@ public final class GameWorld_p {
                     }
         }
         bcxBfsQueue = new int[n];
+        bcxBfsRows = new Direction[2][][];
         bcxBfsWalls = walls;
     }
 

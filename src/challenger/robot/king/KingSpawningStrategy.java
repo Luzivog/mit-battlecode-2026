@@ -2,14 +2,13 @@ package challenger.robot.king;
 
 import battlecode.common.*;
 import challenger.robot.Strategy;
+import challenger.util.MineEstimate;
 import challenger.util.Rng;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
 
-import challenger.CellTracker;
 import challenger.RobotTracker;
 import challenger.comms.GlobalArray;
-import challenger.util.string.FastIndexedIntSet;
 
 public class KingSpawningStrategy extends Strategy {
     private static int numSpawned = 0;
@@ -19,49 +18,15 @@ public class KingSpawningStrategy extends Strategy {
         return ((x - 1) / 4) * 10 + 10;
     }
 
-    // The map holds at least RICH_MINES mines. Measured: a cap 4 rats lower wins on maps with <= 4 mines and loses on
-    // maps with >= 10 (docs/plan.md E2; T1§2.5: the army the income sustains grows with the mines). Every mine's
-    // mirror is a mine, so the count is at least the known mines plus their unknown mirrors under the symmetry, and at
-    // least the smallest such count over the symmetries still possible. Latched: mines are never forgotten.
+    // The map holds at least RICH_MINES mines (util/MineEstimate). Measured: a cap 4 rats lower wins on maps with <= 4
+    // mines and loses on maps with >= 10 (docs/plan.md E2; T1§2.5: the army the income sustains grows with the mines).
+    // Latched: on a turn short of bytecode the estimate falls back to the known count.
     private static final int RICH_MINES = 5;
     private static boolean rich = false;
-    private static int richKey = -1;
 
     static boolean isRichMap() {
-        if (rich) return true;
-        FastIndexedIntSet mines = GlobalArray.globalCheeseMines;
-        int n = mines.size();
-        int key = n | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8;
-        if (key == richKey || 2 * n < RICH_MINES || Clock.getBytecodesLeft() < 4000) return false;
-        richKey = key;
-        int est = n;
-        if (CellTracker.rsym + CellTracker.hsym + CellTracker.vsym > 0) {
-            est = RICH_MINES;
-            if (CellTracker.rsym == 1) est = Math.min(est, withMirrors(mines, n, true, true));
-            if (CellTracker.hsym == 1) est = Math.min(est, withMirrors(mines, n, true, false));
-            if (CellTracker.vsym == 1) est = Math.min(est, withMirrors(mines, n, false, true));
-        }
-        rich = est >= RICH_MINES;
+        if (!rich) rich = MineEstimate.atLeast(RICH_MINES) >= RICH_MINES;
         return rich;
-    }
-
-    // Known mines plus their unknown mirrors, counted up to RICH_MINES. encode2x2 halves coordinates, so on an odd
-    // dimension the mirror of an odd coordinate lands one cell high: the cell below counts as the same mine.
-    static int withMirrors(FastIndexedIntSet mines, int n, boolean fx, boolean fy) {
-        boolean oddX = fx && (mapWidth & 1) == 1;
-        boolean oddY = fy && (mapHeight & 1) == 1;
-        int est = n;
-        for (int i = 0; i < n && est < RICH_MINES; i++) {
-            int e = mines.at(i);
-            int x = (e & 31) << 1, y = (e >>> 5) << 1;
-            int s = encode2x2(fx ? mapWidth - 1 - x : x, fy ? mapHeight - 1 - y : y);
-            if (mines.contains(s)) continue;
-            if (oddX && mines.contains(s - 1)) continue;
-            if (oddY && mines.contains(s - 32)) continue;
-            if (oddX && oddY && mines.contains(s - 33)) continue;
-            est++;
-        }
-        return est;
     }
 
     @Override

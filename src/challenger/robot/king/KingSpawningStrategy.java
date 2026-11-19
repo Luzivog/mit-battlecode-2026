@@ -19,40 +19,39 @@ public class KingSpawningStrategy extends Strategy {
         return ((x - 1) / 4) * 10 + 10;
     }
 
-    // A lower bound on the map's mines, up to MANY_MINES. Measured: a cap 4 rats lower wins on maps with <= 4 mines
-    // and loses on maps with >= 10 (docs/plan.md E2; T1§2.5: the army the income sustains grows with the mines).
-    // Every mine's mirror is a mine, so the count is at least the known mines plus their unknown mirrors under the
-    // symmetry, and at least the smallest such count over the symmetries still possible. Mines are never forgotten,
-    // so the bound only grows.
-    private static final int FEW_MINES = 4, MANY_MINES = 10;
-    private static int minMines = 0;
-    private static int minesKey = -1;
+    // The map holds at least RICH_MINES mines. Measured: a cap 4 rats lower wins on maps with <= 4 mines and loses on
+    // maps with >= 10 (docs/plan.md E2; T1§2.5: the army the income sustains grows with the mines). Every mine's
+    // mirror is a mine, so the count is at least the known mines plus their unknown mirrors under the symmetry, and at
+    // least the smallest such count over the symmetries still possible. Latched: mines are never forgotten.
+    private static final int RICH_MINES = 5;
+    private static boolean rich = false;
+    private static int richKey = -1;
 
-    static int minMines() {
-        if (minMines >= MANY_MINES) return minMines;
+    static boolean isRichMap() {
+        if (rich) return true;
         FastIndexedIntSet mines = GlobalArray.globalCheeseMines;
         int n = mines.size();
         int key = n | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8;
-        if (key == minesKey || 2 * n <= minMines || Clock.getBytecodesLeft() < 4000) return minMines;
-        minesKey = key;
+        if (key == richKey || 2 * n < RICH_MINES || Clock.getBytecodesLeft() < 4000) return false;
+        richKey = key;
         int est = n;
         if (CellTracker.rsym + CellTracker.hsym + CellTracker.vsym > 0) {
-            est = MANY_MINES;
+            est = RICH_MINES;
             if (CellTracker.rsym == 1) est = Math.min(est, withMirrors(mines, n, true, true));
             if (CellTracker.hsym == 1) est = Math.min(est, withMirrors(mines, n, true, false));
             if (CellTracker.vsym == 1) est = Math.min(est, withMirrors(mines, n, false, true));
         }
-        if (est > minMines) minMines = est;
-        return minMines;
+        rich = est >= RICH_MINES;
+        return rich;
     }
 
-    // Known mines plus their unknown mirrors, counted up to MANY_MINES. encode2x2 halves coordinates, so on an odd
+    // Known mines plus their unknown mirrors, counted up to RICH_MINES. encode2x2 halves coordinates, so on an odd
     // dimension the mirror of an odd coordinate lands one cell high: the cell below counts as the same mine.
     static int withMirrors(FastIndexedIntSet mines, int n, boolean fx, boolean fy) {
         boolean oddX = fx && (mapWidth & 1) == 1;
         boolean oddY = fy && (mapHeight & 1) == 1;
         int est = n;
-        for (int i = 0; i < n && est < MANY_MINES; i++) {
+        for (int i = 0; i < n && est < RICH_MINES; i++) {
             int e = mines.at(i);
             int x = (e & 31) << 1, y = (e >>> 5) << 1;
             int s = encode2x2(fx ? mapWidth - 1 - x : x, fy ? mapHeight - 1 - y : y);
@@ -72,11 +71,8 @@ public class KingSpawningStrategy extends Strategy {
         if (mapWidth * mapHeight <= 900 && time < 400) {
             defaultThresh = 30;
         }
-        int mines = minMines();
-        if (mines <= FEW_MINES) {
+        if (!isRichMap()) {
             defaultThresh -= 10;
-        } else if (mines >= MANY_MINES) {
-            defaultThresh += 10;
         }
         int thresh = Math.min(rc.getGlobalCheese() / 10 + 10, defaultThresh);
         if (rc.getGlobalCheese() >= 3000 - time * 3 / 4) {

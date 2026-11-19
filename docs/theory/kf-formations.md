@@ -148,12 +148,14 @@ Gain tests against main (`challenger@b962918`), awubot, `mines-ge8`, seed base 7
 
 | arm | change (`C:robot/king/KingFormationCoordinatorStrategy.java`) | result | mechanism (probe) | run |
 |---|---|---|---|---|
-| T | skip the site of the last timed-out formation | +0.000 [−0.018, +0.018], H0 (83 cells, 1 better, 1 worse) | – | `1119-130507-ab-70ee` |
+| T | skip the site of the last timed-out formation | +0.000 [−0.018, +0.018], H0 (83 cells, 1 better, 1 worse); where_are_you, 40 cells at seed base 7104: +0.013, H0 (7 / 6) | where_are_you: the next site times out too | `1119-130507-ab-70ee`, `1119-132208-ab-5997` |
 | S1 | delete the site score's pull to the centre | −0.019 [−0.053, +0.000], H0 (77 cells, 0 / 3) | – | `1119-130510-ab-cb4f` |
 | S2 | among sites beyond the floor, prefer own side (`isOnOurSide`) | −0.019 [−0.048, +0.005], H0 (106 cells, 1 / 5) | – | `1119-130514-ab-3895` |
 | T + S2 | both | −0.017 [−0.050, +0.017], H0 (60 cells, 1 / 3) | rich losses: timeout rat-rounds 795 → 570 a game, enemy-side sites 43 → 23, timeouts 66 → 49, formed kings dead within 300 rounds 73 → 56; kings formed 0.87 a game, unchanged | `1119-130522-ab-1af5` |
 | M | known-mine gate on `MineEstimate.atLeast` (the map's mines) | −0.040 [−0.075, −0.007], H0 (76 cells, 1 / 6) | kings formed 0.87 → 1.06 a game, dead within 300 rounds 73 → 127, timeouts in losses 66 → 136 | `1119-130518-ab-6390` |
 | MR | M, and a second king with 16 rats once global ≥ 1,000 on ≥ 8 estimated mines | −0.083 [−0.137, −0.035], H0 (108 cells, 5 / 21) | in the first 55 cells 16 games lost (king kills r500–1500, 4 on points), 2 won: a formation takes 6 of the 16 rats | `1119-131509-ab-c8a6` |
+| M3 | M for the third king only (9 known mines) | −0.008 [−0.026, +0.000], H0 (62 cells, 0 / 1) | – | `1119-132045-ab-e5ab` |
+| K | the site is the mine beyond the floor nearest the map centre (KB-centre) | −0.006 [−0.033, +0.019], H0 (85 cells, 2 / 3) | every mine known: 303 of 556 normal sites on the enemy side | `1119-132454-ab-109d` |
 | **C** (merged candidate) | the cooperation mode (own-side sites only, no rat or mine gate) ends at the lock-in round; a cooperation game then forms under the lock-in's rules | rose, 40 cells at seed base 7102: **79–1 against main's 47–33 on the same cells, +0.400** (25 better, 0 worse; H1 at δ 0.20); we end with 2 kings in 80 of 80 games (main: 1 king in 48); `goal` harm, seed base 7103: H0 (no harm), +0.004 [+0.000, +0.011] (137 cells, 1 better, 0 worse) | rose is the only map where a cooperation search fails past r800 (probe: 10 of 1,520 games at r800, 7 of them rose) | `1119-132048-ab-f61e`, `1119-132052-ab-e929` |
 
 ## 4. What binds
@@ -170,7 +172,7 @@ Gain tests against main (`challenger@b962918`), awubot, `mines-ge8`, seed base 7
   score.
 - **Two clusters were real bugs.** rose: the cooperation mode outranked the lock-in and the late refill for the whole
   game. Arm C (cooperation mode only before the lock-in round) fixes it (§3). where_are_you: repeated lock-in timeouts
-  at one site; arm T fixes the repetition (§3).
+  at one site; arm T moves the next attempt elsewhere, and that site times out too (§3): every site there is contested.
 
 ## 5. Next
 
@@ -178,7 +180,8 @@ Gain tests against main (`challenger@b962918`), awubot, `mines-ge8`, seed base 7
 - The danger formation (first king below 100 HP, alone) completes 4 of 40 times in rich losses (all rounds): the king dies 0–30
   rounds after the start, before rats gather at a far site. An emergency site near the rats, started at a higher HP,
   is untested. 89 of 118 rich king-kill losses never had a second king (ending at a median r550).
-- The third king on rich maps waits on 9 known mines (§2.3); arm M3 (§3) prices it.
+- The third king on rich maps waits on 9 known mines (§2.3), but opening that gate (M3) changed 1 cell in 62: the
+  lock-in's cheese and rat gates hold next. More kings on rich maps come from a richer economy, not from the gates.
 
 ## 6. Data and tools (`~/battlecode26-data/scratch/kf/`)
 

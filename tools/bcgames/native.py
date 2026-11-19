@@ -198,7 +198,8 @@ class Planner:
                 return None
             return Plan(version, tuple(game), tuple(game), binary=job.spec["bcx"])
         bots = compose(self._base(), game)
-        return Plan(version, tuple(bots), tuple(game)) if bots is not None else None
+        return Plan(version, tuple(bots), tuple(sorted(set(game), key=lambda b: (b.pkg, b.hash)))) \
+            if bots is not None else None
 
 
 # ------------------------------------------------------------------------------------------------------- classes

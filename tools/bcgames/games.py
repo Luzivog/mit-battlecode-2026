@@ -309,14 +309,23 @@ def drive(d: Path) -> int:
                              "Report it (engine/AGENTS.md); rerun with --backend java meanwhile.")
             cond.notify_all()
 
-    runner = make_runner(d, p, on_mismatch)
+    guard = {"same": 0, "java-nondeterministic": 0, "java-error": 0, "mismatch": 0}
+    guard_log = open(d / "guard.jsonl", "a")
+
+    def on_guard(job, g) -> None:  # a local guard check resolved after its game was delivered
+        with cond:
+            guard[g["verdict"]] = guard.get(g["verdict"], 0) + 1
+            guard_log.write(json.dumps(dict(g, id=job.spec.get("id"), key=job.key)) + "\n")
+            guard_log.flush()
+            cond.notify_all()
+
+    runner = make_runner(d, p, on_mismatch, on_guard=on_guard)
     for ref, (jar, h) in meta.get("bots", {}).items():  # the builds made at submission
         runner.resolver.bots[ref] = (Path(jar), h)
     inflight = {"n": 0}
     out = open(d / "results.jsonl", "a")
     t0 = time.time()
     counts = {"played": 0, "cached": 0, "native": 0, "java": 0, "native_errors": 0}
-    guard = {"same": 0, "java-nondeterministic": 0, "java-error": 0, "mismatch": 0}
 
     def on_term(*_):
         stop["flag"] = True
@@ -341,7 +350,7 @@ def drive(d: Path) -> int:
                 if not r.get("error"):
                     counts[r.get("backend", "java")] += 1
                 counts["native_errors"] += bool(r.get("native_error"))
-                if isinstance(r.get("guard"), dict):
+                if isinstance(r.get("guard"), dict) and r["guard"]["verdict"] != "pending":  # checked remotely
                     guard[r["guard"]["verdict"]] = guard.get(r["guard"]["verdict"], 0) + 1
             cond.notify_all()
 
@@ -357,22 +366,29 @@ def drive(d: Path) -> int:
                  "games_per_min": round(counts["played"] / wall * 60, 2) if wall > 0 else 0,
                  "backends": {"native": counts["native"], "java": counts["java"],
                               "native_errors": counts["native_errors"]},
-                 "guard": dict(guard), "tests": [t.summary() for t in tests]}
+                 "guard": dict(guard, pending=getattr(runner, "pending", 0)), "tests": [t.summary() for t in tests]}
         if error:
             state["error"] = error
         write_json(d / "state.json", state)
 
     # Games waiting or playing, and games of a test beyond its scored prefix. Remote: --workers games in flight.
+    # Native games are cheap and a slow one holds the prefix back: look further ahead.
     queue_cap = p["workers"] if p.get("remote") else 2 * p["workers"]
-    ahead_cap = p["workers"] if p.get("remote") else 4 * p["workers"]
+    ahead_cap = p["workers"] if p.get("remote") else (8 if p.get("backend", "native") == "native" else 4) * p["workers"]
     try:
         while True:
             with cond:
                 for t in tests:
                     t.update()
                 running = [t for t in tests if t.verdict == "running"]
-                if not running or stop["flag"] or stop["error"]:
+                if stop["flag"] or stop["error"]:
                     break
+                if not running:
+                    if not getattr(runner, "pending", 0):
+                        break
+                    save_state("running")  # the verdicts wait for the guard's last checks
+                    cond.wait(timeout=10)
+                    continue
                 for t in running:
                     per_cell = 4 if t.ref else 2
                     # Remote: a test gets at most a pass (or 32 cells) beyond its prefix, the next decision point.
@@ -405,7 +421,7 @@ def drive(d: Path) -> int:
     return 0
 
 
-def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False):
+def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False, on_guard=None):
     """The run's backend: local or Imperial, native (the default; runs made before it existed have no "backend") or
     java. REPLAY: playing games again for their replays (no cache, all workers)."""
     backend = p.get("backend", "native")
@@ -415,7 +431,7 @@ def make_runner(d: Path, p: dict, on_mismatch=None, replay: bool = False):
                                        on_mismatch, use_cache=p.get("cache", True))
     return play.Runner(p["workers"], d, play.DEFAULT_TIMEOUT if replay else p["timeout"],
                        use_cache=not replay and p.get("cache", True), backend=backend, guard=guard,
-                       on_mismatch=on_mismatch)
+                       on_mismatch=on_mismatch, on_guard=on_guard)
 
 
 def test_outcome(t: dict, kind: str) -> str:
@@ -557,10 +573,12 @@ def report_backends(st: dict, p: dict) -> list[str]:
     L = [f"engines: {be['native']} games native, {be['java']} java (backend {p.get('backend', 'native')})"
          + (f"; {be['native_errors']} native failures played on java (tools/games show ID --games)"
             if be.get("native_errors") else "")]
-    checked = sum(g.values()) if g else 0
-    if checked:
+    pending = (g or {}).get("pending", 0)
+    checked = sum(v for k, v in g.items() if k != "pending") if g else 0
+    if checked or pending:
         bad = g.get("mismatch", 0)
         L.append(f"exactness guard: {checked} games played on both engines: {g.get('same', 0)} identical"
+                 + (f", {pending} being checked" if pending else "")
                  + (f", {g['java-nondeterministic']} where the Java engine differed from itself (explained)"
                     if g.get("java-nondeterministic") else "")
                  + (f", {g['java-error']} the Java engine failed" if g.get("java-error") else "")

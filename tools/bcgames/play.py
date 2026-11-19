@@ -304,12 +304,13 @@ class Runner:
     Results go to callbacks; finished games go to the cache, whichever engine played them (they are the same games).
 
     The exactness guard plays a native game on Java too when its spec asks (guard: true), when it is the runner's first
-    game of its binary, or when sampled (GUARD rate, by game key), and delivers it only once compared. On a mismatch
-    the Java engine's own nondeterminism doesn't explain (native.verdict), the binary is marked bad, its results leave
-    the cache, Java's result is delivered and on_mismatch(job, guard) is called."""
+    game of its binary, or when sampled (GUARD rate, by game key): see guard(). On a mismatch the Java engine's own
+    nondeterminism doesn't explain (native.verdict), the binary is marked bad, its results leave the cache and
+    on_mismatch(job, guard) is called."""
 
     def __init__(self, workers: int, outdir: Path, timeout: float = DEFAULT_TIMEOUT, use_cache: bool = True,
-                 backend: str = "native", guard: float | None = None, on_mismatch=None, slots: bool = True):
+                 backend: str = "native", guard: float | None = None, on_mismatch=None, slots: bool = True,
+                 on_guard=None):
         self.resolver = Resolver()
         self.cache = store.Cache() if use_cache else None
         self.cache_lock = threading.Lock()
@@ -318,7 +319,8 @@ class Runner:
         self.native = (native.Backend(self.resolver, workers, outdir / "logs" / "native", timeout, self.gate)
                        if backend == "native" else None)
         self.guard_rate = native.GUARD_RATE if guard is None else guard
-        self.on_mismatch = on_mismatch
+        self.on_mismatch, self.on_guard = on_mismatch, on_guard
+        self.pending = 0               # guard checks not yet resolved (on_guard mode)
         self.first: set[str] = set()   # binaries this runner has guarded a game of
         self.mismatches: list[dict] = []
         self.lock = threading.Lock()
@@ -366,30 +368,44 @@ class Runner:
         return first or native.sampled(job.key, self.guard_rate)
 
     def guard(self, job: Job, nres: dict, done) -> None:
-        """Plays JOB on Java (twice if the first run differs) and delivers the outcome with its verdict."""
+        """Plays JOB on Java too (twice if the first run differs). Without on_guard the outcome is delivered once
+        compared, with its verdict. With on_guard the native outcome is delivered now (guard verdict "pending") and
+        on_guard(job, guard) gets the verdict later; the caller must not conclude while `pending` is above 0."""
         twin = self.resolver.job(dict(job.spec), None)
         mirror = store.parse_bot(job.spec["a"])[0] == store.parse_bot(job.spec["b"])[0]
         g = {"native_digest": nres.get("digest"), "native_build": nres.get("native_build"), "host": socket.gethostname()}
+        if self.on_guard is not None:
+            with self.lock:
+                self.pending += 1
+            done(job, dict(nres, guard=dict(g, verdict="pending")))
+
+        def resolve(res: dict) -> None:
+            if g["verdict"] == "mismatch":
+                self.mismatch(job, g)
+            if self.on_guard is None:
+                done(job, res)
+                return
+            with self.lock:
+                self.pending -= 1
+            self.on_guard(job, g)
 
         def java1(_, r1: dict) -> None:
             if r1.get("error"):  # nothing to compare with: the native result stands, unchecked
-                done(job, dict(nres, guard=dict(g, verdict="java-error", error=r1["error"])))
+                g.update(verdict="java-error", error=r1["error"])
+                resolve(dict(nres, guard=g))
                 return
             g.update(java_digest=r1.get("digest"), java_cpu_s=r1.get("cpu_s"))
             if native.verdict(nres, r1, mirror=mirror) == "same":
-                done(job, dict(nres, guard=dict(g, verdict="same")))
+                g["verdict"] = "same"
+                resolve(dict(nres, guard=g))
             else:
                 self.pool.submit(twin, lambda _, r2: java2(r1, r2))
 
         def java2(r1: dict, r2: dict) -> None:
             g.update(java2_digest=r2.get("digest"), java2_error=r2.get("error"))
             v = native.verdict(nres, r1, None if r2.get("error") else r2, mirror)
-            g["verdict"] = "mismatch" if v == "pending" else v
-            if g["verdict"] == "java-nondeterministic":
-                done(job, dict(nres, guard=g))
-                return
-            self.mismatch(job, g)
-            done(job, dict(r1, backend="java", guard=g))
+            g["verdict"] = "java-nondeterministic" if v == "java-nondeterministic" else "mismatch"
+            resolve(dict(nres, guard=g) if g["verdict"] != "mismatch" else dict(r1, backend="java", guard=g))
 
         self.pool.submit(twin, java1)
 

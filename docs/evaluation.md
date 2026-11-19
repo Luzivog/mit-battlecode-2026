@@ -1,9 +1,10 @@
 # Evaluation: is bot A stronger than bot B?
 
-`tools/games` answers with real games on the unmodified official engine. Each cell (a map and a seed) is played in
-both seats, and a sequential test (GSPRT) stops as soon as the answer is clear. Results are cached by content, so
-unchanged code never replays a game. `tools/play` plays any list of games. Engine and runner details:
-`docs/testing.md` §7a. Code and its invariants: `tools/bcgames/AGENTS.md`.
+`tools/games` answers with real games: on the native engine (`engine/`), which plays exactly the official engine's
+games at a fraction of the CPU, and on the unmodified official engine where the native one can't ("Engines"). Each
+cell (a map and a seed) is played in both seats, and a sequential test (GSPRT) stops as soon as the answer is clear.
+Results are cached by content, so unchanged code never replays a game. `tools/play` plays any list of games. Engine
+and runner details: `docs/testing.md` §7a. Code and its invariants: `tools/bcgames/AGENTS.md`.
 
 ## Commands
 
@@ -20,7 +21,8 @@ unchanged code never replays a game. `tools/play` plays any list of games. Engin
 | replay files for a run's cells, after the fact | `tools/games replays ID [--cells decisive\|lost\|changed\|all] [--remote]` |
 | the replay of one game | `tools/games replay ID GAME` |
 | runs, stop one, pools, SPRT sample sizes | `tools/games list`, `stop ID`, `pools [-v]`, `simulate` |
-| play any games from a spec file | `tools/play SPECS.jsonl OUTDIR [--workers N] [--engine 1.2.6\|1.2.5] [--replays none\|losses\|all]` |
+| play any games from a spec file | `tools/play SPECS.jsonl OUTDIR [--workers N] [--engine 1.2.6\|1.2.5] [--replays none\|losses\|all] [--backend native\|java]` |
+| any of these on the official Java engine only | add `--backend java` |
 | any of `ab`, `gauntlet`, `replays` on DoC's machines (compute skill) | add `--remote [--where condor,slurm]` |
 
 In Claude Code: run `tools/games ab ...`, then `tools/games wait ID` with the Bash tool's `run_in_background: true`.
@@ -32,12 +34,14 @@ You are woken when the test stops, and the exit code is the verdict:
 | 3 fail | H0: A is not better | H1: A is worse by δ (gauntlet: against some opponent) |
 | 4 | inconclusive: the cell cap was reached first | |
 | 5 | still running (`show`, or `wait --timeout`) | |
-| 1 / 2 | error / usage | |
+| 1 / 2 | error / usage (1 also when the exactness guard stopped the run: "Engines") | |
 
 Options of `ab` and `gauntlet`: `--pool` (below), `--ref`, `--test gain|harm`, `--delta` (default 0.10),
 `--alpha`, `--beta` (0.05), `--min-cells` (default one pass over the pool), `--max-cells` (4/δ²: 400 at δ 0.10, 1600
-at 0.05; smoke: one pass), `--seed-base` (below), `--engine` (1.2.6), `--workers` (local JVMs, 8; remote: games in
-flight, 256), `--replays losses|all`, `--fg` (foreground, prints the report), `--remote`.
+at 0.05; smoke: one pass), `--seed-base` (below), `--engine` (1.2.6), `--workers` (local games at once, 8; remote:
+games in flight, 256), `--replays losses|all`, `--fg` (foreground, prints the report), `--remote`, `--backend
+native|java` (default native), `--guard RATE` (the guard's sample, default 1/32), `--no-cache` (play every game,
+for measurements).
 
 A bot is a package under `src/` (compiled alone, like a submission) or `pkg@REV`, the package at a git revision of
 this repo. A revision is pinned to its commit when the test starts (`challenger@origin/main` fetches main first), and
@@ -100,6 +104,8 @@ the ref's own score on the same cells and the paired difference with its CI.
   sensitive than win/loss on maps that reach round 2000.
 - **Robots killed by their own uncaught exception**: robots the engine destroyed because their code threw an uncaught
   Error or returned from `run()`. awubot's asserts do this.
+- **engines** (last lines): how many games each engine played, the native failures replayed on Java, and the
+  exactness guard's count of games played on both ("Engines").
 
 ## Protocol
 
@@ -133,18 +139,54 @@ the ref's own score on the same cells and the paired difference with its CI.
 
 ## Local and remote
 
-- **Local** (default): `--workers` JVMs, each playing many games. All runs on this host share `BCGAMES_SLOTS` (8)
-  games at once, so parallel runs from several agents queue instead of overloading the box.
+- **Local** (default): `--workers` games at once (native processes, or JVMs each playing many games). All runs on
+  this host share `BCGAMES_SLOTS` (8) games at once, so parallel runs from several agents queue instead of
+  overloading the box.
 - **`--remote`** plays on DoC's machines through track C's `tools/run` (`.claude/skills/compute/`).
   - Read the compute skill first. Condor needs Bitwarden unlocked; cpucluster1 refuses jobs at times.
   - `--workers` becomes the games in flight (default 256). Each test sends at most one pass (or 32 cells) beyond its
-    scored prefix, its next decision point. Batches go out every 30 s; each task plays 3 games with `tools/play`.
+    scored prefix, its next decision point. Batches go out every 30 s; each task plays 3 games with `tools/play`
+    (native games: 8).
   - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. It prints the same JDK
     fingerprint as Ubuntu's 21.0.13 here, so remote and local games share one cache. Verified: remote games
     byte-identical to local ones (replay digests, Slurm and Condor).
   - A test reads each task's results as they come back, and cancels the rest of the run when it stops.
   - A game runs 3-6x slower on a DoC CPU, but Condor offers ~2,500 games at once. Use it for `goal`, the gauntlet,
     calibrations and the holdout.
+
+## Engines
+
+- **Native by default.** A game plays on the native engine (`engine/`: the official engine and the bots translated to
+  C++) when one binary can hold both its bots, else on the official jar. Two builds of one package can't share a
+  binary, so a game of challenger against `challenger@REV` plays on Java. `--backend java` plays every game on Java.
+  Each result names its engine (`backend`; native ones also `native_build`, the binary).
+- **The same games.** The native engine plays the official engine's games exactly: result, every round's state,
+  every robot's bytecodes, the replay bytes (engine/AGENTS.md: all 8,388 games of its corpus). A new bot build can
+  reach engine code the corpus never did; such a path stops the native game with an error, never silently, and the
+  game is played again on Java (the report counts these "native failures"; report them, engine/AGENTS.md).
+- **Binaries.** A binary holds the engine, the sparring bots (awubot and the gauntlet's opponents) and the run's
+  other bots. It is built on this host the first time any run needs it, keyed by the bots' class hashes and the
+  engine's sources, and kept for every later run and agent (`~/battlecode26-data/games/native/bin/`, the 24 most
+  recently used). A run plays its cached games and its games of existing binaries while a missing one builds; a
+  second run asking for the same binary waits for the first's build. Builds run niced, at most 2 at once on the
+  host, 8 compile jobs each. A new challenger build takes about 95 s; a change to `engine/` rebuilds everything once
+  per build slot (about 5 min).
+- **Exactness guard.** Each run also plays some of its native games on Java, on the same machine (Imperial: in the
+  same task): every binary's first game in the run, and 1 in 32 of the rest, chosen by game key. A guarded game
+  counts only once compared, so a test never scores it before its check. When the replays differ, Java plays it
+  again. If its two runs differ and one equals the native game, the Java engine's own nondeterminism explains it
+  (engine/AGENTS.md "Known gaps") and the native result stands. Otherwise the run stops with an error (exit 1), the
+  binary is marked bad and never used again, and its results leave the cache. Report it, and rerun with
+  `--backend java` meanwhile.
+- **Cache.** A native and a Java result of the same game are interchangeable: the game key is unchanged, both are
+  the official engine's game, and the guard checks it in every run. Cached Java results serve native runs and the
+  reverse. Fields that differ by engine and are not outcomes: `cpu_s`, `wall_ms`, `hash` (native), `engine_errors`
+  (Java), and `crashed` in a game of one package against itself (Java's scanner gives both teams' crashes to A; the
+  native engine counts per robot).
+- **Imperial.** `--remote` builds the binary here, puts it once on the volume (about 30 MB gzip'd, removed after
+  3 days unused), and sends native games in tasks of 8; the nodes run it as is (static).
+- **What changes for an agent: nothing.** The commands, exit codes and reports are the same. Old runs read as
+  before (they have no engine lines).
 
 ## Pools
 
@@ -187,7 +229,8 @@ holdout results are slightly optimistic. Never tune a constant on those games.
 ## Conditions
 
 - **Engine**: the official jar, unmodified, sha256-checked: 1.2.6 by default (the code of the final tournament's
-  1.2.7.private2), or 1.2.5 with `--engine 1.2.5`. No `src/battlecode` override is on the classpath.
+  1.2.7.private2), or 1.2.5 with `--engine 1.2.5`. No `src/battlecode` override is on the classpath. The native
+  engine plays the same games ("Engines").
 - **One game equals a fresh JVM's game**, although each worker JVM plays many games. The engine's only state that
   outlives a game is the static cat RNG (`InternalRobot.rand = new Random(1092)`), which the runner resets before each
   game. Verified:

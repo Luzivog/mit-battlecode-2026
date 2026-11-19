@@ -107,6 +107,7 @@ to the robot's team.
 ./gradlew classes                                  # the bots' class files (build/classes)
 .venv/bin/python engine/build.py                   # engine/build/bcx: engine 1.2.6 and every bot package
 .venv/bin/python engine/build.py --engine 1.2.5    # engine/build/bcx-1.2.5 (--engine all: both)
+engine/build.py --team PKG=CLASSES_DIR... --gen DIR --out FILE [--glue-opt=-O1]   # tools/bcgames/native.py's builds
 engine/build/bcx play SPECS.jsonl OUTDIR [-j N] [--no-replay] [--no-indicators] [--dump]   # native games
 .venv/bin/python engine/play_java.py SPECS.jsonl OUTDIR [-j N] [--dump]  # the same games on the official jar
 .venv/bin/python engine/test/agreement.py --quick  # both engines, compared, here (--specs FILE: any specs)
@@ -124,6 +125,10 @@ python3 engine/test/imperial.py report RUN         # its agreement and CPU time,
   into `~/battlecode26-data/engine/build/gen-VERSION-CHECKOUT/` (one per checkout, so worktrees build at once) and
   compiles with ninja (`-j`, default 8). Needs clang, ninja, cmake, a JDK 21, zlib. The binary is static, so it runs
   on any x86-64 Linux node.
+- `tools/play` and `tools/games` build their own binaries through `--team` (each bot from its own classes folder, in
+  that order: a team's module index is its position), `--gen` and `--out` (docs/evaluation.md "Engines"), with
+  `--glue-opt=-O1`: `klasses.cpp` (class tables, class-init wrappers, dispatch chains, cut stubs; no game logic) is
+  one 4.7 MB file that changes with any bot and takes 177-238 s at -O2 (8 s at -O1, 1 s at -O0).
 - Builds are incremental: method files (`m_MODULE_N.cpp`) and headers (`types.h` for the engine and the JDK,
   `types_PKG.h` per bot) are per module and rewritten only when they change. Measured on 8 cores: everything,
   6 to 8 min (about 25 CPU-min); nothing changed, 38 s (the translation); one bot changed, 43 s, when the change

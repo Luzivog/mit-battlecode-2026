@@ -191,8 +191,9 @@ class GuardFlowTest(unittest.TestCase):
         r.cache_lock = threading.Lock()
         r.pool = FakePool(java_results)
         r.guard_rate, r.first, r.mismatches, r.lock = rate, set(), [], threading.Lock()
-        r.seen = []
+        r.seen, r.checked = [], []
         r.on_mismatch = lambda job, g: r.seen.append(g)
+        r.on_guard, r.pending = None, 0
         return r
 
     def play(self, r, nres, spec=None):
@@ -232,6 +233,19 @@ class GuardFlowTest(unittest.TestCase):
         self.assertTrue(native.bad("b1"))
         self.assertEqual(len(r.seen), 1)
         self.assertEqual(len(r.mismatches), 1)
+
+    def test_async_delivers_now_and_reports_the_verdict_after(self):
+        r = self.runner([result("d2"), result("d2")])
+        r.on_guard = lambda job, g: r.checked.append((g["verdict"], r.pending))
+        got = self.play(r, result("d1", backend="native", native_build="b1"))
+        self.assertEqual((got["backend"], got["guard"]["verdict"]), ("native", "pending"))
+        self.assertEqual(r.checked, [("mismatch", 0)])
+        self.assertIsNone(r.cache.get(KEY))  # cached when delivered, purged with its binary
+        self.assertEqual(len(r.seen), 1)
+        r = self.runner([result()])
+        r.on_guard = lambda job, g: r.checked.append(g["verdict"])
+        self.play(r, result(backend="native", native_build="b1"))
+        self.assertEqual((r.checked, r.cache.get(KEY)["backend"]), (["same"], "native"))
 
     def test_unsampled_games_are_not_guarded_after_the_binarys_first(self):
         r = self.runner([result()], rate=0.0)

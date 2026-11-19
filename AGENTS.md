@@ -35,7 +35,7 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 | `docs/testing.md`, `docs/evaluation.md` | before judging a change |
 | `docs/theory/`, `docs/plan.md` | the theory and the work packages (track T) |
 | `docs/closed.md` | before trying a change: directions measured and rejected |
-| `docs/theory/w1-classes.md` | why main still loses (after wave 1), and the ranked packages |
+| `docs/theory/w2-classes.md` | why main still loses (after wave 3): loss table, the centre-mine economy, oracle-priced levers, ranked packages (`w1-classes.md`: after wave 1) |
 
 ## Rules
 

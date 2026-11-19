@@ -209,7 +209,7 @@ Coordinator side (`robot/king/KingFormationCoordinatorStrategy.java`), on every 
 kings = king slots alive now                                                                          (:151)
 numRats = 4·⌊n/4⌋ ; req = (W·H ≤ 1200) ? 8 : 12
 lockIn = t ≥ 800 and kings < 3                                                                        (:173)
-coop = kings == 1 and t ≥ 100 and still in cooperation                                                (:174)
+coop = kings == 1 and 100 ≤ t < 800 and still in cooperation                                         (:176)
 ABORT (clears if I'm coordinator) if kings ≥ 5 or (t > 1200 and kings ≥ 2)
       or numRats < (lockIn ? 12 : req·kings)                                                          (:160-169)
 ABORT if the king count just rose (a formation completed)                                             (:171-176)
@@ -240,7 +240,10 @@ walls of these maps, and the formations timed out. Measured on the five maps who
 (t_minus_five_minutes, peaceinourtime, groveisbeingdesecrated, TheHeist, fullofsecrets): second king formed in 67% of
 games (main 33%) at a median r187 (main r331), 16 tiles from home and 27 from the enemy, none starved. TheHeist does not
 move: no own-side mine is known before its cats die (~r280). The same gates from an early round in contested games
-(r40–r350) lost: the second king starves (docs/closed.md).
+(r40–r350) lost: the second king starves (docs/closed.md). From r800 a cooperation game forms under the lock-in's rules
+(KF, docs/theory/kf-formations.md §2.5): on rose, in cooperation to r2000, no known mine is on our side under every
+symmetry still possible, the search found no site all game, and main lost 5 of 6 games at 1 king to 2; with the
+lock-in's rules it forms after the cutoff and won 79 of 80 games (main 47 of 80) on 40 fresh rose cells.
 
 Rat side (`FormationStrategy`): §3. In practice, many rats from up to 25 tiles away walk to the mine. Once ≥ 7 allies are visible, the lowest-ID rat steps onto the tile. When ≥ 7 allied rats stand in its 3×3, `canBecomeRatKing` passes and the centre rat converts. That kills the other 8 tiles' rats and absorbs their raw cheese into global (on `far`, global cheese went 1483 at round 759 → 5418 at round 761, from rats that had picked up cheese while waiting by the mine; that cheese does not count as transferred).
 
@@ -370,7 +373,7 @@ Sensitivity is a guess: **H** means likely to change win rate by itself, **M** m
 | `UPGRADE_COST`+100 | global ≥ 150 to start | `KingFormationCoordinatorStrategy.java:14,207` | formation cheese gate (outside the lock-in, and the lone-king refill after round 1200) | L |
 | `LOCK_IN_ROUND`, `KING_TARGET` | 800, 3 | `KingFormationCoordinatorStrategy.java:21-22,159` | lock-in window and king target | **H** |
 | `LOCK_IN_MIN_RATS` | 12 | `KingFormationCoordinatorStrategy.java:23,175,233` | lock-in and cooperation-king rat floor (start; lock-in abort) | M |
-| `COOP_ROUND` | 100 | `KingFormationCoordinatorStrategy.java:37,174` | from it, a team still in cooperation with one king forms a second on our side | **H** |
+| `COOP_ROUND` | 100 | `KingFormationCoordinatorStrategy.java:37,174` | from it to `LOCK_IN_ROUND`, a team still in cooperation with one king forms a second on our side; from the lock-in, under the lock-in's rules | **H** |
 | `LOCK_IN_MIN_CHEESE` | 1000 | `KingFormationCoordinatorStrategy.java:27,207` | lock-in cheese gate before round 1200 | **H** |
 | `MAX_FORMATION_DIST_TO_MINE_SQ` | 25 (unused) | `KingFormationCoordinatorStrategy.java:15` | dead | – |
 | `COORDINATION_TIMEOUT` | 120 | `KingFormationCoordinatorStrategy.java:16,332` | king-side formation timeout | M |

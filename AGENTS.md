@@ -58,7 +58,11 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools, `tools/run` and `tools/compute`
    (the compute skill, `.claude/skills/compute/`).
    This machine (clankerland, 16 cores) is shared: never stop or change anything you didn't start.
-10. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.
+10. Wait only in the background. Start every wait (`tools/games wait ID`, `tools/tune wait`, `tools/compute wait`, a
+   long build) as a background command, then do other work or end your turn: its exit wakes you. Never poll in the
+   foreground (`until ...; do sleep ...; done`, a foreground wait): while it runs you read no result and no message.
+   Wait for each test on its own, so each one wakes you when it ends.
+11. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.
 
 ## Commands
 

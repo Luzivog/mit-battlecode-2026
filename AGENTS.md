@@ -21,7 +21,10 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 - `references/postmortems/`: every public Battlecode postmortem, as text (`INDEX.md`).
 - Remote: `origin` only (ours, private). The champion's ~30 experiment branches are archived in it under
   `refs/champion/*`: `git fetch origin '+refs/champion/*:refs/remotes/champion/*'` makes them `champion/<branch>`.
-- `~/battlecode26-data/`: data, caches and scratch. Never `/tmp` for anything worth keeping.
+- `~/battlecode26-data/`: data, caches and scratch. Never `/tmp` for anything worth keeping. The tools prune it
+  ("Disk" in `tools/bcgames/AGENTS.md`): a run's replays go after 24 h unless you `tools/games keep ID` it (do so for
+  any run whose replays a doc cites); `tools/games replays ID` plays them again. `./gradlew unpackClient` gets the
+  replay viewer.
 
 ## Read before you change
 

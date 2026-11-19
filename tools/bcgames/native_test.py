@@ -481,6 +481,42 @@ class GuardsFirstTest(unittest.TestCase):
         self.assertEqual(([json.loads(x)["id"] for x in lines], fresh), (["late"], 0))  # guarded ahead: once
 
 
+class ShipBinaryTest(unittest.TestCase):
+    """imperial.ship_binary on the stand-in volume (BC26_LOCAL_REMOTE): its prune of old binaries is best effort. A find
+    that saw another upload's temporary file renamed away exited 1 and failed the upload (19 Nov)."""
+
+    def test_an_upload_survives_a_failing_prune(self):
+        import subprocess
+        import sys
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: subprocess.run(["rm", "-rf", str(tmp)]))
+        remote = tmp / "remote"
+        bcx = remote / "runtime" / "bcx"
+        bcx.mkdir(parents=True)
+        old, inflight = bcx / "k0.gz", bcx / "k1.gz.Ab12Cd"  # unused for days; another upload's temporary file
+        for f in (old, inflight):
+            f.write_bytes(b"x")
+            os.utime(f, (time.time() - 10 * 86400,) * 2)
+        shim = tmp / "bin"
+        shim.mkdir()
+        (shim / "find").write_text('#!/bin/bash\n/usr/bin/find "$@"; echo "find: gone: No such file or directory" >&2; '
+                                   'exit 1\n')
+        (shim / "find").chmod(0o755)
+        (tmp / "bcx").write_bytes(b"binary")
+        root = Path(__file__).resolve().parents[2]
+        code = (f"import sys; sys.path[:0] = [{str(root)!r}, {str(root / 'tools')!r}]\n"
+                "from pathlib import Path\nfrom bcgames import imperial\n"
+                f"print(imperial.ship_binary('k2', Path({str(tmp / 'bcx')!r})))\n")
+        env = dict(os.environ, BC26_LOCAL_REMOTE=str(remote), PATH=f"{shim}:{os.environ['PATH']}")
+        p = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=60)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        import gzip
+        self.assertEqual(gzip.decompress((bcx / "k2.gz").read_bytes()), b"binary")
+        self.assertEqual(p.stdout.strip(), str(bcx / "k2.gz"))
+        self.assertFalse(old.exists())  # pruned
+        self.assertTrue(inflight.exists())  # another upload's file: left alone
+
+
 class FinishTest(unittest.TestCase):
     def test_backend_of_old_cache_entries_is_java(self):
         job = play.Job(spec={"id": "g"}, key="k", meta={"key": "k"})

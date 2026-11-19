@@ -76,33 +76,6 @@ public class CellTracker {
     }
     {% endfor %}
 
-    // Row y (0 <= y < mapHeight) of the seen cells and of the seen walls, bit x: whole-map floods (KingMiningStrategy).
-    public static long seenRow(int y) {
-        switch(y) {
-            {% for i in range(MAX_MAP_SIZE) %}
-            case {{i}} -> {
-                return seen{{i}};
-            }
-            {% endfor %}
-            default -> {
-                return -1l;
-            }
-        }
-    }
-
-    public static long wallRow(int y) {
-        switch(y) {
-            {% for i in range(MAX_MAP_SIZE) %}
-            case {{i}} -> {
-                return seen{{i}} & ~passable{{i}};
-            }
-            {% endfor %}
-            default -> {
-                return -1l;
-            }
-        }
-    }
-
     public static boolean isWallAdjacent(MapLocation loc) {
         if(loc.y == mapHeight - 1 || loc.x == 0 || loc.x == mapWidth - 1) return true;
         switch(loc.y) {

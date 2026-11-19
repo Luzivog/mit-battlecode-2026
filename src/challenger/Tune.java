@@ -89,4 +89,6 @@ public final class Tune {
     // 0: left (main); 1: right; 2: right for chirality 1; 3: right for chirality 1 on VERTICAL and HORIZONTAL maps;
     // 4: right for chirality 1 on VERTICAL maps. The king reads both from its first scan's order (CellTracker).
     public static final int KING_HAND = 0;
+    // 1: the king plans its walk to a mine or the centre over its own map (robot/king/KingPath, MS's KP3) instead of the bug.
+    public static final int KING_PATH = 0;
 }

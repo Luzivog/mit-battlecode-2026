@@ -90,4 +90,7 @@ public final class Tune {
     public static final boolean CM_LAST_CAT_HOLD = false;
     // RS arm DP: the king puts its defensive dirt toward a cat only while pinned (robot/king/KingCombatStrategy).
     public static final boolean CM_DEFDIRT_PIN = false;
+    // A second king from this round with one king, at CatBook's site (robot/king/KingFormationCoordinatorStrategy);
+    // GAME_MAX_NUMBER_OF_ROUNDS or more: never.
+    public static final int CM_KING2_ROUND = 2000;
 }

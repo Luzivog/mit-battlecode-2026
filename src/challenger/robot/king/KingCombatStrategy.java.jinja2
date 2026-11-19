@@ -245,7 +245,7 @@ public class KingCombatStrategy extends Strategy {
     // king centres in the 5x5 box around the king) at most 13. With the switch only a pinned king puts dirt in the cat's
     // way: the cat digs dirt on its front tiles before it scratches (rules §12).
     private static final int PIN_SCRATCHES = 3, PIN_GAP = 6, NARROW_ROOM = 13;
-    private static int pinScratches, lastBlockScratch = -PIN_GAP - 1;
+    private static int pinScratches, lastBlockScratch;
 
     // Called before the king moves: it lost HP since its last turn while a cat touching its 3x3 had it in its lane.
     private static void trackPin() {

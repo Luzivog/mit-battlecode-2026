@@ -3,6 +3,7 @@ package challenger.robot.king;
 import battlecode.common.*;
 import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
+import challenger.CatBook;
 import challenger.CellTracker;
 import challenger.RobotTracker;
 import challenger.Tune;
@@ -38,6 +39,11 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // (cooperation to r2000) no known mine was on our side under every symmetry still possible, the search found no
     // site all game, and main lost 5 of 6 games at 1 king to 2 (KF).
     private static final int COOP_ROUND = Tune.COOP_ROUND;
+    // Tune.CM_KING2_ROUND (a book switch, off in main): from it, with one king, form a second as the cooperation rule
+    // does, whatever the cooperation, at the book's site for this map and seat (CatBook) when it has one. On tminusten
+    // every centre our king can reach lies on a cat loop and the king dies at r101-117 (docs/theory/cm-cat-maps.md).
+    private static final boolean KING2_ON = Tune.CM_KING2_ROUND < GameConstants.GAME_MAX_NUMBER_OF_ROUNDS;
+    private boolean king2;
 
     private static int MIN_DIST_FROM_KINGS_SQ;
 
@@ -173,6 +179,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (home == null) home = myLoc;
         lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
         coop = myKingCount == 1 && time >= COOP_ROUND && time < LOCK_IN_ROUND && rc.isCooperation();
+        if (KING2_ON) king2 = myKingCount == 1 && time >= Tune.CM_KING2_ROUND && time < LOCK_IN_ROUND;
         int minRats = lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
         if (myKingCount >= 5
             || (time > GameConstants.RAT_KING_CUTOFF_ROUND && myKingCount >= GameConstants.MAX_NUMBER_OF_RAT_KINGS_AFTER_CUTOFF)
@@ -229,8 +236,8 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             // A king formed before the cutoff pays upkeep to the end, so it needs the mines to carry it: a side earns
             // ~1.13 per mine per round against 2 per king (T1 §2.7). Measured without this gate, paired against main:
             // lock-in won 15 fewer of 62 games on maps with <= 4 mines, and 15 more of 246 on maps with >= 16.
-            if (myPreCutoff && !coop && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
-            if (coop) {
+            if (myPreCutoff && !(KING2_ON ? coop || king2 : coop) && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
+            if (KING2_ON ? coop || king2 : coop) {
                 if (numRats < LOCK_IN_MIN_RATS) return;
             } else if(!lockIn) {
                 // indicate("D");
@@ -251,7 +258,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).
         int mySearchKey = coop ? Game.knownCheeseMines.size() | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8 : -1;
         if (mySearchKey >= 0 && mySearchKey == coopSearchKey) return;
-        MapLocation formationTarget = selectBestMineForFormation();
+        MapLocation formationTarget = KING2_ON && king2 && CatBook.king2Site() != null ? CatBook.king2Site() : selectBestMineForFormation();
         if (formationTarget == null) {
             coopSearchKey = mySearchKey;
             return;

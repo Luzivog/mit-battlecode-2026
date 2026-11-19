@@ -15,7 +15,7 @@ official engine with a per-turn bytecode limit. This repo starts from the public
   `src/opp_*` (other teams' public bots, docs/opponents.md), `src/afk`, `src/suicide`.
 - `src/battlecode/`: local engine overrides (seed handling, docs/testing.md §3). Never edit.
 - `engine/`: a native build of the official engine (1.2.6 and 1.2.5) that plays the same games, replay bytes included,
-  at about 8× less CPU (`engine/AGENTS.md`). `src/fuzz_*` are its test bots.
+  at 30-50× less CPU (`engine/AGENTS.md`). `src/fuzz_*` are its test bots.
 - `maps/`: the official, tournament and team-made maps (all valid). `test_maps/`: scenario maps.
 - `jinja.py`: the code generator. `tools/`, `autoscrims/`, `scripts/`: tooling, each tool with `--help`.
 - `references/postmortems/`: every public Battlecode postmortem, as text (`INDEX.md`).

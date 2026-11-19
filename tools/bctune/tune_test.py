@@ -118,14 +118,26 @@ def fake_runs(games_data: Path, c: dict, effects: dict, maps: int, passes: int, 
         d.mkdir(parents=True)
         lines = []
         for m, s, seat, won in ref_games:
-            lines.append({"role": "r", "map": m, "seed": s, "seat": seat, "winner": seat if won else "AB".replace(seat, "")})
+            other = "AB".replace(seat, "")
+            lines.append({"role": "r", "map": m, "seed": s, "seat": seat, "winner": seat if won else other})
             p = base_p[m] + sum(effects.get(n, 0) * x for n, x in zip(names, v["x"]))
             w = rng.random() < max(0.0, min(1.0, p))
-            lines.append({"role": "o", "map": m, "seed": s, "seat": seat, "winner": seat if w else "AB".replace(seat, "")})
+            lines.append({"role": "o", "map": m, "seed": s, "seat": seat, "winner": seat if w else other})
         (d / "results.jsonl").write_text("".join(json.dumps(x) + "\n" for x in lines))
         (d / "state.json").write_text(json.dumps({"status": "done"}))
-        c["runs"].append({"variant": v["label"], "id": rid, "pool": "goal", "seed_base": seed_base, "cells": maps * passes,
-                          "ref": "challenger@x", "engine": "1.2.6"})
+        c["runs"].append({"variant": v["label"], "id": rid, "pool": "goal", "seed_base": seed_base,
+                          "cells": maps * passes, "ref": "challenger@x", "engine": "1.2.6"})
+
+
+class Metric(unittest.TestCase):
+    def test_share_reads_the_tested_bots_seat(self):
+        r = {"seat": "B", "winner": "A", "series": {"every": 100, "A": [[30, 0], [60, 0]], "B": [[10, 0], [40, 0]]}}
+        self.assertEqual(tune.metric_value(r, "win"), 0.0)
+        self.assertAlmostEqual(tune.metric_value(r, "share100"), 0.25)
+        self.assertAlmostEqual(tune.metric_value(r, "share200"), 0.4)
+        self.assertAlmostEqual(tune.metric_value(r, "share900"), 0.4)  # ended sooner: its last point
+        r["seat"] = "A"
+        self.assertAlmostEqual(tune.metric_value(r, "share200"), 0.6)
 
 
 class Fit(unittest.TestCase):

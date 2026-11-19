@@ -326,9 +326,27 @@ def outcome(r: dict) -> tuple:
             json.dumps(r.get("B"), sort_keys=True))
 
 
-def cell_scores(run_id: str) -> tuple[dict, dict, int]:
-    """(ours, ref, same): (map, seed) -> score of the cell (games won / 2), for cells with both seats played; same =
-    how many of our games have the reference's outcome on their cell and seat."""
+def metric_value(r: dict, metric: str) -> float:
+    """The tested bot's value of METRIC in game R: win (1 or 0), or shareN, its share of the cheese transferred by
+    both teams at round N (or at the game's end if sooner), a diagnostic (docs/theory/w1-classes.md §3.2)."""
+    if metric == "win":
+        return 1.0 if r["winner"] == r["seat"] else 0.0
+    if metric.startswith("share"):
+        s = r.get("series") or {}
+        i = int(metric[5:]) // s.get("every", 100) - 1
+        ours, theirs = (s.get("A"), s.get("B")) if r["seat"] == "A" else (s.get("B"), s.get("A"))
+        if not ours or not theirs:
+            return 0.5
+        i = max(0, min(i, len(ours) - 1, len(theirs) - 1))
+        a, b = ours[i][0], theirs[i][0]
+        return a / (a + b) if a + b else 0.5
+    raise TuneError(f"unknown metric {metric} (win, shareN)")
+
+
+def cell_scores(run_id: str, metric: str = "win") -> tuple[dict, dict, int]:
+    """(ours, ref, same): (map, seed) -> score of the cell (the metric's mean over its two games; win: games won / 2),
+    for cells with both seats played; same = how many of our games have the reference's outcome on their cell and
+    seat."""
     games, outs = {"o": {}, "r": {}}, {"o": {}, "r": {}}
     with open(run_dir(run_id) / "results.jsonl") as f:
         for line in f:
@@ -336,7 +354,7 @@ def cell_scores(run_id: str) -> tuple[dict, dict, int]:
             if r.get("error") or r.get("role") not in games or r.get("winner") not in ("A", "B"):
                 continue
             # seat: the seat of the tested bot (ours, or the reference)
-            games[r["role"]].setdefault((r["map"], r["seed"]), {})[r["seat"]] = 1.0 if r["winner"] == r["seat"] else 0.0
+            games[r["role"]].setdefault((r["map"], r["seed"]), {})[r["seat"]] = metric_value(r, metric)
             outs[r["role"]][(r["map"], r["seed"], r["seat"])] = outcome(r)
     same = sum(1 for k, o in outs["o"].items() if outs["r"].get(k) == o)
     ours, ref = ({cell: (g["A"] + g["B"]) / 2 for cell, g in games[role].items() if len(g) == 2} for role in "or")
@@ -379,7 +397,7 @@ def pool_maps(pool: str) -> set[str]:
 
 
 def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: int = 2000,
-                 maps: set[str] | None = None, exclude: bool = False, seed: int = 1) -> dict:
+                 maps: set[str] | None = None, exclude: bool = False, seed: int = 1, metric: str = "win") -> dict:
     runs = [r for r in c["runs"] if (seed_base is None or r["seed_base"] == seed_base)
             and (pool is None or r["pool"] == pool)]
     if not runs:
@@ -389,7 +407,7 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
         raise TuneError(f"runs against different references or engines, pick with --seed-base/--pool: {sorted(keys)}")
     by_variant, ref, same = {}, {}, {}
     for r in runs:
-        ours, rs, n_same = cell_scores(r["id"])
+        ours, rs, n_same = cell_scores(r["id"], metric)
         by_variant.setdefault(r["variant"], {}).update(ours)
         same[r["variant"]] = same.get(r["variant"], 0) + n_same
         for cell, s in rs.items():
@@ -417,7 +435,8 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
         for lab in labels:
             sums[lab][i] += by_variant[lab][k]
     variants = {v["label"]: v for v in c["variants"]}
-    out = {"campaign": c["name"], "cells": len(cells), "maps": len(mlist), "variants": [], "effects": [],
+    out = {"campaign": c["name"], "metric": metric, "cells": len(cells), "maps": len(mlist), "variants": [],
+           "effects": [],
            "seed_base": sorted({r["seed_base"] for r in runs}), "pool": sorted({r["pool"] for r in runs}),
            "ref_id": runs[0]["ref"]}
     rng = random.Random(seed)
@@ -468,8 +487,9 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
 
 
 def print_fit(f: dict, c: dict) -> None:
-    print(f"campaign {f['campaign']}: {len(f['variants'])} variants, {f['cells']} cells on {f['maps']} maps, "
-          f"pool {','.join(f['pool'])}, seed base {','.join(map(str, f['seed_base']))}; ref {f['ref_id']} scores {f['ref_score']:.3f}")
+    print(f"campaign {f['campaign']} ({f['metric']}): {len(f['variants'])} variants, {f['cells']} cells on "
+          f"{f['maps']} maps, pool {','.join(f['pool'])}, seed base {','.join(map(str, f['seed_base']))}; "
+          f"ref {f['ref_id']} scores {f['ref_score']:.3f}")
     print("\nvariants: score against awubot; diff = variant - ref on the same cells, 95% CI by map; same = share of "
           "its games with the ref's outcome")
     for v in sorted(f["variants"], key=lambda v: -v["diff"]):
@@ -499,7 +519,7 @@ def cmd_fit(a) -> int:
     parts = [("all", None, False)] + ([(a.split, maps, False), (f"not {a.split}", maps, True)] if a.split else [])
     fits = []
     for title, m, ex in parts:
-        f = fit_campaign(c, a.seed_base, a.pool, a.boot, maps=m, exclude=ex)
+        f = fit_campaign(c, a.seed_base, a.pool, a.boot, maps=m, exclude=ex, metric=a.metric)
         f["part"] = title
         fits.append(f)
         if not a.json:
@@ -577,6 +597,8 @@ def main(argv=None) -> int:
     sp.add_argument("--seed-base", type=int)
     sp.add_argument("--pool")
     sp.add_argument("--split", metavar="LISTPOOL", help="also fit the cells on this list pool's maps and the rest")
+    sp.add_argument("--metric", default="win", help="win (default, the objective) or shareN: our share of the cheese "
+                    "transferred at round N, a diagnostic")
     sp.add_argument("--boot", type=int, default=2000)
     sp.add_argument("--json", action="store_true")
     sp.set_defaults(fn=cmd_fit)

@@ -235,3 +235,4 @@ patch battlecode/world/GameWorld bcx/subst/GameWorld_p
 patch battlecode/world/BcxStateHash bcx/subst/BcxStateHash_p
 patch battlecode/world/RobotControllerImpl bcx/subst/RobotControllerImpl_p
 patch battlecode/world/InternalRobot bcx/subst/InternalRobot_p
+patch battlecode/common/MapLocation bcx/subst/MapLocation_p

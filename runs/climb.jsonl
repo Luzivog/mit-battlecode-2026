@@ -25,3 +25,4 @@
 {"t": 1795084885, "score": 12.0827, "kept": true, "what": "cone fast path: whole mask on first use, per-column accepted ranges, radius from the shape table"}
 {"t": 1795085243, "score": 12.1645, "kept": false, "what": "pointer-free small objects from traced pointer stacks refilled by GC_generic_malloc_many"}
 {"t": 1795085525, "score": 11.9707, "kept": true, "what": "System.arraycopy fast path: same class, in bounds -> one memmove"}
+{"t": 1795086360, "score": 11.5553, "kept": true, "what": "fast path for MapLocation.toString: the String.format text built directly"}

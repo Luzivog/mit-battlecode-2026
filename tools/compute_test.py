@@ -92,7 +92,9 @@ def test_checkpointed_time() -> None:
 def test_ssh_only_to_login_nodes() -> None:
     for host in (*remote.SLURM_HOSTS, remote.CPU_HOST):
         argv = remote.ssh_argv(host, "true")
-        assert "ControlMaster=auto" in argv and argv[-2:] == [host, "true"]
+        # only over the kept connection: no master of its own, and a proxy that fails if it tried to connect itself
+        assert "ControlMaster=no" in argv and "ProxyCommand=/bin/false" in argv and argv[-2:] == [host, "true"]
+        assert not any("%" in a for a in argv if a.startswith("ControlPath="))  # resolved: %C hashes the proxy
     sub = remote.ssh_argv(remote.SUBMIT, "true")
     assert not any("ControlMaster" in a for a in sub)  # a lab machine: one login a call
     for lab in ("beech17.doc.ic.ac.uk", "gallifrey.doc.ic.ac.uk", "ash05.doc.ic.ac.uk", "shell5"):
@@ -193,7 +195,7 @@ def fake_doc(monkeypatch: pytest.MonkeyPatch, cpucluster1: str | None) -> None:
     """Every read answered from the fixtures (cpucluster1's with CPUCLUSTER1; None: its login node unreachable), and
     no Slurm slot granted."""
     def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = remote.SLURM_HOSTS,
-              stream: int = 0) -> str:
+              stream: int = 0, timeout: float | None = None) -> str:
         if hosts == (remote.CPU_HOST,):
             if cpucluster1 is None:
                 raise remote.Unreachable("on cpucluster1.doc.ic.ac.uk: exit 255")
@@ -333,7 +335,8 @@ def test_cancel_many_is_one_removal_a_scheduler(monkeypatch: pytest.MonkeyPatch)
     logins: list[str] = []
     removals: list[str] = []
 
-    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = (), stream: int = 0) -> str:
+    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = (), stream: int = 0,
+              timeout: float | None = None) -> str:
         logins.append(cmd)
         if cmd.startswith("touch") or "; touch" in cmd:
             return "".join(f"{j} {bid[j]}\n" for j in ids if f"jobs/{j}/cancelled" in cmd)

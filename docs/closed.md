@@ -25,6 +25,17 @@ agent adds its H0s here; the integrator adds them when an agent did not. Diffs a
 | 2026-11-19 | K2 | D': A plus no mining step into a known lane | `L-cat`, 0.08, fresh seeds | +0.021 [−0.038, +0.075], H0 | cat-involved king deaths −30% but all king deaths −1%: enemies kill the kings the cats no longer do; one clear cluster (bed 12 better, 1 worse). `goal` harm passed twice; kept on the branch, not accepted |
 | 2026-11-19 | K2 | D2: D' plus marking 4 steps along a seen cat's facing | `L-cat`, 0.08, fresh seeds | −0.051 [−0.157, +0.042], H0 (39 cells) | cone scratch −27% (D': −12%) with no more wins |
 | 2026-11-19 | E3 | change 0: the mine squeak decoder reads all 3 mines (a bug fix) | `goal` harm, 0.05, on CW main; and vs `opp_obg` | vs awubot −0.005 [−0.024, +0.016] (14 of 190 cells changed); vs OBG −0.014 [−0.030, +0.001] (393 cells), and −0.026 [−0.052, +0.000] in E3's gauntlet | kings learn mines from their own vision, so their knowledge barely moves (same on 14 of 18 maps); only rat gossip speeds up, and it leans against us vs OBG twice. Not merged; branch `t3/e3-territory-miners-deficit` |
+| 2026-11-19 | E1 | arm H = 30: reserve max(100, 2·kings·30); spawns (cost-10 exempt), rat traps, rat and king digs and the formation start leave global ≥ reserve after paying | `L-starve`, 0.08 | −0.037 [−0.075, +0.000], H0 (95 cells) | king starvation turns −0.4 a game [−2.3, +1.3]; cost-10 spawns +1.4; 5–7-mine maps −0.10 in wins. Branch `t3/e1-h30` |
+| 2026-11-19 | E1 | arm H = 60 (as above) | `L-starve`, 0.08 | −0.012 [−0.059, +0.035], H0 (84 cells) | starvation turns −1.3 [−3.0, +0.3]: down on ≤ 4-mine maps (−1.6) with no more wins there; 5–7-mine maps −0.11. Branch `t3/e1-h60` |
+| 2026-11-19 | E1 | arm H = 120 (as above) | `L-starve`, 0.08 | −0.078 [−0.128, −0.030] (103 cells) | the army collapses: cost-10 spawns +3.5 a game, cheese transferred −240, starvation turns +3.6 on 5–7-mine maps (−2.3 on ≤ 4). Branch `t3/e1-h120` |
+
+Why E1 cannot gain (all three arms, paired replays): the spawn cap is already a reserve. `thresh = min(global/10 + 10, …)`
+builds a cost-c rat only with global ≥ 10·(c − 10): 100 for cost 20, 200 for 30, 300 for 40. Outside the +10 to +30
+raises when the king is hit or cats are near, global stays ≥ 80 after any spawn but a cost-10 one. With one king, a reserve of 2·K·H binds only on cost-20 rats at global 100–139, which
+leaves a 4–7-rat army that cannot earn its way back (squaresaremodernart: 4 rats from r300 to r700, main rebuilt to 9;
+the same cells lose in every arm). The trap, dig and formation gates almost never bind (traps 79 vs 79 a game). Most
+remaining starvation follows a lost income share (cheddarchokehold: 4,660 transferred against awubot's 17,770), which a
+reserve only delays. Diagnostics: `~/battlecode26-data/scratch/e1/` (`E1Stats.java`, `e1_diag.py`, `paired.py`).
 
 Code of the rejected arms: the packages' revert commits and side branches (`e3-c2` holds a working spawn-payload
 role switch with S2's both-or-neither write, for KB or K3 to reuse).

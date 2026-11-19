@@ -206,6 +206,28 @@ class Fit(unittest.TestCase):
             self.assertAlmostEqual(e0["effect"], e1["effect"])
         self.assertAlmostEqual(fits[0]["variants"][0]["diff"], fits[1]["variants"][0]["diff"])
 
+    def test_vs_a_variant(self):
+        names = ["A", "B", "C"]
+        c = {"name": "vs", "factors": names, "variants": [], "runs": [],
+             "params": {n: {"type": "int", "value": 10, "step": 1} for n in names}}
+        for i, x in enumerate(tune.screen_design(len(names))):
+            c["variants"].append({"label": f"v{i:02d}", "x": x, "values": {}})
+        with tempfile.TemporaryDirectory() as tmp:
+            old = tune.GAMES_DATA
+            tune.GAMES_DATA = Path(tmp)
+            try:
+                fake_runs(Path(tmp), c, {"A": 0.2}, maps=40, passes=10, seed_base=1, rng=random.Random(9))
+                plain = tune.fit_campaign(c, None, boot=200)
+                f = tune.fit_campaign(c, None, boot=200, vs="v00")
+            finally:
+                tune.GAMES_DATA = old
+        by = {v["label"]: v for v in plain["variants"]}
+        self.assertEqual(f["ref_id"], "v00")
+        self.assertNotIn("v00", [v["label"] for v in f["variants"]])
+        self.assertAlmostEqual(f["ref_score"], by["v00"]["score"])
+        for v in f["variants"]:
+            self.assertAlmostEqual(v["diff"], by[v["label"]]["score"] - by["v00"]["score"])
+
     def test_path_fit_finds_the_peak(self):
         rng = random.Random(3)
         c = {"name": "path", "factors": ["A"], "variants": [], "runs": [],

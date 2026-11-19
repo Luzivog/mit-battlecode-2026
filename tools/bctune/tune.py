@@ -432,7 +432,7 @@ def pool_maps(pool: str) -> set[str]:
 
 def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: int = 2000,
                  maps: set[str] | None = None, exclude: bool = False, seed: int = 1, metric: str = "win",
-                 drop: set[str] = frozenset()) -> dict:
+                 drop: set[str] = frozenset(), vs: str | None = None) -> dict:
     runs = [r for r in c["runs"] if (seed_base is None or r["seed_base"] == seed_base)
             and (pool is None or r["pool"] == pool) and r["variant"] not in drop]
     if not runs:
@@ -453,6 +453,10 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
             # the same game twice: equal unless two runs played it on CPUs whose Math stubs differ (engine/AGENTS.md)
             if ref.setdefault(cell, s) != s:
                 ref_mismatch += 1
+    if vs is not None:  # a variant is the reference: diffs pair every other variant with it
+        if vs not in by_variant:
+            raise TuneError(f"no runs of variant {vs}")
+        ref, ref_outs = by_variant.pop(vs), outs.pop(vs)
     labels = [v["label"] for v in c["variants"] if v["label"] in by_variant]
     cells = set(ref)
     for lab in labels:
@@ -478,7 +482,7 @@ def fit_campaign(c: dict, seed_base: int | None, pool: str | None = None, boot: 
     out = {"campaign": c["name"], "metric": metric, "cells": len(cells), "maps": len(mlist), "variants": [],
            "effects": [], "ref_mismatch": ref_mismatch,
            "seed_base": sorted({r["seed_base"] for r in runs}), "pool": sorted({r["pool"] for r in runs}),
-           "ref_id": runs[0]["ref"]}
+           "ref_id": vs or runs[0]["ref"]}
     rng = random.Random(seed)
     draws = [[rng.randrange(len(mlist)) for _ in mlist] for _ in range(boot)]
 
@@ -569,7 +573,7 @@ def cmd_fit(a) -> int:
     fits = []
     for title, m, ex in parts:
         f = fit_campaign(c, a.seed_base, a.pool, a.boot, maps=m, exclude=ex, metric=a.metric,
-                         drop=set(filter(None, (a.drop or "").split(","))))
+                         drop=set(filter(None, (a.drop or "").split(","))), vs=a.vs)
         f["part"] = title
         fits.append(f)
         if not a.json:
@@ -654,6 +658,7 @@ def main(argv=None) -> int:
                     "transferred at round N, a diagnostic")
     sp.add_argument("--boot", type=int, default=2000)
     sp.add_argument("--drop", help="comma-separated variants to leave out (a failed run)")
+    sp.add_argument("--vs", metavar="LABEL", help="pair the variants with this one instead of the reference")
     sp.add_argument("--json", action="store_true")
     sp.set_defaults(fn=cmd_fit)
     sp = sub.add_parser("apply", help="write a variant's values into this checkout's Tune.java")

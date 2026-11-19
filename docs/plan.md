@@ -511,6 +511,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   (grabs from outside its cone 1,011 → 1,243): CC's lead.
 
 #### E1. One spend gate on every global spend
+- **Closed** (2026-11-19; `docs/closed.md`). H ∈ {30, 60, 120} all lost on `L-starve` (−0.037, −0.012, −0.078). Its
+  premise was wrong: the spawn cap is already a cost-scaled reserve (a cost-c rat needs global ≥ 10·(c − 10)), so a
+  floor only stops the army rebuilding. Remaining starvation follows a lost income share; income, not floors, is the
+  lever. Merged: its exact refactor, `KingSpawningStrategy` reads `util/MineEstimate` (every game equal to main's,
+  1119-070620-ab-2f2e). There is no `spendable()`; later packages keep today's gates.
 - **Rests on.** `critic/Starve.java` on W0.3's 62 STARVE cells (1.2.6; `synthesis/w03_starve.txt`).
   - From r1 to starvation, the losing seat spent a median of 2,180 on spawns (52% of its spending), up to 900 on rat
     traps (≤ 22%: traps pay from raw cheese first), 820 on upkeep (18%) and 178 on digs (4%).

@@ -805,6 +805,12 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   is there to deny them: a gathering lasts a median 14 rounds and ≥ 3 of our rats are near it in 13% of formations
   (≈ 0.8 pp at best); a crowd at a mine looks the same with or without formations. Our own formations are worth more
   (main without them: −0.111 [−0.167, −0.063]). The rich-map gap is a king race won by economy and our own kings.
+- **KF merged** (2026-11-19, e547d46; `docs/theory/kf-formations.md`): the cooperation king's mode ends at the lock-in
+  round, so a cooperation game then forms under the lock-in's rules. On rose (cooperation to r2000, no own-side mine
+  known) we never formed and lost 5 of 6 at 1 king to 2; fixed: 79–1 against main's 47–33 on 40 fresh cells. `goal`
+  gain H0 (+0.006, one map of 95), no harm on `goal`, `teammade` or the gauntlet. Every other arm was H0 (site,
+  timeout, mine and rat gates, KB-centre): rich-map formations follow wealth (the 20-rat gate is the rich spawn line),
+  and opening a gate forms kings into weakness.
 
 ## 5. Order to 90%
 

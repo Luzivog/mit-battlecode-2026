@@ -102,4 +102,6 @@ public final class Tune {
     public static final boolean CM_LANE_KNOWN = CM_LANE_MEMORY || CM_LANE_BOOK;
     // With a cat in view, the king's flee loses 4 a loop tile it steps onto (robot/king/KingCombatStrategy).
     public static final boolean CM_LANE_FLEE = false;
+    // PT 2d's late cat hunt starts at this round (robot/rat/combat/CombatStrategy; main 1300).
+    public static final int CM_CAT_HUNT_START = 1300;
 }

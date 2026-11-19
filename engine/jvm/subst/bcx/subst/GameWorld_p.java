@@ -3,8 +3,11 @@ package bcx.subst;
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;
 import battlecode.world.LiveMap;
+import battlecode.world.MapSymmetry;
 
-/** Fast path of battlecode.world.GameWorld.bfsFromTarget (the cats' BFS tables, one per target and symmetry, built
+/** Fast paths of battlecode.world.GameWorld (originals kept as NAME$orig; FastPath.CHECK runs both).
+ *
+ *  bfsFromTarget (the cats' BFS tables, one per target and symmetry, built
  *  at game start): the same breadth-first search on tile indices, with no allocation per step. The original stays as
  *  bfsFromTarget$orig; FastPath.CHECK runs both and compares the target's column. */
 public final class GameWorld_p {
@@ -109,6 +112,59 @@ public final class GameWorld_p {
         bcxBfsQueue = new int[n];
         bcxBfsWalls = walls;
     }
+
+    /** getAllLocationsWithinConeRadiusSquaredWithoutMap without its boxed coordinate lists and iterators: the same
+     *  box, the same visiting order (each axis reversed as the map's symmetry says when chirality is 1), the same
+     *  per-tile test, the accepted tiles in order. */
+    public MapLocation[] getAllLocationsWithinConeRadiusSquaredWithoutMap(MapLocation origin, int width, int height,
+            MapLocation center, Direction dir, double angle, int r2, int chirality) {
+        MapLocation[] f = bcxCone(origin, width, height, center, dir, angle, r2, chirality);
+        if (!FastPath.CHECK) return f;
+        MapLocation[] o = getAllLocationsWithinConeRadiusSquaredWithoutMap$orig(origin, width, height, center, dir, angle, r2, chirality);
+        boolean same = o.length == f.length;
+        for (int i = 0; same && i < o.length; i++) same = o[i].x == f[i].x && o[i].y == f[i].y;
+        if (!same) FastPath.fail("GameWorld.getAllLocationsWithinConeRadiusSquaredWithoutMap: " + center + " " + dir + " " + angle + " " + r2 + " " + chirality);
+        return f;
+    }
+
+    private MapLocation[] bcxConeBuf;
+
+    private MapLocation[] bcxCone(MapLocation origin, int width, int height, MapLocation center, Direction dir,
+            double angle, int r2, int chirality) {
+        MapSymmetry sym = null;
+        if (chirality == 1) sym = getGameMap().getSymmetry();
+        if (origin == null || center == null || (chirality == 1 && sym == null))
+            return getAllLocationsWithinConeRadiusSquaredWithoutMap$orig(origin, width, height, center, dir, angle, r2, chirality);
+        int r = (int) Math.ceil(Math.sqrt((double) r2)) + 1;
+        int x0 = Math.max(center.x - r, origin.x), y0 = Math.max(center.y - r, origin.y);
+        int x1 = Math.min(center.x + r, origin.x + width - 1), y1 = Math.min(center.y + r, origin.y + height - 1);
+        long nx = (long) x1 - x0 + 1, ny = (long) y1 - y0 + 1;
+        if (nx <= 0 || ny <= 0) return new MapLocation[0];
+        if (nx * ny > 1 << 16)
+            return getAllLocationsWithinConeRadiusSquaredWithoutMap$orig(origin, width, height, center, dir, angle, r2, chirality);
+        boolean revX = sym == MapSymmetry.VERTICAL || sym == MapSymmetry.ROTATIONAL;
+        boolean revY = sym == MapSymmetry.HORIZONTAL || sym == MapSymmetry.ROTATIONAL;
+        MapLocation[] buf = bcxConeBuf;
+        if (buf == null || buf.length < nx * ny) bcxConeBuf = buf = new MapLocation[(int) (nx * ny)];
+        int n = 0;
+        for (int i = 0; i < nx; i++) {
+            int x = revX ? x1 - i : x0 + i;
+            for (int j = 0; j < ny; j++) {
+                MapLocation loc = new MapLocation(x, revY ? y1 - j : y0 + j);
+                if (center.isWithinDistanceSquared(loc, r2, dir, angle)) buf[n++] = loc;
+            }
+        }
+        MapLocation[] out = new MapLocation[n];
+        System.arraycopy(buf, 0, out, 0, n);
+        return out;
+    }
+
+    @Orig
+    public MapLocation[] getAllLocationsWithinConeRadiusSquaredWithoutMap$orig(MapLocation origin, int width, int height,
+            MapLocation center, Direction dir, double angle, int r2, int chirality) { return null; }
+
+    @Orig
+    public LiveMap getGameMap() { return null; }
 
     @Orig
     public void bfsFromTarget$orig(MapLocation target, int sym) {}

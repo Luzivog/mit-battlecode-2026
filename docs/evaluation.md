@@ -300,10 +300,18 @@ for c in $(cd A && find . -name '*.class'); do cmp <(javap -c -p -constants A/$c
 | a 570-game variant | ~9,000 CPU s | ~42,000 CPU s |
 
 - Native wins: a minute of one build slot saves ~33,000 CPU s of Imperial a variant. `tools/tune play` builds two
-  variants at once (`--builds`) and starts each test as soon as its own binary is ready. The translation (38 s of a
-  variant's ~45, every package translated again) runs one at a time on the host, so the second build's compile, link
-  and test start overlap it: from one variant every 50-60 s (s1, s5: 32 variants in 32 min) to one every ~40 s.
-  The rest of the gain needs the translation to skip unchanged packages (all but challenger), not more slots.
+  variants at once (`--builds`) and starts each test as soon as its own binary is ready. A variant's build is 45-49 s
+  alone (59-64 CPU s), 38 s of it the translation of every package, one translation at a time on the host; two at
+  once take 67-75 s each, so a variant's test starts every 37-42 s instead of every 53-65 s (8-variant campaigns, 19
+  Nov 17:04-17:29, both slots warm: `tlb3` 331 s from the reference's start to the last variant's, `tlb1` with
+  `--builds 1` 615 s; s1 and s5 took 32 min for 32). A slot whose last build was of another engine rebuilds
+  everything first (279-337 s): after an engine change, worktrees still on the old engine make the two slots
+  alternate, and every build is a full one (a variant took 281-840 s at 16:40-17:00).
+- The other options, measured: one binary of many variants can't share a package (below). On Imperial, a lab
+  machine has the same compiler (ash09, Ubuntu 26.04: clang 21.1.8, as here) but no ninja, 5.6 GB of memory free for
+  a translation that peaks at 3.7 GB, and the compile commands name this host's paths (`-I`, the runtime's sources),
+  so a remote build would be another binary, to be checked by the guard; not done. The gain left is in the
+  translation: it translates the engine and all 15 packages again for a change to one constant of challenger.
 - Several variants in one binary would not help: each must be its own package (two builds of one package can't share
   a binary), so each compiles all ~105 of its files (the 305-363 CPU s of a code change) instead of one, and the
   translation grows with it.

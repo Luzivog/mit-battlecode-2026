@@ -800,6 +800,11 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   (−0.087 without it), eternal exploration (−0.041), the rich spawn lines (−0.093). Ten deletions are neutral alone,
   but eight of them bundled lose to OBG (−0.045): small losses add up. Only the dead-code deletion (no logic change)
   is a merge candidate. Ablation is mostly exhausted outside other packages' code.
+- **XA closed** (2026-11-19; `docs/closed.md`, `docs/theory/xa-formations.md`): awubot's formations cost us 6.3 pp
+  (+0.063 [+0.033, +0.098] against an awubot copy that never forms), all on maps with ≥ 5 mines, but nothing of ours
+  is there to deny them: a gathering lasts a median 14 rounds and ≥ 3 of our rats are near it in 13% of formations
+  (≈ 0.8 pp at best); a crowd at a mine looks the same with or without formations. Our own formations are worth more
+  (main without them: −0.111 [−0.167, −0.063]). The rich-map gap is a king race won by economy and our own kings.
 
 ## 5. Order to 90%
 

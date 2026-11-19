@@ -494,7 +494,6 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - THROW turns already reach 13.9k at p90 (combat§13).
   - Gauntlet: bots that grab the carrier rescue the victim (E:world/InternalRobot.java:685-700).
 - **Size.** 120–250 template lines.
-
 - **Merged** (2026-11-19, af60d68): arm C4, all four changes (damage-scored lines, hold unless step-2 or better,
   aim while holding, 8 directions). `goal` gain +0.112 [+0.050, +0.174] vs main (1119-035720-ab-1be9); merged on top
   of KL, +0.139 [+0.061, +0.219] (1119-043231-ab-22e2). Open landings 20.6% → 5.6%, step-2 collisions 59.5% → 83.1%.

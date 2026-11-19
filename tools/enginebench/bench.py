@@ -40,8 +40,8 @@ ENGINE_DATA = Path.home() / "battlecode26-data" / "engine"
 KINDS = {"visible": DATA / "visible", "sealed": DATA / "SEALED-TEST-DO-NOT-READ"}
 # sha256 of each manifest.json: the scenarios, their weights and caps, and the reference's outputs (pinned)
 MANIFEST_SHA256 = {
-    "visible": "PIN",
-    "sealed": "PIN",
+    "visible": "63b20fa8d966a2b0c184adc1a4a8935088d92d4fe5193b64d1455a460d842c6f",
+    "sealed": "2539939b7be53d6cec9e75e13bf3c197b9f1a3c821b42e7df61edb547d396977",
 }
 ENGINE_VERSION = "1.2.6"
 # the bots compiled into the scored binary: every frozen package of the agreement corpus (engine/test/corpus.py)
@@ -85,7 +85,7 @@ def sha256_file(p: Path) -> str:
 def eval_hash() -> str:
     """The eval's own code (keys the main cache)."""
     h = hashlib.sha256()
-    for f in sorted(HERE.glob("*.py")) + [HERE / "enginebench"]:
+    for f in sorted(HERE.glob("*.py")) + [HERE / "enginebench", HERE / "runner.c"]:
         if f.exists() and not f.name.endswith("_test.py"):
             h.update(f.name.encode() + b"\0" + f.read_bytes() + b"\0")
     return h.hexdigest()[:16]
@@ -261,36 +261,34 @@ def build(repo: Path, jobs: int, log: Path) -> tuple[Path, float]:
 
 # ---------------------------------------------------------------- playing a scenario
 
-SETARCH = "/usr/bin/setarch"
+def runner() -> Path:
+    """runner.c, compiled static once per source (the first process in the sandbox: no address randomization,
+    the peak RSS of the whole tree; address randomization moves the conservative collector's work, 1.6e-4 of the
+    count from run to run with it, 1e-8 without)."""
+    src = HERE / "runner.c"
+    exe = DATA / "bin" / f"runner-{hashlib.sha256(src.read_bytes()).hexdigest()[:16]}"
+    if not exe.exists():
+        exe.parent.mkdir(parents=True, exist_ok=True)
+        tmp = exe.with_suffix(f".tmp{os.getpid()}")
+        sh(["clang", "-static", "-O2", "-o", str(tmp), str(src)])
+        tmp.rename(exe)
+    return exe
 
 
-def setarch_binds() -> list:
-    """setarch and the libraries it loads, bound read-only at their paths: bwrap resets the personality, so
-    address randomization is turned off inside the sandbox (it moves the conservative collector's work: 1.6e-4 of
-    the count from run to run with it, 1e-8 without)."""
-    binds = ["--ro-bind", SETARCH, SETARCH]
-    for ln in subprocess.run(["ldd", SETARCH], capture_output=True, text=True).stdout.splitlines():
-        f = ln.split()
-        path = f[2] if len(f) > 2 and f[1] == "=>" else f[0] if f and f[0].startswith("/") else None
-        if path:
-            binds += ["--ro-bind", os.path.realpath(path), path]
-    return binds
-
-
-def sandbox_cmd(binary: Path, root: Path, classes: Path, out: Path, tmp: Path, home: Path, env: dict) -> list:
-    """The game sees only its inputs (read-only) and three empty writable folders, no network, no environment,
-    no address randomization."""
+def sandbox_cmd(binary: Path, root: Path, classes: Path, out: Path, tmp: Path, home: Path, env: dict, fd: int) -> list:
+    """The game sees only its inputs (read-only) and three empty writable folders, no network, no environment.
+    The runner reports to FD."""
     if str(binary).startswith(("/tmp/", "/bench/", "/home/bench/", "/proc/", "/dev/")):
         raise Refused(f"the binary {binary} would sit under one of the sandbox's own mounts")
     cmd = ["bwrap", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
            "--setenv", "HOME", "/home/bench", "--setenv", "BCX_BUNDLED_MAPS", "/bench/root/maps"]
     for k, v in env.items():
         cmd += ["--setenv", k, v]
-    cmd += setarch_binds()
-    cmd += ["--ro-bind", str(binary), str(binary), "--ro-bind", str(root / "maps"), "/bench/root/maps",
-            "--ro-bind", str(classes), "/bench/classes", "--bind", str(out), "/bench/out", "--bind", str(tmp), "/tmp",
-            "--bind", str(home), "/home/bench", "--proc", "/proc", "--dev", "/dev", "--chdir", "/bench/out",
-            SETARCH, "x86_64", "-R", str(binary), "play", "/bench/out/spec.jsonl", "/bench/out/games", "-j", "1",
+    cmd += ["--ro-bind", str(runner()), "/bench/runner", "--ro-bind", str(binary), str(binary),
+            "--ro-bind", str(root / "maps"), "/bench/root/maps", "--ro-bind", str(classes), "/bench/classes",
+            "--bind", str(out), "/bench/out", "--bind", str(tmp), "/tmp", "--bind", str(home), "/home/bench",
+            "--proc", "/proc", "--dev", "/dev", "--chdir", "/bench/out",
+            "/bench/runner", str(fd), str(binary), "play", "/bench/out/spec.jsonl", "/bench/out/games", "-j", "1",
             "--no-indicators", "--root", "/bench/root"]
     return cmd
 
@@ -306,22 +304,28 @@ def play(sc: dict, binary: Path, m: dict, rundir: Path, env: dict, timeout: floa
     (out / "spec.jsonl").write_text(json.dumps(spec) + "\n")
     stat = d / "perf.txt"
     pre = perf or ["perf", "stat", "-x", ",", "-e", "instructions:u,instructions:k", "-o", str(stat), "--"]
-    cmd = pre + sandbox_cmd(binary, Path(m["dir"]), Path(m["classes_dir"]), out, tmp, home, env)
+    rfd, wfd = os.pipe()
+    cmd = pre + sandbox_cmd(binary, Path(m["dir"]), Path(m["classes_dir"]), out, tmp, home, env, wfd)
     t = time.time()
     with open(d / "stdout.txt", "w") as so, open(d / "stderr.txt", "w") as se:
-        p = subprocess.Popen(cmd, stdout=so, stderr=se)
+        p = subprocess.Popen(cmd, stdout=so, stderr=se, pass_fds=(wfd,))
+        os.close(wfd)
         killed = False
         while True:
             pid, status, ru = os.wait4(p.pid, os.WNOHANG)
             if pid:
                 break
-            if time.time() - t > timeout:
+            if time.time() - t > timeout and not killed:
                 p.kill()
                 killed = True
             time.sleep(0.05)
     wall = time.time() - t
-    r = {"id": sc["id"], "wall_s": round(wall, 2), "rss_kb": ru.ru_maxrss, "exit": os.waitstatus_to_exitcode(status),
+    with os.fdopen(rfd) as f:
+        reading = f.read().split()
+    r = {"id": sc["id"], "wall_s": round(wall, 2), "rss_kb": None, "exit": None,
          "cpu_s": round(ru.ru_utime + ru.ru_stime, 2), "dir": str(d), "timeout": killed}
+    if len(reading) == 2:
+        r["rss_kb"], r["exit"] = int(reading[0]), int(reading[1])
     if perf is None:
         r.update(read_perf(stat))
     return r
@@ -356,6 +360,8 @@ def validate(sc: dict, r: dict, m: dict) -> list[str]:
     ref = Path(m["dir"]) / "ref" / sc["id"]
     if r.get("instr_u") is None:
         reasons.append("perf counted no instructions:u")
+    if r.get("rss_kb") is None:
+        reasons.append(f"no reading from the sandbox's runner (see {r['dir']}/stderr.txt)")
     try:
         res = json.loads((g / "result.json").read_text())
     except (OSError, ValueError):
@@ -370,7 +376,7 @@ def validate(sc: dict, r: dict, m: dict) -> list[str]:
             k = bad[0]
             reasons.append(f"result differs from the official engine's in {', '.join(bad)} "
                            f"(e.g. {k}: {res.get(k)!r} against {want[k]!r})")
-    if r["exit"] != 0 and res is not None and "error" not in res:
+    if r.get("exit") not in (0, None) and res is not None and "error" not in res:
         reasons.append(f"bcx exited {r['exit']}")
     hp = g / "hashes.txt"
     if not hp.exists():
@@ -385,7 +391,7 @@ def validate(sc: dict, r: dict, m: dict) -> list[str]:
     elif sha256_file(rp) != sc["ref"]["replay_sha256"]:
         reasons.append("replay differs from the official engine's (bytecodes, actions or bytes): " + replay_diff(rp, ref / "replay.bc26"))
     cap = sc.get("rss_cap_kb")
-    if cap and r["rss_kb"] > cap:
+    if cap and r.get("rss_kb") is not None and r["rss_kb"] > cap:
         reasons.append(f"peak RSS {r['rss_kb'] / 1024:.0f} MB over the cap {cap / 1024:.0f} MB "
                        f"({RSS_FACTOR}x main's at design): memory traded for instructions")
     stray = []

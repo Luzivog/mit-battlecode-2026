@@ -198,6 +198,17 @@ int main(int argc, char** argv) {
     f = fopen("/tmp/memo", "w"); if (f) { fputs("x", f); fclose(f); }
     f = fopen("/bench/classes/x", "w"); printf("classes writable %d\n", f != 0);
     printf("PATH %s\n", getenv("PATH") ? getenv("PATH") : "unset");
+    fflush(stdout);
+    // a process that leaves its parent still counts: 96 MB touched in an orphaned grandchild
+    if (fork() == 0) {
+        if (fork() == 0) {
+            usleep(200000);
+            volatile char* m = malloc(96 << 20);
+            for (long i = 0; i < (96 << 20); i += 4096) m[i] = 1;
+            _exit(0);
+        }
+        _exit(0);
+    }
     return 0;
 }
 """
@@ -224,6 +235,7 @@ def test_sandbox_shows_only_the_inputs_and_keeps_nothing():
     assert "/bench/classes readable" in out and "/bench/root/maps readable" in out
     assert "classes writable 0" in out and "PATH unset" in out
     assert r["instr_u"] and r["instr_u"] > 0
+    assert r["exit"] == 0 and r["rss_kb"] > 96 * 1024, r
     # what it wrote is seen: the check that keeps a game from caching between runs
     left = sorted(str(p.relative_to(tmp_path / "runs" / "spy")) for p in (tmp_path / "runs" / "spy").rglob("*")
                   if p.is_file() and p.parent.name in ("tmp", "home"))

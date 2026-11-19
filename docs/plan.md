@@ -647,6 +647,13 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   (T5§9).
 
 #### KB. Early second king
+- **Merged: the cooperation king only** (2026-11-19, 2b6d29e). From r100, still in cooperation with one king, the
+  coordinator forms a second without the 20-rat gate (12-rat floor) or the known-mine threshold, at a known unassigned
+  mine on our side under every possible symmetry; a backstab aborts it. Coop maps +0.235 [+0.150, +0.357] on fresh
+  seeds (1119-070812-ab-b6a7), `goal` harm +0.010 (1119-070818-ab-f29e). Expected on `goal`: about +1 pp. The round
+  arms (r40–r350) all lost (`docs/closed.md`): the second king starves (rebuild, a second upkeep, digging, and it
+  pays upkeep after the first king), and no bank gate fixed it. Kings learn mines from their own vision, so known-mine
+  gates measure what the king has seen.
 - **Change.** Arms on the earliest formation round, with KL's mechanism (arm A's gates, or arm B's bud if KL needed
   it):
   - an opening bud from the first 7 spawns (150 cheese, about r10), only where kk_dirt > 20 (T4 `maps.tsv`);

@@ -168,7 +168,7 @@ won games. The king counts HP lost while a cat is in its sight.
 |---|---|---|---|---|---|
 | CAT | HP < 100, or below 400 HP with 60 HP lost in 20 rounds while a cat is in sight | the known mine nearest the king at d² ≥ 100, else NF's rings | `L-cat` ∪ `L1-cat` ∪ `cat`, 8311, 0.10 | −0.028 [−0.090, +0.037], H0 (89 cells: 7 better, 14 worse) | `1119-144355-ab-a7ce` |
 | | | | `goal`, 8312, 0.05 | −0.009 [−0.037, +0.018], H0 (222 cells: 16 / 18) | `1119-144355-ab-8fdb` |
-| CAT2 | as CAT | a cat danger forms only at a far mine | `L-cat` ∪ `L1-cat` ∪ `cat`, 8313, 0.10 | +0.007 [−0.058, +0.091], H0 (73 cells: 9 better, 9 worse) | `1119-144801-ab-746b` |
+| CAT2 | as CAT | a cat danger forms only at a far mine | `L-cat` ∪ `L1-cat` ∪ `cat`, 8313, 0.10 | +0.022 [−0.058, +0.113], H0 (116 cells: 16 better, 14 worse) | `1119-144801-ab-746b` |
 
 CAT's danger formations against the ref's game on the same cell (`D:dpair.py`, the cat pools): 6 lost games won
 (tminusten 4, sunandmoon 2), 5 won games lost (RUN twice, from formations at r942 and r1237; sunandmoon once, at a

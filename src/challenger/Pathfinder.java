@@ -2103,7 +2103,7 @@ public class Pathfinder {
                 // indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
                 lastDist = 0;
-                bug = new BugnavInstance(true, target);
+                bug = new BugnavInstance(Tune.KING_HAND == 0 || !isRatKing, target);
             }
         }
         // int shade = 255;

@@ -15,7 +15,7 @@ to what a Java bot repo needs: no test queue and no follower service.
 | `tools/jobs.py` | a job: code bundle, folder, submit, state, logs, wait, pull, cancel |
 | `tools/provision.py` | the runtime on the volume: Temurin 21, CPython 3.14.8, the engine's jars |
 | `tools/kit.py` | the game kit's classpath, here and on a node |
-| `tools/runs.py`, `tools/piece.py` | runs (client) and pieces (node) |
+| `tools/runs.py`, `tools/piece.py` | runs (client) and pieces (node); the pool |
 | `tools/compute.py`, `tools/grid.py` | the CLIs `tools/compute` and `tools/run` |
 | `tools/kitgame` | a smoke game runner: the same game here and on a node |
 | `tools/fixtures/` | reads captured from DoC (18 Nov 2026), the verification games, `launchcost.sh` |
@@ -42,6 +42,12 @@ and a failed login is retried at the next poll.
 `tools/run` makes `REMOTE_ROOT/runs/RUN` (its files: `tools/runs.py`'s docstring) and submits pieces: jobs running
 `python3 RUN/piece.py RUN`, the run's `code.bundle` and `with.tgz` hard-linked into each. Each piece claims tasks by
 `mkdir claims/N` (atomic on the NFS server) and runs `min(JOB_CPUS // task_cpus, JOB_MEM_MB // task_mem_mb)` at once.
+
+Shipping, once a content: `code.bundle` and `with.tgz` are hard links to `REMOTE_ROOT/cas/code-KEY.bundle` and
+`cas/with-KEY.tgz`. The code's KEY is its commit and `main`'s: the working tree's snapshot commit has a fixed author,
+committer and date (HEAD's), so the same tree on the same HEAD is the same commit. The files' KEY hashes their names,
+modes and bytes, not their times. One login finds which are there (touching them); a missing one is made here (the
+bundle takes 4 s) and uploaded under a temporary name, renamed in. A run of unchanged content uploads nothing.
 It touches `claims/N/beat` every 30 s; a claim not touched for 300 s (the server's clock: a fresh file's mtime) is a
 dead piece's, and any piece takes it over by renaming it into `lost/`. A task has 3 starts; then it ends `-1`. A
 task's result is `done/N.tar` (`result.json`: code, peak RSS, host, seconds, began, ended, slots; `log`, its last
@@ -61,8 +67,49 @@ The follower (`runs.follow`, behind `tools/run` and `tools/compute wait RUN`) po
 pieces that never started. When no piece is left and tasks remain: a held piece stops the follower with exit 3, the
 run left open (a hold is reported, never routed around); a piece that ended with a code other than 0 or 75 stops the
 run (its log shown: it would fail again); otherwise a replacement round is submitted, once unclaimed tasks exist or
-the dead claims are stale, at most 3 rounds (`mkdir replace.K` lets one follower submit each). A run no piece could
-be submitted for is closed at once.
+the dead claims are stale, at most 3 rounds (`mkdir replace.K` lets one follower submit each). A pooled run follows
+the pool's rule below instead. A run no piece could be submitted for is closed at once.
+
+## The pool
+
+A run of tasks of a set size (not `--whole`) and no `--max-cpus` is pooled (`run.json`'s `pool`, `pool_v`): its
+pieces serve every pooled run, and every pooled piece serves it.
+
+- **Open runs.** `REMOTE_ROOT/pool/open/RUN`, an empty file, made last in the login that makes the run's folder and
+  removed by `close` and `cancel` (and by a piece once every task is done; the sweep removes those of closed or deleted
+  runs).
+- **Claiming across runs.** A piece with a free slot lists `pool/open` (at most every `SCAN_S`, 2 s; at once after a
+  task ends) and reads each new run's `run.json` once. It serves a run with the same `task_cpus`, `task_mem_mb` and
+  runtime (`env`: the hash of `provision.env_file()`), whose `wheres` hold its backend, and, when it has a deadline
+  (Slurm's `--time` less SIGUSR1's lead, Condor's `--time`), with at least `min(MIN_LEFT_S, limit / 2)` left (20 min,
+  or half its limit) and 1.5 times the longest task of that run it ran. A run found with nothing claimable is skipped
+  for `FULL_S` (30 s); its claims are read for dead pieces' at most every `STALE_CHECK_S` (120 s). Claims, beats,
+  takeover, `MAX_STARTS` and results are a run's own, as above, whoever runs its tasks; a result run by another run's
+  piece names that run (`piece_run`).
+- **Fairness.** Each free slot goes to the run with the fewest running tasks (claims not done), the older run first
+  among equals. A run with nothing running is beaten only by older runs with nothing running, which are finitely many
+  and finite, so no run waits forever; a newcomer beats every run that has a task running, so a small batch behind a
+  big one starts at the next free slots.
+- **Another run's checkout.** A task runs in its run's checkout: the piece's own (job.sh's) for its run and runs of
+  the same content and kit; else one the piece makes in its scratch from that run's `code.bundle` and `with.tgz`,
+  job.sh's way (2.0 s on a lab machine, 19 Nov), kept for later runs of that content (`CHECKOUTS` unused ones at
+  most). A kit run's `kit` file names its jars; the task gets that run's `BC_CLASSPATH` and `BC_ENGINE_JARS`.
+- **The exit rule.** A piece ends as soon as it runs nothing and a last look at every run (skips ignored) finds
+  nothing it may claim: no idle grace. A run's `closed` stops that run's tasks on every piece (checked every
+  `CLOSED_S`, 5 s), and the piece goes on with other runs' tasks.
+- **Live capacity.** `pool/pieces/JOB` is a pooled piece's state (slots, running, task size, runtime, backend,
+  deadline, limit), rewritten through a rename as it changes (at most every 5 s, at least every 30 s) and removed at
+  its end; one older than 90 s (by the volume's clock) is a dead piece's.
+- **Placement.** A new pooled run asks for pieces for its tasks less the free slots of the live pieces that would
+  serve it (`runs.place`); `tools/run` says so (`2 live pieces have 9 free slots: no new piece`).
+- **Following.** The follower adds pieces (`replace.K`, `POOL_ROUNDS` 8 at most) when tasks wait (unclaimed, or
+  claimed by dead pieces while none of its own pieces runs) beyond the live pieces' free slots, never while one of its
+  pieces is queued or held, or just started, and at most every `GRACE_S` (20 s). Its own pieces' end stops a pooled
+  run only once none of its tasks moved for 90 s. The summary adds `pieces_requested` and `served_by_others`.
+- **Cancel.** `tools/compute cancel RUN` closes a pooled run and cancels its pieces that are queued or held; its
+  running pieces stop its tasks and go on with other runs' tasks, or end at once.
+- **Compatibility.** Runs made before the pool have no `pool` in `run.json`: no pooled piece touches them, and their
+  pieces serve them alone, as before. A piece serves only runs of its own `POOL_V`: a change to the protocol bumps it.
 
 ## The games interface (track E)
 
@@ -157,7 +204,9 @@ three rounds at most. These are yours:
 - **Bounded writes on /vol/bitbucket**, DoC's shared NFS scratch with no per-user quota (99% full, 2.9 TB free on 18
   Nov). A job's log stops at 64 MB, a task's log at 1 MB and its OUT at 1 GB; ended jobs and closed runs are deleted
   after 7 days, a run nothing touched for 30 days too, and a closed run's code bundle at once (`tools/compute
-  sweep`, run by `tools/run` and `tools/compute run` at most once a day). Never `chmod` anything open.
+  sweep`, run by `tools/run` and `tools/compute run` at most once a day). A stored bundle or shipped file in `cas/`
+  that no run or job links any more goes 2 days after its last use; `pool/pieces` files silent for a day go. Never
+  `chmod` anything open.
 - **Quotas are facts.** The NFS home has a quota; nothing of ours writes to it (HOME is scratch in a job).
 - **First jobs small**: a first job on a backend, or of a new kind, runs under 10 minutes.
 

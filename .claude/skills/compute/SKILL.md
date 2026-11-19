@@ -26,6 +26,10 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
 - `--with PATH` ships another git-ignored file or folder. `--where condor,slurm,cpucluster1` limits the backends.
 - It prints the run's id first, then waits until every task has ended; the exit code is 0 when every task ended 0,
   else the first task's code. A task whose machine was taken back runs again elsewhere, three starts at most.
+- Runs share one pool (not `--whole`, not `--max-cpus`): a live piece of any run takes tasks of every open run of the
+  same `--task-cpus`, `--task-mem` and backends, the run with the fewest running tasks first, and ends as soon as
+  nothing is left. A new run asks for pieces only beyond the live pieces' free slots, so its tasks often start within
+  seconds. Code and `--with` files go up once a content.
 
 ## Wait in the background
 
@@ -39,8 +43,9 @@ tools/compute wait "$RUN" --json          # run_in_background; exit = the run's 
 - `tools/compute wait ID...` takes runs and jobs, polls every 30 s, survives lost connections, fetches results as
   they come, and ends with one line an id saying where they are. Run it again after a restart: it picks up.
 - Or run `tools/run ...` itself in the background: same output, same exit code.
-- `tools/compute status [--json]`: what each backend can start now, in tasks at once, and our jobs.
-- `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run and its pieces).
+- `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs.
+- `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run: its tasks stop, its queued pieces are
+  cancelled; its running pieces go on with other runs' tasks, or end).
 
 ## Games at scale
 

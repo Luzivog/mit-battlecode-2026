@@ -23,6 +23,11 @@ A task's result is done/N.tar (result.json, log, out/), written whole under a te
 command runs with {} (its line), {file} (a file of its lines), {out} (its OUT) and {cpus} (its CPUs) replaced, in the
 checkout's folder the submitter ran from, with OUT, JOB_OUT, JOB_CPUS, JOB_MEM_MB, TASK, RUN_ID and TMPDIR its own.
 
+A host that can't hold more work takes none: a piece claims a task only while its scratch's filesystem has DISK_MIN_MB
+free (its unused checkouts are pruned first). A task that ends GIVE_BACK says this host can't run it (its game had no
+room to write): its claim goes back at once, for another piece, and this piece takes no more tasks. The tasks of one
+piece share JOB_CACHE, a folder of its scratch (the native binaries they unpack, once a piece).
+
 A run's `closed` stops its tasks (claims given back) within CLOSED_S; a piece whose own run is unpooled then ends.
 SIGTERM (a cancel, an eviction) and SIGUSR1 (Slurm's limit) stop it: its tasks are stopped and their claims given back
 at once (into lost/, so they count as a start), then it exits 0 (on Slurm after SIGUSR1, job.sh then requeues the
@@ -49,14 +54,17 @@ MAX_STARTS = 3  # a task's starts, the first included
 LOG_BYTES = 1 << 20  # the end of a task's output kept
 OUT_CAP = 1 << 30  # the most a task's OUT may hold: a run's writes on the shared volume are bounded
 LOST = -1  # the code of a task whose every start was lost
-POOL_V = 1  # the pool's protocol: a piece serves only runs that speak its version
+POOL_V = 2  # the pool's protocol: a piece serves only runs that speak its version (2: GIVE_BACK, JOB_CACHE)
 SCAN_S = 2.0  # between two looks for work while a slot is free and the last look found none
 FULL_S = 30.0  # a run found with nothing claimable is looked at again after this long
 STALE_CHECK_S = 120.0  # a run's claims are read for dead pieces' at most this often
 CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
 STATE_S = 5.0  # the piece's state file is rewritten at most this often, and at least every BEAT_S
 MIN_LEFT_S = 1200.0  # a piece with a deadline takes another run's task only with this long left (or half its limit)
-CHECKOUTS = 4  # other runs' checkouts kept unused in scratch
+CHECKOUTS = 4  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
+# a piece claims a task only with this much free where its tasks write (a checkout is ~350 MB, a binary 100 MB)
+DISK_MIN_MB = int(os.environ.get("BC26_DISK_MIN_MB", "2048"))
+GIVE_BACK = 75  # a task's code saying its host can't run it (EX_TEMPFAIL): its claim goes back, the piece stops
 USR1_LEAD_S = 120  # Slurm's SIGUSR1 comes this long before --time (tools/backends.py)
 
 
@@ -142,6 +150,10 @@ class Piece:
         self.state_at = 0.0
         self.state_said = ""
         self.stopping = ""
+        self.refusing = ""  # why this piece takes no more tasks (its host can't run them), once a task said so
+        self.low_disk = False
+        self.cache = self.scratch / "cache"  # JOB_CACHE: shared by its tasks
+        self.cache.mkdir()
         for d in ("claims", "done", "lost"):
             (run / d).mkdir(exist_ok=True)
         self.say(f"piece {self.me} on {self.host}: {self.slots} at once, {self.task_cpus} CPUs and "
@@ -288,7 +300,8 @@ class Piece:
         equals); FRESH looks at runs recently found full too. The tasks started."""
         free = self.slots - len(self.running)
         now = time.monotonic()
-        if free <= 0:
+        if free <= 0 or self.refusing or not self.room():
+            self.next_scan = now + SCAN_S
             return 0
         cand: dict[str, tuple[Run, list[int], list[int]]] = {}  # id -> (run, [running], claimable)
         for r in self.open_runs():
@@ -307,7 +320,9 @@ class Piece:
             if not self.ready(r):
                 cand.pop(rid, None)
                 continue
-            if not self.claim(r, n):
+            if not self.room() or not self.claim(r, n):
+                if self.low_disk:
+                    break
                 continue
             if self.starts(r, n) >= MAX_STARTS:
                 self.lost(r, n)
@@ -348,7 +363,7 @@ class Piece:
             return False
         self.checkouts[key] = (home, time.monotonic())
         r.home, r.env = home, env
-        self.prune_checkouts()
+        self.prune_checkouts(keep=home)
         return True
 
     def kit_env(self, r: Run) -> dict[str, str]:
@@ -394,16 +409,38 @@ class Piece:
         self.say(f"run {r.id}: its checkout made in {time.monotonic() - t0:.1f} s")
         return final
 
-    def prune_checkouts(self) -> None:
-        """Other runs' checkouts beyond CHECKOUTS, unused longest first, deleted unless a task runs in one."""
-        busy = {r.home for r, _, _, _, _ in self.running.values()}
+    def prune_checkouts(self, keep: Path | None = None, idle_kept: int = CHECKOUTS) -> None:
+        """Other runs' unused checkouts beyond IDLE_KEPT, unused longest first, deleted: never one a task runs in, nor
+        KEEP (the one a task is about to start in). Counting every checkout instead deleted the one just made whenever
+        more than CHECKOUTS were busy, so each claim made it again (2 s each) and the main loop stalled for minutes:
+        no beats, its tasks' claims taken over as dead (19 Nov)."""
+        busy = {r.home for r, _, _, _, _ in self.running.values()} | {keep}
         idle = sorted((used, key) for key, (home, used) in self.checkouts.items() if home not in busy)
-        for _, key in idle[:max(0, len(self.checkouts) - CHECKOUTS)]:
+        for _, key in idle[:max(0, len(idle) - idle_kept)]:
             home = self.checkouts.pop(key)[0]
             for r in self.runs.values():
                 if r.home == home:
                     r.home = None
             shutil.rmtree(home, ignore_errors=True)
+
+    def room(self) -> bool:
+        """DISK_MIN_MB free where this piece's tasks write, after pruning its unused checkouts if short; said once
+        when it runs short and once when it recovers."""
+        def free_mb() -> float:
+            try:
+                st = os.statvfs(self.scratch)
+            except OSError:
+                return 0.0
+            return st.f_bavail * st.f_frsize / (1 << 20)
+        mb = free_mb()
+        if mb < DISK_MIN_MB and self.checkouts:
+            self.prune_checkouts(idle_kept=0)
+            mb = free_mb()
+        low = mb < DISK_MIN_MB
+        if low != self.low_disk:
+            self.low_disk = low
+            self.say(f"{mb:.0f} MB free under {self.scratch}: " + ("taking no task" if low else "taking tasks again"))
+        return not low
 
     # ---- tasks ----
     def start(self, r: Run, n: int) -> None:
@@ -428,7 +465,8 @@ class Piece:
             env.pop("BC_CLASSPATH", None)
             env |= {k: v.replace("{home}", str(r.home)) for k, v in r.env.items()}
         env |= dict(OUT=str(here / "out"), JOB_OUT=str(here / "out"), JOB_CPUS=str(self.task_cpus),
-                    JOB_MEM_MB=str(self.task_mem), TASK=str(n), RUN_ID=r.id, TMPDIR=str(here / "tmp"))
+                    JOB_MEM_MB=str(self.task_mem), TASK=str(n), RUN_ID=r.id, TMPDIR=str(here / "tmp"),
+                    JOB_CACHE=str(self.cache))
         cwd = r.home / str(r.meta.get("cwd", "."))
         log = open(here / "log", "wb")
         try:
@@ -491,8 +529,15 @@ class Piece:
                 continue
             del self.running[key]
             p.returncode = os.waitstatus_to_exitcode(got[1])
-            self.finish(r, key[1], p.returncode, got[2].ru_maxrss * 1024, time.monotonic() - began, here, wall)
             ended += 1
+            if p.returncode == GIVE_BACK:
+                tail = (here / "log").read_bytes()[-300:].decode(errors="replace").strip().splitlines()
+                self.refusing = tail[-1] if tail else "its task ended GIVE_BACK"
+                self.say(f"{self.name(r, key[1])}: its host can't run it ({self.refusing}): taking no more tasks")
+                shutil.rmtree(here, ignore_errors=True)
+                self.give_back(r, key[1], "its host can't run it")
+                continue
+            self.finish(r, key[1], p.returncode, got[2].ru_maxrss * 1024, time.monotonic() - began, here, wall)
         return ended
 
     def halt(self, keys: list[tuple[str, int]], why: str) -> None:

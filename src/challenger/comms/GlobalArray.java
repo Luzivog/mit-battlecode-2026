@@ -598,8 +598,9 @@ public class GlobalArray {
         }
     }
 
+    // A dead king's slot is never cleared: its assignment counts only while the king is alive.
     public static MapLocation getKingMineAssignment(int aKingId) throws GameActionException {
-        if (aKingId >= 0 && aKingId < 5) {
+        if (aKingId >= 0 && aKingId < 5 && getRatKing(aKingId) != null) {
             int myEncoded = rc.readSharedArray(KING_MINE_ASSIGNMENT + aKingId);
             if (myEncoded == 0) return null;
             return decode2x2(myEncoded - 1);

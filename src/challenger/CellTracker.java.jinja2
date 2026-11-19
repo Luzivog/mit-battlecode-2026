@@ -271,7 +271,9 @@ public class CellTracker {
     // (GameWorld.getAllLocationsWithinConeRadiusSquaredWithoutMap). Walls and mines never change, so once every
     // visible cell is seen a scan only refreshes dirt: isDirt cell by cell into row bits, then one write per row.
     {% set kingHalf = {-5: 0, -4: 3, -3: 4, -2: 4, -1: 4, 0: 5, 1: 4, 2: 4, 3: 4, 4: 3, 5: 0} %}
-    static int kingScanOrder = -1; // 2 * (x descending) + (y descending)
+    // 2 * (x descending) + (y descending): 0 for chirality 0; chirality 1 reverses x on VERTICAL maps (2), y on
+    // HORIZONTAL (1), both on ROTATIONAL (3)
+    static int kingScanOrder = -1;
     static long kingMask0, kingMask3, kingMask4, kingMask5; // visible cells of a row of half-width 0, 3, 4, 5
     {% for dy in range(-5, 6) %}
     static long kingDirt{{dy + 5}}; // dirt bits of row myLocY {{ "%+d" % dy }}
@@ -285,16 +287,8 @@ public class CellTracker {
         kingMask3 = (x >= 3 ? 0x7fl << (x - 3) : 0x7fl >>> (3 - x)) & onMap;
         kingMask4 = (x >= 4 ? 0x1ffl << (x - 4) : 0x1ffl >>> (4 - x)) & onMap;
         kingMask5 = (x >= 5 ? 0x7ffl << (x - 5) : 0x7ffl >>> (5 - x)) & onMap;
-        if (Tune.KING_HAND != 0 && kingScanOrder < 0) {
-            // order 0: chirality 0; chirality 1 reverses x on VERTICAL maps (2), y on HORIZONTAL (1), both on ROTATIONAL (3)
-            kingScanOrder = findKingScanOrder(infos);
-            Pathfinder.kingLeft = switch (Tune.KING_HAND) {
-                case 1 -> false;
-                case 2 -> kingScanOrder == 0;
-                case 3 -> kingScanOrder == 0 || kingScanOrder == 3;
-                default -> kingScanOrder != 2;
-            };
-        }
+        // the king's bug hand reads the order from its first turn (Pathfinder.kingLeft)
+        if (Tune.KING_HAND != 0 && kingScanOrder < 0) kingScanOrder = findKingScanOrder(infos);
         if (!kingRowsSeen(y)) {
             // a cell seen for the first time: the full scan registers walls and mines in the engine's order
             for (var info : infos) {

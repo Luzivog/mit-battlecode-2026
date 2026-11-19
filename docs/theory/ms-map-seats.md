@@ -11,8 +11,9 @@ symmetric map seat B stands at seat A's mirror image.
    maps our seat B wins 0.699 and seat A 0.823 (W3's 10,640 pooled main-equivalent games, `mapseat_p.json`); seat A
    leads on every main run alone (+3 to +21 pp). On the 20 HORIZONTAL maps the seats are level (0.840 / 0.835); on the
    48 ROTATIONAL maps seat B leads by 2 pp. Lifting B to A on the VERTICAL maps is worth 1.8 pp of `goal`. It is not
-   turn order: of the six VERTICAL maps where seat B's king has the lower id (acts first), seat A wins more on four
-   (+27 to +44 pp) and as much on two.
+   turn order: of the five VERTICAL maps where seat B's king has the lower id (acts first), seat A wins more on three
+   (+27 to +45 pp) and as much on two (start ids and sides from the replays; T4's `maps.json` has the teams swapped on
+   10 tournament maps, diamond among them).
    awubot's own mirror shows the same lean (seat A 0.556 on VERTICAL maps, 0.475 and 0.477 on the others).
 2. **On four of the six the cause is the king's bug, which always turns left.** A king never uses the bug's lookahead:
    its bug starts left-handed and keeps that side at every obstacle (`C:Pathfinder.java.jinja2`, the `isRatKing` branch of
@@ -42,9 +43,14 @@ symmetric map seat B stands at seat A's mirror image.
    bottom). Three screens read −0.005, +0.006, +0.006; **the confirmation on 3,000 cells reads −0.004 [−0.022, +0.014]**.
    A hybrid that keeps the bug until the king retraces its own steps (KH3) fires too rarely to matter (+0.001
    [−0.010, +0.011]) (§4).
-5. **Recommendation: merge nothing to the bot.** Merge the doc and docs/closed.md rows. The seat effect is real and
-   explained, but no rule built on what the king knows beats the left turn's luck on average; what would is wall
-   knowledge the rats have and the king does not (§5).
+5. **Map knowledge is worth nothing to us as the bot stands (§7).** Oracles that read the true static map (walls,
+   dirt, mines) from a compiled table, on 1,000 fresh `goal` cells against a salted null: the kings' route search on
+   true walls −3.4 pp, with mine choice by route −1.7 pp, with every rat's bug and mine targeting too −1.5 pp, main with
+   only a perfect first trip for its king −0.5 pp; none above the null. Exact plans cost the king turns that cheap free-space plans did not, the rats' paths and targets do
+   not change for the better, and which mine to take matters more than the way there. No reachable part was built.
+6. **Recommendation: merge nothing to the bot.** Merge the doc and docs/closed.md rows. The seat effect is real and
+   explained, but no rule built on what the king knows beats the left turn's luck on average, and §7 shows that
+   knowing the whole map would not either.
 
 ## 1. The seat effect is a VERTICAL-map effect
 
@@ -66,8 +72,8 @@ symmetric map seat B stands at seat A's mirror image.
 - The engine is mirror-consistent: sensing lists follow chirality (`E:world/GameWorld.java`
   `getAllLocationsWithinConeRadiusSquaredWithoutMap`), cats' BFS and corners are flipped for chirality 1, cheese spawns
   mirror (1.2.6). What is not mirrored is the bots' own fixed choices (directions tried in a fixed order, the bug's
-  side), and turn order. The seat follows team A, not the side: on asabovesobelow, pocketsofcheese, diamond and
-  AceOfSpades team A starts on the right and acts second, and still wins more (+27 to +44 pp).
+  side), and turn order. The seat follows team A, not the side: on asabovesobelow, pocketsofcheese and AceOfSpades
+  team A starts on the right and acts second, and still wins more (+27 to +45 pp).
 
 ## 2. The king's bug
 
@@ -188,8 +194,8 @@ What the planner does, and why it does not add up:
   would capture it: in KR's run the per-map-seat better of the two hands reads 0.790 on VERTICAL maps against 0.735
   (0.875 against 0.838 on HORIZONTAL), an upper bound inflated by 6-game noise. Choosing it needs walls the king has
   not seen. The rats have them (each rat's `CellTracker`); the king gets only mines and seen 3×3 units (`MapTracker`
-  chunks). A route ahead squeaked by rats near the king, or the symmetry the rats find (slot 1) applied to the king's
-  map, are the untried ways to give it that knowledge.
+  chunks). §7 priced that knowledge with oracles: even the true map, free, gains nothing, so the symmetry route and
+  squeaked walls are closed.
 - **popthecork B** is a race for a 2-wide neck on the symmetry line that seat A wins in turn order and position, for
   both bots; we already win 0.32 there against the mirror's 0.
 - **peaceinourtime A** is decided by when each half's cat reaches its king's strip; the left cat is first in every game
@@ -213,5 +219,67 @@ What the planner does, and why it does not add up:
   moving, dirt dug, distance from start; ours against the ref), `kpdiag.py RUN` (round our king first stands by a mine),
   `CatTrack.java` (cats every 10 rounds), `seatpair.py RUN` (a paired run by seat and symmetry), `mapdiff.py RUN` (per
   map ours − ref, pocket and reach maps apart).
+- Map-knowledge oracles (§7): `MapDump.java` (every map as played, from replays: `goalmaps.jsonl`), `mkmsmap.py` /
+  `mkmsmap2.py PKG RATS OUT.java` (the cheat table: keys, walls and round-1 dirt rows, mines, per start the reachable
+  mines and the offline route to the mine nearest by route), `patch_probe.py`, `patch_logic.py`, `patch_clean.py`
+  (the probes' edits; the probe worktree is `wt/`), `osplit.py NULL RUN...` (probe − main and − null, by symmetry ×
+  seat, pocket/reach and map class, CI by bootstrap over maps).
 - `runs.txt`: every run of this package. Pools `MS-vert`, `MS-six`, `MS-reflect` in `~/battlecode26-data/games/pools/`.
 - Local debug runs: `dbg/` (specs and replays; prints via the `robot-player-to-system-out` shim).
+
+## 7. What map knowledge is worth (follow-up)
+
+The planner failed on unseen tiles it assumed open (§4), so the next question was whether knowing the true map is worth
+building toward. Oracle copies of challenger (branch `t3/ms-probes`, never merged) read the true static map (walls,
+round-1 dirt, mines) from a table compiled per map (`D:mkmsmap2.py`, from every `goal` map as played, dumped from
+replays by `D:MapDump.java`). The map is found from its size, the own king's start and an order-free hash of the
+walls, dirt and mines in that king's round-1 view; the first king writes the index to shared slot 15 (free in main),
+later kings and rats read it. 184 of 187 keys are unique; the three shared ones (cheeseguardians / longwayaround, and
+attack_on_cat / holeinthewall from both seats) play without the table. Each robot decodes the table once, when a turn
+has 7.7k bytecodes left (the decode costs ~6.8k).
+
+All on the same 1,000 `goal` cells (seed base 19101), paired game by game with main; the null is main with a salted
+random stream (`ms_salt`, W2 §4.6). "vs null" = probe − null on the same cells.
+
+| probe | what knows the true map, and for what | run | − main [95% CI] | vs null |
+|---|---|---|---|---|
+| null `ms_salt` | nobody | `1119-204229-ab-70f7` | +0.004 [−0.017, +0.025] | – |
+| KP3 | nobody (KP3's planner, unseen cells open) | `1119-204242-ab-2a8f` | +0.011 [−0.012, +0.032] | +0.007 |
+| `ms_kr` | kings, in KP3's route search only (every plan exact) | `1119-212044-ab-46c5` | −0.030 [−0.059, −0.005] | −0.034 |
+| `ms_ka` | kings: route search, and the starting king's mine chosen by route on a route computed offline, held; later choices the nearest reachable | `1119-212044-ab-2c8c` | −0.013 [−0.045, +0.017] | −0.017 |
+| `ms_kb` | `ms_ka`, and every rat's bug (unseen cells by the true walls) and mine targeting (all mines from round 1) | `1119-212045-ab-a8fc` | −0.011 [−0.043, +0.020] | −0.015 |
+| `ms_kf` | main, and only the starting king's first trip: the offline route to the mine nearest by route (no search) | `1119-213530-ab-a1f7` | −0.002 [−0.032, +0.028] | −0.005 |
+
+Earlier versions that also wrote the map into each robot's `CellTracker` leaked it into every strategy (formation
+sites, traps, the kings' scans), and in v1 the key was taken at the end of the king's round-1 turn, which fails when
+that turn overruns: `ms_oka` v1 −0.005, `ms_okb` v1 +0.004, `ms_oka` v2 −0.029, `ms_okb` v2 −0.013, `ms_okr` (routes only)
+−0.026 (runs `1119-204234-ab-50f1`, `-204238-ab-6084`, `-210212-ab-8e53`, `-210216-ab-a8aa`, `-211204-ab-670e`).
+
+By symmetry and seat (vs main; 286 games a seat on VERTICAL maps, 211 HORIZONTAL, 503 ROTATIONAL; `D:osplit.py`):
+
+| | VER A | VER B | HOR A | HOR B | ROT A | ROT B | reach maps | pocket maps |
+|---|---|---|---|---|---|---|---|---|
+| null | +0.066 | +0.038 | −0.028 | −0.009 | +0.012 | −0.040 | −0.004 | +0.022 |
+| KP3 | +0.028 | +0.066 | +0.043 | +0.019 | −0.018 | −0.018 | +0.009 | +0.017 |
+| `ms_kr` | −0.003 | +0.010 | −0.038 | −0.038 | −0.038 | −0.054 | −0.047 | +0.010 |
+| `ms_ka` | +0.010 | +0.052 | −0.033 | −0.028 | −0.026 | −0.034 | −0.019 | +0.003 |
+| `ms_kb` | +0.014 | +0.024 | −0.009 | +0.009 | +0.002 | −0.068 | −0.019 | +0.008 |
+| `ms_kf` | +0.087 | +0.042 | −0.005 | −0.033 | −0.040 | −0.024 | −0.002 | +0.000 |
+
+What it says:
+- **No oracle is worth 2 pp; against the null none is above zero.** The best 95% upper bound is +2.8 pp (`ms_kf`).
+  The cleanest, `ms_kf` (main untouched except a perfect first trip, no search at all), reads −0.002: it wins
+  asabovesobelow B 9/11 (main 5/11), AceOfSpades B 9/10 (5/10), EscapeTheNight B 4/11 (0/11) and gives as much back
+  elsewhere.
+  So the reachable parts (symmetry over seen walls, squeaked walls, scouting) are not built: their ceiling is below
+  what a test resolves. The VERTICAL seat deficit (1.8 pp) and the pathing ideas close.
+- **True walls make the king's planner worse** (`ms_kr` − KP3: −4.1 pp). With every cell known there is no exit into
+  the unknown to stop at, so each search runs on to the target, up to 150 layers over the map's height, across
+  several turns; the king walks the bug meanwhile and the plan, made from a cell it has left, starts again. Planning
+  cost, not knowledge, decides; under the free-space assumption the cheap, short plans were what worked.
+- **The rats gain nothing from the map** (`ms_kb` − `ms_ka`: +0.2 pp): their lookahead bug and their mine weights
+  already do what the walls and the full mine list would.
+- **Knowing the map does fix the cases KP3 got wrong** (per map, 10–11 games a seat): AceOfSpades A 6/10 (KP3) → 10/10
+  (`ms_kr`, `ms_kb`), bed A 5/11 → 10–11/11, asabovesobelow B 7/11 → 11/11 (`ms_ka`). But it loses EscapeTheNight B (KP3
+  7/11 → 0–5/11): the mine nearest by route from seat B is the side mine (40,37), behind less dirt, not the centre mines
+  seat A takes. Which mine to take matters more than the way to it, and nothing here knows which mine is worth more.

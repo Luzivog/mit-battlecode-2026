@@ -155,6 +155,43 @@ the ref's own score on the same cells and the paired difference with its CI.
    - then smoke and the gauntlet as in item 3. Report both run IDs and both intervals.
    A smaller screen (e.g. 1,000 cells) is fine for choosing among arms; only the confirmation decides.
 
+## The book: per-map entries
+
+The book (`src/challenger/book.jsonl`, tools/book/AGENTS.md) sets a switch or a datum per goal map and seat. Its
+entries are chosen and confirmed map by map, then as a whole:
+
+1. **Choose** on one fresh seed base: `tools/book/book matrix NAME --point LABEL:CONST=V ... --maps M1,M2
+   --cells-per-map N --seed-base B` (in the background) plays every candidate on the maps' `map:` pool, main on the
+   same cells, both seats. Then `tools/book/book fit NAME`: per map-seat the best candidate's raw effect, its
+   selection-adjusted effect and p_max. The best of K candidates on one map-seat reads high by the null maximum of K
+   (simulated nulls, `fit --simulate`: +0.033 for K 2, +0.057 for K 4, +0.075 for K 8 at 30 cells a map-seat); adj
+   removes it (null mean within ±0.002), and p_max is the sign-flip test of that maximum. Propose an entry when
+   p_max < 0.05 and adj > 0.
+2. **Confirm** the one chosen value on the map alone (`--pool map:M`, both seats) on a second fresh seed base: the
+   entry's seat must read a 95% lower bound above 0 (`tools/games ab challenger@REV awubot --ref challenger@origin/main
+   --pool map:M --min-cells N --max-cells N --seed-base B2 --remote`). The entry's `evidence` holds both run IDs.
+3. **The whole book** against main: `tools/book/book confirm --seed-base B3` starts the protocol's precision route
+   (3,000 `goal` cells, item 5), the entries' map-seats on their own maps (seed base B3 + 1), and the goal maps
+   without entries plus `teammade` (B3 + 2), where the book must change nothing systematic.
+   `tools/book/book confirm-show FILE` reads all three. The book merges when the `goal` lower bound is above 0 and
+   no entry's own map-seat reads below 0.
+
+**Measured (19 Nov, seed bases 25001-25004).**
+- Empty book against main, 1,000 `goal` cells (`1119-214049-ab-32c9`): −0.002 [−0.009, +0.005]; 52 cells scored
+  differently (24 better, 28 worse), 54 of 2,000 games changed winner. The book costs each robot 15-31 bytecodes on
+  its first turn; on 1.84 M rat turns and 129,000 king turns synced with main's (PairBc, 95 cells with replays,
+  `1119-214103-ab-b14d`) +0.07 and +0.05 a turn, mean 10,875.2 both.
+- A test entry (EscapeTheNight seat B, `KING_HAND` 1) against the empty book on the same 1,000 cells
+  (`1119-214054-ab-dab3`): all 10 EscapeTheNight seat-B games changed (+4 wins); off that map-seat 9 of 1,990 games
+  changed winner (net −1), from the booked constant's extra instructions in every robot (tools/book/AGENTS.md
+  "Settable constants"). On EscapeTheNight alone, 60 cells (`1119-214102-ab-f7a0`): seat B 60 of 60 games changed,
+  +39 wins; seat A 9 of 60 changed, +0. Walls-and-dirt scan, 30 cells (`1119-223639-ab-9c7c`): seat B +22 wins of 30.
+- The scan costs the round-1 king 1,913 bytecodes (17,016 against 15,103 on EscapeTheNight); a map-seat without
+  entries pays 6. Main's round-1 king already overruns on warhammer and superioristhmus (~20,000), knifefight 16,679.
+
+A map-seat holds about 1/190 of `goal`: a +20 pp entry is +0.1 pp of the goal score, so the book's value is the sum
+of many entries, and each needs its own map's evidence; a single goal run cannot see one.
+
 ## Local and remote
 
 - **Local** (default): `--workers` games at once (native processes, or JVMs each playing many games). All runs on

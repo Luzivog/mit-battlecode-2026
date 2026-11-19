@@ -137,3 +137,179 @@ def test_a_closed_run_starts_nothing(tmp_path: Path) -> None:
     (run / "closed").touch()
     run_piece(tmp_path, run)
     assert not list((run / "done").iterdir())
+
+
+# ---- the pool: pieces serving every open pooled run ----
+def pooled_run(root: Path, rid: str, tasks: "Sequence[Mapping[str, object]]", created: float, *, open_: bool = True,
+               **meta: object) -> Path:
+    """A pooled run as tools/runs.py makes one, at ROOT/runs/RID, listed in ROOT/pool/open unless not OPEN_."""
+    run = root / "runs" / rid
+    for d in ("claims", "done", "lost"):
+        (run / d).mkdir(parents=True)
+    m = {"id": rid, "tasks": len(tasks), "task_cpus": 1, "task_mem_mb": 100, "cwd": ".", "pool": True,
+         "pool_v": piece.POOL_V, "env": "e1", "wheres": ["local", "condor"], "created": created, "commit": "c" * 40,
+         "code_key": "k1", "with_key": "", "kit": False, "time_s": 14400, "condor_time_s": None} | meta
+    (run / "run.json").write_text(json.dumps(m))
+    (run / "tasks.jsonl").write_text("".join(json.dumps(t) + "\n" for t in tasks))
+    if open_:
+        (root / "pool" / "open").mkdir(parents=True, exist_ok=True)
+        (root / "pool" / "open" / rid).touch()
+    return run
+
+
+def stamp(tag: str, secs: float = 0.0) -> dict[str, object]:
+    """A task recording when it began and ended, as OUT/t."""
+    return {"argv": [*SH, f'echo "{tag} $(date +%s.%N)" > $OUT/a; sleep {secs}; date +%s.%N > $OUT/b'], "lines": []}
+
+
+def spans(run: Path) -> list[tuple[float, float, str]]:
+    """Every done task of RUN: (its start by the piece's clock, its end by its own, the piece's own run when another
+    run's piece served it)."""
+    out = []
+    for f in sorted((run / "done").glob("*.tar")):
+        r, _, o = result(run, int(f.name[:-4]))
+        out.append((float(str(r["began"])), float(o["out/b"]), str(r.get("piece_run", ""))))
+    return out
+
+
+def start_piece(tmp: Path, run: Path, cpus: int = 2, job: str = "local-1118-120000-0001",
+                **extra: str) -> subprocess.Popen[str]:
+    (tmp / "code").mkdir(exist_ok=True)
+    (tmp / "tmp").mkdir(exist_ok=True)
+    return subprocess.Popen([sys.executable, str(PIECE), str(run)], cwd=tmp / "code",
+                            env=env(tmp, cpus, 1000, job) | extra, stdout=subprocess.PIPE, text=True)
+
+
+def test_a_pooled_piece_serves_other_open_runs(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    b = pooled_run(root, "run-1118-120001-bbbb", [stamp("b") for _ in range(3)], 2.0)
+    out = run_piece_at(tmp_path, a)
+    assert len(spans(a)) == 1 and spans(a)[0][2] == ""
+    assert [x[2] for x in spans(b)] == ["run-1118-120000-aaaa"] * 3  # B's tasks, run by A's piece
+    assert "serving the pool" in out and "task run-1118-120001-bbbb/2: ended 0" in out
+    assert not (root / "pool" / "open" / b.name).exists()  # every task done: B leaves the pool
+    assert not list((root / "pool" / "pieces").iterdir())  # the piece's state goes with it
+
+
+def run_piece_at(tmp: Path, run: Path, cpus: int = 2, job: str = "local-1118-120000-0001") -> str:
+    p = start_piece(tmp, run, cpus, job)
+    out, _ = p.communicate(timeout=BOUND_S)
+    assert p.returncode == 0, out
+    return out
+
+
+def test_only_runs_it_can_serve(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    others = [pooled_run(root, f"run-1118-12000{i}-000{i}", [stamp("x")], 2.0 + i, **m) for i, m in enumerate([
+        {"task_mem_mb": 200}, {"task_cpus": 2}, {"env": "e2"}, {"wheres": ["slurm"]}, {"pool": False},
+        {"pool_v": piece.POOL_V + 1}])]
+    others.append(pooled_run(root, "run-1118-120009-0009", [stamp("x")], 9.0, open_=False))  # not listed
+    run_piece_at(tmp_path, a)
+    assert len(spans(a)) == 1 and all(not list((o / "done").iterdir()) for o in others)
+
+
+def test_a_piece_with_little_time_left_serves_only_its_own_run(tmp_path: Path) -> None:
+    """A Slurm piece of 4 s (124 s of --time, less SIGUSR1's lead) serves another run in its first half only."""
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a", 4)], 1.0, time_s=124, wheres=["slurm"])
+    b = pooled_run(root, "run-1118-120001-bbbb", [stamp("b")], 2.0, wheres=["slurm"], open_=False)
+    p = start_piece(tmp_path, a, job="slurm-1118-120000-0001")
+    time.sleep(2.5)
+    (root / "pool" / "open" / b.name).touch()  # listed once under 2 s are left
+    out, _ = p.communicate(timeout=BOUND_S)
+    assert len(spans(a)) == 1 and not list((b / "done").iterdir()), out
+
+
+def test_ends_at_once_when_nothing_is_claimable(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    b = pooled_run(root, "run-1118-120001-bbbb", [stamp("b")], 2.0)
+    for run in (a, b):  # a's task done; b's claimed by a live piece
+        (run / "claims" / "0").mkdir()
+        (run / "claims" / "0" / "by").write_text("local-1118-000000-live host 1\n")
+    (a / "done" / "0.tar").touch()
+    t0 = time.monotonic()
+    out = run_piece_at(tmp_path, a)
+    assert time.monotonic() - t0 < 5 and "started" not in out and not list((b / "done").iterdir())
+
+
+def test_the_fewest_running_run_goes_first(tmp_path: Path) -> None:
+    """Three slots, a big old run and a small new one: the small one's tasks start among the first, not after the
+    big one's; and the big one is served all along (no starvation)."""
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    (a / "claims" / "0").mkdir()
+    (a / "done" / "0.tar").touch()
+    big = pooled_run(root, "run-1118-120001-bbbb", [stamp("big", 0.6) for _ in range(9)], 2.0)
+    small = pooled_run(root, "run-1118-120002-cccc", [stamp("small", 0.6) for _ in range(2)], 3.0)
+    run_piece_at(tmp_path, a, cpus=3)
+    order = sorted([(x[0], "big") for x in spans(big)] + [(x[0], "small") for x in spans(small)])
+    assert [w for _, w in order[:3]] == ["big", "small", "big"]  # equal counts: the older run first
+    assert [w for _, w in order].index("small", 2) <= 4  # the small run's second task: in the next round
+    assert len(spans(big)) == 9
+
+
+def test_a_closed_run_loses_only_its_tasks(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a", 4)], 1.0)
+    b = pooled_run(root, "run-1118-120001-bbbb", [{"argv": ["sleep", "60"], "lines": []}], 2.0)
+    p = start_piece(tmp_path, a)
+    end = time.monotonic() + BOUND_S
+    while not (b / "claims" / "0").exists():
+        assert time.monotonic() < end
+        time.sleep(0.05)
+    (b / "closed").touch()
+    out, _ = p.communicate(timeout=BOUND_S)
+    assert p.returncode == 0 and "its run is closed" in out
+    assert len(spans(a)) == 1 and not list((b / "done").iterdir())
+    assert [x.name.split(".")[0] for x in (b / "lost").iterdir()] == ["0"]
+
+
+def test_another_runs_checkout_and_kit(tmp_path: Path) -> None:
+    """A run of other content runs in its own checkout (its bundle and shipped files), with its own kit."""
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0, kit=True)
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    g = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run([*g, "init", "-q", "-b", "main"], check=True)
+    (repo / "sub").mkdir()
+    (repo / "sub" / "f").write_text("b's code\n")
+    subprocess.run([*g, "add", "-A"], check=True)
+    subprocess.run([*g, "commit", "-qm", "b"], check=True)
+    commit = subprocess.run([*g, "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    jar = tmp_path / "engine.jar"
+    jar.write_text("jar")
+    b = pooled_run(root, "run-1118-120001-bbbb", [{"argv": [*SH, 'cat f ../shipped > $OUT/r; echo "$BC_CLASSPATH '
+                                                   '$RUN_ID $PWD" >> $OUT/r'], "lines": []}], 2.0, commit=commit,
+                   code_key="k2", with_key="w2", kit=True, cwd="sub")
+    subprocess.run([*g, "bundle", "create", "-q", str(b / "code.bundle"), "HEAD", "main"], check=True)
+    (tmp_path / "w").mkdir()
+    (tmp_path / "w" / "shipped").write_text("b's shipped file\n")
+    subprocess.run(["tar", "-czf", str(b / "with.tgz"), "-C", str(tmp_path / "w"), "shipped"], check=True)
+    (b / "kit").write_text(f"{jar}\n")
+    out = run_piece_at(tmp_path, a)
+    r, log, o = result(b, 0)
+    assert r["code"] == 0, log + out
+    text = o["out/r"].decode().splitlines()
+    assert text[:2] == ["b's code", "b's shipped file"]
+    cp, rid, pwd = text[2].split()
+    assert rid == b.name and pwd.endswith("/sub") and cp == f"{Path(pwd).parent}/build/classes:{jar}"
+    assert "its checkout made" in out
+
+
+def test_its_state_says_its_free_slots(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [{"argv": ["sleep", "3"], "lines": []}], 1.0)
+    p = start_piece(tmp_path, a, cpus=3)
+    f = root / "pool" / "pieces" / "local-1118-120000-0001"
+    end = time.monotonic() + BOUND_S
+    while not f.exists():
+        assert time.monotonic() < end
+        time.sleep(0.05)
+    st = json.loads(f.read_text())
+    assert (st["slots"], st["running"], st["task_mem_mb"], st["env"], st["backend"]) == (3, 1, 100, "e1", "local")
+    p.communicate(timeout=BOUND_S)
+    assert not f.exists()

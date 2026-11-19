@@ -589,7 +589,6 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - Diagnostics: bites by damage level, one-shot kills, 1v1 duels won (CombatStats), cheese spent on bites.
   - **Kill:** duels won unchanged.
 - **Size.** 40–100 lines.
-
 - **Merged: CB1c only** (2026-11-19, f809bf3): after a combat move the bite or grab runs only if the action is ready,
   and an out-of-cone secondary target ends the combat turn. Game actions are main's; only the lost turn tails come back
   (`BabyRat.attack` throws 149 → 18 per 192 games). Every damage-policy and king-bite arm ended H0 (`docs/closed.md`):

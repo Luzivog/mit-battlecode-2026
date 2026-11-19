@@ -18,7 +18,7 @@ both seats; diff [95%], games better/worse of the confirmation). The entry lines
 | tminusten | A, B | every centre the king can reach is on a cat loop; it is pinned at r22 and dies at r101–117 with a bank of 2,000 and 16 babies; the backstab comes before r50, so the cooperation second king never forms | `CM_KING2_ROUND` 30, `KING2_SITE` A (12,15), B (12,34) | 23007 `1119-223519-ab-64a3`: A +0.475, B +0.30 | 23009 `1119-225939-ab-b3f0`: A +0.475 [+0.37, +0.59] (38/0), B +0.21 [+0.12, +0.30] (17/0) |
 | peaceinourtime | A | awubot kills its own cat first (r363–487); ours kills our first king near r500; our own rats, traps and king then kill the last cat at 1 king to 2, and the cooperation ending scores kings 30 | `CM_KING2_ROUND` 30, `KING2_SITE` (11,31), (14,34), `CM_LAST_CAT_HOLD` 1 | 23009 `1119-230006-ab-646c`: +0.44; the hold over the second king alone on the same cells +0.075 [+0.01, +0.14] (7/1) | 23013 `1119-231831-ab-eddf`: +0.45 [+0.34, +0.56] (49/4) |
 | sunandmoon | A, B | the king flees along cat 6's (5's) lane from the mine into its waypoint dead end (26,28) / (26,11) | `CM_KING2_ROUND` 30, `KING2_SITE` A (19,23), B (19,16), `CAT_LANE`, `CM_LANE_MEMORY` 1, `CM_LANE_FLEE` 1 | 23009 `1119-225957-ab-2215`: A +0.19, B +0.36 (the lanes over the second king alone: B +0.125 [+0.02, +0.23]) | 23012 `1119-231544-ab-1b88`: A +0.21 [+0.10, +0.32] (29/8), B +0.17 [+0.06, +0.29] (27/10) |
-| RUN | A | ends on points at r2000 after the backstab; cat damage counts 30 | `CM_CAT_HUNT_START` 500 | 23014 `1119-231919-ab-a923`: +0.21 [+0.10, +0.32] (800: +0.10) | pending (23015) |
+| RUN | A | ends on points at r2000 after the backstab; cat damage counts 30 | `CM_CAT_HUNT_START` 500 | 23014 `1119-231919-ab-a923`: +0.21 [+0.10, +0.32] (800: +0.10) | 23015 `1119-232514-ab-45ee`: +0.15 [+0.04, +0.26] (25/10) |
 
 Off: peaceinourtime B loses with the second king (−0.11 to −0.18 in every run) and both seats with the lane book
 (−0.25 A, −0.15 B); the lane book does not confirm on RUN A (+0.225 on 23004, +0.07 [−0.04, +0.18] on 23010); on
@@ -118,7 +118,9 @@ Arms turn one or more switches on everywhere; each is read per map-seat, paired 
 | `p2` | confirmation | peaceinourtime, 23013 | A +0.45 [+0.34, +0.56], B −0.14 (100) | `1119-231831-ab-eddf` |
 | `CM_CAT_HUNT_START` 800 / 500 | | RUN, 23014 | 800: A +0.10, B +0.04; 500: A +0.21 [+0.10, +0.32], B +0.06 (100) | `1119-231913-ab-b159`, `1119-231919-ab-a923` |
 
-Running: `CM_CAT_HUNT_START` 500 confirmation on RUN (23015, `1119-232514-ab-45ee`); the proposed entries in the book
+| `CM_CAT_HUNT_START` 500 | confirmation | RUN, 23015 | A +0.15 [+0.04, +0.26], B +0.06 (100) | `1119-232514-ab-45ee` |
+
+Running: the proposed entries in the book
 itself (`t3/cm-book-trial`, never merged) on five maps (23016, `1119-232632-ab-e89f`).
 
 ## 5. Tools (`~/battlecode26-data/scratch/cm/`)

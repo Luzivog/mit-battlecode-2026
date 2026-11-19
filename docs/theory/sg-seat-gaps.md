@@ -17,10 +17,12 @@ map comes from something that is not mirror-symmetric. Source keys: `E:` engine 
    the map file), sensing scan order (chiralities swapped), the team label (both kings' teams swapped), our king's
    hand (explains pocketsofcheese only), awubot's king's hand, the map centre `W/2, H/2` (rounded toward +x/+y, flipped
    in both bots).
-3. **The switch `SG_LOOK_RIGHT`** (Tune.java, 0 = main, every instruction unchanged) mirrors each left-first rule.
-   Turned on in our bot only, on the eight maps: popthecork B 0.38 → 0.92 (A 1.00 → 0.96), diamond B 0.48 → 0.79,
-   jail A 0.71 → 0.88 (B 0.88 → 0.71), hellofromtheotherside A 0.73 → 0.83 (B 0.90 → 0.83).
-4. Book entries and the general rule: §4.
+3. **The switch `SG_LOOK_RIGHT`** (Tune.java, 0 = main, every instruction unchanged, javap) mirrors each left-first
+   rule. **Proposed book entry: popthecork, seat B, `SG_LOOK_RIGHT` 1**: chosen at +0.400 [+0.231, +0.569] (p_max
+   0.000, seed base 22002), confirmed at **+0.483 [+0.332, +0.634]** on 60 fresh cells (22003); seat A −0.033.
+   On the other map-seats the switch's effect did not replicate on fresh seeds (§4).
+4. **Open:** knifefight and closeup (no flip here moves them; closeup is ROTATIONAL, so no handedness can), diamond
+   B (the lookahead read +0.31 on 22001 and −0.13 on 22002), pocketsofcheese (KR's king hand).
 
 ## 1. The gaps and the diagnostics
 
@@ -72,7 +74,20 @@ team A digs first in 11 of 24 and team B in 19–20; mirrored in ours only, the 
 
 ## 4. Arms and book entries
 
-(numbers to come)
+The switch on in our bot against main, both on the same cells (paired), win rate change by seat.
+
+| arm | pool | seed base | cells | ours − main, seat A | seat B | run |
+|---|---|---|---|---|---|---|
+| `sg_lr` (probe copy, the same rules) | the 8 maps | 22001 | 192 | +0.06 (all maps) | +0.11 (all maps) | `1119-225424-ab-9d78` |
+| `SG_LOOK_RIGHT` 1: book matrix SGL | the 8 maps, 40 a map | 22002 | 320 | popthecork −0.075, others −0.13..0 | popthecork **+0.400 [+0.231, +0.569]**, p_max 0.000; jail +0.075, pockets +0.075, diamond −0.125 | `1119-232509-ab-d42e` (ref `1119-232310-ab-35ca`) |
+| confirmation | `map:popthecork` | 22003 | 60 | −0.033 [−0.099, +0.032] | **+0.483 [+0.332, +0.634]** | `1119-233501-ab-5796` |
+| step order rotated (`sg_morot`) | `map:closeup` | 22001 | 48 | 0.50 → 0.63 | 0.79 → 0.88 (gap kept) | `1119-232700-ab-ccfd` |
+| step order x-mirrored (`sg_mox`) | `map:knifefight` | 22001 | 48 | 0.88 → 0.85 | 0.98 → 0.96 (gap kept) | `1119-232713-ab-a30a` |
+
+Proposed entry (both runs above): `{"map": "popthecork", "seat": "B", "set": "SG_LOOK_RIGHT", "value": 1,
+"evidence": ["1119-232509-ab-d42e", "1119-233501-ab-5796"], "by": "SG"}`. Its round-1 king turn on popthecork is
+15,956 bytecodes in main; the book's scan adds 1,913 (limit 20,000). Once booked, the switch is read twice per
+lookahead step (2 bytecodes each).
 
 ## 6. Data and tools (`~/battlecode26-data/scratch/sg/`)
 

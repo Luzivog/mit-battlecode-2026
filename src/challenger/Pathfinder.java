@@ -1819,6 +1819,7 @@ public class Pathfinder {
         }
     }
     static BugnavInstance bug;
+    static boolean kingLeft = true; // the king's bug hand (Tune.KING_HAND), set by CellTracker.storeVisibleCellsKing
     static int lastDist = 0;
 
     public static  MapLocation getBugPos() {
@@ -1847,7 +1848,7 @@ public class Pathfinder {
                 // indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
                 lastDist = 0;
-                bug = new BugnavInstance(true, target);
+                bug = new BugnavInstance(Tune.KING_HAND == 0 || kingLeft, target);
             }
         }
         // int shade = 255;

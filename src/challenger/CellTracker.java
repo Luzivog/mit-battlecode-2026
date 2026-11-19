@@ -5841,6 +5841,16 @@ public class CellTracker {
         kingMask3 = (x >= 3 ? 0x7fl << (x - 3) : 0x7fl >>> (3 - x)) & onMap;
         kingMask4 = (x >= 4 ? 0x1ffl << (x - 4) : 0x1ffl >>> (4 - x)) & onMap;
         kingMask5 = (x >= 5 ? 0x7ffl << (x - 5) : 0x7ffl >>> (5 - x)) & onMap;
+        if (Tune.KING_HAND != 0 && kingScanOrder < 0) {
+            // order 0: chirality 0; chirality 1 reverses x on VERTICAL maps (2), y on HORIZONTAL (1), both on ROTATIONAL (3)
+            kingScanOrder = findKingScanOrder(infos);
+            Pathfinder.kingLeft = switch (Tune.KING_HAND) {
+                case 1 -> false;
+                case 2 -> kingScanOrder == 0;
+                case 3 -> kingScanOrder == 0 || kingScanOrder == 3;
+                default -> kingScanOrder != 2;
+            };
+        }
         if (!kingRowsSeen(y)) {
             // a cell seen for the first time: the full scan registers walls and mines in the engine's order
             for (var info : infos) {

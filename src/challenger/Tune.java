@@ -83,4 +83,10 @@ public final class Tune {
     public static final int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
     // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
+
+    // KR: the king's bug hand (Pathfinder; docs/theory/kr-king-routes.md). Main's king always starts left-handed; a
+    // mirror reverses that, so on reflective maps the two seats' kings go round mirrored walls on opposite sides.
+    // 0: left (main); 1: right; 2: right for chirality 1; 3: right for chirality 1 on VERTICAL and HORIZONTAL maps;
+    // 4: right for chirality 1 on VERTICAL maps. The king reads both from its first scan's order (CellTracker).
+    public static final int KING_HAND = 0;
 }

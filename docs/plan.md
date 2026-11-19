@@ -460,7 +460,6 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - In cooperation a fired trap blames us (R§2), which is harmless against awubot.
   - Bytecode: TryTrap keeps its budget.
 - **Size.** 40–120 template lines.
-
 - **Merged** (2026-11-19, 79cc92f): B2 (staying scores all 8 facings), the band trap (+20 on the tile between, +10 at
   ±45°, raw ≥ 20 or global ≥ 400) gated on ≥ 5 known mines (`util/MineEstimate`), and S2's two lost-turn sites.
   `goal` gain +0.119 [+0.045, +0.188] (1119-033639-ab-2d84); on top of CW +0.116 [+0.050, +0.183]

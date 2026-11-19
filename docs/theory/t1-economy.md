@@ -37,9 +37,9 @@ a measurement from replays or maps, reproducible with the scratch tools in `~/ba
 | maps | the 43 official `maps/*.map26` | path distance: 8-neighbour Dijkstra, walls impassable, dirt cost 3 (a dig adds 25 action cooldown and costs 5 cheese) |
 
 Replays record per round the cheese transferred (king pickups included, rules §1), baby rats alive, and every spawn,
-death, transfer, trap, trigger and bite. They do not record global cheese, so no claim below rests on a
-reconstructed bank; bank levels come from the instrumented probe in strategy.md §8 and §10.1. `teamAliveRatKings` in
-replays is not a king count (it reads 14–20k); king counts here come from spawn, upgrade and death events.
+death, transfer, trap, trigger and bite. Global cheese is in them too, found after this lens was written:
+`Round.teamAliveRatKings` holds kings + 10 × global (`~/battlecode26-data/scratch/kb/Bank.java` prints it per round).
+The claims below were made without it; bank levels here come from the instrumented probe in strategy.md §8 and §10.1.
 
 ## 2. Derivation
 
@@ -421,8 +421,8 @@ and independent). E4–E6 follow; E6 merges into E2's site code.
 - τ, the per-trip overhead in §2.6 (assumed 5 rounds); not measured.
 - The fraction of its own mine's 2.26/round a parked king collects: measured only as 17% of team income overall
   (≈ 1.4/round at the mirror's 8.2/round, A), not per king.
-- Global cheese over time is not in replays; the float and starvation numbers rest on strategy.md's probe
-  (§8, §10.1). A copy of challenger that logs `rc.getGlobalCheese()` every 50 rounds would settle them.
+- The float and starvation numbers rest on strategy.md's probe (§8, §10.1); replays hold global cheese
+  (`teamAliveRatKings` = kings + 10 × global, KB's `Bank.java`), so they can be re-measured from any run.
 - The replays are engine 1.2.5. On 1.2.6 the spawn box is centred and mirror-correct (rules §0): this moves where a
   parked king's pickups land, not the supply.
 - Whether an opening king (r≈10–40) or a later one (r100–200) is better depends on how much the first contact

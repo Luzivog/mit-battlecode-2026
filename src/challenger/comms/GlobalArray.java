@@ -59,6 +59,9 @@ public class GlobalArray {
     private static final int MAP_CHUNK_EMPTY_FLAG = 1 << 29; // top bit of 30-bit payload
     private static final int MAP_CHUNK_MASK = MAP_CHUNK_EMPTY_FLAG - 1; // low 29 bits
     private static final int MIN_CHEESE = MAP_CHUNK_START + MAP_CHUNK_SLOTS;
+    // What the engine charges after the LSB read in writeMyLoc, through its second write: 2 writes of 50
+    // (MethodCosts.txt) and the 39 instructions between (javap). With more bytecodes left, no pause falls between them.
+    private static final int LOC_WRITES_COST = 2 * 50 + 39;
     public static FastIndexedIntSet globalCheeseMines = new FastIndexedIntSet();
     public static MapLocation nearestRatKing;
     public static int nearestRatKingId;
@@ -480,14 +483,17 @@ public class GlobalArray {
     }
 
     public static void writeMyLoc() throws GameActionException {
-        // println("wrote my loc as rat king: " + myLoc);
-        writeSharedArray(kingId + RAT_KING_LOC, encode2x2());
-        // write LSBs for exact position
+        int pos = encode2x2();
         int lsbs = rc.readSharedArray(RAT_KING_LSBS);
         int myLsb = (myLocX & 1) | ((myLocY & 1) << 1);
         lsbs &= ~(0b11 << (2 * kingId));
         lsbs |= myLsb << (2 * kingId);
-        writeSharedArray(RAT_KING_LSBS, lsbs);
+        // The location spans two slots. The engine can pause a turn that runs out of bytecode before any write, and
+        // rats acting until it resumes would read the new slot with the old low bits, a tile off. So write both or
+        // neither: the slots keep the last location written, which is consistent.
+        if (Clock.getBytecodesLeft() <= LOC_WRITES_COST) return;
+        rc.writeSharedArray(kingId + RAT_KING_LOC, pos);
+        rc.writeSharedArray(RAT_KING_LSBS, lsbs);
         ratKingsRound = -1;
     }
 

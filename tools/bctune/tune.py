@@ -265,6 +265,15 @@ def run_status(run_id: str) -> str:
         return "starting"
 
 
+def run_cells(run_id: str):
+    """'running', or the cells a stopped run completed."""
+    try:
+        st = json.loads((run_dir(run_id) / "state.json").read_text())
+    except (OSError, ValueError):
+        return "running"
+    return "running" if st.get("status") == "running" else st["tests"][0].get("cells", 0)
+
+
 def pin_ref(ref: str) -> str:
     pkg, _, rev = ref.partition("@")
     if rev == "origin/main":
@@ -276,8 +285,10 @@ def cmd_play(a) -> int:
     c = load(a.name)
     ref = pin_ref(a.ref)
     key = {"pool": a.pool, "seed_base": a.seed_base, "cells": a.cells, "ref": ref, "engine": a.engine}
-    todo = [v for v in c["variants"] if not any(r["variant"] == v["label"] and
-                                                 {k: r[k] for k in key} == key for r in c["runs"])]
+    # a variant is played again when its run stopped short of its cells (failed batches): the new run reads the
+    # games already played from the cache
+    todo = [v for v in c["variants"] if not any(r["variant"] == v["label"] and {k: r[k] for k in key} == key
+                                                 and run_cells(r["id"]) in ("running", a.cells) for r in c["runs"])]
     if a.only:
         todo = [v for v in todo if v["label"] in a.only.split(",")]
     print(f"campaign {a.name}: {len(todo)} variants to play against awubot, ref {ref}, pool {a.pool}, "

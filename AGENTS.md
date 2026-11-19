@@ -61,7 +61,8 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 10. Wait only in the background. Start every wait (`tools/games wait ID`, `tools/tune wait`, `tools/compute wait`, a
    long build) as a background command, then do other work or end your turn: its exit wakes you. Never poll in the
    foreground (`until ...; do sleep ...; done`, a foreground wait): while it runs you read no result and no message.
-   Wait for each test on its own, so each one wakes you when it ends.
+   Wait so that each result wakes you: `tools/games wait --any ID ID...` returns at the first verdict (and names the
+   rest), `tools/tune wait NAME --next` at each run's end.
 11. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.
 
 ## Commands
@@ -83,7 +84,8 @@ tools/tune params                                           # tune src/challenge
 
 Judging a change: `docs/evaluation.md`. `tools/games ab challenger awubot --pool POOL` (gain test: the branch against
 main, both playing awubot on the same cells) prints an ID; run `tools/games wait ID` in the background (exit 0 =
-passed), then `tools/games show ID` and `tools/games diff OLD NEW`. Add `--remote` to play on Imperial. Games play on
+passed; `wait --any ID...` for several), then `tools/games show ID` and `tools/games diff OLD NEW`. A gain smaller than
+the test's δ merges by the precision route (`docs/evaluation.md`, Protocol item 5). Add `--remote` to play on Imperial. Games play on
 the native engine (`engine/`) with a same-machine exactness check; `--backend java` plays on the official engine.
 Tests are the slow part of the work: run independent ones in parallel (Imperial has thousands of free slots),
 never block on one in the foreground, and ask for replays in the test (`--replays losses|all`) when you'll read them.

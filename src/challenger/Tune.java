@@ -26,7 +26,11 @@ public final class Tune {
     public static final int MINES_KING2 = 5; // tune: 2 [1, 12] known mines a second king needs before r1200
     public static final int JOIN_DIST = 25; // tune: 5 [8, 60] rats within this distance (tiles) join a formation
 
+    // Pathing (Pathfinder): rats path through dirt (and dig it) once global reaches this from r100.
+    public static final int DIRT_CHEESE = 1500; // tune: 500 [500, 3000] global from which rats path through dirt
+
     // Combat (robot/rat/combat).
     public static final int BITE_BONUS_CHEESE = 300; // tune: 150 [0, 2000] bites deal 12 (2 cheese) from this cheese, else 10
+    public static final int TRAP_RAW = 20; // tune: 10 [0, 100] rats carrying this raw cheese place traps (TryTrap)
     public static final int BAND_GLOBAL_CHEESE = 400; // tune: 200 [0, 2000] band traps paid from global above this (TryTrap)
 }

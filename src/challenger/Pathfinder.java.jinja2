@@ -19,7 +19,7 @@ class Config {
     public static boolean allowDirt() {
         if(dirtAllowed) return true;
         var globalCheese = rc.getGlobalCheese();
-        if(time >= 100 && globalCheese >= 1500 || globalCheese >= 3000) {
+        if(time >= 100 && globalCheese >= Tune.DIRT_CHEESE || globalCheese >= 3000) {
             dirtAllowed = true;
         }
         return dirtAllowed;

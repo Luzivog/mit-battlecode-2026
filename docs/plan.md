@@ -897,7 +897,7 @@ All lanes start once S1 is on main. CW waits for S1 only because they share TryT
 
 At most 10 lanes run in parallel in wave 1. Merges are always serial.
 
-## 5.5 Open bugs (certain-sign, unowned)
+### 5.5 Open bugs (certain-sign, unowned)
 
 Found by packages outside their files; each is a small fix judged by its diagnostic plus a `goal` harm test.
 - `TryAttack.miniRun` has no cone check: 13 lost turn tails per 192 games (CB).

@@ -86,6 +86,7 @@ public final class Tune {
 
     // PM (per-map tuning, docs/theory/pm-per-map.md): switches and constants for the book. Each default is main's.
     public static final int PM_SYM = 0; // tune: 1 [0, 3] the map's symmetry from round 1: 0 learn it, 1 rotation, 2 x mirror, 3 y mirror
+    public static final int PM_SYM_B = 0; // tune: 1 [0, 1] 1: seat B's king reads the symmetry from its first scan's order (a general rule)
     public static final int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
     public static final int SPAWN_POOR_CUT = 10; // tune: 10 [0, 30] rat-cap cut on maps <= 1600 tiles with < 5 mines (E2: 4 rats)
 }

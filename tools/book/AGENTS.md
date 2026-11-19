@@ -12,6 +12,11 @@ map-seat without entries, the bot plays exactly as main. How an entry is chosen 
 | ids unique over `maps/`, entries valid, generated code current (exit 1 on a problem) | `tools/book/book check` |
 | the goal maps' ids and round-1 keys | `tools/book/book ids` |
 | tests | `python3 -m unittest discover -s tools/book -p '*_test.py'` |
+| candidates x maps: one run a candidate plus main's, each over every map (background) | `tools/book/book matrix NAME --point LABEL:CONST=V ... --maps M1,M2 --cells-per-map N --seed-base B` |
+| per map-seat: raw, selection-adjusted and shrunk effects, p_max | `tools/book/book fit NAME [--json]` |
+| the method on simulated null and planted matrices | `tools/book/book fit --simulate` |
+| the book against main: goal 3,000 cells, its maps, maps outside it (3 runs) | `tools/book/book confirm --seed-base B` |
+| a confirm's results | `tools/book/book confirm-show FILE` |
 
 After `gen`, regenerate nothing else; run `./gradlew build -x test` and commit `book.jsonl`, `Book.java` and
 `Tune.java` together.
@@ -58,6 +63,9 @@ One JSON object a line (blank lines and `#` lines skipped):
 - `tools/tune` reads and rewrites both forms; a tuned value of a booked constant is its default off the book.
 
 ## Rules
+
+- A matrix is K + 1 runs (`tools/tune play` of a points campaign on a `map:` pool): put many maps in one matrix
+  rather than one matrix a map, and keep within the integrator's limit on open runs.
 
 - Never edit `Book.java`; never drop `final` by hand. `check` fails when either is not what the book generates.
 - A switch's default is main's behaviour, instruction for instruction (javap, docs/evaluation.md "Tuning constants").

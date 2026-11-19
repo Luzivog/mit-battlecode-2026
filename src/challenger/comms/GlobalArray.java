@@ -418,17 +418,21 @@ public class GlobalArray {
     public static void writeCheeseMines() throws GameActionException {
         int n = cheeseQueueSize;
         int slots = N - MIN_CHEESE;
+        // Terminator first, then the mines from the bottom up. Readers scan down from slot N-1, and slots below the
+        // deepest terminator ever written still hold the array's initial 0. Written in this order, the deepest
+        // terminator is overwritten only after a deeper one exists, so a turn that runs out of bytecode mid-list
+        // never lets a reader reach a 0.
+        if (n < slots) {
+            writeSharedArray(N - 1 - n, 1023);
+        }
         if (n > 0) {
             int count = Math.min(n, slots);
-            for (int j = 0; j < count; j++) {
+            for (int j = count - 1; j >= 0; j--) {
                 writeSharedArray(N - 1 - j, cheeseQueueAt(j));
             }
             for (int j = 0; j < count; j++) {
                 rotateCheeseQueueOnce();
             }
-        }
-        if (n < slots) {
-            writeSharedArray(N - 1 - n, 1023);
         }
     }
 

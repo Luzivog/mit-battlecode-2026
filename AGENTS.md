@@ -34,6 +34,7 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 | `docs/intel.md`, `docs/opponents.md`, `docs/lessons.md` | when choosing what to improve |
 | `docs/testing.md`, `docs/evaluation.md` | before judging a change |
 | `docs/theory/`, `docs/plan.md` | the theory and the work packages (track T) |
+| `docs/closed.md` | before trying a change: directions measured and rejected |
 
 ## Rules
 

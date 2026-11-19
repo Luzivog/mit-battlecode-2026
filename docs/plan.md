@@ -137,7 +137,7 @@ w·(s − 0.5) to the goal score (§5).
    - King budgets (king mean 13.2k, max 19,988 of 20k; arch§8): KL ≤ +1k mean on formation turns; K1 and K2 ≤ +0.5k
      mean on cat turns; any other king change ≤ +0.3k. RB must free more than these combined before KL and K1 merge.
 10. **Kill and lane closing.** Each package has a kill criterion (§4). A lane closes after 3 consecutive H0s only if the
-    diagnostics did not move either. Record every H0 with its diagnostics in a closed-directions log (lessons§9).
+    diagnostics did not move either. Record every H0 with its diagnostics in `docs/closed.md` (lessons§9).
 11. **Gauntlet.** Before merge, play every sparring bot paired against main on the same cells, OBG and GST first. No
     significant drop.
 12. **Report.** Branch, head commit, the arm chosen and why, GSPRT results per pool, diagnostic values against main,
@@ -601,6 +601,10 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 ### 4.2 Wave 2
 
 #### E3. Territory: miners by deficit, exploration that ends
+- **Closed** (2026-11-19): every lever lost on the ≥ 8-mine class pool (`docs/closed.md`). Against awubot, far trips
+  to enemy-side mines hold the front; its distance-weighted lottery looks near a local optimum. Only change 0, the mine
+  squeak decoder fix (it read 1 of the 3 mines a squeak packs), is kept. Drop E3's +2 to +6 pp from the wave-2
+  forecast.
 - **Change.**
   - The king writes payload role 1 (`KingSpawningStrategy.java:93`) with the mine whose miner deficit is largest:
     - target miners per mine n_mine(d, L) (T1§2.6);

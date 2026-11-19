@@ -252,6 +252,62 @@ holdout results are slightly optimistic. Never tune a constant on those games.
   from replays. A replay of an alternate-order game swaps the teams of the initial bodies, so some of those maps may
   have A and B exchanged. Both seats are always played, so this only relabels the seats.
 
+## Tuning constants (`tools/tune`, track TN)
+
+`tools/tune` (guide: `tools/bctune/AGENTS.md`) tunes the numbers in `src/challenger/Tune.java` jointly against
+awubot. A variant is a commit that changes only Tune.java; it plays a fixed-size `tools/games ab` paired with main
+on the same cells, and `fit` estimates every constant's effect from all variants at once.
+
+**Why variants differ only in constants.** Tune.java holds compile-time constants, which javac copies into each use:
+moving a number there changed no instruction of main (all 49 classes compared with `javap -c -p`, pool indices
+removed), and a variant changes no instruction either. Its games equal main's up to the first decision a constant
+changes. To check a refactor the same way:
+
+```sh
+for c in $(cd A && find . -name '*.class'); do cmp <(javap -c -p -constants A/$c | sed -E 's/#[0-9]+(, *[0-9]+)?//g;s/ +/ /g') \
+  <(javap -c -p -constants B/$c | sed -E 's/#[0-9]+(, *[0-9]+)?//g;s/ +/ /g') >/dev/null || echo "DIFF $c"; done
+```
+
+**What a variant costs** (measured 19 Nov, clankerland at load 15-25, Imperial Condor):
+
+| step | native backend | Java backend |
+|---|---|---|
+| build a variant | 63 s wall, 75 CPU s: the translation (49 s, single-threaded, one at a time on the host), one method file, the link; a code change to challenger takes 98-115 s, 305-363 CPU s (every challenger file recompiles) | javac alone, 3.5 s |
+| a game on DoC | 15.7 CPU s (19,421 games of the first screen) | 74.5 CPU s (measured above) |
+| a 570-game variant | ~9,000 CPU s | ~42,000 CPU s |
+
+- Native wins: a minute of one build slot saves ~33,000 CPU s of Imperial a variant. `tools/tune play` builds one
+  variant at a time (the host's other build slot stays free) and starts its test as soon as its binary is ready: one
+  variant a minute.
+- Several variants in one binary would not help: each must be its own package (two builds of one package can't share
+  a binary), so each compiles all ~105 of its files (the 305-363 CPU s of a code change) instead of one, and the
+  translation grows with it.
+- The first screen (32 variants, 285 cells each): 48 min from the first build to the last result, 19,422 games,
+  305,000 CPU s on Imperial. About 600 of those games were main's, replayed by runs that started before the cache
+  held them.
+
+**Noise** (the first screen: 32 variants, each 16 constants one step from main, 285 `goal` cells):
+- No variant game equalled main's game on the same cell and seat: with 16 constants moved, every game diverges
+  early. With 3 constants moved, 8% did; with one, see stage 3 below.
+- Per-cell SD of the paired diff (variant − main): 0.38. A variant's cell score varies with SD 0.26 across variants
+  (the chaos of W0.1); 25 of 285 cells scored the same for all 32 (22 of them won both games by every variant).
+- The variants' mean scores spread with SD 0.026, against 0.016 from the chaos alone: the constants move the score.
+- A single variant's diff on 285 cells has a 95% CI of about ±0.04; an effect fitted from all 32 has one of about
+  ±0.006 for one step.
+
+**Method: two-level screens, a step, a dose-response, then the ordinary protocol.** Builds are the scarce resource
+and games are cheap and parallel, so the search uses few variants with many games each, and lets every game inform
+every constant:
+- A screen sets each constant to its value ± one step in a two-level resolution-IV design (2n variants for up to n
+  constants; main effects are not mixed with two-constant interactions). Its effects are least-squares fits, with
+  CIs by resampling maps. SPSA (fishtest's method) moves along a new random direction every iteration and needs
+  hundreds of iterations, each two builds: about 7 hours of builds for 200 iterations, where a screen takes 32.
+  One-at-a-time sweeps spend a build per point on one constant; a screen's 32 builds estimate 16 constants, each
+  from all 18,000 games.
+- Then the constants with |z| ≥ 2 move one step, and a second screen around the new centre, on fresh seeds, both
+  checks them (a winner of 16 is biased upward) and asks whether to go further. Then a dose-response on the
+  confirmed ones, and the chosen vector goes through the protocol above on a seed base the search never used.
+
 ## Measured: the native engine (2026-11-19)
 
 **One test on all four**: `tools/games ab challenger awubot --test harm --pool goal --no-cache` (challenger = main's,

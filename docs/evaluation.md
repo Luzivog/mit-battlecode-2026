@@ -155,6 +155,30 @@ the ref's own score on the same cells and the paired difference with its CI.
    - then smoke and the gauntlet as in item 3. Report both run IDs and both intervals.
    A smaller screen (e.g. 1,000 cells) is fine for choosing among arms; only the confirmation decides.
 
+## The book: per-map entries
+
+The book (`src/challenger/book.jsonl`, tools/book/AGENTS.md) sets a switch or a datum per goal map and seat. Its
+entries are chosen and confirmed map by map, then as a whole:
+
+1. **Choose** on one fresh seed base: `tools/book/book matrix NAME --point LABEL:CONST=V ... --maps M1,M2
+   --cells-per-map N --seed-base B` (in the background) plays every candidate on the maps' `map:` pool, main on the
+   same cells, both seats. Then `tools/book/book fit NAME`: per map-seat the best candidate's raw effect, its
+   selection-adjusted effect and p_max. The best of K candidates on one map-seat reads high by the null maximum of K
+   (simulated nulls, `fit --simulate`: +0.033 for K 2, +0.057 for K 4, +0.075 for K 8 at 30 cells a map-seat); adj
+   removes it (null mean within ±0.002), and p_max is the sign-flip test of that maximum. Propose an entry when
+   p_max < 0.05 and adj > 0.
+2. **Confirm** the one chosen value on the map alone (`--pool map:M`, both seats) on a second fresh seed base: the
+   entry's seat must read a 95% lower bound above 0 (`tools/games ab challenger@REV awubot --ref challenger@origin/main
+   --pool map:M --min-cells N --max-cells N --seed-base B2 --remote`). The entry's `evidence` holds both run IDs.
+3. **The whole book** against main: `tools/book/book confirm --seed-base B3` starts the protocol's precision route
+   (3,000 `goal` cells, item 5), the entries' map-seats on their own maps (seed base B3 + 1), and the goal maps
+   without entries plus `teammade` (B3 + 2), where the book must change nothing systematic.
+   `tools/book/book confirm-show FILE` reads all three. The book merges when the `goal` lower bound is above 0 and
+   no entry's own map-seat reads below 0.
+
+A map-seat holds about 1/190 of `goal`: a +20 pp entry is +0.1 pp of the goal score, so the book's value is the sum
+of many entries, and each needs its own map's evidence; a single goal run cannot see one.
+
 ## Local and remote
 
 - **Local** (default): `--workers` games at once (native processes, or JVMs each playing many games). All runs on

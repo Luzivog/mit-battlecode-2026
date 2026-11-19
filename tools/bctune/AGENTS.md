@@ -28,6 +28,8 @@ Campaigns live in `~/battlecode26-data/tune/NAME/campaign.json` (`TUNE_DATA` ove
 
 - One line a constant: `public static final TYPE NAME = VALUE; // tune: STEP [MIN, MAX] meaning`. The tuner rewrites
   VALUE only, within [MIN, MAX]. A code line holding `// tune:` that does not parse is an error.
+- A constant some book entry sets has no `final` (`tools/book/book gen` drops it; tools/book/AGENTS.md): it is a
+  static field the book writes per map-seat, and a variant's value is its default off the book.
 - Compile-time constants only (literals and constant expressions such as `10 * Tune.GOHOME_PCT / 100`): javac copies
   the value into every use, so main's bytecode is unchanged instruction for instruction, and a variant changes no
   instruction, only the constants. Its games equal main's up to the first decision a constant changes, with no

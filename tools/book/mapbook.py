@@ -10,7 +10,9 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parents[1]
@@ -18,11 +20,16 @@ sys.path.insert(0, str(TOOLS))
 from bcgames import pools, store  # noqa: E402
 from bctune import tune  # noqa: E402
 
+import bookfit  # noqa: E402
+
 ROOT = TOOLS.parent
 BOOK = ROOT / "src/challenger/book.jsonl"
 BOOK_JAVA = ROOT / "src/challenger/Book.java"
 TUNE_JAVA = ROOT / "src/challenger/Tune.java"
 VIEW_CACHE = store.DATA / "bookview"
+CONFIRM_DIR = tune.DATA.parent / "book"  # ~/battlecode26-data/book: confirm runs
+GAMES = TOOLS / "games"
+TUNE = TOOLS / "tune"
 SEATS = {"A": ["A"], "B": ["B"], "both": ["A", "B"]}
 DATA_TYPES = {"tiles": "MapLocation[]", "ints": "int[]"}
 VIEW_R2 = 25  # the king's vision, 360 degrees from its centre (docs/rules.md §7)
@@ -313,6 +320,180 @@ def generate(book: dict | None = None) -> tuple[str, str]:
     return render_book(book, params, vs), tune_text
 
 
+
+# ------------------------------------------------------------------------------------------------- matrix, fit
+
+def pool_of(maps: list[str]) -> str:
+    bad = [m for m in maps if m not in pools.GOAL]
+    if bad:
+        raise BookError(f"not goal maps: {bad}")
+    return "map:" + ",".join(maps)
+
+
+def cmd_matrix(a) -> int:
+    """A tools/tune campaign of candidate values, played on the maps' map: pool with main on the same cells."""
+    maps = [m for m in a.maps.split(",") if m]
+    pool = pool_of(maps)
+    argv = ["points", a.name, *sum((["--point", p] for p in a.point), [])] + (["--rev", a.rev] if a.rev else [])
+    if tune.main(argv) != 0:
+        return 1
+    c = tune.load(a.name)
+    c["book"] = {"maps": maps, "cells_per_map": a.cells_per_map, "seed_base": a.seed_base}
+    tune.save(c)
+    cmd = [str(TUNE), "play", a.name, "--seed-base", str(a.seed_base), "--pool", pool,
+           "--cells", str(a.cells_per_map * len(maps))]
+    print(" ".join(cmd), flush=True)
+    return subprocess.call(cmd)
+
+
+def matrix_diffs(c: dict, seed_base: int | None = None) -> dict:
+    """candidate label -> (map, seat) -> {seed: d} from a campaign's runs (its reference's run and the variants')."""
+    runs = [r for r in c["runs"] if seed_base is None or r["seed_base"] == seed_base]
+    refs = [r for r in runs if r["variant"] == tune.REF]
+    if not refs:
+        raise BookError(f"campaign {c['name']}: no reference run yet")
+    ref_rows = sum((bookfit.read_rows(tune.run_dir(r["id"]) / "results.jsonl") for r in refs), [])
+    out = {}
+    for r in runs:
+        if r["variant"] != tune.REF:
+            rows = bookfit.read_rows(tune.run_dir(r["id"]) / "results.jsonl")
+            for ms, d in bookfit.pair(ref_rows, rows).items():
+                out.setdefault(r["variant"], {}).setdefault(ms, {}).update(d)
+    return out
+
+
+def print_fit(f: dict, c: dict | None = None) -> None:
+    vals = {v["label"]: ", ".join(f"{k}={x}" for k, x in v["values"].items()) for v in (c or {}).get("variants", [])}
+    print(f"{len(f['candidates'])} candidates: " + "; ".join(f"{k} {vals.get(k, '')}" for k in f["candidates"]))
+    print(f"empirical Bayes tau = {f['tau2'] ** 0.5:.3f} over {sum(len(r['cands']) for r in f['rows'])} estimates")
+    print("per map-seat: cells n; the best of K: raw [95%], Sidak [0.95^(1/K)], selection-adjusted adj [95%], "
+          "shrunk [95%], p_max; then every candidate's raw")
+    for r in sorted(f["rows"], key=lambda r: -r["adj"]):
+        b = next(x for x in r["cands"] if x["cand"] == r["best"])
+        rest = "  ".join(f"{x['cand']} {x['raw']:+.3f}" for x in r["cands"])
+        print(f"  {r['map']:24s} {r['seat']}  n {r['n']:3d}  best {r['best']:6s} {b['raw']:+.3f} [{b['lo']:+.3f}, "
+              f"{b['hi']:+.3f}]  sidak [{b['lo_k']:+.3f}, {b['hi_k']:+.3f}]  adj {r['adj']:+.3f} [{r['adj_lo']:+.3f}, "
+              f"{r['adj_hi']:+.3f}]  shrunk {b['shrunk']:+.3f} [{b['shrunk_lo']:+.3f}, {b['shrunk_hi']:+.3f}]  "
+              f"p_max {r['p_max']:.3f}   | {rest}")
+
+
+def cmd_fit(a) -> int:
+    if a.simulate:
+        for K in (1, 2, 4, 8):
+            r = bookfit.simulate(K=K, mapseats=a.mapseats, n=a.n, q=a.q, reps=a.reps)
+            print(f"null K {K}: best raw {r['null_best_raw']:+.3f}  adj {r['null_best_adj']:+.3f}  shrunk "
+                  f"{r['null_best_shrunk']:+.3f};  picked (lower bound > 0): raw 95% {r['null_pick_raw95']:.3f}, "
+                  f"Sidak {r['null_pick_sidak']:.3f}, adj {r['null_pick_adj']:.3f}, shrunk {r['null_pick_shrunk']:.3f}"
+                  f";  p_max < 0.05 {r['null_pick_p_max']:.3f}")
+        for eff in (0.1, 0.2):
+            r = bookfit.simulate(K=4, mapseats=a.mapseats, n=a.n, q=a.q, reps=a.reps, effect=eff)
+            print(f"planted +{eff:.2f} on one map-seat of {a.mapseats}, K 4: raw {r['planted_raw']:+.3f}  adj "
+                  f"{r['planted_adj']:+.3f}  shrunk {r['planted_shrunk']:+.3f}  p_max < 0.05 in "
+                  f"{r['planted_p_lt_05']:.2f} of matrices")
+        return 0
+    c = tune.load(a.name)
+    f = bookfit.fit(matrix_diffs(c, a.seed_base), flips=a.flips)
+    if a.json:
+        print(json.dumps(f, indent=1))
+    else:
+        print_fit(f, c)
+    return 0
+
+
+# ------------------------------------------------------------------------------------------------- confirm
+
+def start(bot: str, ref: str, pool: str, cells: int, seed_base: int, extra: list[str]) -> str:
+    cmd = [str(GAMES), "ab", bot, "awubot", "--ref", ref, "--pool", pool, "--min-cells", str(cells),
+           "--max-cells", str(cells), "--seed-base", str(seed_base), "--remote", *extra]
+    p = subprocess.run(cmd, capture_output=True, text=True)
+    if p.returncode != 0 or not p.stdout.strip():
+        raise BookError(f"tools/games ab failed: {p.stderr[-1500:]}")
+    return p.stdout.strip().splitlines()[0]
+
+
+def cmd_confirm(a) -> int:
+    rev = tune.git("rev-parse", "--short=12", f"{a.rev}^{{commit}}")
+    book = load_text(tune.git("show", f"{rev}:src/challenger/book.jsonl"))
+    maps = sorted({m for m, _ in map_seats(book)}, key=map_id)
+    if not maps:
+        raise BookError(f"{rev}: the book is empty")
+    ref = tune.pin_ref(a.ref)
+    outside = [m for m in pools.GOAL if m not in maps] + pools.TEAM_MADE
+    runs = {
+        "goal": start(f"challenger@{rev}", ref, "goal", a.cells, a.seed_base, []),
+        "entries": start(f"challenger@{rev}", ref, "map:" + ",".join(maps), a.map_cells * len(maps), a.seed_base + 1,
+                         []),
+        "outside": start(f"challenger@{rev}", ref, "map:" + ",".join(outside), len(outside) * a.outside_passes,
+                         a.seed_base + 2, []),
+    }
+    CONFIRM_DIR.mkdir(parents=True, exist_ok=True)
+    out = CONFIRM_DIR / f"confirm-{rev}-{a.seed_base}.json"
+    out.write_text(json.dumps({"rev": rev, "ref": ref, "seed_base": a.seed_base, "maps": maps, "runs": runs,
+                               "started": time.time()}, indent=1))
+    print(f"confirm {rev} against {ref}: {out}")
+    for k, v in runs.items():
+        print(f"  {k:8s} {v}")
+    print(f"wait (in the background): tools/games wait {' '.join(runs.values())}; then tools/book/book confirm-show "
+          f"{out}")
+    return 0
+
+
+def load_text(text: str) -> dict:
+    with tempfile_path(text) as p:
+        return load(p)
+
+
+class tempfile_path:
+    def __init__(self, text):
+        import tempfile
+        self.f = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
+        self.f.write(text)
+        self.f.close()
+
+    def __enter__(self):
+        return Path(self.f.name)
+
+    def __exit__(self, *exc):
+        Path(self.f.name).unlink()
+
+
+def paired_run(run_id: str) -> dict:
+    """(map, seat) -> {seed: d} of a paired run (ours role o, the ref role r)."""
+    rows = bookfit.read_rows(tune.run_dir(run_id) / "results.jsonl")
+    ref = [dict(r, role="o") for r in rows if r.get("role") == "r"]
+    return bookfit.pair(ref, [r for r in rows if r.get("role") == "o"])
+
+
+def summary(d: dict) -> tuple[float, float, int]:
+    v = [x for g in d.values() for x in g.values()]
+    n = len(v)
+    m = sum(v) / n if n else 0.0
+    sd = (sum((x - m) ** 2 for x in v) / (n - 1)) ** 0.5 if n > 1 else 0.0
+    return m, 1.96 * sd / n ** 0.5 if n else 0.0, n
+
+
+def cmd_confirm_show(a) -> int:
+    conf = json.loads(Path(a.file).read_text())
+    book = load_text(tune.git("show", f"{conf['rev']}:src/challenger/book.jsonl"))
+    print(f"book {conf['rev']} against {conf['ref']}, seed base {conf['seed_base']}")
+    for k, rid in conf["runs"].items():
+        print(f"  {k:8s} {rid} [{tune.run_status(rid)}]")
+    g = paired_run(conf["runs"]["goal"])
+    m, h, n = summary(g)
+    print(f"goal: game diff (book - main) {m:+.4f} +- {h:.4f} (95%, {n} games; tools/games show "
+          f"{conf['runs']['goal']} for the CI by map)")
+    e = paired_run(conf["runs"]["entries"])
+    print("entries' map-seats, each alone (game diff, 95%):")
+    for mp, t in map_seats(book):
+        d = e.get((mp, t), {})
+        m, h, n = summary({0: d})
+        print(f"  {mp:24s} {t}  {m:+.3f} +- {h:.3f}  ({n} games)")
+    o = paired_run(conf["runs"]["outside"])
+    m, h, n = summary(o)
+    changed = sum(1 for g in o.values() for x in g.values() if x)
+    print(f"outside the book: game diff {m:+.4f} +- {h:.4f} ({n} games; {changed} with a different winner)")
+    return 0
+
 # ------------------------------------------------------------------------------------------------- commands
 
 def cmd_gen(a) -> int:
@@ -373,6 +554,37 @@ def main(argv=None) -> int:
     sub.add_parser("check", help="ids unique over maps/, entries valid, generated code current").set_defaults(
         f=cmd_check)
     sub.add_parser("ids", help="the goal maps' ids and round-1 keys").set_defaults(f=cmd_ids)
+    sp = sub.add_parser("matrix", help="candidate values x maps: a tools/tune campaign on the maps' map: pool, main on "
+                                       "the same cells (builds and starts the runs: run it in the background)")
+    sp.add_argument("name")
+    sp.add_argument("--point", action="append", required=True, metavar="LABEL:NAME=V[,NAME=V]")
+    sp.add_argument("--maps", required=True, help="comma-separated goal maps")
+    sp.add_argument("--cells-per-map", type=int, default=60)
+    sp.add_argument("--seed-base", type=int, required=True, help="a fresh seed base")
+    sp.add_argument("--rev", help="the base (default HEAD)")
+    sp.set_defaults(f=cmd_matrix)
+    sp = sub.add_parser("fit", help="each candidate's effect per map-seat: raw, selection-adjusted, shrunk")
+    sp.add_argument("name", nargs="?")
+    sp.add_argument("--seed-base", type=int)
+    sp.add_argument("--flips", type=int, default=2000)
+    sp.add_argument("--json", action="store_true")
+    sp.add_argument("--simulate", action="store_true", help="the method on simulated null and planted matrices")
+    sp.add_argument("--mapseats", type=int, default=60)
+    sp.add_argument("--n", type=int, default=30, help="simulated cells a map-seat")
+    sp.add_argument("--q", type=float, default=0.35, help="simulated share of games a candidate redraws")
+    sp.add_argument("--reps", type=int, default=10)
+    sp.set_defaults(f=cmd_fit)
+    sp = sub.add_parser("confirm", help="the book at REV against main: goal, the entries' maps, maps outside it")
+    sp.add_argument("--rev", default="HEAD")
+    sp.add_argument("--ref", default="challenger@origin/main")
+    sp.add_argument("--seed-base", type=int, required=True, help="a fresh base; the entries' run uses +1, outside +2")
+    sp.add_argument("--cells", type=int, default=3000)
+    sp.add_argument("--map-cells", type=int, default=60, help="cells a book map in the entries' run")
+    sp.add_argument("--outside-passes", type=int, default=4, help="passes over the maps outside the book")
+    sp.set_defaults(f=cmd_confirm)
+    sp = sub.add_parser("confirm-show", help="a confirm's results")
+    sp.add_argument("file")
+    sp.set_defaults(f=cmd_confirm_show)
     a = ap.parse_args(argv)
     try:
         return a.f(a)

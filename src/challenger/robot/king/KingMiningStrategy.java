@@ -253,7 +253,7 @@ public class KingMiningStrategy extends Strategy {
                 int encoded = encode2x2(myMine);
                 GlobalArray.registerGlobalCheeseMine(encoded);
 
-                if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
+                if (GlobalArray.isMineAssignedToOtherKing(myMine)) continue;
                 // if (isInTabooZone(myMine)) continue;
 
                 int myDist = myLoc.distanceSquaredTo(myMine);
@@ -335,7 +335,7 @@ public class KingMiningStrategy extends Strategy {
         for (int i = 0; i < myMineCount && i < 10; i++) {
             MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
             if (myMine == null) continue;
-            if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
+            if (GlobalArray.isMineAssignedToOtherKing(myMine)) continue;
             // if (isInTabooZone(myMine)) continue;
 
             int myDist = myLoc.distanceSquaredTo(myMine);

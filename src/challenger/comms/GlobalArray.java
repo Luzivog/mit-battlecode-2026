@@ -617,4 +617,17 @@ public class GlobalArray {
         }
         return false;
     }
+
+    // A king choosing its own mine skips its own slot: counting it made the target flip between two visible mines
+    // every turn.
+    public static boolean isMineAssignedToOtherKing(MapLocation aMine) throws GameActionException {
+        for (int i = 0; i < 5; i++) {
+            if (i == kingId) continue;
+            MapLocation myKingMine = getKingMineAssignment(i);
+            if (myKingMine != null && myKingMine.distanceSquaredTo(aMine) < 25) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

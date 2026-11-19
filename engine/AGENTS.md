@@ -15,7 +15,8 @@ gives:
    trap, both teams' info, the cats' state, the cheese mines, the shared arrays, the squeak queues and the world RNG.
    Its comment lists what it covers and what it cannot read.
 3. **Every robot's bytecodes on every turn**, and every action: the replay (`Turn.bytecodesUsed`, the actions).
-4. **The replay bytes**: the gunzipped `.bc26` flatbuffer, byte for byte (the gzip container may differ).
+4. **The replay bytes**: the `.bc26` file byte for byte, gzip container included (its `digest`), and the gunzipped
+   flatbuffer decoded to the first differing round and turn when it differs.
 
 A game the engine ends by coin flip (`WON_BY_DUBIOUS_REASONS`, decided by an unseeded `Math.random()`) must match up
 to that flip: same state hashes, same round, win type `WON_BY_DUBIOUS_REASONS`; the winner is not compared.
@@ -91,8 +92,10 @@ to the robot's team.
 - **The fuzz bots** call every `RobotController` method with legal and illegal arguments, catch and leak exceptions,
   overrun the bytecode limit mid-statement, fail asserts, resign, disintegrate, and use the JDK features the corpus
   uses (collections, strings, boxing, lambdas, records, switches, `Math`, `Random`).
-- **Status** (19 Nov 2026, engine 1.2.6): the full corpus, 8388 games on Imperial, 8387 agree in all four checks;
-  the other is the reference's own divergence ("Known gaps"). 1.2.5: 839 of 839 (a 1-in-10 sample). Quick 5/5,
+- **Status** (19 Nov 2026, engine 1.2.6, commit f14753a): every game of the full corpus (8388) has a reference run
+  and a native run that agree in all the checks and in every result field. 7 more reference runs on DoC machines
+  disagreed with the native run on the same machine; each time the native run equalled the reference's run of that
+  game elsewhere ("Known gaps"). 1.2.5: the same for a 1-in-10 sample (839 games, 1 such run). Quick 5/5,
   `refmain_test` 13/13, `conformance` 5/5.
 - **Fast paths.** A hand-written replacement for a translated method lands only when the corpus agrees and a
   differential build (`BCX_CHECK_FASTPATH=1`) runs the translated original beside the fast path on every call over the
@@ -151,15 +154,15 @@ instrumentation and JIT).
 
 | where | games | reference s/game | native s/game | ratio |
 |---|---|---|---|---|
-| DoC lab machines, full corpus, 1.2.6 (mean 760 rounds) | 8372 | 86.6 | 11.1 | 7.8 |
-| DoC, 1-in-10 corpus sample, 1.2.5 | 839 | 65.9 | 8.1 | 8.1 |
-| clankerland, `medium.jsonl` (50 games, mostly DefaultSmall) | 50 | 18.7 | 2.2 | 8.3 |
+| DoC lab and cluster machines, full corpus, 1.2.6 (mean 760 rounds) | 8388 | 85.0 | 10.8 | 7.8 |
+| DoC, 1-in-10 corpus sample, 1.2.5 | 839 | 68.7 | 9.1 | 7.5 |
+| clankerland: awubot against every package, both seats, DefaultSmall; fuzz pairs | 50 | 19.6 | 2.3 | 8.6 |
 | clankerland, awubot mirror: DefaultSmall, 170 rounds | 1 | ~30 | 1.3 | ~23 |
 | DefaultMedium, 185 rounds | 1 | ~34 | 7.0 | ~5 |
 | DefaultLarge, 1198 rounds | 1 | ~85 | 20.3 | ~4 |
 
-- Games per CPU-second on DoC: reference 0.0115, native 0.090. Per game the ratio spans 3.2 (10th percentile) to
-  31.7 (90th), median 10.5; by map from 1.9 (maze1, maze3: 27 and 42 native s a game) to 45 (gridlock, averyfineline).
+- Games per CPU-second on DoC: reference 0.0118, native 0.092. Per game the ratio spans 3.1 (10th percentile) to
+  31.2 (90th), median 10.3; by map from 1.9 (maze1, maze3: 27 and 42 native s a game) to 45 (gridlock, averyfineline).
 - Native time goes to the world's start (`GameWorld.bfsFromTarget`, the cats' BFS tables, quadratic in tiles) and to
   the collector (the translated world allocates a `MapLocation` per step and clones `Direction.values()`: 36 GB on a
   DefaultLarge game): together about 85% on DefaultMedium. The bots' own code is a small share. Those are the
@@ -184,9 +187,12 @@ instrumentation and JIT).
 - CPU models: HotSpot's `Math.pow` and `Math.log` use `rcpps`, whose result depends on the CPU model. The native engine
   runs the same instruction, so both engines agree on one machine, and a game can differ between machines in both.
   Compare engines on the same machine (`imperial.py` does).
-- The reference itself: in one game of 8388 (`cups~awubot~opp_obg~s1021211706` on lab machine gpu16) the official
-  engine played differently from the official engine everywhere else (from round 58: one king skipped a spawn); the
-  native engine and 7 other runs of the reference agree. Unexplained. One candidate: `SandboxedRobotPlayer` hands
-  control between threads with an unlooped `Object.wait()`, so a spurious wakeup breaks the lockstep.
+- The reference itself is not deterministic on DoC's machines: in 8 of about 18,500 reference runs there (two full
+  corpus passes and a 1.2.5 sample, both seats), one robot's turn recorded a different bytecode count (once 0, once
+  34, against about 7,000 to 15,000 natively) and the game went another way from that turn. Every time, the
+  native run on the same machine equalled both engines run here, and the reference run again elsewhere agreed with
+  it. None in about 300 reference runs here. No error was printed. One candidate: `SandboxedRobotPlayer` hands
+  control between the engine's and the robot's threads with an unlooped `Object.wait()`, so a spurious wakeup lets
+  a turn end early or run on. The native engine plays the intended lockstep.
 - What `BcxStateHash` cannot read: its comment.
 - 1.2.5 is checked on a 1-in-10 sample of the corpus, not the whole.

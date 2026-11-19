@@ -18,6 +18,7 @@ public class RatKing {
     public static boolean spawnedThisTurn;
 
     public static void init() {
+        if (challenger.Tune.CM_LANE_BOOK) challenger.CatLanes.loadBook();
         primaryStrategy = new RatKingStrategy();
         is5x5 = false;
     }

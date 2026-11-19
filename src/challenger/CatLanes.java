@@ -13,6 +13,14 @@ public class CatLanes {
     // Bumped whenever a footprint tile is added; 0 while none is known.
     public static int version;
 
+    // Tune.CM_LANE_BOOK: start with every cat loop of the map (CatBook.lanes), when the book knows the map.
+    public static void loadBook() {
+        long[] b = CatBook.lanes();
+        if (b == null) return;
+        for (int y = b.length; --y >= 0; ) lane[y] = b[y];
+        version = 1;
+    }
+
     // The 2x2 of every visible cat (RobotInfo.location is its bottom-left tile).
     public static void markVisibleCats() {
         for (int i = RobotTracker.numCats; --i >= 0; ) {

@@ -96,4 +96,10 @@ public final class Tune {
     // K2 D': kings remember cat footprints (CatLanes), park and chase cheese off them, take no mining step into a known
     // lane (robot/king/KingMiningStrategy).
     public static final boolean CM_LANE_MEMORY = false;
+    // The cat loops of the map from the book (CatBook.lanes) in the kings' footprint memory from round 1; lane memory's
+    // mining rules apply (CM_LANE_KNOWN).
+    public static final boolean CM_LANE_BOOK = false;
+    public static final boolean CM_LANE_KNOWN = CM_LANE_MEMORY || CM_LANE_BOOK;
+    // With a cat in view, the king's flee loses 4 a loop tile it steps onto (robot/king/KingCombatStrategy).
+    public static final boolean CM_LANE_FLEE = false;
 }

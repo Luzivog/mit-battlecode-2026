@@ -183,7 +183,7 @@ E2's siege flag (its siege-spawn arm) stays king-only: no slot carries it, and o
 **`util/Economy.java`** (owner E1): `reserve()` = max(100, 2·K·H), with K counted from the shared array's king slots,
 so every unit can compute it; `spendable()` = global − `reserve()`.
 - Until E1 merges, packages that spend global use today's gates: the spawn floor of 100
-  (`KingSpawningStrategy.java:69`), the formation gate of 150 (`KingFormationCoordinatorStrategy.java:187-188`), and
+  (`KingSpawningStrategy.java:121` after E2), the formation gate of 150 (`KingFormationCoordinatorStrategy.java:187-188`), and
   bite cheese at total ≥ 300 (`CombatStrategy.java.jinja2:440-443`).
 - E1 rewires every gate that exists in main when it merges. A package merging after E1 uses `spendable()`.
 
@@ -207,7 +207,7 @@ marked → (sequence: the later one starts from main after the earlier merged).
 | new `robot/rat/BudStrategy.java`, `robot/king/KingBudStrategy.java` | KL arm B → KB |
 | new `robot/rat/CatDefenseStrategy.java` | K3 |
 | `robot/king/RatKingStrategy.java` | KL arm B (:24-29) |
-| `robot/king/KingSpawningStrategy.java` | S1 (:90 turn) · E2 (:21-73) → E1 (:69 gate) · E3 (:93 payload) |
+| `robot/king/KingSpawningStrategy.java` | S1 (turn) · E2 (:22-77, merged) → E1 (:121 gate) · E3 (payload write) |
 | `robot/king/KingFormationCoordinatorStrategy.java` | KL (:141-151 aborts, :181-204 gates, :241 floor) → E1 (:187-188 cheese gate) |
 | `robot/king/RatKing.java` | E1 (king digs :58, :68, :159, :224) |
 | `robot/king/KingMiningStrategy.java.jinja2` | K1 → K2 |
@@ -347,6 +347,13 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - **The gate must be observable.** Use the known mine count, doubled once the symmetry is known (every mine's mirror
     is a mine), and the champion's cap until the estimate settles. Step 0: a probe logging the estimate and the true
     count per round on `mines-le4` and `mines-ge8`, to find when it settles.
+- **Merged: arm 1a** (2026-11-19, 07da7d5). The cap is 4 lower while the map is ≤ 1600 tiles and not known to hold
+  ≥ 5 mines: every map starts poor and lifts once the estimate (known mines plus their unknown mirrors, the smallest
+  over the symmetries still possible) reaches 5. Waiting for the estimate to settle would miss the gain: the bank gap
+  builds from r1 and poor-map games end around r150–400. Above 1600 tiles the low cap gained ~0 and rich maps took the
+  leak. `goal` gain +0.061 [+0.015, +0.109] vs main (1119-013819-ab-c574); −8 was far worse (−0.455 vs 1a on
+  `mines-le4`); +4 on ≥ 10 mines did nothing. Open: the mine squeak decoder reads 1 of 3 mines (E3 fixes it), which
+  slows the estimate; rich maps need arm 2's income estimate, not mine counts.
 - **Arm 1b.** On ≥ 8-mine maps the opposite sign: a higher cap, dose {+4, +8}. Basis: arm 1 lost those maps, and T1§2.5
   puts the sustainable army at 20–44 rats on low-contact maps.
 - **Arm 2.** n* budget: spawn while n < n* = √((Î − 2K)/(2.5·δ̂)) (T1§2.5), or while `spendable()` − c(n) exceeds the
@@ -487,14 +494,14 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - From the first round below 100 global to the first below 2 (global recovers above 100 inside that window):
     spawns of cost > 10 took 17,820 over all 62 cells, traps up to 15,840, upkeep 23,238; the `cost == 10` exception
     took 1,440 and digs 960.
-  - Today's spawn floor is 100 (`KingSpawningStrategy.java:69`), but rats spend global with no floor: traps
+  - Today's spawn floor is 100 (`KingSpawningStrategy.java:121` after E2), but rats spend global with no floor: traps
     (`TryTrap.java.jinja2:64-76`), digs (`BabyRat.java:222`), king digs (`RatKing.java:58,68,159,224`;
     `KingCombatStrategy.java.jinja2:72`).
   - The winner also starved in 12 of the 62 cells (19%). A reserve can flip those. Elsewhere the loser starved after it
     lost the exchange and the share (T1§2.8), which CT, CW, E2 and E3 address.
 - **Change.**
   - New `util/Economy.java` (§2.1): `reserve()` = max(100, 2K·H).
-  - Every global spend checks `spendable()`: king spawns (`:69`), traps when raw cheese does not cover them (after CT,
+  - Every global spend checks `spendable()`: king spawns (`:121` after E2), traps when raw cheese does not cover them (after CT,
     `TryTrap.java.jinja2:64-76`), rat and king digs, bite cheese (`getBiteDamage` or CB's function), and formation
     (`KingFormationCoordinatorStrategy.java:187-188`).
   - The `cost == 10` exception stays: it spent 0–50 per loss (Starve.java) and is the only way to rebuild income with

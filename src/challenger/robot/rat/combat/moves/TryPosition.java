@@ -28,16 +28,36 @@ public final class TryPosition {
     static MapLocation newLoc;
     static double score;
     static int bytecodeStart, bytecodeBudget;
+    // a (move, facing) worth aimValue for the next turn's throw; search() uses it once
+    static Direction aimMove, aimFacing;
+    static double aimValue;
+
+    public static void aim(Direction moveDir, Direction facing, double value) {
+        aimMove = moveDir;
+        aimFacing = facing;
+        aimValue = value;
+    }
 
     public static boolean run() throws GameActionException {
         if (!rc.isMovementReady()) return false;
+        search();
+        return execute();
+    }
+
+    // the best (move, facing) into bestMove, bestFacing; true when it leaves me safe from a grab
+    public static boolean search() throws GameActionException {
         bytecodeStart = Clock.getBytecodeNum();
         bytecodeBudget = Math.min(3000, Clock.getBytecodesLeft() - 1000);
-        // // Profiler.push();
         bestMove = null;
         bestFacing = null;
         bestScore = -1e9;
         selectMoves();
+        aimValue = 0;
+        return bestScore >= 0;
+    }
+
+    public static boolean execute() throws GameActionException {
+        if (bestMove == null) return false;
         return CombatStrategy.performMoves(bestMove, bestFacing);
     }
 
@@ -866,6 +886,7 @@ public final class TryPosition {
         if (Direction.NORTH != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.NORTH == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -882,6 +903,7 @@ public final class TryPosition {
         if (Direction.NORTHEAST != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.NORTHEAST == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -898,6 +920,7 @@ public final class TryPosition {
         if (Direction.EAST != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.EAST == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -914,6 +937,7 @@ public final class TryPosition {
         if (Direction.SOUTHEAST != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.SOUTHEAST == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -930,6 +954,7 @@ public final class TryPosition {
         if (Direction.SOUTH != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.SOUTH == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -946,6 +971,7 @@ public final class TryPosition {
         if (Direction.SOUTHWEST != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.SOUTHWEST == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -962,6 +988,7 @@ public final class TryPosition {
         if (Direction.WEST != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.WEST == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;
@@ -978,6 +1005,7 @@ public final class TryPosition {
         if (Direction.NORTHWEST != myDir) {
             score += 2;
         }
+        if (score >= 0 && moveDir == aimMove && Direction.NORTHWEST == aimFacing) score += aimValue;
         if (score > bestScore) {
             bestScore = score;
             bestMove = moveDir;

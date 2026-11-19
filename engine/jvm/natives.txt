@@ -232,3 +232,4 @@ sys bcx/subst/FastPath fail (Ljava/lang/String;)V rt_fastpath_fail
 sys bcx/subst/FastPath randomState (Ljava/util/Random;)J rt_fastpath_random_state nothrow
 patch battlecode/world/GameWorld bcx/subst/GameWorld_p
 patch battlecode/world/BcxStateHash bcx/subst/BcxStateHash_p
+patch battlecode/world/RobotControllerImpl bcx/subst/RobotControllerImpl_p

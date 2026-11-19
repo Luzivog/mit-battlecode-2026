@@ -39,13 +39,14 @@ import challenger.util.Profiler;
 
 {%- set OFF = 0x0FFF -%}
 {%- set MAX_DIST = 42 -%}
+{%- set MAX_ROBOTS = 25 -%}
 
 public class RobotTracker {
 
     private static StringBuilder baseString = new StringBuilder("{% for c in range(0, MAX_DIST + 1) %}{{ java_string_char(OFF + c) }}{% endfor %}");
-    public static RobotInfo[] sortedRobots = new RobotInfo[25];
-    public static RobotInfo[] sortedEnemies = new RobotInfo[25];
-    public static RobotInfo[] sortedAllies = new RobotInfo[25];
+    public static RobotInfo[] sortedRobots = new RobotInfo[{{MAX_ROBOTS}}];
+    public static RobotInfo[] sortedEnemies = new RobotInfo[{{MAX_ROBOTS}}];
+    public static RobotInfo[] sortedAllies = new RobotInfo[{{MAX_ROBOTS}}];
     public static RobotInfo[] sortedCats = new RobotInfo[10];
     public static int numRobots, numEnemies, numAllies, numCats;
     private static char DELIM_CHAR = '\u0FFF';
@@ -79,9 +80,13 @@ public class RobotTracker {
         StringBuilder sb = new StringBuilder(baseString);
         RobotInfo[] nearbyRobots = rc.senseNearbyRobots();
         numRobots = nearbyRobots.length;
+        if (numRobots > {{MAX_ROBOTS}}) {
+            keepNearest(sb, nearbyRobots);
+            return;
+        }
         numEnemies = numAllies = numCats = 0;
         switch (numRobots) {
-            {% for count in range(MAX_DIST, -1, -1) %}
+            {% for count in range(MAX_ROBOTS - 1, -1, -1) %}
             case {{count + 1}}: {
                 int d = nearbyRobots[{{count}}].location.distanceSquaredTo(myLoc);
                 {# assert(d <= {{MAX_DIST}}) : "Robot at distance " + d + " >= MAX_DIST {{MAX_DIST}}" + " location " + nearbyRobots[{{count}}].location + " my loc " + myLoc; #}
@@ -102,9 +107,6 @@ public class RobotTracker {
                 {% endfor %}
             case 0:
                 break;
-            default:
-                assert(false);
-                break;
         }
         int i;
         {% for i in range(0, MAX_DIST + 1) %}
@@ -115,7 +117,7 @@ public class RobotTracker {
         int nextEnemy = numEnemies;
         int nextCat = numCats;
         switch (numRobots) {
-            {% for count in range(MAX_DIST, -1, -1) %}
+            {% for count in range(MAX_ROBOTS - 1, -1, -1) %}
             case {{count + 1}}: {
                 sortedRobots[{{count}}] =  nearbyRobots[(int) sb.charAt({{count}})];
                 switch (sortedRobots[{{count}}].team.ordinal()) {
@@ -133,13 +135,32 @@ public class RobotTracker {
                 {% endfor %}
             case 0:
                 break;
-            default:
-                assert(false);
-                break;
         }
         // // Profiler.end_print("updateRobots");
     }
     {% endfor %}
+
+    // More than {{MAX_ROBOTS}} robots in view (a king in a crowd): sort them all by distance and keep the nearest {{MAX_ROBOTS}}.
+    private static void keepNearest(StringBuilder sb, RobotInfo[] nearbyRobots) {
+        for (int i = numRobots; --i >= 0;) {
+            int d = nearbyRobots[i].location.distanceSquaredTo(myLoc);
+            sb.insert(sb.indexOf(String.valueOf((char) ({{OFF}} + d))), (char) i);
+        }
+        numRobots = numEnemies = numAllies = numCats = 0;
+        for (int k = 0; numRobots < {{MAX_ROBOTS}}; k++) {
+            int c = sb.charAt(k);
+            if (c >= {{OFF}}) continue;
+            RobotInfo r = nearbyRobots[c];
+            sortedRobots[numRobots++] = r;
+            if (r.team == team) {
+                sortedAllies[numAllies++] = r;
+            } else if (r.team == Team.NEUTRAL) {
+                sortedCats[numCats++] = r;
+            } else {
+                sortedEnemies[numEnemies++] = r;
+            }
+        }
+    }
 
     public static RobotInfo[][] catHist = new RobotInfo[4][10];
     public static int[] catHistNum = new int[4];

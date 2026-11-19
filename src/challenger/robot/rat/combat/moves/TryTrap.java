@@ -103,11 +103,11 @@ public final class TryTrap {
         selectMoves();
         if (best <= 0.5) return false;
         if (bestMoveDir != null) {
-            assert(CombatStrategy.performMoves(bestMoveDir, bestFacing));
+            if (!CombatStrategy.performMoves(bestMoveDir, bestFacing)) return false;
             rc.placeRatTrap(bestPlaceLoc);
         } else {
             rc.placeRatTrap(bestPlaceLoc);
-            assert(CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing));
+            CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing);
         }
         // println("!!!!!!!!!! placed rat trap");
         // indicate("COMBAT STRAT: TRAP");

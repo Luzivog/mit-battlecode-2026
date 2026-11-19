@@ -78,9 +78,10 @@ public class EnemyManager {
             int dx = Math.abs(enemy.location.x - myLocX);
             int dy = Math.abs(enemy.location.y - myLocY);
             if (dx > VIEW_RADIUS || dy > VIEW_RADIUS) continue;
-            data |= (encodeEnemy(enemy) << (i * ENC_WIDTH));
+            data |= (encodeEnemy(enemy) << (squeaked * ENC_WIDTH));
             squeaked++;
         }
+        if (squeaked == 0) return false;
         if (squeaked == 1) data |= (NULL << ENC_WIDTH);
         Squeaker.squeakEnemy(data);
         return true;

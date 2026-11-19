@@ -64,11 +64,11 @@ public final class TryAttack {
             return false;
         }
         if (bestMove != null) {
-            assert(CombatStrategy.performMoves(bestMove, bestFacing));
+            if (!CombatStrategy.performMoves(bestMove, bestFacing)) return false;
             attack(target, bestDamage);
         } else {
             attack(target, bestDamage);
-            assert(CombatStrategy.performMoves(bestSecondaryMove, bestFacing));
+            CombatStrategy.performMoves(bestSecondaryMove, bestFacing);
         }
         // println("!!!!!!!!!!!!!!!!!!!!!!! attacked rat");
         // indicate("COMBAT STRAT: ATTACK");

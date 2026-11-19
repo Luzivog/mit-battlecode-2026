@@ -38,8 +38,7 @@ public final class TryPosition {
         bestFacing = null;
         bestScore = -1e9;
         selectMoves();
-        assert(CombatStrategy.performMoves(bestMove, bestFacing));// indicate
-        return true;
+        return CombatStrategy.performMoves(bestMove, bestFacing);
     }
 
     private static void selectMoves() throws GameActionException {

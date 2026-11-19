@@ -25,6 +25,7 @@ import static challenger.robot.rat.BabyRat.*;
 
 
 
+
 public final class TryThrow {
     private TryThrow() {
     }
@@ -36,6 +37,7 @@ public final class TryThrow {
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
+    static long catMask;
     static RobotInfo occ_m4_4;
     static RobotInfo occ_m3_4;
     static RobotInfo occ_m2_4;
@@ -148,12 +150,12 @@ public final class TryThrow {
         // }
         if (isSecondary) {
             if (td != myDir) turn(td);
-            assert(rc.canThrowRat());
+            if (!rc.canThrowRat()) return false;
             rc.throwRat();
-            assert(CombatStrategy.performMoves(md, td));
+            CombatStrategy.performMoves(md, td);
         } else {
-            assert(CombatStrategy.performMoves(md, td));
-            assert(rc.canThrowRat());
+            if (!CombatStrategy.performMoves(md, td)) return false;
+            if (!rc.canThrowRat()) return false;
             rc.throwRat();
         }
         return true;
@@ -3250,6 +3252,13 @@ public final class TryThrow {
                 markCell(dx, dy, info);
             }
         }
+        catMask = 0;
+        for (int i = RobotTracker.numCats; --i >= 0;) {
+            MapLocation l = RobotTracker.sortedCats[i].location;
+            int x = l.x - myLocX + 3;
+            int y = l.y - myLocY + 3;
+            if (x >= 0 && x <= 5 && y >= 0 && y <= 5) catMask |= 387L << (y * 7 + x);
+        }
         if (GlobalArray.nearestRatKing != null) {
             int dx = GlobalArray.nearestRatKing.x - myLocX;
             int dy = GlobalArray.nearestRatKing.y - myLocY;
@@ -3276,6 +3285,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
+            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3412,6 +3422,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
+            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3548,6 +3559,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
+            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3701,6 +3713,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -3854,6 +3867,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4024,6 +4038,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4177,6 +4192,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
+            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4330,6 +4346,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
+            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4466,6 +4483,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
+            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4602,6 +4620,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_2 != null) return;
+            if ((catMask & 1099511627776L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4738,6 +4757,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
+            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -4874,6 +4894,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
+            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5010,6 +5031,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5180,6 +5202,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5350,6 +5373,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5520,6 +5544,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
+            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5656,6 +5681,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
+            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5809,6 +5835,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
+            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -5945,6 +5972,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
+            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6081,6 +6109,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
+            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6217,6 +6246,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
+            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6370,6 +6400,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6523,6 +6554,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6693,6 +6725,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -6846,6 +6879,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7016,6 +7050,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
+            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7152,6 +7187,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
+            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7288,6 +7324,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m2 != null) return;
+            if ((catMask & 4096L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7424,6 +7461,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
+            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7560,6 +7598,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
+            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7696,6 +7735,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -7866,6 +7906,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8036,6 +8077,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8206,6 +8248,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8359,6 +8402,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
+            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8512,6 +8556,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
+            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8648,6 +8693,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
+            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8784,6 +8830,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
+            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -8920,6 +8967,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
+            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9073,6 +9121,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9226,6 +9275,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9396,6 +9446,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9566,6 +9617,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9736,6 +9788,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
+            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -9872,6 +9925,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
+            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10008,6 +10062,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m2 != null) return;
+            if ((catMask & 256L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10144,6 +10199,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
+            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10280,6 +10336,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
+            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10416,6 +10473,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
+            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10569,6 +10627,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10722,6 +10781,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -10892,6 +10952,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11045,6 +11106,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
+            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11198,6 +11260,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
+            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11334,6 +11397,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
+            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11470,6 +11534,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
+            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11606,6 +11671,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
+            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11742,6 +11808,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
+            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -11878,6 +11945,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12048,6 +12116,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12218,6 +12287,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12388,6 +12458,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
+            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12524,6 +12595,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
+            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12660,6 +12732,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_2 != null) return;
+            if ((catMask & 68719476736L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12796,6 +12869,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -12949,6 +13023,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
+            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13102,6 +13177,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13255,6 +13331,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
+            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13408,6 +13485,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13561,6 +13639,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
+            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13714,6 +13793,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -13867,6 +13947,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
+            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -14022,6 +14103,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14168,6 +14250,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14314,6 +14397,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14460,6 +14544,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14606,6 +14691,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14752,6 +14838,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -14898,6 +14985,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15044,6 +15132,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15190,6 +15279,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15336,6 +15426,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15482,6 +15573,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15628,6 +15720,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15774,6 +15867,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -15920,6 +16014,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16066,6 +16161,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16212,6 +16308,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16358,6 +16455,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16504,6 +16602,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16650,6 +16749,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16796,6 +16896,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -16942,6 +17043,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17088,6 +17190,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17234,6 +17337,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17380,6 +17484,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17526,6 +17631,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17672,6 +17778,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17818,6 +17925,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -17964,6 +18072,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18110,6 +18219,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18256,6 +18366,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18402,6 +18513,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18548,6 +18660,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18694,6 +18807,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18840,6 +18954,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -18986,6 +19101,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19132,6 +19248,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19278,6 +19395,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19424,6 +19542,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19570,6 +19689,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19716,6 +19836,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -19862,6 +19983,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20008,6 +20130,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20154,6 +20277,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20300,6 +20424,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20446,6 +20571,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20592,6 +20718,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20738,6 +20865,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -20884,6 +21012,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21030,6 +21159,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21176,6 +21306,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21322,6 +21453,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21468,6 +21600,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21614,6 +21747,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21760,6 +21894,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -21906,6 +22041,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22052,6 +22188,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22198,6 +22335,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22344,6 +22482,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22490,6 +22629,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22636,6 +22776,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22782,6 +22923,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -22928,6 +23070,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23074,6 +23217,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23220,6 +23364,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23366,6 +23511,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23512,6 +23658,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23658,6 +23805,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23804,6 +23952,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -23950,6 +24099,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24096,6 +24246,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24242,6 +24393,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24388,6 +24540,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -24543,6 +24696,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
+            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24618,6 +24772,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
+            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24693,6 +24848,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
+            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24768,6 +24924,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24843,6 +25000,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24918,6 +25076,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -24993,6 +25152,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
+            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25068,6 +25228,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
+            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25143,6 +25304,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_2 != null) return;
+            if ((catMask & 549755813888L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25218,6 +25380,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_2 != null) return;
+            if ((catMask & 1099511627776L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25293,6 +25456,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
+            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25368,6 +25532,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
+            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25443,6 +25608,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25518,6 +25684,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25593,6 +25760,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25668,6 +25836,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
+            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25743,6 +25912,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
+            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25818,6 +25988,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_1 != null) return;
+            if ((catMask & 8589934592L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25893,6 +26064,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
+            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -25968,6 +26140,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
+            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26043,6 +26216,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
+            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26118,6 +26292,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26193,6 +26368,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26268,6 +26444,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26343,6 +26520,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26418,6 +26596,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_0 != null) return;
+            if ((catMask & 67108864L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26493,6 +26672,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m1 != null) return;
+            if ((catMask & 524288L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26568,6 +26748,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_2_m2 != null) return;
+            if ((catMask & 4096L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26643,6 +26824,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
+            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26718,6 +26900,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
+            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26793,6 +26976,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26868,6 +27052,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -26943,6 +27128,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27018,6 +27204,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27093,6 +27280,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
+            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27168,6 +27356,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m2 != null) return;
+            if ((catMask & 2048L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27243,6 +27432,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
+            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27318,6 +27508,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
+            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27393,6 +27584,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
+            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27468,6 +27660,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27543,6 +27736,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27618,6 +27812,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27693,6 +27888,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27768,6 +27964,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m2 != null) return;
+            if ((catMask & 1024L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27843,6 +28040,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m2 != null) return;
+            if ((catMask & 512L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27918,6 +28116,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m2 != null) return;
+            if ((catMask & 256L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -27993,6 +28192,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
+            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28068,6 +28268,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
+            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28143,6 +28344,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
+            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28218,6 +28420,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28293,6 +28496,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28368,6 +28572,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28443,6 +28648,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
+            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28518,6 +28724,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_m1 != null) return;
+            if ((catMask & 32768L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28593,6 +28800,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
+            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28668,6 +28876,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
+            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28743,6 +28952,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_2 != null) return;
+            if ((catMask & 137438953472L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28818,6 +29028,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_2 != null) return;
+            if ((catMask & 274877906944L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28893,6 +29104,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -28968,6 +29180,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_0 != null) return;
+            if ((catMask & 16777216L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29043,6 +29256,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29118,6 +29332,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_0 != null) return;
+            if ((catMask & 4194304L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29193,6 +29408,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_1 != null) return;
+            if ((catMask & 536870912L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29268,6 +29484,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m2_2 != null) return;
+            if ((catMask & 68719476736L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29343,6 +29560,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_1 != null) return;
+            if ((catMask & 2147483648L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29418,6 +29636,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_1 != null) return;
+            if ((catMask & 4294967296L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29493,6 +29712,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_0 != null) return;
+            if ((catMask & 33554432L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29568,6 +29788,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_1_m1 != null) return;
+            if ((catMask & 262144L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29643,6 +29864,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_0_m1 != null) return;
+            if ((catMask & 131072L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29718,6 +29940,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_m1 != null) return;
+            if ((catMask & 65536L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29793,6 +30016,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_0 != null) return;
+            if ((catMask & 8388608L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29868,6 +30092,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if (occ_m1_1 != null) return;
+            if ((catMask & 1073741824L) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -29938,6 +30163,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30006,6 +30232,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30074,6 +30301,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30142,6 +30370,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30210,6 +30439,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30278,6 +30508,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30346,6 +30577,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30414,6 +30646,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30482,6 +30715,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30550,6 +30784,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30618,6 +30853,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30686,6 +30922,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30754,6 +30991,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30822,6 +31060,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30890,6 +31129,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -30958,6 +31198,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31026,6 +31267,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31094,6 +31336,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31162,6 +31405,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31230,6 +31474,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31298,6 +31543,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31366,6 +31612,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31434,6 +31681,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31502,6 +31750,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.EAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31570,6 +31819,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31638,6 +31888,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31706,6 +31957,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31774,6 +32026,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31842,6 +32095,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31910,6 +32164,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -31978,6 +32233,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32046,6 +32302,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHEAST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32114,6 +32371,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32182,6 +32440,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32250,6 +32509,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32318,6 +32578,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32386,6 +32647,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32454,6 +32716,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32522,6 +32785,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32590,6 +32854,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTH, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32658,6 +32923,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32726,6 +32992,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32794,6 +33061,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32862,6 +33130,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32930,6 +33199,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -32998,6 +33268,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33066,6 +33337,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33134,6 +33406,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.SOUTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33202,6 +33475,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33270,6 +33544,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33338,6 +33613,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33406,6 +33682,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33474,6 +33751,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33542,6 +33820,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33610,6 +33889,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33678,6 +33958,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.WEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33746,6 +34027,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33814,6 +34096,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33882,6 +34165,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -33950,6 +34234,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34018,6 +34303,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34086,6 +34372,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34154,6 +34441,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34222,6 +34510,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.NORTHWEST, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34290,6 +34579,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTH)) return;
         if (occ_0_1 != null) return;
+        if ((catMask & 2147483648L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34358,6 +34648,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHEAST)) return;
         if (occ_1_1 != null) return;
+        if ((catMask & 4294967296L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34426,6 +34717,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.EAST)) return;
         if (occ_1_0 != null) return;
+        if ((catMask & 33554432L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34494,6 +34786,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHEAST)) return;
         if (occ_1_m1 != null) return;
+        if ((catMask & 262144L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34562,6 +34855,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTH)) return;
         if (occ_0_m1 != null) return;
+        if ((catMask & 131072L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34630,6 +34924,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.SOUTHWEST)) return;
         if (occ_m1_m1 != null) return;
+        if ((catMask & 65536L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34698,6 +34993,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.WEST)) return;
         if (occ_m1_0 != null) return;
+        if ((catMask & 8388608L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;
@@ -34766,6 +35062,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary(Direction.CENTER, Direction.NORTHWEST)) return;
         if (occ_m1_1 != null) return;
+        if ((catMask & 1073741824L) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         score = 0;

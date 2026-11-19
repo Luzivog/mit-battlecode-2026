@@ -24,6 +24,11 @@ import static challenger.robot.rat.BabyRat.*;
 occ_{{ "m" if dx < 0 else "" }}{{ dx|abs }}_{{ "m" if dy < 0 else "" }}{{ dy|abs }}
 {%- endmacro %}
 
+{# catMask bit of tile myLoc + (dx, dy), |dx|, |dy| <= 2: rows of 7 bits, x and y from -3 #}
+{% macro cat_bit(dx, dy) -%}
+{{ 2 ** ((dy + 3) * 7 + dx + 3) }}L
+{%- endmacro %}
+
 {% macro coord_x(dx) -%}
 myLocX{% if dx %} + {{ dx }}{% endif %}
 {%- endmacro %}
@@ -62,6 +67,7 @@ public final class TryThrow {
     static boolean isSecondary;
     static int bytecodeStart, bytecodeBudget;
     static char c;
+    static long catMask;
     {% for dy in range(grid_radius, -grid_radius - 1, -1) %}
     {% for dx in range(-grid_radius, grid_radius + 1) %}
     static RobotInfo {{ occ_var(dx, dy) }};
@@ -98,12 +104,12 @@ public final class TryThrow {
         // }
         if (isSecondary) {
             if (td != myDir) turn(td);
-            assert(rc.canThrowRat());
+            if (!rc.canThrowRat()) return false;
             rc.throwRat();
-            assert(CombatStrategy.performMoves(md, td));
+            CombatStrategy.performMoves(md, td);
         } else {
-            assert(CombatStrategy.performMoves(md, td));
-            assert(rc.canThrowRat());
+            if (!CombatStrategy.performMoves(md, td)) return false;
+            if (!rc.canThrowRat()) return false;
             rc.throwRat();
         }
         return true;
@@ -278,6 +284,13 @@ public final class TryThrow {
                 markCell(dx, dy, info);
             }
         }
+        catMask = 0;
+        for (int i = RobotTracker.numCats; --i >= 0;) {
+            MapLocation l = RobotTracker.sortedCats[i].location;
+            int x = l.x - myLocX + 3;
+            int y = l.y - myLocY + 3;
+            if (x >= 0 && x <= 5 && y >= 0 && y <= 5) catMask |= 387L << (y * 7 + x);
+        }
         if (GlobalArray.nearestRatKing != null) {
             int dx = GlobalArray.nearestRatKing.x - myLocX;
             int dy = GlobalArray.nearestRatKing.y - myLocY;
@@ -310,6 +323,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if ({{ occ_var(base_dx, base_dy) }} != null) return;
+            if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -412,6 +426,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary({{ move_dir }}, {{ throw_dir }})) return;
         if ({{ occ_var(base_dx, base_dy) }} != null) return;
+        if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         {% if debug %} // println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}
@@ -514,6 +529,7 @@ public final class TryThrow {
         } else {
             if (!rc.canSenseLocation(throwTarget)) return;
             if ({{ occ_var(base_dx, base_dy) }} != null) return;
+            if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
             if (!rc.onTheMap(throwTarget)) return;
             if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         }
@@ -617,6 +633,7 @@ public final class TryThrow {
         if (!rc.canSenseLocation(throwTarget)) return;
         if (!canSecondary({{ move_dir }}, {{ throw_dir }})) return;
         if ({{ occ_var(base_dx, base_dy) }} != null) return;
+        if ((catMask & {{ cat_bit(base_dx, base_dy) }}) != 0) return;
         if (!rc.onTheMap(throwTarget)) return;
         if (!rc.senseMapInfo(throwTarget).isPassable()) return;
         {% if debug %} println("verified {{ dir_short_map[move_dir] }} then {{ dir_short_map[throw_dir] }}"); {% endif %}

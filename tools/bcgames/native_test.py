@@ -357,7 +357,8 @@ class RemoteGuardTest(unittest.TestCase):
         job = play.Job(spec={"id": "g", "a": "x", "b": "y", "map": "m"}, key=KEY, meta={"key": KEY})
         delivered = []
         b = {"run": "run-1", "jobs": {"g": (job, delivered.append)}, "done": set(),
-             "guards": {"g~guard": job, "h~guard": job}}
+             "guards": {"g~guard": job, "h~guard": job},
+             "gstate": {k: {"left": 1, "done": False, "err": None} for k in ("g~guard", "h~guard")}}
         r._deliver(b, dict(result(), id="g~guard", guard={"verdict": "same", "native_build": "b1"}))
         self.assertEqual((r.got, delivered), ([("same", 1)], []))
         r._deliver(b, dict(result(), id="g", key=KEY, backend="native", native_build="b1"))
@@ -365,6 +366,27 @@ class RemoteGuardTest(unittest.TestCase):
         r._deliver(b, dict(result("d2"), id="h~guard", guard={"verdict": "mismatch", "native_build": "b1"}))
         self.assertEqual((r.got[-1], len(r.seen)), (("mismatch", 0), 1))
         self.assertIsNone(r.cache.get(KEY))  # the binary's results purged
+
+
+class GuardTwinTest(unittest.TestCase):
+    def test_the_first_verdict_counts_and_an_error_waits_for_the_twin(self):
+        from bcgames import imperial
+        r = imperial.ImperialRunner.__new__(imperial.ImperialRunner)
+        r.lock = threading.Lock()
+        r.got, r.mism = [], []
+        r.on_guard = lambda job, g: r.got.append(g["verdict"])
+        r._mismatch = lambda job, g: r.mism.append(g)
+        r.guards_pending = 2
+        job = play.Job(spec={"id": "g"}, key=KEY)
+        b = {"run": "run-1", "guards": {"a~guard": job, "a~guard~2": job, "b~guard": job, "b~guard~2": job},
+             "gstate": {k: {"left": 2, "done": False, "err": None} for k in ("a~guard", "b~guard")}}
+        r._guard_result(b, "a~guard~2", {"guard": {"verdict": "same"}})
+        r._guard_result(b, "a~guard", {"guard": {"verdict": "same"}})
+        self.assertEqual((r.got, r.guards_pending), (["same"], 1))  # once
+        r._guard_result(b, "b~guard", {"error": "boom"})  # its twin may still check it
+        self.assertEqual((r.got, r.guards_pending), (["same"], 1))
+        r._guard_result(b, "b~guard~2", {"guard": {"verdict": "mismatch"}})
+        self.assertEqual((r.got, r.guards_pending, len(r.mism)), (["same", "mismatch"], 0, 1))
 
 
 class FlusherTest(unittest.TestCase):
@@ -450,8 +472,9 @@ class GuardsFirstTest(unittest.TestCase):
             j.plan = r.plan
         lines, guards, fresh = r._specs(batch, True, list(r.ahead), jars)
         ids = [json.loads(x)["id"] for x in lines]
-        self.assertEqual(ids, ["late~guard", "g1~guard", "g0", "g1", "g2"])  # the binary's first game isn't g0:
-        self.assertEqual((sorted(guards), fresh), (["g1~guard", "late~guard"], 1))  # it has a guard already
+        # the binary's first game isn't g0: it has a guard already; each guard twice, its twin in the second half
+        self.assertEqual(ids, ["late~guard", "g1~guard", "g0", "late~guard~2", "g1", "g1~guard~2", "g2"])
+        self.assertEqual((sorted(guards), fresh), (["g1~guard", "g1~guard~2", "late~guard", "late~guard~2"], 1))
         later = self.job("late", sampled[0])
         later.plan = r.plan
         lines, guards, fresh = r._specs([(later, None)], True, [], jars)

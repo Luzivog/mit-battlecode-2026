@@ -13,7 +13,8 @@ and named by each spec (`bcx`). A guarded game goes out twice: as itself, whose 
 verdict (play.Runner.guard). So a Java twin never holds up a cell; the run waits for the verdicts (guards_pending,
 on_guard) before it concludes. A guard task takes 5 times its game (80 s median, 500 s at p99), and ended last in
 three tests of four (19 Nov), so guards go first: the games a test will surely play are guarded ahead
-(guard_ahead: the first batch of their binary holds them), and a batch's guard tasks come before its games.
+(guard_ahead: the first batch of their binary holds them), and a batch's guard tasks come before its games. Each goes
+twice (GUARD_COPIES; `ID~guard~2` in the batch's second half, so another machine plays it): the first verdict counts.
 
 A batch's tools/run is read for its run's id and followed at once: its placement (submitting pieces: seconds to
 minutes) goes on beside it, and the next batch need not wait for it.
@@ -48,6 +49,12 @@ POLL_S = 3            # reading finished tasks' results (local files, which tool
 # less slot time (overhead 1 s a game instead of 2.4) but took twice the wall time.
 CHUNK = 1
 REMOTE_KEEP_DAYS = 3
+# Each guard goes out twice, on two machines (its first copy at the head of its batch, its twin in the second half,
+# where other pieces claim): its Java game takes 2-3 times as long on the slowest DoC CPUs as on the fastest (the same
+# game: 82 s on rubeus, 197 s on dove02, 291 s on kipp), and the first verdict counts. A twin's mismatch still stops
+# the run.
+GUARD_COPIES = 2
+TWIN = "~2"
 
 
 def ship_binary(key: str, path: Path) -> str:
@@ -292,7 +299,10 @@ class ImperialRunner:
             self.log.write(err)
             raise store.SetupError(f"tools/run exit {proc.returncode}: {(run + out + err).strip()[-500:]}")
         b = {"run": run, "jobs": {j.spec["id"]: (j, cb) for j, cb in batch}, "guards": guards, "done": set(),
-             "ended": False}
+             "ended": False, "gstate": {}}
+        for gid in guards:
+            st = b["gstate"].setdefault(gid.removesuffix(TWIN), {"left": 0, "done": False, "err": None})
+            st["left"] += 1
         b["place"] = threading.Thread(target=self._placed, args=(proc, run), daemon=True)
         b["place"].start()
         with self.lock:
@@ -320,10 +330,15 @@ class ImperialRunner:
                 spec["bcx"] = self.binaries[job.plan]["remote"]
             return spec
 
+        heads: list[str] = []
+        twins: list[str] = []
+
         def guard_line(job: play.Job, spec: dict) -> None:
             gid = f"{spec['id']}~guard"
-            guards[gid] = job
-            lines.insert(len(guards) - 1, json.dumps(dict(spec, id=gid, guard=True, replay=False)))
+            for k in range(GUARD_COPIES):
+                cid = gid + (TWIN if k else "")
+                guards[cid] = job
+                (twins if k else heads).append(json.dumps(dict(spec, id=cid, guard=True, replay=False)))
 
         for job in ahead:
             self.guarded.add(self.binaries[job.plan]["key"])
@@ -337,6 +352,11 @@ class ImperialRunner:
                 guard_line(job, spec)
                 fresh += 1
             lines.append(json.dumps(spec))
+        # first copies first; the twins spread over the second half, where other pieces claim
+        n = len(lines)
+        for k, t in enumerate(twins):
+            lines.insert(n // 2 + (k * (n - n // 2)) // len(twins) + k, t)
+        lines[:0] = heads
         return lines, guards, fresh
 
     def _placed(self, proc: subprocess.Popen, run: str) -> None:
@@ -367,13 +387,19 @@ class ImperialRunner:
                 self._deliver(b, {"id": gid, "guard": {"verdict": "java-error", "error": "no result"}})
 
     def _guard_result(self, b: dict, gid: str, r: dict) -> None:
-        """A guard task's verdict (its game's result came from its own task)."""
+        """A guard task's verdict (its game's result came from its own task). Of a guard's copies the first verdict
+        counts, a java-error only once no other copy can check the game; a mismatch from any copy stops the run."""
         job = b["guards"][gid]
         g = r.get("guard") if isinstance(r.get("guard"), dict) else {
             "verdict": "java-error", "error": r.get("error") or "the guard task played no Java game"}
         g = dict(g, remote=b["run"])
+        st = b["gstate"][gid.removesuffix(TWIN)]
+        st["left"] -= 1
         if g.get("verdict") == "mismatch":
             self._mismatch(job, g)
+        if st["done"] or (g.get("verdict") == "java-error" and st["left"] > 0):
+            return
+        st["done"] = True
         with self.lock:
             self.guards_pending -= 1
         if self.on_guard:

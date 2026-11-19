@@ -461,6 +461,14 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
   - Bytecode: TryTrap keeps its budget.
 - **Size.** 40–120 template lines.
 
+- **Merged** (2026-11-19, 79cc92f): B2 (staying scores all 8 facings), the band trap (+20 on the tile between, +10 at
+  ±45°, raw ≥ 20 or global ≥ 400) gated on ≥ 5 known mines (`util/MineEstimate`), and S2's two lost-turn sites.
+  `goal` gain +0.119 [+0.045, +0.188] (1119-033639-ab-2d84); on top of CW +0.116 [+0.050, +0.183]
+  (1119-052337-ab-fe57). Hits landed/taken 1.57 (main 1.04). Ungated, the trap won ≥ 8-mine maps (+0.11 to +0.17)
+  and lost ≤ 4-mine maps (−0.18 to −0.19) by starving the king: global cheese starts at 2500 everywhere, so only the
+  mine count separates them. Any later trap spender keeps the mine gate. `MineEstimate` duplicates E2's estimator
+  (E1 removes the copy).
+
 #### CW. Cat-aware, value-gated throws; hold and bite
 - **Change.**
   - `moves/TryThrow.java.jinja2`:

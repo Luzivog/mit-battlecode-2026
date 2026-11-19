@@ -18,3 +18,5 @@
 {"t": 1795080478, "score": null, "kept": false, "what": "INVALID: inline free lists, atomic lists untraced and sizes one granule short (crash)"}
 {"t": 1795080755, "score": 14.4124, "kept": true, "what": "small pointerful objects from our own free lists refilled by GC_generic_malloc_many"}
 {"t": 1795081372, "score": 13.8401, "kept": true, "what": "canSenseLocation fast path caches the robot's current vision mask in the robot"}
+{"t": 1795081959, "score": null, "kept": false, "what": "INVALID: bdwgc HBLKSIZE=16384 (mmap alignment abort)"}
+{"t": 1795082535, "score": 13.5299, "kept": true, "what": "bdwgc patch: GC_allochblk skips empty free lists instead of calling GC_allochblk_nth on each; per-configuration gc dir"}

@@ -34,6 +34,18 @@ ASM = ["asm-commons", "asm-analysis", "asm-util", "asm-tree"]
 GC_VERSION = "8.2.8"
 # robots run on their own stacks: the collector must not clear below the stack it believes in
 GC_CFLAGS = "-O2 -fPIC -DALWAYS_SMALL_CLEAR_STACK"
+# edits to the collector's source (file, text, replacement), each exact in behaviour:
+# - GC_allochblk tries each larger free list in turn for a heap block; an empty list makes GC_allochblk_nth return
+#   NULL at once, and after a collection most lists are empty, so the call is skipped (a refill of small objects
+#   asks for a block at a time)
+GC_PATCHES = [("allchblk.c",
+               "    for (; start_list <= split_limit; ++start_list) {\n"
+               "        result = GC_allochblk_nth(sz, kind, flags, start_list, may_split);",
+               "    for (; start_list <= split_limit; ++start_list) {\n"
+               "        if (NULL == GC_hblkfreelist[start_list]) continue;\n"
+               "        result = GC_allochblk_nth(sz, kind, flags, start_list, may_split);")]
+# the collector's source, build and install, one per configuration (DEPS is shared by every worktree)
+GC_DIR = "gc-" + hashlib.sha256(repr((GC_CFLAGS, GC_PATCHES)).encode()).hexdigest()[:8]
 GC_SHA256 = "7649020621cb26325e1fb5c8742590d92fb48ce5c259b502faf7d9fb5dabb160"
 JAR_SHA256 = {"1.2.6": "ea722532f6d523241ff4f708078563de2a010a39d7d524c66ae1890ab85c04ec",
               "1.2.5": "b9f39d19a2a0bccd35540039747bacd0412b6016b2ef64c39846395989f20488"}
@@ -75,19 +87,26 @@ def deps(versions):
               JARS / f"battlecode26-java-{v}.jar", JAR_SHA256[v])
     for a in ASM:
         fetch(f"{MAVEN}/{a}/9.7/{a}-9.7.jar", JARS / f"{a}-9.7.jar")
-    gc = DEPS / "gc-install" / "lib" / "libgc.a"
-    stamp = DEPS / "gc-install" / "flags"
+    gc = DEPS / GC_DIR / "install" / "lib" / "libgc.a"
+    stamp = DEPS / GC_DIR / "install" / "flags"
     if not gc.exists() or not stamp.exists() or stamp.read_text() != GC_CFLAGS:
         tar = DEPS / f"gc-{GC_VERSION}.tar.gz"
         fetch(f"https://github.com/ivmai/bdwgc/releases/download/v{GC_VERSION}/gc-{GC_VERSION}.tar.gz", tar, GC_SHA256)
-        src = DEPS / "src"
-        src.mkdir(parents=True, exist_ok=True)
+        src = DEPS / GC_DIR / "src"
+        shutil.rmtree(src, ignore_errors=True)
+        src.mkdir(parents=True)
         sh(["tar", "xzf", str(tar), "-C", str(src)])
-        bdir = DEPS / "gc-build"
+        for name, text, repl in GC_PATCHES:
+            f = src / f"gc-{GC_VERSION}" / name
+            code = f.read_text()
+            if code.count(text) != 1:
+                sys.exit(f"build: the collector patch for {name} does not apply")
+            f.write_text(code.replace(text, repl))
+        bdir = DEPS / GC_DIR / "build"
         shutil.rmtree(bdir, ignore_errors=True)
-        bdir.mkdir()
+        bdir.mkdir(parents=True)
         sh(["cmake", str(src / f"gc-{GC_VERSION}"), "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_C_COMPILER=clang",
-            f"-DCMAKE_INSTALL_PREFIX={DEPS / 'gc-install'}", "-DBUILD_SHARED_LIBS=OFF", "-Denable_threads=OFF",
+            f"-DCMAKE_INSTALL_PREFIX={DEPS / GC_DIR / 'install'}", "-DBUILD_SHARED_LIBS=OFF", "-Denable_threads=OFF",
             "-Denable_cplusplus=OFF", "-Dbuild_cord=OFF", "-Denable_docs=OFF", "-Denable_parallel_mark=OFF",
             "-Denable_gcj_support=OFF", "-Denable_java_finalization=OFF", "-Denable_disclaim=OFF",
             "-Denable_large_config=ON", "-Dbuild_tests=OFF", f"-DCMAKE_C_FLAGS={GC_CFLAGS}"], cwd=bdir,
@@ -184,7 +203,7 @@ def build(version: str, bots, jobs: int, opt: str, teams=None, gen: Path = None,
     if not vc.exists() or vc.read_text() != text:
         vc.write_text(text)
     rt = ENGINE / "runtime"
-    gci = DEPS / "gc-install"
+    gci = DEPS / GC_DIR / "install"
     inc = f"-I{gen} -I{rt} -I{gci / 'include'}"
     srcs = sorted(gen.glob("m*.cpp")) + [gen / "klasses.cpp", gen / "version.cpp"] + \
         [rt / f for f in ("rt.cpp", "sched.cpp", "natives.cpp", "main.cpp")]

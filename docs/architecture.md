@@ -61,7 +61,7 @@ isLastMove=true; executeGlance()           turn ±90° if the turn cooldown is u
 1. Lifecycle bookkeeping: `goHomeStrategy` is nulled when raw cheese is 0, and created when `shouldGoHome()` holds (thresholds depend on distance to king, HP and global cheese).
 2. `FormationStrategy`: walk to a king-announced formation point and `becomeRatKing()`.
 3. `GoHomeStrategy`: follow breadcrumbs to a king and transfer cheese.
-4. `CheeseStrategy`: walk to the best visible cheese.
+4. `CheeseStrategy`: walk to the largest visible pile it can reach (`Pathfinder.computePickable`).
 5. If raw cheese > 50: force GoHome.
 6. Loop `TraverseStrategy(target, 2)` until one accepts. The target is an unexplored 3×3 unit (`MapManager.localTracker.sampleUnseenUnitCenter()`) or a known mine weighted by distance (20% explore once mines are known).
 
@@ -111,7 +111,7 @@ G = generated from the same-named `.jinja2`; sizes are generated-output lines (s
 | `Game.java` | 168 | | Global cached state (`rc`, `myLoc`, `myDir`, `time`, …). `_rawMove`/`_turn` are the **only** `rc.move`/`rc.turn` call sites. `convertKing` |
 | `CellTracker.java` | 436,521 | G | Map memory: per-row bitboards (seen/passable/dirt), `mapData` char grid, 11×11 local masks, symmetry detection and mirroring |
 | `RobotTracker.java` | 3,008 | G | Nearby robots sorted by distance; ally/king-footprint sets; 4-round cat history |
-| `Pathfinder.java` | 18,536 | G | Bug-nav with lookahead + local 11×11 bitboard BFS; also `doBfs`, `multisourceBfs`, `computeReachable` (§6) |
+| `Pathfinder.java` | 18,536 | G | Bug-nav with lookahead + local 11×11 bitboard BFS; also `doBfs`, `multisourceBfs`, `computeReachable`, `computePickable` (§6) |
 | `comms/GlobalArray.java` | 575 | | Shared-array protocol (§4.1) |
 | `comms/Squeaker.java` | 218 | | Squeak protocol, send priority, receive loop (§4.2) |
 | `comms/EnemyManager.java` | 358 | G | 15-bit enemy encoding; enemies heard via squeak this turn |
@@ -299,6 +299,7 @@ See §4.3.
 | `Pathfinder.doBfs(target)` | Local BFS seeded at `target` with no bug-nav (used by GoHome). |
 | `multisourceBfs(sources, n) → {dirMask, iters}` | Combat approach directions (≤ 6 iterations). |
 | `computeReachable()` → `reach0/1` | Cells within 5 steps. |
+| `computePickable()` → `pickable0/1`, `isPickable(loc)` | Cells a rat can pick cheese up from: cells reached in ≤ 6 steps through passable cells (no allies; no dirt unless dirt pathing is on), grown by one ring, plus its own 3×3. `loc` must be within 4 cells. |
 | `givenUp()`, `reset()`, `getBugPos()` | Bug-nav state queries/reset. |
 
 Typical use is `BabyRat.autoMove(Pathfinder.getMove(target))` (TraverseStrategy.java:30). **`Pathfinder.makeMove` does not exist**: `src/challenger/CLAUDE.md` is stale on this point.

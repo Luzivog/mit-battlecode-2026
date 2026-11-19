@@ -224,7 +224,7 @@ holdout results are slightly optimistic. Never tune a constant on those games.
   against that main, or any later main that still plays those games the same way, any change looks like a gain:
   the flips that W0.1 measured on every change regress to the mean (E2b: +0.16 on `L1-early` for arms that read
   ≤ 0 on fresh seeds). Run gain tests on loss pools with a fresh `--seed-base`; the pool then means "these maps,
-  weighted by their losses". Seed base 0 on a loss pool is only for reading the listed games.
+  weighted by their losses". Seed base 0 on a loss pool is only for reading the listed games. Why (MC, `L1-econ`): main two merges after W1 played 98 of the 124 listed games identically to W1's to round 500 and gave W1's winner in 118; MC's reach check read +0.187 there, +0.004 on the same maps at seed base 7 and +0.037 on `goal`.
 - Each pass visits every entry once, in a new fixed random order. An early stop has covered the pool once
   (`--min-cells` defaults to one pass).
 - Seeds are applied by rewriting the map file's seed field into a cached copy, so the official engine stays

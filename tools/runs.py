@@ -493,18 +493,23 @@ def mark_placed(rid: str) -> None:
 
 
 def fetch(rid: str, names: list[int], out: Path) -> None:
-    """Tasks NAMES' done tars, unpacked into OUT/N/."""
+    """Tasks NAMES' done tars, each unpacked aside and renamed into OUT/N/ whole: a reader that sees N/ sees all of it
+    (tools/games reads a failed task's folder as its games' failure)."""
+    import tarfile
     for i in range(0, len(names), 200):
         part = names[i:i + 200]
         tmp = out / ".done"
         login_into(f"tar -C {run_dir(rid)}/done -cf - {' '.join(f'{n}.tar' for n in part)}", tmp)
         for n in part:
-            dest = out / str(n)
-            dest.mkdir(parents=True, exist_ok=True)
-            import tarfile
+            dest, aside = out / str(n), out / f".{n}.part"
+            shutil.rmtree(aside, ignore_errors=True)
+            aside.mkdir(parents=True)
             with tarfile.open(tmp / f"{n}.tar") as tar:
-                tar.extractall(dest, filter="data")
+                tar.extractall(aside, filter="data")
             (tmp / f"{n}.tar").unlink()
+            if dest.exists():  # fetched again (a follower started anew): the new one replaces it
+                shutil.rmtree(dest)
+            os.rename(aside, dest)
 
 
 def result_of(out: Path, n: int) -> dict[str, object]:
@@ -518,17 +523,32 @@ def result_of(out: Path, n: int) -> dict[str, object]:
 def close(rid: str, pieces: list[str]) -> None:
     """The run closed (pieces stop claiming; it leaves the pool), its inputs deleted (a piece still running holds its
     own links), and its pieces that never started cancelled: no machine is held for nothing."""
+    mark_closed(rid)
+    cancel_unstarted(rid, pieces)
+
+
+def mark_closed(rid: str) -> None:
     d = run_dir(rid)
     login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz {REMOTE_POOL}/open/{rid}")
+
+
+def cancel_unstarted(rid: str, pieces: list[str]) -> None:
+    """RID's pieces that never started cancelled, all at once (jobs.cancel_many): one condor_rm for every cluster,
+    where one a piece took 4 logins (150 pieces: 33 min on 19 Nov)."""
     if not pieces:
         return
     states = J.read_states(pieces)
-    for pid, st in states.items():
-        if st.phase in ("queued", "held") and "started" not in st.flags:
-            try:
-                J.say(f"run {rid}: {J.cancel(pid)} ({pid}, never started)")
-            except Refused as e:
-                J.say(f"run {rid}: cancelling {pid}: {e}")
+    unstarted = [pid for pid, st in states.items() if st.phase in ("queued", "held") and "started" not in st.flags]
+    if not unstarted:
+        return
+    try:
+        said = J.cancel_many(unstarted)
+    except Refused as e:
+        J.say(f"run {rid}: cancelling {len(unstarted)} pieces that never started: {e}")
+        return
+    gone = sum("already gone" in x for x in said.values())
+    J.say(f"run {rid}: {len(unstarted)} pieces that never started cancelled"
+          + (f" ({gone} had already left the queue)" if gone else ""))
 
 
 def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) -> dict[str, object]:
@@ -576,8 +596,11 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             shown = line
         if len(have) >= s.tasks or pr.closed:
             if not pr.closed:
-                close(rid, [p for p in pr.pieces if p not in finals])
-            return summarize(s, out, finals, pr.pieces)
+                mark_closed(rid)
+            summary = summarize(s, out, finals, pr.pieces)  # before the cancels: the run reads done at once
+            if not pr.closed:
+                cancel_unstarted(rid, [p for p in pr.pieces if p not in finals])
+            return summary
         if not pr.placed and now - (s.created or now) < PLACE_S:  # tools/run still places its pieces
             pause()
             continue
@@ -782,12 +805,14 @@ def cancel(rid: str) -> str:
     pooled = read_settings(rid).pool
     d = run_dir(rid)
     login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz {REMOTE_POOL}/open/{rid}")
-    said, kept = [], 0
+    said, kept, ended = [], 0, []
     for pid, st in J.read_states(pr.pieces).items():
         if pooled and st.phase == "running":
             kept += 1
         elif st.phase in ("queued", "running", "held", "unknown"):
-            said.append(J.cancel(pid))
+            ended.append(pid)
+    if ended:
+        said += J.cancel_many(ended).values()
     if kept:
         said.append(f"{kept} running piece{'s' * (kept != 1)} stop its tasks and go on with other runs' or end")
     return f"run {rid} closed; " + ("; ".join(said) if said else "no piece was live")

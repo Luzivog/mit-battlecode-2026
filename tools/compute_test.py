@@ -321,3 +321,39 @@ def test_content_keys_ignore_times_and_snapshots_repeat(tmp_path: Path) -> None:
     heads = subprocess.run([*g, "bundle", "list-heads", str(tmp_path / "b.bundle")], capture_output=True, text=True,
                            check=True).stdout
     assert a.commit in heads and "refs/heads/main" in heads
+
+
+def test_cancel_many_is_one_removal_a_scheduler(monkeypatch: pytest.MonkeyPatch) -> None:
+    """jobs.cancel_many: one login a cluster for `cancelled` and the backend ids, one condor_rm for every cluster and
+    one scancel for every Slurm job; a cluster condor_rm can't find (it left the queue) counts as cancelled."""
+    ids = ["condor-1119-180715-6bbe", "condor-1119-180715-50ac", "condor-1119-180715-f328", "slurm-1119-180811-8b25",
+           "condor-1119-180715-0000"]
+    bid = {ids[0]: "ash04.doc.ic.ac.uk 48192", ids[1]: "ash04.doc.ic.ac.uk 48190", ids[2]: "ash04.doc.ic.ac.uk 48553",
+           ids[3]: "1265700", ids[4]: ""}
+    logins: list[str] = []
+    removals: list[str] = []
+
+    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = (), stream: int = 0) -> str:
+        logins.append(cmd)
+        if cmd.startswith("touch") or "; touch" in cmd:
+            return "".join(f"{j} {bid[j]}\n" for j in ids if f"jobs/{j}/cancelled" in cmd)
+        if cmd.startswith("scancel"):
+            removals.append(cmd)
+            return ""
+        return ""
+
+    def submit_host(cmd: str, ticket: bool = True) -> str:
+        removals.append(cmd)
+        return ("All jobs in cluster 48192 have been marked for removal\n"
+                "All jobs in cluster 48190 have been marked for removal\n"
+                "Couldn't find/remove all jobs in cluster 48553\n")
+    monkeypatch.setattr(J, "login", login)
+    monkeypatch.setattr(J, "submit_host", submit_host)
+    said = J.cancel_many(ids)
+    assert sorted(removals) == ["condor_rm -name ash04.doc.ic.ac.uk 48192 48190 48553 2>&1; true",
+                                "scancel 1265700 2>&1; true"]
+    assert len(logins) == 3  # cancelled + ids, scancel, inputs removed: one login for the cluster's every job
+    assert said[ids[0]] == "Condor cluster 48192 marked for removal"
+    assert said[ids[2]] == "Condor cluster 48553 already gone"
+    assert said[ids[3]] == "Slurm job 1265700 cancelled"
+    assert said[ids[4]] == f"{ids[4]}: never queued"

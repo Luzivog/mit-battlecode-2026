@@ -55,6 +55,7 @@ leaves a 4–7-rat army that cannot earn its way back (squaresaremodernart: 4 ra
 the same cells lose in every arm). The trap, dig and formation gates almost never bind (traps 79 vs 79 a game). Most
 remaining starvation follows a lost income share (cheddarchokehold: 4,660 transferred against awubot's 17,770), which a
 reserve only delays. Diagnostics: `~/battlecode26-data/scratch/e1/` (`E1Stats.java`, `e1_diag.py`, `paired.py`).
+| 2026-11-19 | KB | second king from round T with one king: the coordinator skips the 20-rat gate (12-rat floor), keeps the mine thresholds and the far-mine floor | `L-combat` ∪ `L-points`, 0.10 | r40 −0.025 [−0.058, +0.006]; r100 −0.033 [−0.064, −0.006]; r200 −0.018 [−0.049, +0.010]; r350 −0.017 [−0.047, +0.011]; all H0 | the second king starves: where an arm formed ≥ 50 rounds before main, it starved in 18–23 games, which we won 1 of and main 10–14; the other games +1 to +5. The rebuild, the second upkeep and the new king's digs take the bank to 0 (constrictinglattice: 1100 → 0 within 200 rounds of the formation, then the army shrinks from 16 to 2), and the first king pays upkeep first. No global gate at formation separates them (formed at ≥ 1500 global: 19 wins vs main's 25) |
 
 Code of the rejected arms: the packages' revert commits and side branches (`e3-c2` holds a working spawn-payload
 role switch with S2's both-or-neither write, for KB or K3 to reuse; `t3/cc-a*` hold CC+CK's arms and `t3/cc-bundle` its

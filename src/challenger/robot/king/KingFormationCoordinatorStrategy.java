@@ -3,6 +3,7 @@ package challenger.robot.king;
 import battlecode.common.*;
 import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
+import challenger.CellTracker;
 import challenger.RobotTracker;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
@@ -25,6 +26,15 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // with a 120-round upkeep reserve for 3 kings (720) + the formation (50) + the rebuild (~280). Measured: lock-in
     // formations started below 1000 global starved 22 of 38 games and won 5 fewer than main, above it 12 more.
     private static final int LOCK_IN_MIN_CHEESE = 1000;
+    // Second king in cooperation (KB): a game that ends in cooperation scores kings at 30 (rules.md §1), so 2 kings to 1
+    // is +10 points, and those endings are decided by a few points. A game still in cooperation at COOP_ROUND is
+    // likely to end in it (the first backstab comes by r40 in 34 of 41 mirror games, T3 §3.1), and its bank is high.
+    // So from COOP_ROUND, with one king, form a second without the 20-per-king rat gate and without the known-mine
+    // threshold: kings learn mines late (TheHeist: none known by r200). The site is a mine of its own on our side (under
+    // every symmetry still possible), far from our king when one is: the far-mine floor alone picked enemy-side mines
+    // behind the walls of these maps, and the formations timed out. A backstab ends the reason, so it aborts such a
+    // formation: earlier kings in contested games starve.
+    private static final int COOP_ROUND = 100;
 
     private static int MIN_DIST_FROM_KINGS_SQ;
 
@@ -42,6 +52,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private int kingCount = 1;
     private int kings = 1;
     private boolean lockIn = false;
+    private boolean coop = false;
+    private boolean coopFormation = false;
+    private MapLocation home = null;
+    private int coopSearchKey = -1;
     private RobotInfo nearestCat = null;
 
     private enum FormationState {
@@ -156,7 +170,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if(mapWidth * mapHeight <= 1200) {
             req = 8;
         }
+        if (home == null) home = myLoc;
         lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
+        coop = myKingCount == 1 && time >= COOP_ROUND && rc.isCooperation();
         int minRats = lockIn ? LOCK_IN_MIN_RATS : req * myKingCount;
         if (myKingCount >= 5
             || (time > GameConstants.RAT_KING_CUTOFF_ROUND && myKingCount >= GameConstants.MAX_NUMBER_OF_RAT_KINGS_AFTER_CUTOFF)
@@ -213,8 +229,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             // A king formed before the cutoff pays upkeep to the end, so it needs the mines to carry it: a side earns
             // ~1.13 per mine per round against 2 per king (T1 §2.7). Measured without this gate, paired against main:
             // lock-in won 15 fewer of 62 games on maps with <= 4 mines, and 15 more of 246 on maps with >= 16.
-            if (myPreCutoff && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
-            if(!lockIn) {
+            if (myPreCutoff && !coop && Game.knownCheeseMines.size() < MINE_THRESHOLDS[myKingCount]) return;
+            if (coop) {
+                if (numRats < LOCK_IN_MIN_RATS) return;
+            } else if(!lockIn) {
                 // indicate("D");
                 if(mapWidth * mapHeight > 1200) {
                     if (numRats < 20 * myKingCount) return;
@@ -229,11 +247,19 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         if (GlobalArray.getFormationTarget() != null) return;
 
+        // A cooperation search that found no site is repeated only when its inputs grow: more known mines, fewer
+        // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).
+        int mySearchKey = coop ? Game.knownCheeseMines.size() | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8 : -1;
+        if (mySearchKey >= 0 && mySearchKey == coopSearchKey) return;
         MapLocation formationTarget = selectBestMineForFormation();
-        if (formationTarget == null) return;
+        if (formationTarget == null) {
+            coopSearchKey = mySearchKey;
+            return;
+        }
 
         targetMine = formationTarget;
         coordinationStartTurn = time;
+        coopFormation = coop;
         state = FormationState.COORDINATING;
 
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
@@ -253,6 +279,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
             if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
             if (isInTabooZone(myMine)) continue;
+            if (coop && !isOnOurSide(myMine)) continue;
 
             int myScore = scoreMineForFormation(myMine);
             if (myScore > myBestScore) {
@@ -260,10 +287,18 @@ public class KingFormationCoordinatorStrategy extends Strategy {
                 myBestMine = myMine;
             }
         }
-        if(!lockIn && myBestScore < -40000) {
+        if(!lockIn && !coop && myBestScore < -40000) {
             return null;
         }
         return myBestMine;
+    }
+
+    // Nearer our first king's start than its mirror, under every symmetry not yet ruled out.
+    private boolean isOnOurSide(MapLocation aMine) {
+        int myDist = aMine.distanceSquaredTo(home);
+        return (CellTracker.rsym == 0 || myDist < aMine.distanceSquaredTo(rot180(home)))
+            && (CellTracker.hsym == 0 || myDist < aMine.distanceSquaredTo(flipHor(home)))
+            && (CellTracker.vsym == 0 || myDist < aMine.distanceSquaredTo(flipVer(home)));
     }
 
     private int scoreMineForFormation(MapLocation aMine) throws GameActionException {
@@ -335,7 +370,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             return;
         }
 
-        if (rc.getGlobalCheese() < UPGRADE_COST) {
+        if (rc.getGlobalCheese() < UPGRADE_COST || (coopFormation && !rc.isCooperation())) {
             // indicate("FORMATION: insufficient cheese");
             abortFormation();
             return;

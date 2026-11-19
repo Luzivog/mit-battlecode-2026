@@ -130,10 +130,13 @@ public final class TryTrap {
         resetBest();
         selectMoves();
         if (best <= 0.5) return false;
+        // Ask the engine before placing: a cheese transfer during the move uses the action, and a robot can take the tile
+        // since the weights were computed. A refused placement would throw and lose the rest of the turn.
         if (bestMoveDir != null) {
             if (!CombatStrategy.performMoves(bestMoveDir, bestFacing)) return false;
-            rc.placeRatTrap(bestPlaceLoc);
+            if (rc.canPlaceRatTrap(bestPlaceLoc)) rc.placeRatTrap(bestPlaceLoc);
         } else {
+            if (!rc.canPlaceRatTrap(bestPlaceLoc)) return false;
             rc.placeRatTrap(bestPlaceLoc);
             CombatStrategy.performMoves(bestSecondaryMoveDir, bestFacing);
         }

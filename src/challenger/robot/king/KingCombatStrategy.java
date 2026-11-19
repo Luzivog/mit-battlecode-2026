@@ -83,6 +83,7 @@ public class KingCombatStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         boolean hasThreat = (RobotTracker.numEnemies + RobotTracker.numCats) > 0;
         if(!hasThreat) return false;
+        if (challenger.Tune.CM_DEFDIRT_PIN) trackPin();
         var score0 = 0;
         var score1 = 0;
         var score2 = 0;
@@ -568,7 +569,7 @@ public class KingCombatStrategy extends Strategy {
             if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         }
         if (RobotTracker.numCats > 0) {
-            placeDefensiveDirt();
+            if (!challenger.Tune.CM_DEFDIRT_PIN || isPinned()) placeDefensiveDirt();
         } else {
             digSurroundingDirt();
         }
@@ -624,6 +625,36 @@ public class KingCombatStrategy extends Strategy {
                 return;
             }
         }
+    }
+
+    // Tune.CM_DEFDIRT_PIN (RS arm DP). A pin (docs/theory/cl-catlane.md §1): an EXPLORE cat the king blocks scratches it
+    // every 3 rounds. CL's trapped-pin trigger is 3 such scratches, each within 6 rounds of the last, with room (free
+    // king centres in the 5x5 box around the king) at most 13. With the switch only a pinned king puts dirt in the cat's
+    // way: the cat digs dirt on its front tiles before it scratches (rules §12).
+    private static final int PIN_SCRATCHES = 3, PIN_GAP = 6, NARROW_ROOM = 13;
+    private static int pinScratches, lastBlockScratch = -PIN_GAP - 1;
+
+    // Called before the king moves: it lost HP since its last turn while a cat touching its 3x3 had it in its lane.
+    private static void trackPin() {
+        if (time - lastBlockScratch > PIN_GAP) pinScratches = 0;
+        if (RobotTracker.numCats == 0 || rc.getHealth() >= lastHP) return;
+        for (int i = RobotTracker.numCats; --i >= 0; ) {
+            RobotInfo cat = RobotTracker.sortedCats[i];
+            int dx = myLocX - cat.location.x, dy = myLocY - cat.location.y;
+            if (dx < -2 || dx > 3 || dy < -2 || dy > 3 || laneCross(myLocX, myLocY, cat) == NOT_IN_LANE) continue;
+            pinScratches++;
+            lastBlockScratch = time;
+            return;
+        }
+    }
+
+    private static boolean isPinned() {
+        if (pinScratches < PIN_SCRATCHES) return false;
+        int x = myLocX;
+        long m = x >= 2 ? 0x1fl << (x - 2) : 0x1fl >>> (2 - x);
+        int room = 0;
+        for (int y = myLocY - 2; y <= myLocY + 2; y++) room += Long.bitCount(CellTracker.kingCentres(y) & m);
+        return room <= NARROW_ROOM;
     }
 
     static final int NOT_IN_LANE = 1000;

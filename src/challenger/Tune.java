@@ -88,4 +88,6 @@ public final class Tune {
     // PC1 A2: in cooperation with one king, deal no damage (bite, king bite, new cat trap) that our traps could turn into
     // the last cat's death, and defuse our cat traps around a cat they could kill (robot/LastCat).
     public static final boolean CM_LAST_CAT_HOLD = false;
+    // RS arm DP: the king puts its defensive dirt toward a cat only while pinned (robot/king/KingCombatStrategy).
+    public static final boolean CM_DEFDIRT_PIN = false;
 }

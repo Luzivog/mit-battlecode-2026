@@ -134,6 +134,27 @@ public class CellTracker {
         }
     }
 
+    // Bit x of row y: tile (x, y) seen and not a wall (dirt counts: kings dig it); 0 off the map.
+    public static long passableRow(int y) {
+        if(y < 0 || y >= mapHeight) return 0;
+        switch(y) {
+            {% for i in range(MAX_MAP_SIZE) %}
+            case {{i}} -> {
+                return passable{{i}};
+            }
+            {% endfor %}
+            default -> {
+                return 0;
+            }
+        }
+    }
+
+    // Bit x of row y: the 3x3 centred at (x, y) is on the map, seen and free of walls.
+    public static long kingCentres(int y) {
+        long f = passableRow(y - 1) & passableRow(y) & passableRow(y + 1) & ((1l << mapWidth) - 1);
+        return f & (f << 1) & (f >>> 1);
+    }
+
     public static boolean isKingPassable(MapLocation loc) {
         if(RatKing.is5x5) {
             return isPassable5x5(loc);

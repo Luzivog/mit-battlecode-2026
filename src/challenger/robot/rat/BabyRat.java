@@ -34,11 +34,11 @@ public class BabyRat {
     }
 
     public static void considerPlacingCatTrap() throws GameActionException {
-        if (Tune.CM_LAST_CAT_HOLD && RobotTracker.numCats > 0) LastCat.defuseTraps();
+        if (Tune.CM_LAST_CAT_HOLD != 0 && RobotTracker.numCats > 0) LastCat.defuseTraps();
         if (!rc.isActionReady()) return;
         if (RobotTracker.numCats > 0 && rc.isCooperation() && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0) {
             RobotInfo cat = RobotTracker.sortedCats[0];
-            if (Tune.CM_LAST_CAT_HOLD && !LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return;
+            if (Tune.CM_LAST_CAT_HOLD != 0 && !LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return;
             if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
                 for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
                     MapLocation targ = myLoc.add(off);

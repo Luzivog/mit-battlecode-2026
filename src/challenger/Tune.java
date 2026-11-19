@@ -86,24 +86,18 @@ public final class Tune {
     // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
 
-    // CM (book switches, docs/theory/cm-cat-maps.md): each default leaves main's games unchanged.
-    // PC1 A2: in cooperation with one king, deal no damage (bite, king bite, new cat trap) that our traps could turn into
-    // the last cat's death, and defuse our cat traps around a cat they could kill (robot/LastCat).
-    public static final boolean CM_LAST_CAT_HOLD = false;
-    // RS arm DP: the king puts its defensive dirt toward a cat only while pinned (robot/king/KingCombatStrategy).
-    public static final boolean CM_DEFDIRT_PIN = false;
-    // A second king from this round with one king, at CatBook's site (robot/king/KingFormationCoordinatorStrategy);
-    // GAME_MAX_NUMBER_OF_ROUNDS or more: never.
-    public static final int CM_KING2_ROUND = 2000;
-    // K2 D': kings remember cat footprints (CatLanes), park and chase cheese off them, take no mining step into a known
-    // lane (robot/king/KingMiningStrategy).
-    public static final boolean CM_LANE_MEMORY = false;
-    // The cat loops of the map from the book (CatBook.lanes) in the kings' footprint memory from round 1; lane memory's
-    // mining rules apply (CM_LANE_KNOWN).
-    public static final boolean CM_LANE_BOOK = false;
-    public static final boolean CM_LANE_KNOWN = CM_LANE_MEMORY || CM_LANE_BOOK;
-    // With a cat in view, the king's flee loses 4 a loop tile it steps onto (robot/king/KingCombatStrategy).
-    public static final boolean CM_LANE_FLEE = false;
-    // PT 2d's late cat hunt starts at this round (robot/rat/combat/CombatStrategy; main 1300).
-    public static final int CM_CAT_HUNT_START = 1300;
+    // CM (book switches, docs/theory/cm-cat-maps.md): each default leaves main's games unchanged; 1 turns a 0/1 switch on.
+    // PC1 A2: in cooperation with one king, no bite, king bite or new cat trap that our traps could turn into the last
+    // cat's death, and rats defuse their own cat traps around a cat they could kill (robot/LastCat).
+    public static final int CM_LAST_CAT_HOLD = 0; // tune: 1 [0, 1] last-cat hold in cooperation with one king (0 off)
+    // From this round, with one king, a second king at the book's site Book.KING2_SITE, else main's mine choice, whatever
+    // the cooperation (robot/king/KingFormationCoordinatorStrategy); 2000 or more: never.
+    public static final int CM_KING2_ROUND = 2000; // tune: 30 [15, 2000] round of the early second king (2000 never)
+    // K2 D': kings remember cat footprints (CatLanes, from round 1 the book's Book.CAT_LANE where it has one), park and
+    // chase cheese off them, take no mining step into a known lane (robot/king/KingMiningStrategy).
+    public static final int CM_LANE_MEMORY = 0; // tune: 1 [0, 1] kings' cat-lane memory for mining (0 off)
+    // With a cat in view and lanes known, the king's flee loses 4 a lane tile its step adds (robot/king/KingCombatStrategy).
+    public static final int CM_LANE_FLEE = 0; // tune: 1 [0, 1] the king's flee off known cat lanes (0 off)
+    // PT 2d's late cat hunt starts at this round (robot/rat/combat/CombatStrategy).
+    public static final int CM_CAT_HUNT_START = 1300; // tune: 300 [300, 2000] round from which idle rats hunt cats
 }

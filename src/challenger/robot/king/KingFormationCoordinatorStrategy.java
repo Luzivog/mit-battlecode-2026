@@ -3,7 +3,7 @@ package challenger.robot.king;
 import battlecode.common.*;
 import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
-import challenger.CatBook;
+import challenger.Book;
 import challenger.CellTracker;
 import challenger.RobotTracker;
 import challenger.Tune;
@@ -40,7 +40,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     // site all game, and main lost 5 of 6 games at 1 king to 2 (KF).
     private static final int COOP_ROUND = Tune.COOP_ROUND;
     // Tune.CM_KING2_ROUND (a book switch, off in main): from it, with one king, form a second as the cooperation rule
-    // does, whatever the cooperation, at the book's site for this map and seat (CatBook) when it has one. On tminusten
+    // does, whatever the cooperation, at the first book site for this map and seat (Book.KING2_SITE) with none of our kings within d² 8. On tminusten
     // every centre our king can reach lies on a cat loop and the king dies at r101-117 (docs/theory/cm-cat-maps.md).
     private static final boolean KING2_ON = Tune.CM_KING2_ROUND < GameConstants.GAME_MAX_NUMBER_OF_ROUNDS;
     private boolean king2;
@@ -258,7 +258,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).
         int mySearchKey = coop ? Game.knownCheeseMines.size() | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8 : -1;
         if (mySearchKey >= 0 && mySearchKey == coopSearchKey) return;
-        MapLocation formationTarget = KING2_ON && king2 && CatBook.king2Site() != null ? CatBook.king2Site() : selectBestMineForFormation();
+        MapLocation formationTarget = KING2_ON && king2 && king2Site() != null ? king2Site() : selectBestMineForFormation();
         if (formationTarget == null) {
             coopSearchKey = mySearchKey;
             return;
@@ -272,6 +272,22 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
 
         // indicate("FORMATION: coordinating at " + formationTarget);
+    }
+
+    // The first of the book's second-king sites with none of our kings within d² 8 (a formation completes within d² 8
+    // of its site), or null.
+    private static MapLocation king2Site() {
+        MapLocation[] s = Book.KING2_SITE;
+        if (s == null) return null;
+        sites:
+        for (MapLocation c : s) {
+            for (int k = 0; k < 5; k++) {
+                MapLocation king = GlobalArray.getRatKing(k);
+                if (king != null && king.distanceSquaredTo(c) <= 8) continue sites;
+            }
+            return c;
+        }
+        return null;
     }
 
     private MapLocation selectBestMineForFormation() throws GameActionException {

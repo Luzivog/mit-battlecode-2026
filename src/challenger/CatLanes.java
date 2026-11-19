@@ -13,10 +13,9 @@ public class CatLanes {
     // Bumped whenever a footprint tile is added; 0 while none is known.
     public static int version;
 
-    // Tune.CM_LANE_BOOK: start with every cat loop of the map (CatBook.lanes), when the book knows the map.
+    // Start with every cat loop of the map (Book.CAT_LANE, docs/theory/cm-cat-maps.md §3).
     public static void loadBook() {
-        long[] b = CatBook.lanes();
-        if (b == null) return;
+        long[] b = Book.CAT_LANE;
         for (int y = b.length; --y >= 0; ) lane[y] = b[y];
         version = 1;
     }

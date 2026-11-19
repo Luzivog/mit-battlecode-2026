@@ -81,7 +81,6 @@ public class KingCombatStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         boolean hasThreat = (RobotTracker.numEnemies + RobotTracker.numCats) > 0;
         if(!hasThreat) return false;
-        if (challenger.Tune.CM_DEFDIRT_PIN) trackPin();
         {% for i in range(8) %}
         var score{{i}} = 0;
         {% endfor %}
@@ -187,9 +186,9 @@ public class KingCombatStrategy extends Strategy {
             }
             {% endfor %}
         }
-        // Tune.CM_LANE_FLEE: with the cat loops known (CatBook), a step that puts more loop footprint under the king loses
+        // Tune.CM_LANE_FLEE: with the cat lanes known (Book.CAT_LANE), a step that puts more loop footprint under the king loses
         // 4 a tile, so a king that keeps away from a cat also walks off its loop.
-        if(challenger.Tune.CM_LANE_FLEE && RobotTracker.numCats > 0 && challenger.CatLanes.version != 0) {
+        if(challenger.Tune.CM_LANE_FLEE != 0 && RobotTracker.numCats > 0 && challenger.CatLanes.version != 0) {
             int o = challenger.CatLanes.kingOverlap(myLocX, myLocY);
             {% for i in range(8) %}
             score{{i}} -= 4 * (challenger.CatLanes.kingOverlap(myLocX + {{dir_dx[directions[i]]}}, myLocY + {{dir_dy[directions[i]]}}) - o);
@@ -209,7 +208,7 @@ public class KingCombatStrategy extends Strategy {
             if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         }
         if (RobotTracker.numCats > 0) {
-            if (!challenger.Tune.CM_DEFDIRT_PIN || isPinned()) placeDefensiveDirt();
+            placeDefensiveDirt();
         } else {
             digSurroundingDirt();
         }
@@ -236,7 +235,7 @@ public class KingCombatStrategy extends Strategy {
 
     // A bite on a cat costs no cheese and is no backstab (rules §2, §7); it adds cat damage.
     private static void biteCat(RobotInfo cat) throws GameActionException {
-        if (challenger.Tune.CM_LAST_CAT_HOLD && !challenger.robot.LastCat.mayDamage(cat, GameConstants.RAT_BITE_DAMAGE)) return;
+        if (challenger.Tune.CM_LAST_CAT_HOLD != 0 && !challenger.robot.LastCat.mayDamage(cat, GameConstants.RAT_BITE_DAMAGE)) return;
         {% for dx, dy in [(0, 0), (1, 0), (0, 1), (1, 1)] %}
         {
             var loc = cat.location.translate({{dx}}, {{dy}});
@@ -246,36 +245,6 @@ public class KingCombatStrategy extends Strategy {
             }
         }
         {% endfor %}
-    }
-
-    // Tune.CM_DEFDIRT_PIN (RS arm DP). A pin (docs/theory/cl-catlane.md §1): an EXPLORE cat the king blocks scratches it
-    // every 3 rounds. CL's trapped-pin trigger is 3 such scratches, each within 6 rounds of the last, with room (free
-    // king centres in the 5x5 box around the king) at most 13. With the switch only a pinned king puts dirt in the cat's
-    // way: the cat digs dirt on its front tiles before it scratches (rules §12).
-    private static final int PIN_SCRATCHES = 3, PIN_GAP = 6, NARROW_ROOM = 13;
-    private static int pinScratches, lastBlockScratch;
-
-    // Called before the king moves: it lost HP since its last turn while a cat touching its 3x3 had it in its lane.
-    private static void trackPin() {
-        if (time - lastBlockScratch > PIN_GAP) pinScratches = 0;
-        if (RobotTracker.numCats == 0 || rc.getHealth() >= lastHP) return;
-        for (int i = RobotTracker.numCats; --i >= 0; ) {
-            RobotInfo cat = RobotTracker.sortedCats[i];
-            int dx = myLocX - cat.location.x, dy = myLocY - cat.location.y;
-            if (dx < -2 || dx > 3 || dy < -2 || dy > 3 || laneCross(myLocX, myLocY, cat) == NOT_IN_LANE) continue;
-            pinScratches++;
-            lastBlockScratch = time;
-            return;
-        }
-    }
-
-    private static boolean isPinned() {
-        if (pinScratches < PIN_SCRATCHES) return false;
-        int x = myLocX;
-        long m = x >= 2 ? 0x1fl << (x - 2) : 0x1fl >>> (2 - x);
-        int room = 0;
-        for (int y = myLocY - 2; y <= myLocY + 2; y++) room += Long.bitCount(CellTracker.kingCentres(y) & m);
-        return room <= NARROW_ROOM;
     }
 
     static final int NOT_IN_LANE = 1000;

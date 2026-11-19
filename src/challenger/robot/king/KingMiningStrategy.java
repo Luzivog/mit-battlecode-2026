@@ -92,7 +92,7 @@ public class KingMiningStrategy extends Strategy {
     private boolean pathedNearCat;
 
     private boolean skipPath(MapLocation target) {
-        if (challenger.Tune.CM_LANE_KNOWN && myLoc.equals(laneBlockedAt) && target.equals(laneBlockedTarget) && CatLanes.version == laneBlockedVersion) {
+        if (challenger.Tune.CM_LANE_MEMORY != 0 && myLoc.equals(laneBlockedAt) && target.equals(laneBlockedTarget) && CatLanes.version == laneBlockedVersion) {
             return true;
         }
         if (RobotTracker.numCats == 0) return false;
@@ -125,7 +125,7 @@ public class KingMiningStrategy extends Strategy {
     public boolean runTick() throws GameActionException {
         // indicate("stuckTurns: " + stuckTurns);
         pathedNearCat = false;
-        if (challenger.Tune.CM_LANE_KNOWN) CatLanes.markVisibleCats();
+        if (challenger.Tune.CM_LANE_MEMORY != 0) CatLanes.markVisibleCats();
         scanForCheeseMines();
 
         if (!foundCheeseMine) {
@@ -153,7 +153,7 @@ public class KingMiningStrategy extends Strategy {
         for(var info : rc.senseNearbyMapInfos()) {
             if (info.getCheeseAmount() > 0) {
                 MapLocation checkLoc = info.getMapLocation();
-                if(challenger.Tune.CM_LANE_KNOWN ? chebyshevDistance(checkLoc, mineTarget) > 4 || CatLanes.onLane(checkLoc) : chebyshevDistance(checkLoc, mineTarget) > 4) continue;
+                if(challenger.Tune.CM_LANE_MEMORY != 0 ? chebyshevDistance(checkLoc, mineTarget) > 4 || CatLanes.onLane(checkLoc) : chebyshevDistance(checkLoc, mineTarget) > 4) continue;
                 if (nearestCheese == null || myLoc.distanceSquaredTo(checkLoc) < myLoc.distanceSquaredTo(nearestCheese)) {
                     nearestCheese = checkLoc;
                 }
@@ -164,7 +164,7 @@ public class KingMiningStrategy extends Strategy {
                 if(rc.isMovementReady() && !skipPath(nearestCheese)) {
                     Direction dir = Pathfinder.getMove(nearestCheese);
                     // indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
-                    if (!(challenger.Tune.CM_LANE_KNOWN ? stepIntoKnownLane(dir, nearestCheese) : stepIntoCatLane(dir))) {
+                    if (!(challenger.Tune.CM_LANE_MEMORY != 0 ? stepIntoKnownLane(dir, nearestCheese) : stepIntoCatLane(dir))) {
                         digDirtInDirection(dir);
                         if (rc.canMove(dir)) {
                             RatKing.rawMove(dir);
@@ -252,7 +252,7 @@ public class KingMiningStrategy extends Strategy {
         if (!myLoc.equals(resetLoc)) {
             if(rc.isMovementReady() && !skipPath(resetLoc)) {
                 Direction dir = Pathfinder.getMove(resetLoc);
-                if (!(challenger.Tune.CM_LANE_KNOWN ? stepIntoKnownLane(dir, resetLoc) : stepIntoCatLane(dir))) {
+                if (!(challenger.Tune.CM_LANE_MEMORY != 0 ? stepIntoKnownLane(dir, resetLoc) : stepIntoCatLane(dir))) {
                     digDirtInDirection(dir);
                     if (rc.canMove(dir)) {
                         RatKing.rawMove(dir);
@@ -275,7 +275,7 @@ public class KingMiningStrategy extends Strategy {
                 GlobalArray.registerGlobalCheeseMine(encoded);
 
                 if (GlobalArray.isMineAssignedToOtherKing(myMine)) continue;
-                if (challenger.Tune.CM_LANE_KNOWN && CatLanes.nearLane(myMine)) continue;
+                if (challenger.Tune.CM_LANE_MEMORY != 0 && CatLanes.nearLane(myMine)) continue;
                 // if (isInTabooZone(myMine)) continue;
 
                 int myDist = myLoc.distanceSquaredTo(myMine);
@@ -303,7 +303,7 @@ public class KingMiningStrategy extends Strategy {
         if(Pathfinder.getBugPos().distanceSquaredTo(myLoc) > 2) {
             if(dir != Direction.CENTER) {
                 stuckTurns = 0;
-                if(challenger.Tune.CM_LANE_KNOWN ? stepIntoKnownLane(dir, target) : stepIntoCatLane(dir)) return;
+                if(challenger.Tune.CM_LANE_MEMORY != 0 ? stepIntoKnownLane(dir, target) : stepIntoCatLane(dir)) return;
                 digDirtInDirection(dir);
                 if(rc.canMove(dir)) {
                     RatKing.rawMove(dir);
@@ -332,7 +332,7 @@ public class KingMiningStrategy extends Strategy {
             int closestDist = Integer.MAX_VALUE;
             MapLocation closestLoc = null;
             for (MapInfo info : rc.senseNearbyMapInfos(mineTarget, 13)) {
-                if (challenger.Tune.CM_LANE_KNOWN ? info.getCheeseAmount() > 0 && !CatLanes.onLane(info.getMapLocation()) : info.getCheeseAmount() > 0) {
+                if (challenger.Tune.CM_LANE_MEMORY != 0 ? info.getCheeseAmount() > 0 && !CatLanes.onLane(info.getMapLocation()) : info.getCheeseAmount() > 0) {
                     int dist = myLoc.distanceSquaredTo(info.getMapLocation());
                     if (dist < closestDist) {
                         closestDist = dist;
@@ -358,7 +358,7 @@ public class KingMiningStrategy extends Strategy {
             MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
             if (myMine == null) continue;
             if (GlobalArray.isMineAssignedToOtherKing(myMine)) continue;
-            if (challenger.Tune.CM_LANE_KNOWN && CatLanes.nearLane(myMine)) continue;
+            if (challenger.Tune.CM_LANE_MEMORY != 0 && CatLanes.nearLane(myMine)) continue;
             // if (isInTabooZone(myMine)) continue;
 
             int myDist = myLoc.distanceSquaredTo(myMine);

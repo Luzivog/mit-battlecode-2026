@@ -147,16 +147,75 @@ public final class GameWorld_p {
         MapLocation[] buf = bcxConeBuf;
         if (buf == null || buf.length < nx * ny) bcxConeBuf = buf = new MapLocation[(int) (nx * ny)];
         int n = 0;
-        for (int i = 0; i < nx; i++) {
-            int x = revX ? x1 - i : x0 + i;
-            for (int j = 0; j < ny; j++) {
-                MapLocation loc = new MapLocation(x, revY ? y1 - j : y0 + j);
-                if (center.isWithinDistanceSquared(loc, r2, dir, angle)) buf[n++] = loc;
+        if (dir == null) {
+            for (int i = 0; i < nx; i++) {
+                int x = revX ? x1 - i : x0 + i;
+                for (int j = 0; j < ny; j++) {
+                    MapLocation loc = new MapLocation(x, revY ? y1 - j : y0 + j);
+                    if (center.isWithinDistanceSquared(loc, r2, dir, angle)) buf[n++] = loc;
+                }
+            }
+        } else {
+            // the test is a function of the offset from center (the coordinates enter it as exact doubles and, for
+            // offsets within r, exact ints), r2, dir and angle: each offset's answer is the test's own, remembered
+            int side = 2 * r + 1;
+            byte[] mask = bcxConeMask(dir, angle, r2, side);
+            for (int i = 0; i < nx; i++) {
+                int x = revX ? x1 - i : x0 + i;
+                int row = (x - center.x + r) * side - center.y + r;
+                for (int j = 0; j < ny; j++) {
+                    int y = revY ? y1 - j : y0 + j;
+                    byte m = mask[row + y];
+                    if (m == 1) continue;
+                    MapLocation loc = new MapLocation(x, y);
+                    if (m == 0) {
+                        m = center.isWithinDistanceSquared(loc, r2, dir, angle) ? (byte) 2 : (byte) 1;
+                        mask[row + y] = m;
+                        if (m == 1) continue;
+                    }
+                    buf[n++] = loc;
+                }
             }
         }
         MapLocation[] out = new MapLocation[n];
         System.arraycopy(buf, 0, out, 0, n);
         return out;
+    }
+
+    // remembered cone tests: per key (dir, angle, r2), side x side offsets, 0 unknown, 1 outside, 2 inside
+    private Direction[] bcxMaskDir;
+    private double[] bcxMaskAngle;
+    private int[] bcxMaskR2;
+    private byte[][] bcxMask;
+    private int bcxMaskN, bcxMaskLast;
+
+    private byte[] bcxConeMask(Direction dir, double angle, int r2, int side) {
+        int last = bcxMaskLast;
+        if (last < bcxMaskN && bcxMaskDir[last] == dir && bcxMaskAngle[last] == angle && bcxMaskR2[last] == r2) return bcxMask[last];
+        for (int i = 0; i < bcxMaskN; i++)
+            if (bcxMaskDir[i] == dir && bcxMaskAngle[i] == angle && bcxMaskR2[i] == r2) {
+                bcxMaskLast = i;
+                return bcxMask[i];
+            }
+        if (bcxMaskDir == null || bcxMaskN == bcxMaskDir.length) {
+            int cap = bcxMaskDir == null ? 16 : 2 * bcxMaskN;
+            Direction[] d = new Direction[cap];
+            double[] a = new double[cap];
+            int[] q = new int[cap];
+            byte[][] m = new byte[cap][];
+            for (int i = 0; i < bcxMaskN; i++) { d[i] = bcxMaskDir[i]; a[i] = bcxMaskAngle[i]; q[i] = bcxMaskR2[i]; m[i] = bcxMask[i]; }
+            bcxMaskDir = d;
+            bcxMaskAngle = a;
+            bcxMaskR2 = q;
+            bcxMask = m;
+        }
+        int i = bcxMaskN++;
+        bcxMaskDir[i] = dir;
+        bcxMaskAngle[i] = angle;
+        bcxMaskR2[i] = r2;
+        bcxMask[i] = new byte[side * side];
+        bcxMaskLast = i;
+        return bcxMask[i];
     }
 
     @Orig

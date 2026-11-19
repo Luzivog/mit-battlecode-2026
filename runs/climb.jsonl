@@ -5,3 +5,4 @@
 {"t": 1795072774, "score": 34.1294, "kept": true, "what": "GC static roots: .data and .bss only (the collector took the whole static binary, code included)"}
 {"t": 1795073273, "score": 36.6815, "kept": false, "what": "memo of MapLocation.isWithinDistanceSquared's angle half per offset/dir/angle (hit path as costly as the original; statics slowed MapLocation)"}
 {"t": 1795073679, "score": 27.8192, "kept": true, "what": "fast path for GameWorld.getAllLocationsWithinConeRadiusSquaredWithoutMap: plain loops instead of boxed Integer lists and iterators"}
+{"t": 1795074413, "score": 23.7906, "kept": true, "what": "cone fast path remembers each (dir, angle, r2) offset mask; rejected tiles cost a byte read, no allocation"}

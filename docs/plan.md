@@ -782,6 +782,10 @@ rats average 11.3k of 17.5k; kings 13.2k of 20k, with a maximum of 19,988.
 | JS | Joint combat search | one pass scoring nap, attack and fight per (move, facing): "move + nap + reposition", "throw then bite" | combat H12 |
 | AB | Ablations | remove champion features one at a time: anti-glorp troll, eternal exploration, ally-sacrifice gate | lessons§9 |
 
+- **E2b closed** (2026-11-19; `docs/closed.md`): no arm that lifts the rat cap during a siege beat main on fresh seeds
+  (SR on `goal` +0.013 [−0.013, +0.040]); on E2's capped maps siege spawns double starvation. The king's panic spawn
+  boost is load-bearing (−0.019 [−0.038, −0.002] without it); the cat boost is neutral and stays. E2's income cap
+  (arm 2) has little room: on rich maps both teams sit at 16–18 rats with 1,300–1,700 banked.
 - **AB result** (2026-11-19; `docs/closed.md`): 13 ablations, none gains. Load-bearing: the squeaked-enemy chase
   (−0.087 without it), eternal exploration (−0.041), the rich spawn lines (−0.093). Ten deletions are neutral alone,
   but eight of them bundled lose to OBG (−0.045): small losses add up. Only the dead-code deletion (no logic change)

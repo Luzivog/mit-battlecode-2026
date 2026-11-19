@@ -70,7 +70,8 @@ insertmeowname: chosen as the worst, they regressed.
 | `PM_SYM` | longwayaround | 24003, 300 | −0.023 ± 0.065 |
 | `PM_SYM` | the 8 rotational maps of §2 | 24003, 87 a map | −0.022 ± 0.039 |
 | `PM_SYM` | the 27 VERTICAL `goal` maps | 24004, 10 a map | −0.031 ± 0.038 |
-| `PM_SYM` | the 48 ROTATIONAL `goal` maps | 24004, 10 a map | see §7 |
+| `PM_SYM_B` (seat B, general) | `goal` | 24008, 1,000 | −0.002 [−0.015, +0.011]; seat B −0.004 ± 0.025; seat B where main has no symmetry by r300 −0.027 ± 0.044 |
+| `PM_SYM` | the 48 ROTATIONAL `goal` maps | 24004, 10 a map | −0.014 ± 0.027 |
 | `PM_COOP_HOLD` | TheHeist | 24003, 106 | −0.406 ± 0.104 |
 | `PM_COOP_HOLD` | longwayaround, therainbow, 7 rotational maps besides grove | 24003 | 0 (backstab maps: the hold never binds) |
 

@@ -146,8 +146,8 @@ the ref's own score on the same cells and the paired difference with its CI.
 - **`--remote`** plays on DoC's machines through track C's `tools/run` (`.claude/skills/compute/`).
   - Read the compute skill first. Condor needs Bitwarden unlocked; cpucluster1 refuses jobs at times.
   - `--workers` becomes the games in flight (default 256). Each test sends at most one pass (or 32 cells) beyond its
-    scored prefix, its next decision point. Batches go out every 30 s; each task plays 3 games with `tools/play`
-    (native games: 8).
+    scored prefix, its next decision point. Batches go out every 30 s; each task plays one game with `tools/play`
+    (`imperial.CHUNK`), native or Java.
   - The nodes play the jars built here (shipped in `.bcgames-ship/`) on Temurin 21.0.13. It prints the same JDK
     fingerprint as Ubuntu's 21.0.13 here, so remote and local games share one cache. Verified: remote games
     byte-identical to local ones (replay digests, Slurm and Condor).
@@ -186,7 +186,7 @@ the ref's own score on the same cells and the paired difference with its CI.
   (Java), and `crashed` in a game of one package against itself (Java's scanner gives both teams' crashes to A; the
   native engine counts per robot).
 - **Imperial.** `--remote` builds the binary here, puts it once on the volume (about 30 MB gzip'd, removed after
-  3 days unused), and sends native games in tasks of 8; the nodes run it as is (static).
+  3 days unused), and sends native games in batches of their own; the nodes run it as is (static).
 - **What changes for an agent: nothing.** The commands, exit codes and reports are the same. Old runs read as
   before (they have no engine lines).
 
@@ -266,6 +266,7 @@ so the test stops at H0 after one pass, 95 cells; every game played, none from t
 - A game takes 8.1x less CPU natively on DoC's machines, 4.0x less on clankerland at load 30-50 (the native engine's
   allocation-heavy world suffers more from a full box than the JVM).
 - Remote runs play past the decision point (424 and 681 games for a 380-game decision): batches land at once.
+  These ran before track C2's dispatch changes, with tasks of 8 native or 3 Java games (now one).
 - Every game two of these runs share is the same game (replay digest): local native against local Java 190 of 190
   game keys, remote native against remote Java 212 of 212, local native against remote native 190 of 190.
 

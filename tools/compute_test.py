@@ -357,3 +357,13 @@ def test_cancel_many_is_one_removal_a_scheduler(monkeypatch: pytest.MonkeyPatch)
     assert said[ids[2]] == "Condor cluster 48553 removed or already gone"
     assert said[ids[3]] == "Slurm job 1265700 cancelled"
     assert said[ids[4]] == f"{ids[4]}: never queued"
+
+
+def test_ids_have_six_hex_digits_and_old_ones_still_read() -> None:
+    """Two runs placing 40 pieces each in one second drew the same 4-digit id (19 Nov): ids now end in 6."""
+    from tools import runs as R
+    assert len(J.new_id("condor").rsplit("-", 1)[1]) == 6 and len(R.new_run_id().rsplit("-", 1)[1]) == 6
+    for jid in ("condor-1119-180715-6bbe", "condor-1119-180715-6bbe12"):
+        assert J.job(jid).where == "condor"
+    assert R.run_dir("run-1119-180652-dd6e").endswith("dd6e") and R.run_dir("run-1119-180652-dd6e01")
+    assert R.submitted("slurm-1119-180811-8b25aa") == R.submitted("slurm-1119-180811-8b25") > 0

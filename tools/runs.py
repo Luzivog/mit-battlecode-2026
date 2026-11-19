@@ -80,7 +80,7 @@ def env_hash() -> str:
 
 
 def new_run_id() -> str:
-    return f"run-{time.strftime('%m%d-%H%M%S')}-{secrets.token_hex(2)}"
+    return f"run-{time.strftime('%m%d-%H%M%S')}-{secrets.token_hex(3)}"
 
 
 def run_dir(rid: str) -> str:
@@ -703,7 +703,7 @@ def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J
 
 def submitted(jid: str) -> float:
     """When a job was submitted (its id's local time, this year)."""
-    m = re.fullmatch(rf"[a-z0-9]+-(\d\d)(\d\d)-(\d\d)(\d\d)(\d\d)-[0-9a-f]{{4}}", jid)
+    m = re.fullmatch(rf"[a-z0-9]+-(\d\d)(\d\d)-(\d\d)(\d\d)(\d\d)-[0-9a-f]{{4,6}}", jid)
     if not m:
         return 0.0
     return time.mktime((time.localtime().tm_year, *(int(x) for x in m.groups()), 0, 0, -1))

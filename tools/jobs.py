@@ -35,7 +35,9 @@ from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_
 REPO = Path(__file__).resolve().parent.parent
 LOCAL_RUNS = REPO / "runs"
 WHERES = (*B.WHERES, *(("local",) if LOCAL else ()))  # local: tests only, a job run here by bash
-ID_TAIL = r"-\d{4}-\d{6}-[0-9a-f]{4}"
+# a second's ids differ by 6 hex digits (4 until 19 Nov, still read): two runs placing 40 pieces each in one second
+# drew the same id (an mkdir on the volume refused the whole placement)
+ID_TAIL = r"-\d{4}-\d{6}-[0-9a-f]{4,6}"
 JOB_ID = rf"({'|'.join(WHERES)}){ID_TAIL}"
 HELD, ENDED_UNRECORDED = 3, 4  # wait's and logs -f's codes for a held job and one that ended with no exit file
 # between two reads of a job being waited for: light on the login nodes (BC26_POLL_S: tests' stand-in remote only)
@@ -192,7 +194,7 @@ class Job:
 
 
 def new_id(where: str) -> str:
-    return f"{where}-{time.strftime('%m%d-%H%M%S')}-{secrets.token_hex(2)}"
+    return f"{where}-{time.strftime('%m%d-%H%M%S')}-{secrets.token_hex(3)}"
 
 
 def job(job_id: str) -> Job:

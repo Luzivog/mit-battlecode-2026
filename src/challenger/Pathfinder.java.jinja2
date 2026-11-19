@@ -180,7 +180,7 @@ class BugnavInstance {
                 {{ advance("left") }}
             } else if(leftDone) {
                 {{ advance("right") }}
-            } else if(Tune.SG_LOOK_RIGHT) {
+            } else if(Tune.SG_LOOK_RIGHT != 0) {
                 if(rightBug.nextPathIndex > leftBug.nextPathIndex) {
                     {{ advance("left") }}
                 } else {
@@ -258,7 +258,7 @@ class BugnavInstance {
         }
         {% endmacro %}
         // SG_LOOK_RIGHT mirrors the left-first rules (advance order above, arrival, ties, the draw): docs/theory/sg-seat-gaps.md
-        if(Tune.SG_LOOK_RIGHT) {
+        if(Tune.SG_LOOK_RIGHT != 0) {
 {{ pickSide("rightBug", "leftBug", "rightScore", "leftScore") }}
         } else {
 {{ pickSide("leftBug", "rightBug", "leftScore", "rightScore") }}

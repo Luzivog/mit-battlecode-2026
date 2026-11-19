@@ -379,7 +379,7 @@ class BugnavInstance {
             // indicate(rightBug.pos);
             // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
-            } else if(Tune.SG_LOOK_RIGHT) {
+            } else if(Tune.SG_LOOK_RIGHT != 0) {
                 if(rightBug.nextPathIndex > leftBug.nextPathIndex) {
                                 // indicate("advance left");
             leftBug.outOfSight = false;
@@ -429,7 +429,7 @@ class BugnavInstance {
 
 
         // SG_LOOK_RIGHT mirrors the left-first rules (advance order above, arrival, ties, the draw): docs/theory/sg-seat-gaps.md
-        if(Tune.SG_LOOK_RIGHT) {
+        if(Tune.SG_LOOK_RIGHT != 0) {
         if(rightBug.arrived) {
                     var bug = rightBug;
         if(bug.leftTurn) {

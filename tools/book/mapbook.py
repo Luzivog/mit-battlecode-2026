@@ -485,35 +485,70 @@ def paired_run(run_id: str) -> dict:
     return bookfit.pair(ref, [r for r in rows if r.get("role") == "o"])
 
 
-def summary(d: dict) -> tuple[float, float, int]:
-    v = [x for g in d.values() for x in g.values()]
-    n = len(v)
-    m = sum(v) / n if n else 0.0
-    sd = (sum((x - m) ** 2 for x in v) / (n - 1)) ** 0.5 if n > 1 else 0.0
-    return m, 1.96 * sd / n ** 0.5 if n else 0.0, n
+def summary(d: dict) -> tuple[float, float, float, int]:
+    """(mean, lo, hi, games) of the paired game differences in D ((map, seat) -> {seed: d}), 95% interval with the
+    standard error clustered by cell (map, seed): a cell's two seats share their seed."""
+    cells: dict = {}
+    for (mp, _), g in d.items():
+        for sd, x in g.items():
+            c = cells.setdefault((mp, sd), [0, 0])
+            c[0] += x
+            c[1] += 1
+    n = sum(m for _, m in cells.values())
+    if not n:
+        return 0.0, 0.0, 0.0, 0
+    mean = sum(t for t, _ in cells.values()) / n
+    k = len(cells)
+    var = sum((t - mean * m) ** 2 for t, m in cells.values()) * k / max(1, k - 1) / n ** 2
+    h = 1.96 * var ** 0.5
+    return mean, mean - h, mean + h, n
+
+
+def split(d: dict, seats: set) -> tuple[dict, dict]:
+    return {k: v for k, v in d.items() if k in seats}, {k: v for k, v in d.items() if k not in seats}
+
+
+def line(name: str, s: tuple) -> str:
+    m, lo, hi, n = s
+    return f"{name}: {m:+.4f} [{lo:+.4f}, {hi:+.4f}] ({n} games)"
 
 
 def cmd_confirm_show(a) -> int:
+    """The book's merge criterion (docs/evaluation.md "The book", item 3) on a confirm's three runs."""
     conf = json.loads(Path(a.file).read_text())
     book = load_text(tune.git("show", f"{conf['rev']}:src/challenger/book.jsonl"))
-    print(f"book {conf['rev']} against {conf['ref']}, seed base {conf['seed_base']}")
+    seats = set(map_seats(book))
+    print(f"book {conf['rev']} ({len(seats)} map-seats) against {conf['ref']}, seed bases {conf['seed_base']} "
+          f"(goal), +1 (entries), +2 (outside); game differences book - main, 95% intervals clustered by cell")
     for k, rid in conf["runs"].items():
         print(f"  {k:8s} {rid} [{tune.run_status(rid)}]")
-    g = paired_run(conf["runs"]["goal"])
-    m, h, n = summary(g)
-    print(f"goal: game diff (book - main) {m:+.4f} +- {h:.4f} (95%, {n} games; tools/games show "
-          f"{conf['runs']['goal']} for the CI by map)")
     e = paired_run(conf["runs"]["entries"])
-    print("entries' map-seats, each alone (game diff, 95%):")
-    for mp, t in map_seats(book):
-        d = e.get((mp, t), {})
-        m, h, n = summary({0: d})
-        print(f"  {mp:24s} {t}  {m:+.3f} +- {h:.3f}  ({n} games)")
-    o = paired_run(conf["runs"]["outside"])
-    m, h, n = summary(o)
-    changed = sum(1 for g in o.values() for x in g.values() if x)
-    print(f"outside the book: game diff {m:+.4f} +- {h:.4f} ({n} games; {changed} with a different winner)")
-    return 0
+    ent, _ = split(e, seats)
+    a_all = summary(ent)
+    print("\n" + line("entries' map-seats together", a_all))
+    below = []
+    for mp, t in sorted(seats, key=lambda p: (map_id(p[0]), p[1])):
+        s = summary({(mp, t): e.get((mp, t), {})})
+        below += [(mp, t)] if s[2] < 0 else []
+        print("  " + line(f"{mp:24s} {t}", s))
+    o = summary(paired_run(conf["runs"]["outside"]))
+    print(line("maps outside the book", o))
+    g_in, g_out = split(paired_run(conf["runs"]["goal"]), seats)
+    g = summary({**g_in, **g_out})
+    print(line("goal", g) + f"  (tools/games show {conf['runs']['goal']}: its CI by map)")
+    print("  " + line("goal, the book's map-seats", summary(g_in)))
+    print("  " + line("goal, the rest", summary(g_out)))
+    done = all(tune.run_status(r) in ("done", "stopped") for r in conf["runs"].values())
+    va = a_all[1] > 0 and not below
+    vb = o[2] >= 0
+    vc = g[2] >= 0
+    print(f"\n(a) entries together lower bound > 0 and no map-seat below 0: {'PASS' if va else 'FAIL'}"
+          + (f" (below 0: {below})" if below else ""))
+    print(f"(b) maps outside the book show no harm (upper bound >= 0): {'PASS' if vb else 'FAIL'}")
+    print(f"(c) goal not below 0 (upper bound >= 0): {'PASS' if vc else 'FAIL'}")
+    print(f"verdict: {'PASS' if va and vb and vc else 'FAIL'}" + ("" if done else " (runs still playing: provisional)")
+          + "; then smoke and the gauntlet (docs/evaluation.md Protocol item 3)")
+    return 0 if va and vb and vc else 3
 
 # ------------------------------------------------------------------------------------------------- commands
 

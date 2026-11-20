@@ -49,6 +49,13 @@ public class KingSpawningStrategy extends Strategy {
             thresh = threshForNumRats(32);
         }
 
+        // A book switch (Tune.PM_SIEGE, E2b's siege arms): a newborn spawns on the king's ring toward the nearest enemy
+        // and fights at once, so with an enemy in the king's vision (1), or more enemies than our rats there (2), the
+        // king spawns whatever the army size.
+        if (Tune.PM_SIEGE != 0 && RobotTracker.numEnemies > (Tune.PM_SIEGE == 1 ? 0 : RobotTracker.numAllies)) {
+            thresh = 1000;
+        }
+
         if (RobotTracker.numCats > 0 && RobotTracker.numAllies == 0) {
             thresh += 10;
         }

@@ -1,0 +1,56 @@
+# CM4: the first king's site as book data
+
+Package CM4 (wave 6, the book). Main `9d740112` / `31f0a2aa` (book 6) against awubot. Data and tools:
+`~/battlecode26-data/scratch/cm/` (`D:`; `king1.py` the candidate sites, `entries4.jsonl` the lines, `runs.txt`).
+"Seat A/B" is our seat.
+
+## 0. Summary
+
+On the maps where we lose the income race, the first king's site decides games: seated from round 1 beside the right
+mine it wins +0.12 to +0.26 a map-seat, where a second king sent to the same mine (CM2, AT3) lost −0.2 to −0.5. Holding
+the start corner, as awubot's king does, loses on most map-seats (−0.25 to −0.70).
+
+| map | seat | site (`KING1_SITE`, `CM_KING1_SITE` 1) | chosen from (4 candidates a map-seat) | confirmed |
+|---|---|---|---|---|
+| kingofthehill | A | (25,17), the contested mine on our side | `cm4a`, 23039, 60 cells: +0.25 [+0.10, +0.40], adj +0.19, p_max 0.005 | 23040 `1120-075509-ab-9b9c`: +0.18 [+0.07, +0.29] (26/8) |
+| kingofthehill | B | (34,17), contested | `cm4a`: +0.32 [+0.15, +0.48], adj +0.25, p_max 0.001 | 23040: +0.26 [+0.16, +0.36] (30/4) |
+| therearenowalls | A | (32,8), contested | `cm4a`: +0.28 [+0.13, +0.44], adj +0.225, p_max 0.001 | 23040: +0.22 [+0.13, +0.32] (25/3) |
+| therearenowalls | B | (22,8), contested | `cm4a`: +0.20 [+0.07, +0.33], adj +0.15, p_max 0.015 | 23040: +0.21 [+0.12, +0.30] (23/2) |
+| QueenOfHearts | A | (11,8), our nearest mine | `cm4a`: +0.32 [+0.16, +0.47], adj +0.27, p_max 0.000 | 23040: +0.20 [+0.11, +0.29]; on top of SG's `KING_PATH` 1, 23042 `1120-080105-ab-eab8`: +0.12 [+0.04, +0.20] (15/3) |
+| shell | B | (42,17), our nearest mine | `cm4b`, 23041, 40 cells: +0.325 [+0.14, +0.51], adj +0.26, p_max 0.005 | 23043 `1120-080421-ab-a33d`: +0.15 [+0.04, +0.26] (24/9) |
+| AceOfSpades | A | (36,23), the middle of our mines | `cm4c`, 23044, 40 cells: +0.225 [+0.07, +0.38], adj +0.19, p_max 0.019 | 23046 `1120-082624-ab-6edd`: +0.08 [+0.003, +0.157] (12/4) |
+| therainbow | A | (17,3), our nearest mine, on top of its second-king lines | `cm4c`: +0.20 [+0.03, +0.37], adj +0.15, p_max 0.044 | 23046: +0.08 [+0.003, +0.157] (12/4) |
+| gelcatinouscube | B | (10,8), the middle of our mines | `cm4b`: +0.15, p_max 0.106 (did not pass); 23043: +0.16 [+0.09, +0.23] (16/0) | 23045 `1120-081449-ab-8fc4`: +0.15 [+0.07, +0.23] (16/1), on top of its second-king line |
+
+## 1. The switch and the datum
+
+- `Tune.CM_KING1_SITE` (0 main; k > 0): the first king (the one alive at round 1) takes the k-th tile of the book datum
+  `KING1_SITE` (a tile list; the last when k exceeds it) as its mine target from round 1 and keeps it
+  (`robot/king/KingMiningStrategy.runAtSite`): it walks there, collects the cheese within Chebyshev 4 of it and walks
+  back, as main does at the mine it picks. Kings formed later keep main's choice.
+- "Stay": the cat flee (`KingCombatStrategy`) and the formation coordinator run before mining every turn as in main;
+  the king returns to its site afterwards. S3's liveness mark and KS's reach rules are untouched (the site is a
+  reachable centre by construction).
+- At 0 the switch adds members and changes no existing instruction (javap against main); a matrix screens several
+  sites of one map-seat by k alone.
+- Candidates from the map file (`D:king1.py`): 1 the start; 2 beside our mine nearest by king steps; 3 beside the
+  contested mine on our side (smallest margin of enemy steps over ours); 4 the reachable centre nearest the centroid of
+  our side's mines. A site is a reachable 3×3 centre (walls block, dirt does not).
+
+## 2. Screens
+
+`tools/book/book matrix` over a trial branch holding the candidates as `KING1_SITE` (never merged), the points
+`CM_KING1_SITE` 1–4, read by `book fit`.
+
+| screen | maps, seed base, cells a map | map-seats at p_max < 0.05 | runs (ref first) |
+|---|---|---|---|
+| `cm4a` | kingofthehill, therearenowalls, QueenOfHearts; 23039; 60 | 5 of 6 (QueenOfHearts B: none, best +0.02) | `1120-074340-ab-3489`, s1 `-e23a`, s2 `-d7e8`, s3 `-6aec`, s4 `-5dc5` |
+| `cm4b` | shell, jail, moonlitriverpark, cheeseysquare, gelcatinouscube, asabovesobelow, DefaultSmall; 23041; 40 | shell B; leads jail A (+0.20, p 0.12), gelcatinouscube B (+0.15, p 0.11) | `1120-075548-ab-587d`, s1 `-d339`, s2 `-7581`, s3 `-0fbd`, s4 `-88fe` |
+| `cm4c` | hatefullattice, dirtpassageway, holeinthewall, AceOfSpades, trapped, constrictinglattice, therainbow; 23044; 40 | AceOfSpades A (36,23) +0.225, p 0.019; therainbow A (17,3) +0.20, p 0.044 | `1120-080527-ab-0040`, s2 `-3caf`, s3 `-9b54`, s4 `-aa5f`, s1 `-ab4d` |
+
+- The start corner (site 1) loses most where it is not neutral: kingofthehill −0.25 / −0.27, QueenOfHearts B −0.25,
+  jail −0.30, DefaultSmall −0.65 / −0.70, holeinthewall −0.55 / −0.675, trapped −0.50 / −0.55.
+- jail A (8,36) fails confirmation: +0.06 [−0.04, +0.16] (23043).
+- Not chosen (no candidate at p_max < 0.05): QueenOfHearts B, shell A, jail B, moonlitriverpark, cheeseysquare,
+  asabovesobelow, DefaultSmall, hatefullattice, dirtpassageway, holeinthewall, trapped, constrictinglattice,
+  gelcatinouscube A, AceOfSpades B, therainbow B.

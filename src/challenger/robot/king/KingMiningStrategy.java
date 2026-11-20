@@ -12,6 +12,7 @@ import static challenger.robot.king.RatKing.*;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
 
+import challenger.Book;
 import challenger.CatLanes;
 import challenger.CellTracker;
 import challenger.Tune;
@@ -48,6 +49,24 @@ public class KingMiningStrategy extends Strategy {
         }
 
         centerTarget = selectSafeCenterTarget();
+        if (Tune.CM_KING1_SITE != 0) firstKing = time <= 1;
+    }
+
+    // Tune.CM_KING1_SITE (a book switch, 0 in main): the first king's site is the k-th tile of Book.KING1_SITE (the last
+    // when k exceeds the list). From round 1 it is the king's mine target and stays so: the king walks there, collects
+    // the cheese within Chebyshev 4 of it and walks back, as at any mine (moveTowardMine, tryCollectCheese). The cat flee
+    // and the formation coordinator run before mining every turn as in main; the king returns afterwards.
+    private boolean firstKing;
+
+    private boolean runAtSite() throws GameActionException {
+        scanForCheeseMines();
+        MapLocation[] sites = Book.KING1_SITE;
+        mineTarget = sites[Math.min(Tune.CM_KING1_SITE, sites.length) - 1];
+        foundCheeseMine = true;
+        GlobalArray.writeKingMineAssignment(kingId, mineTarget);
+        moveTowardMine();
+        tryCollectCheese();
+        return true;
     }
 
     private boolean isInTabooZone(MapLocation aLoc) {
@@ -128,6 +147,7 @@ public class KingMiningStrategy extends Strategy {
         pathedNearCat = false;
         if (challenger.Tune.CM_LANE_MEMORY != 0) CatLanes.markVisibleCats();
         if (Tune.KING_PATH != 0) routed = false;
+        if (Tune.CM_KING1_SITE != 0 && firstKing && Book.KING1_SITE != null) return runAtSite();
         scanForCheeseMines();
 
         if (!foundCheeseMine) {

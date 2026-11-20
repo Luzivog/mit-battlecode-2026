@@ -84,3 +84,19 @@
 {"map": "AceOfSpades", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-080940-ab-9b54", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}
 {"map": "therainbow", "seat": "A", "data": "KING1_SITE", "value": [[17, 3]], "evidence": ["1120-080722-ab-3caf", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}
 {"map": "therainbow", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-080722-ab-3caf", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}
+{"map": "diamond", "seat": "B", "data": "KING1_SITE", "value": [[28, 12]], "evidence": ["1120-081454-ab-117b", "1120-082156-ab-6d63", "1120-102434-ab-dd7f", "1120-102531-ab-5b2b"], "by": "PM"}
+{"map": "diamond", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-081454-ab-117b", "1120-082156-ab-6d63", "1120-102434-ab-dd7f", "1120-102531-ab-5b2b"], "by": "PM"}
+{"map": "houseofcards", "seat": "B", "data": "KING1_SITE", "value": [[11, 4]], "evidence": ["1120-081454-ab-117b", "1120-082156-ab-6d63", "1120-102632-ab-a640", "1120-102644-ab-c84a"], "by": "PM"}
+{"map": "houseofcards", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-081454-ab-117b", "1120-082156-ab-6d63", "1120-102632-ab-a640", "1120-102644-ab-c84a"], "by": "PM"}
+{"map": "TheHeist", "seat": "B", "set": "IDLE_GOHOME", "value": 0, "evidence": ["1120-082455-ab-a88b", "1120-114248-ab-4764"], "by": "AT (WS4)"}
+{"map": "TheHeist", "seat": "A", "set": "SPAWN_RICH", "value": 1000, "evidence": ["1120-081404-ab-3a0f", "1120-114149-ab-4242"], "by": "SG"}
+{"map": "longwayaround", "seat": "A", "set": "MINES_KING2", "value": 7, "evidence": ["1120-080457-ab-bef9", "1120-114203-ab-60fe"], "by": "SG"}
+{"map": "externalsustenance", "seat": "B", "data": "KING1_SITE", "value": [[15, 7]], "evidence": ["1120-084927-ab-5e5d", "1120-084755-ab-fcb5", "1120-114443-ab-c290"], "by": "CM"}
+{"map": "externalsustenance", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-084927-ab-5e5d", "1120-084755-ab-fcb5", "1120-114443-ab-c290"], "by": "CM"}
+{"map": "thunderdome", "seat": "A", "data": "KING1_SITE", "value": [[14, 21]], "evidence": ["1120-084927-ab-5e5d", "1120-084755-ab-fcb5", "1120-114443-ab-c290"], "by": "CM"}
+{"map": "thunderdome", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-084927-ab-5e5d", "1120-084755-ab-fcb5", "1120-114443-ab-c290"], "by": "CM"}
+{"map": "thunderdome", "seat": "B", "data": "KING1_SITE", "value": [[32, 13]], "evidence": ["1120-114443-ab-c290", "1120-115111-ab-e765"], "by": "CM"}
+{"map": "thunderdome", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-114443-ab-c290", "1120-115111-ab-e765"], "by": "CM"}
+{"map": "TheHeist", "seat": "B", "set": "SPAWN_RICH", "value": 1000, "evidence": ["1120-081404-ab-3a0f", "1120-114149-ab-4242", "1120-115343-ab-114a"], "by": "SG"}
+{"map": "gelcatinouscube", "seat": "A", "data": "KING1_SITE", "value": [[26, 34]], "evidence": ["1120-114707-ab-2ce3", "1120-114526-ab-e64e", "1120-115154-ab-0140"], "by": "CM"}
+{"map": "gelcatinouscube", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-114707-ab-2ce3", "1120-114526-ab-e64e", "1120-115154-ab-0140"], "by": "CM"}

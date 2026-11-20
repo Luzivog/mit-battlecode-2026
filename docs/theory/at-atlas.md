@@ -80,8 +80,10 @@ By seat: toomuchcheese A +0.240/+0.190, B +0.170/+0.105; cheddarchokehold A +0.1
 wallsofparadis and t_minus_five_minutes level. KP3 leaves seat A of EscapeTheNight and pocketsofcheese unchanged
 (+0.007, +0.000/+0.013).
 
-RUN by seat: A +0.267/+0.205, B +0.113/+0.160. Every run here is against plain main (KP3: `419fa32`; constants:
-`de6e5b8`), never on top of a book entry.
+RUN by seat: A +0.267/+0.205, B +0.113/+0.160; houseofcards by seat: A +0.115/+0.064/+0.010, B +0.150/+0.040/+0.073.
+Every run here is against plain main before `KING_HAND` 7 (6017078): KP3 against `419fa32`, constants against
+`de6e5b8`, never on top of a book entry. On EscapeTheNight B, pocketsofcheese B and the other seat-B VERTICAL maps the
+new king hand acts on the same mechanism: those KP3 entries need re-measuring on top of it.
 
 **Against the arm's own (stale) base only:** K2 D' (`t3/k2-proj`, `502c01d9` against `71402d9`, 34 merges behind
 main): bed B +0.505 [+0.422, +0.588] and +0.573 [+0.486, +0.661], bed A +0.155 [+0.084, +0.226] and +0.193 [+0.118,
@@ -101,7 +103,7 @@ closeup (+0.04 to +0.06, intervals across 0).
 
 ## 3. Main's map-seat table now
 
-`~/battlecode26-data/scratch/at/mapseat_p.json`, the format of W3's (`"map|seat": [shrunk p, games, raw p]`): 21,279
+`~/battlecode26-data/scratch/at/mapseat_p.json` (the bot before `KING_HAND` 7), the format of W3's (`"map|seat": [shrunk p, games, raw p]`): 21,279
 games of the current bot (class hash `b9f344664968e099`, main since 93e8311) against awubot on `goal`, from 9 runs,
 102–160 games a pair, outcome-selected cells excluded; beta-binomial shrinkage as W3's `mapvar.py`. Mean 0.830,
 true map-seat SD 0.153. All 190 pairs with intervals: `mapseat_main.tsv`.
@@ -196,8 +198,22 @@ other arms main already holds (`excluded.txt`), and every micro or fight-weight 
 
 ## 5. Tools
 
+**Rebuild main's table** (after a merge that changes the bot; the reference games of every run of the new main
+count, so a fresh `goal` run of main gives ~100 games a pair per 10,000 games):
+
+```sh
+cd ~/battlecode26-data/scratch/at
+python3 extract.py && venv/bin/python prep.py            # all runs -> games.pkl, seats normalised
+venv/bin/python mainmap.py HASH mapseat_p.json OLD.json   # HASH: main's challenger class hash, run.json "bots"
+```
+
+`mainmap.py` keeps only games of that hash against awubot on `goal` maps, drops the outcome-selected list pools at
+seed base 0, writes the table (same path and format) and `mapseat_main.tsv`, and prints the pairs that moved against
+`OLD.json` (copy the current table there first). Today's table: hash `b9f344664968e099`.
+
+
 In `~/battlecode26-data/scratch/at/` (Python: `venv/bin/python`, numpy, scipy, pandas): `extract.py` (runs →
-`games.tsv`, then seat-normalised `games.pkl`), `units.py` (arm × base pairs, patch-ids), `atlas.py` (arms, the
+`games.tsv`), `prep.py` (seat-normalised `games.pkl`), `units.py` (arm × base pairs, patch-ids), `atlas.py` (arms, the
 model `fit2`), `armclass.py`, `inmain.py`, `merged_check.py` and `excluded.txt` (arms main already holds),
 `fitall2.py` (fits, nulls, split-half), `shelf.py` (out-of-sample shelf gating), `shortlist.py`, `confirm.py`,
 `confstats.py RUN` (a confirmation's paired effect per map and seat), `mainmap.py` (§3), `runs.txt` (run IDs).

@@ -37,6 +37,14 @@ the start corner, as awubot's king does, loses on most map-seats (−0.25 to −
   contested mine on our side (smallest margin of enemy steps over ours); 4 the reachable centre nearest the centroid of
   our side's mines. A site is a reachable 3×3 centre (walls block, dirt does not).
 
+- Round 1: the first path to the site waits for round 2 (`23e2465c`). With the path in round 1 the king's first turn
+  hit the 20,000 limit on 7 of the 9 booked map-seats (MB, `1120-084751-ab-9a8f`) and spilled into round 2. Paired
+  fixed against present code, the 18 lines in both, seed base 23048, 100 games a map-seat (`1120-085527-ab-541e`):
+  kingofthehill A +0.06, B −0.03, therearenowalls A −0.05, B +0.02, shell B +0.03, gelcatinouscube B −0.01,
+  AceOfSpades A −0.06 (every interval across 0; mean −0.006). The first king's bytecode on those map-seats (BcStats,
+  700 games each): present code round 1 20,003 (overrun in 700 of 700), round 2 1,342 (the spill), round 3 13,250;
+  fixed round 1 16,381 (max 17,207, no overrun), round 2 12,735, round 3 13,431.
+
 ## 2. Screens
 
 `tools/book/book matrix` over a trial branch holding the candidates as `KING1_SITE` (never merged), the points

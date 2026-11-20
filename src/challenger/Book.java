@@ -180,6 +180,13 @@ public final class Book {
                         && d0 == 0x80300600c0080000L && d1 == 0x80fe300600c03L) return 13;
                 return 0;
             }
+            case 32407746 -> {
+                scan();
+                // asabovesobelow seat B
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x801803a07c000000L && d1 == 0x80f82f02a0e01L) return 51;
+                return 0;
+            }
             case 32669987 -> {
                 scan();
                 // TheHeist seat B
@@ -206,6 +213,13 @@ public final class Book {
                 // groveisbeingdesecrated seat B
                 if (id == 6 && w0 == 0x20040080000000L && w1 == 0x200400801L
                         && d0 == 0x0L && d1 == 0x0L) return 65;
+                return 0;
+            }
+            case 32754570 -> {
+                scan();
+                // RUN seat B
+                if (id == 4 && w0 == 0x8010020040080000L && w1 == 0x200400L
+                        && d0 == 0x20040080000000L && d1 == 0x200400803L) return 49;
                 return 0;
             }
             case 32755062 -> {
@@ -332,6 +346,15 @@ public final class Book {
             case 98 -> { // RUN seat A
                 symmetry = 1;
                 Tune.CM_CAT_HUNT_START = 500;
+                Tune.KING_PATH = 1;
+            }
+            case 99 -> { // RUN seat B
+                symmetry = 1;
+                Tune.KING_PATH = 1;
+            }
+            case 103 -> { // asabovesobelow seat B
+                symmetry = 2;
+                Tune.SG_LOOK_RIGHT = 1;
             }
             case 106 -> { // bed seat A
                 symmetry = 2;
@@ -348,6 +371,7 @@ public final class Book {
             case 109 -> { // cheddarchokehold seat B
                 symmetry = 3;
                 Tune.MINES_KING2 = 3;
+                Tune.KING_HAND = 1;
             }
             case 130 -> { // groveisbeingdesecrated seat A
                 symmetry = 1;

@@ -157,6 +157,15 @@ class Render(unittest.TestCase):
         self.assertNotIn("case", java.split("identify()")[1].split("default")[0])
 
 
+class Summary(unittest.TestCase):
+    def test_clustered(self):
+        d = {("a", "A"): {1: 1, 2: 0, 3: 1, 4: 0}, ("a", "B"): {1: 1, 2: 0, 3: 1, 4: 0}}
+        m, lo, hi, n = mb.summary(d)
+        self.assertEqual((m, n), (0.5, 8))
+        self.assertAlmostEqual(hi - m, 1.96 * (4 / 3 * 4 / 64) ** 0.5)  # 4 cells of sums 2, 0, 2, 0
+        self.assertEqual(mb.summary({}), (0.0, 0.0, 0.0, 0))
+
+
 class Repo(unittest.TestCase):
     def test_generated_current(self):
         java, tune_text = mb.generate()

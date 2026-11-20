@@ -2,6 +2,7 @@ package challenger;
 
 import battlecode.common.*;
 import challenger.comms.EnemyManager;
+import challenger.Tune;
 import challenger.comms.GlobalArray;
 import challenger.comms.MapManager;
 import challenger.comms.Squeaker;
@@ -31,6 +32,8 @@ public class RobotPlayer {
         EnemyManager.init();
         GlobalArray.init();
         CellTracker.init();
+        // A book switch (Tune.PM_SYM): on a book map-seat, the map's symmetry from its file, known from round 1.
+        if (Tune.PM_SYM != 0) CellTracker.setSymmetry(Book.symmetry);
         MapManager.init();
 
         while (true) {

@@ -528,6 +528,19 @@ public class KingCombatStrategy extends Strategy {
                 score7 += -fx + fy;
             }
         }
+        // Tune.CM_LANE_FLEE: with the cat lanes known (Book.CAT_LANE), a step that puts more loop footprint under the king loses
+        // 4 a tile, so a king that keeps away from a cat also walks off its loop.
+        if(challenger.Tune.CM_LANE_FLEE != 0 && RobotTracker.numCats > 0 && challenger.CatLanes.version != 0) {
+            int o = challenger.CatLanes.kingOverlap(myLocX, myLocY);
+            score0 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + 0, myLocY + 1) - o);
+            score1 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + 1, myLocY + 1) - o);
+            score2 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + 1, myLocY + 0) - o);
+            score3 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + 1, myLocY + -1) - o);
+            score4 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + 0, myLocY + -1) - o);
+            score5 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + -1, myLocY + -1) - o);
+            score6 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + -1, myLocY + 0) - o);
+            score7 -= 4 * (challenger.CatLanes.kingOverlap(myLocX + -1, myLocY + 1) - o);
+        }
         {
             int best = -1;
             var move = Direction.CENTER;
@@ -595,6 +608,7 @@ public class KingCombatStrategy extends Strategy {
 
     // A bite on a cat costs no cheese and is no backstab (rules §2, §7); it adds cat damage.
     private static void biteCat(RobotInfo cat) throws GameActionException {
+        if (challenger.Tune.PM_COOP_HOLD != 0 && !challenger.robot.LastCat.mayDamage(cat, GameConstants.RAT_BITE_DAMAGE)) return;
         {
             var loc = cat.location.translate(0, 0);
             if(rc.canAttack(loc)) {

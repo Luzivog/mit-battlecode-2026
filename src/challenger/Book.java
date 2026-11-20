@@ -54,11 +54,25 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0xfe000000000L) return 40;
                 return 0;
             }
+            case 7988993 -> {
+                scan();
+                // warhammer seat A
+                if (id == 2 && w0 == 0x8010020078010020L && w1 == 0x3L
+                        && d0 == 0x400801e004008000L && d1 == 0xe00L) return 93;
+                return 0;
+            }
             case 8253533 -> {
                 scan();
                 // cheddarchokehold seat A
                 if (id == 1 && w0 == 0x100000000000000L && w1 == 0x800401e004008L
                         && d0 == 0x0L && d1 == 0x0L) return 54;
+                return 0;
+            }
+            case 9359825 -> {
+                scan();
+                // QueenOfHearts seat A
+                if (id == 4 && w0 == 0xff800000L && w1 == 0x807e18c000000L
+                        && d0 == 0xa0200000000000L && d1 == 0x200400801L) return 48;
                 return 0;
             }
             case 9380015 -> {
@@ -75,11 +89,39 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 70;
                 return 0;
             }
+            case 10649857 -> {
+                scan();
+                // therainbow seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0xc00c0000L && d1 == 0x0L) return 90;
+                return 0;
+            }
+            case 10690829 -> {
+                scan();
+                // worldshardestgame seat A
+                if (id == 10 && w0 == 0x0L && w1 == 0xfe38e000000L
+                        && d0 == 0x0L && d1 == 0x8000000000000L) return 95;
+                return 0;
+            }
             case 13249351 -> {
                 scan();
                 // pipes seat A
                 if (id == 2 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x80300600c00fe020L && d1 == 0x80300600c03L) return 13;
+                return 0;
+            }
+            case 13275842 -> {
+                scan();
+                // hatefullattice seat A
+                if (id == 1 && w0 == 0x8000000048000000L && w1 == 0x120000000L
+                        && d0 == 0x0L && d1 == 0x0L) return 30;
+                return 0;
+            }
+            case 13312218 -> {
+                scan();
+                // dirtpassageway seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 9;
                 return 0;
             }
             case 15548555 -> {
@@ -145,6 +187,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 41;
                 return 0;
             }
+            case 15974711 -> {
+                scan();
+                // cheeseguardians seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 5;
+                return 0;
+            }
             case 15974789 -> {
                 scan();
                 // Nofreecheese seat A
@@ -178,6 +227,13 @@ public final class Book {
                 // bed seat B
                 if (id == 2 && w0 == 0x1f020000L && w1 == 0x0L
                         && d0 == 0x10020040001e020L && d1 == 0x8L) return 53;
+                return 0;
+            }
+            case 24764508 -> {
+                scan();
+                // warhammer seat B
+                if (id == 1 && w0 == 0x380000000000000L && w1 == 0x801003c008010L
+                        && d0 == 0x400e00000000000L && d1 == 0x200400f0020L) return 93;
                 return 0;
             }
             case 24764676 -> {
@@ -243,11 +299,32 @@ public final class Book {
                         && d0 == 0x80000L && d1 == 0x2002000000L) return 89;
                 return 0;
             }
+            case 27429057 -> {
+                scan();
+                // therainbow seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0xc0300000000L) return 90;
+                return 0;
+            }
+            case 27470052 -> {
+                scan();
+                // worldshardestgame seat B
+                if (id == 9 && w0 == 0xe38fe000L && w1 == 0x0L
+                        && d0 == 0x20L && d1 == 0x0L) return 95;
+                return 0;
+            }
             case 30023943 -> {
                 scan();
                 // pipes seat B
                 if (id == 1 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x80300600c0080000L && d1 == 0x80fe300600c03L) return 13;
+                return 0;
+            }
+            case 30092186 -> {
+                scan();
+                // dirtpassageway seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 9;
                 return 0;
             }
             case 32329224 -> {
@@ -290,6 +367,13 @@ public final class Book {
                 // tminusten seat B
                 if (id == 1 && w0 == 0x100000400800000L && w1 == 0x22000004000L
                         && d0 == 0x0L && d1 == 0x0L) return 92;
+                return 0;
+            }
+            case 32751876 -> {
+                scan();
+                // cheeseguardians seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 5;
                 return 0;
             }
             case 32752066 -> {
@@ -363,6 +447,14 @@ public final class Book {
     private static void apply() {
         seat = Game.team == Team.A ? 0 : 1;
         switch (map << 1 | seat) {
+            case 10 -> { // cheeseguardians seat A
+                symmetry = 3;
+                Tune.SPAWN_CAP = 60;
+            }
+            case 11 -> { // cheeseguardians seat B
+                symmetry = 3;
+                Tune.SPAWN_CAP = 60;
+            }
             case 16 -> { // dirtfulcat seat A
                 symmetry = 2;
                 Tune.CM_LANE_MEMORY = 1;
@@ -381,6 +473,14 @@ public final class Book {
                 CAT_LANE[26] = 0x3f807f0L;
                 Tune.CM_LANE_MEMORY = 1;
                 Tune.CM_LANE_FLEE = 1;
+            }
+            case 18 -> { // dirtpassageway seat A
+                symmetry = 2;
+                Tune.SPAWN_CAP = 30;
+            }
+            case 19 -> { // dirtpassageway seat B
+                symmetry = 2;
+                Tune.SPAWN_CAP = 30;
             }
             case 24 -> { // Nofreecheese seat A
                 symmetry = 1;
@@ -462,6 +562,10 @@ public final class Book {
                 Tune.CM_LANE_MEMORY = 1;
                 Tune.CM_LANE_FLEE = 1;
             }
+            case 60 -> { // hatefullattice seat A
+                symmetry = 3;
+                Tune.SPAWN_CAP = 60;
+            }
             case 70 -> { // peaceinourtime seat A
                 symmetry = 2;
                 Tune.CM_KING2_ROUND = 30;
@@ -494,6 +598,10 @@ public final class Book {
                 symmetry = 1;
                 Tune.CM_CAT_HUNT_START = 500;
             }
+            case 96 -> { // QueenOfHearts seat A
+                symmetry = 1;
+                Tune.KING_PATH = 1;
+            }
             case 98 -> { // RUN seat A
                 symmetry = 1;
                 Tune.CM_CAT_HUNT_START = 500;
@@ -523,6 +631,7 @@ public final class Book {
                 symmetry = 3;
                 Tune.MINES_KING2 = 3;
                 Tune.KING_HAND = 1;
+                Tune.SG_LOOK_RIGHT = 1;
             }
             case 127 -> { // gelcatinouscube seat B
                 symmetry = 1;
@@ -531,10 +640,12 @@ public final class Book {
             case 130 -> { // groveisbeingdesecrated seat A
                 symmetry = 1;
                 Tune.PM_COOP_HOLD = 1;
+                Tune.SPAWN_CAP = 60;
             }
             case 131 -> { // groveisbeingdesecrated seat B
                 symmetry = 1;
                 Tune.PM_COOP_HOLD = 1;
+                Tune.SPAWN_CAP = 80;
             }
             case 140 -> { // isnotgold seat A
                 symmetry = 1;
@@ -661,6 +772,16 @@ public final class Book {
                 symmetry = 1;
                 Tune.KING_HAND = 0;
             }
+            case 180 -> { // therainbow seat A
+                symmetry = 2;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(17, 5)};
+            }
+            case 181 -> { // therainbow seat B
+                symmetry = 2;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(22, 5)};
+            }
             case 184 -> { // tminusten seat A
                 symmetry = 3;
                 Tune.CM_KING2_ROUND = 30;
@@ -671,9 +792,29 @@ public final class Book {
                 Tune.CM_KING2_ROUND = 30;
                 KING2_SITE = new MapLocation[] {new MapLocation(12, 34)};
             }
+            case 186 -> { // warhammer seat A
+                symmetry = 1;
+                Tune.SPAWN_CAP_SMALL = 50;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(11, 8), new MapLocation(21, 18)};
+            }
+            case 187 -> { // warhammer seat B
+                symmetry = 1;
+                Tune.SPAWN_CAP_SMALL = 40;
+            }
             case 188 -> { // where_are_you seat A
                 symmetry = 1;
                 Tune.PM_SKIP_FAILED = 2;
+            }
+            case 190 -> { // worldshardestgame seat A
+                symmetry = 1;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(13, 15)};
+            }
+            case 191 -> { // worldshardestgame seat B
+                symmetry = 1;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(26, 34)};
             }
             default -> {
             }

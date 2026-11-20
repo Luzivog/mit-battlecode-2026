@@ -45,3 +45,22 @@
 {"map": "isnotgold", "seat": "both", "set": "CAT_DEF_DSQ", "value": 100, "evidence": ["1120-024129-ab-4d8d", "1120-025516-ab-53c4", "1120-034745-ab-8ad9", "1120-034943-ab-f683"], "by": "PM"}
 {"map": "rift", "seat": "both", "set": "CAT_DEF_DSQ", "value": 100, "evidence": ["1120-024129-ab-4d8d", "1120-025516-ab-53c4", "1120-034745-ab-8ad9", "1120-034943-ab-f683"], "by": "PM"}
 {"map": "where_are_you", "seat": "A", "set": "PM_SKIP_FAILED", "value": 2, "evidence": ["1120-034644-ab-82ee", "1120-035654-ab-a29a", "1120-041536-ab-44f2", "1120-041536-ab-59a2"], "by": "PM"}
+{"map": "therainbow", "seat": "both", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-034612-ab-d3ce", "1120-040328-ab-fe20"], "by": "CM"}
+{"map": "therainbow", "seat": "A", "data": "KING2_SITE", "value": [[17, 5]], "evidence": ["1120-034612-ab-d3ce", "1120-040328-ab-fe20"], "by": "CM"}
+{"map": "therainbow", "seat": "B", "data": "KING2_SITE", "value": [[22, 5]], "evidence": ["1120-034612-ab-d3ce", "1120-040328-ab-fe20"], "by": "CM"}
+{"map": "worldshardestgame", "seat": "A", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-040816-ab-6a45", "1120-042000-ab-c796"], "by": "CM"}
+{"map": "worldshardestgame", "seat": "A", "data": "KING2_SITE", "value": [[13, 15]], "evidence": ["1120-040816-ab-6a45", "1120-042000-ab-c796"], "by": "CM"}
+{"map": "worldshardestgame", "seat": "B", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-042000-ab-c796", "1120-042730-ab-56de"], "by": "CM"}
+{"map": "worldshardestgame", "seat": "B", "data": "KING2_SITE", "value": [[26, 34]], "evidence": ["1120-042000-ab-c796", "1120-042730-ab-56de"], "by": "CM"}
+{"map": "groveisbeingdesecrated", "seat": "A", "set": "SPAWN_CAP", "value": 60, "evidence": ["1120-043224-ab-1b26", "1120-045439-ab-4884", "1120-051040-ab-6e3f", "1120-051040-ab-3039"], "by": "PM"}
+{"map": "groveisbeingdesecrated", "seat": "B", "set": "SPAWN_CAP", "value": 80, "evidence": ["1120-043224-ab-1b26", "1120-043442-ab-77dc", "1120-051040-ab-6e3f", "1120-051040-ab-c690"], "by": "PM"}
+{"map": "warhammer", "seat": "A", "set": "SPAWN_CAP_SMALL", "value": 50, "evidence": ["1120-043031-ab-eee6", "1120-045603-ab-5e9d"], "by": "AT"}
+{"map": "warhammer", "seat": "B", "set": "SPAWN_CAP_SMALL", "value": 40, "evidence": ["1120-042936-ab-0aa3", "1120-045603-ab-7654"], "by": "AT"}
+{"map": "hatefullattice", "seat": "A", "set": "SPAWN_CAP", "value": 60, "evidence": ["1120-030709-ab-3e6b", "1120-040910-ab-8af0"], "by": "AT"}
+{"map": "dirtpassageway", "seat": "both", "set": "SPAWN_CAP", "value": 30, "evidence": ["1120-031046-ab-e9c7", "1120-040913-ab-62cc"], "by": "AT"}
+{"map": "warhammer", "seat": "A", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-064621-ab-bffa", "1120-065040-ab-f4b0"], "by": "AT"}
+{"map": "warhammer", "seat": "A", "data": "KING2_SITE", "value": [[11, 8], [21, 18]], "evidence": ["1120-064621-ab-bffa", "1120-065040-ab-f4b0"], "by": "AT"}
+{"map": "QueenOfHearts", "seat": "A", "set": "KING_PATH", "value": 1, "evidence": ["1120-050229-ab-751b", "1120-065754-ab-01e0"], "by": "SG"}
+{"map": "cheddarchokehold", "seat": "B", "set": "SG_LOOK_RIGHT", "value": 1, "evidence": ["1120-050342-ab-783d", "1120-065755-ab-eb06"], "by": "SG"}
+{"map": "cheeseguardians", "seat": "A", "set": "SPAWN_CAP", "value": 60, "evidence": ["1120-054920-ab-1b76", "1120-065757-ab-e1e5"], "by": "SG"}
+{"map": "cheeseguardians", "seat": "B", "set": "SPAWN_CAP", "value": 60, "evidence": ["1120-054920-ab-1b76", "1120-065757-ab-e1e5"], "by": "SG"}

@@ -21,7 +21,10 @@ map comes from something that is not mirror-symmetric. Source keys: `E:` engine 
    rule. **Proposed book entry: popthecork, seat B, `SG_LOOK_RIGHT` 1**: chosen at +0.400 [+0.231, +0.569] (p_max
    0.000, seed base 22002), confirmed at **+0.483 [+0.332, +0.634]** on 60 fresh cells (22003); seat A −0.033.
    On the other map-seats the switch's effect did not replicate on fresh seeds (§4).
-4. **Open:** knifefight and closeup (no flip here moves them; closeup is ROTATIONAL, so no handedness can), diamond
+4. **No general rule:** on in every game it reads +0.006 [−0.015, +0.026] on 1,000 `goal` cells. Seat B on VERTICAL
+   maps reads +0.067 ±0.061 in that screen (seat A −0.014): a rule "right-hand lookahead for seat B on VERTICAL maps"
+   is a post-hoc subgroup, worth about +1 pp of `goal` if real, and unconfirmed (§5).
+5. **Open:** knifefight and closeup (no flip here moves them; closeup is ROTATIONAL, so no handedness can), diamond
    B (the lookahead read +0.31 on 22001 and −0.13 on 22002), pocketsofcheese (KR's king hand).
 
 ## 1. The gaps and the diagnostics
@@ -81,6 +84,7 @@ The switch on in our bot against main, both on the same cells (paired), win rate
 | `sg_lr` (probe copy, the same rules) | the 8 maps | 22001 | 192 | +0.06 (all maps) | +0.11 (all maps) | `1119-225424-ab-9d78` |
 | `SG_LOOK_RIGHT` 1: book matrix SGL | the 8 maps, 40 a map | 22002 | 320 | popthecork −0.075, others −0.13..0 | popthecork **+0.400 [+0.231, +0.569]**, p_max 0.000; jail +0.075, pockets +0.075, diamond −0.125 | `1119-232509-ab-d42e` (ref `1119-232310-ab-35ca`) |
 | confirmation | `map:popthecork` | 22003 | 60 | −0.033 [−0.099, +0.032] | **+0.483 [+0.332, +0.634]** | `1119-233501-ab-5796` |
+| general rule: `SG_LOOK_RIGHT` 1 everywhere | `goal` | 22004 | 1,000 | −0.001 ±0.028 (VERTICAL −0.014, HORIZONTAL −0.033, ROTATIONAL +0.020) | +0.014 ±0.029 (**VERTICAL +0.067 ±0.061**, HORIZONTAL +0.019, ROTATIONAL −0.018) | `1119-232234-ab-3b23`: +0.006 [−0.015, +0.026] |
 | step order rotated (`sg_morot`) | `map:closeup` | 22001 | 48 | 0.50 → 0.63 | 0.79 → 0.88 (gap kept) | `1119-232700-ab-ccfd` |
 | step order x-mirrored (`sg_mox`) | `map:knifefight` | 22001 | 48 | 0.88 → 0.85 | 0.98 → 0.96 (gap kept) | `1119-232713-ab-a30a` |
 
@@ -88,6 +92,15 @@ Proposed entry (both runs above): `{"map": "popthecork", "seat": "B", "set": "SG
 "evidence": ["1119-232509-ab-d42e", "1119-233501-ab-5796"], "by": "SG"}`. Its round-1 king turn on popthecork is
 15,956 bytecodes in main; the book's scan adds 1,913 (limit 20,000). Once booked, the switch is read twice per
 lookahead step (2 bytecodes each).
+
+## 5. What is left
+
+- Confirm "`SG_LOOK_RIGHT` 1 for our seat B on VERTICAL maps" on fresh `goal` cells. A round-1 rule needs the
+  symmetry at round 1, which only the book gives (`Book.symmetry`), so it is a set of VERTICAL seat-B entries, or a
+  rule once the rats' own symmetry detection settles. KR measures the same shape for the king's hand (h5).
+- knifefight, closeup and diamond B keep their gaps. Untried flips: the micro's direction loops (TryFight,
+  TryPosition), king spawn and site tie-breaks, the cats' own fixed draws on CENTER-facing cats (`E:InternalRobot`
+  static `Random(1092)`, fixed per map; on closeup the first facings came out rotation-consistent).
 
 ## 6. Data and tools (`~/battlecode26-data/scratch/sg/`)
 

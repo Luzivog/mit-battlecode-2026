@@ -144,6 +144,21 @@ def locked(path: Path, wait_s: float) -> Iterator[None]:
         os.close(fd)
 
 
+def held(path: Path) -> bool:
+    """Whether another process holds the lock on PATH now."""
+    try:
+        fd = os.open(path, os.O_RDWR)
+    except OSError:
+        return False
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return False
+    except BlockingIOError:
+        return True
+    finally:
+        os.close(fd)
+
+
 @contextmanager
 def session(host: str, bulk: bool, wait_s: float) -> Iterator[None]:
     """One of HOST's session slots, shared by every process here: SESSIONS a kept connection (BULK_SESSIONS of them
@@ -315,15 +330,27 @@ def login_into(cmd: str, into: Path, hosts: tuple[str, ...] = SLURM_HOSTS, strea
 # Reads of the schedulers (sinfo, condor_status, our queues), shared by every process here for CACHE_S: 66 placements at
 # once each read them (19 Nov). A submit makes them stale at once (forget).
 CACHE_S = 0.5 if LOCAL else 5.0
+STALE_OK = False  # a process that must not wait (tools/compute status) takes the last read while another reads anew
 
 
 def cached(cmd: str, hosts: tuple[str, ...] = SLURM_HOSTS, max_age: float = CACHE_S, timeout: float | None = None
            ) -> str:
-    """CMD's stdout as any process here read it within MAX_AGE, else read now (one process at a time a command)."""
+    """CMD's stdout as any process here read it within MAX_AGE since our last submit or removal, else read now (one
+    process at a time a command). A read begun before a submit is never taken after it: each read is filed under the
+    generation it began in (forget starts a new one), so a placement always sees the pieces the last one queued."""
     key = hashlib.sha256(f"{hosts} {cmd}".encode()).hexdigest()[:20]
-    f = CLIENT / "cache" / key
+    d = CLIENT / "cache"
+    lock = d / f"{key}.lock"
+
+    def current() -> Path:
+        try:
+            gen = (d / "generation").read_text().strip()
+        except OSError:
+            gen = "0"
+        return d / f"{key}.{gen}"
 
     def fresh() -> str | None:
+        f = current()
         try:
             if time.time() - f.stat().st_mtime <= max_age:
                 return f.read_bytes().decode(errors=ESC)
@@ -332,20 +359,31 @@ def cached(cmd: str, hosts: tuple[str, ...] = SLURM_HOSTS, max_age: float = CACH
         return None
     if max_age > 0 and (got := fresh()) is not None:
         return got
-    with locked(f.with_name(f"{key}.lock"), min(2 * (timeout or READ_S) + SLACK_S, SLOT_WAIT_S)):
+    if STALE_OK and held(lock):  # another process reads it now: the last read of any generation
+        last = sorted(d.glob(f"{key}.*[0-9]"), key=lambda x: x.stat().st_mtime)
+        if last:
+            return last[-1].read_bytes().decode(errors=ESC)
+    with locked(lock, min(2 * (timeout or READ_S) + SLACK_S, SLOT_WAIT_S)):
         if max_age > 0 and (got := fresh()) is not None:
             return got
+        f = current()
         out = login(cmd, hosts=hosts, timeout=timeout)
-        tmp = f.with_name(f".{key}.{os.getpid()}")
+        tmp = d / f".{key}.{os.getpid()}"
         tmp.write_bytes(out.encode(errors=ESC))
         os.replace(tmp, f)
         return out
 
 
 def forget() -> None:
-    """Every cached read stale: something of ours was just submitted or removed."""
-    for f in (CLIENT / "cache").glob("*"):
-        if not f.name.endswith(".lock"):
+    """Every cached read stale, and any read under way filed where no reader looks: something of ours was just
+    submitted or removed."""
+    d = CLIENT / "cache"
+    d.mkdir(parents=True, exist_ok=True)
+    tmp = d / f".generation.{os.getpid()}"
+    tmp.write_text(str(time.time_ns()))
+    os.replace(tmp, d / "generation")
+    for f in d.glob("*"):
+        if not f.name.endswith(".lock") and f.name != "generation" and not f.name.startswith("."):
             f.unlink(missing_ok=True)
 
 

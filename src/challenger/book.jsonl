@@ -102,3 +102,13 @@
 {"map": "kingofthehill", "seat": "both", "set": "DIRT_ROUND", "value": 0, "evidence": ["1120-082056-ab-983f", "1120-114246-ab-4473", "1120-115328-ab-47a7"], "by": "AT (WS4/AT5)", "note": "chosen from 17 on 26017; on book 7: A +0.067 [-0.013, +0.147], B +0.133 [+0.058, +0.209], both +0.100 [+0.045, +0.155]"}
 {"map": "asabovesobelow", "seat": "A", "data": "KING1_SITE", "value": [[40, 36]], "evidence": ["1120-122452-ab-2332", "1120-120839-ab-f43a", "1120-123411-ab-14cb"], "by": "CM"}
 {"map": "asabovesobelow", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-122452-ab-2332", "1120-120839-ab-f43a", "1120-123411-ab-14cb"], "by": "CM"}
+{"map": "houseofcards", "seat": "B", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-120743-ab-182b", "1120-131439-ab-47cb"], "by": "SG"}
+{"map": "houseofcards", "seat": "B", "data": "KING2_SITE", "value": [[16, 4]], "evidence": ["1120-120743-ab-182b", "1120-131439-ab-47cb"], "by": "SG"}
+{"map": "mushroom", "seat": "A", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-130848-ab-7bf7", "1120-132728-ab-3b99"], "by": "SG"}
+{"map": "mushroom", "seat": "A", "data": "KING2_SITE", "value": [[20, 16]], "evidence": ["1120-130848-ab-7bf7", "1120-132728-ab-3b99"], "by": "SG"}
+{"map": "asabovesobelow", "seat": "B", "set": "CM_KING2_ROUND", "value": 80, "evidence": ["1120-130844-ab-15a4", "1120-132734-ab-0ee3"], "by": "SG"}
+{"map": "asabovesobelow", "seat": "B", "data": "KING2_SITE", "value": [[29, 21]], "evidence": ["1120-130844-ab-15a4", "1120-132734-ab-0ee3"], "by": "SG"}
+{"map": "trapped", "seat": "A", "set": "CM_KING2_ROUND", "value": 80, "evidence": ["1120-130844-ab-15a4", "1120-132738-ab-477f"], "by": "SG"}
+{"map": "trapped", "seat": "A", "data": "KING2_SITE", "value": [[6, 19]], "evidence": ["1120-130844-ab-15a4", "1120-132738-ab-477f"], "by": "SG"}
+{"map": "trapped", "seat": "B", "set": "CM_KING2_ROUND", "value": 80, "evidence": ["1120-130844-ab-15a4", "1120-132738-ab-477f"], "by": "SG"}
+{"map": "trapped", "seat": "B", "data": "KING2_SITE", "value": [[6, 30]], "evidence": ["1120-130844-ab-15a4", "1120-132738-ab-477f"], "by": "SG"}

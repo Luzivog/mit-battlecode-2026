@@ -45,3 +45,4 @@
 {"map": "isnotgold", "seat": "both", "set": "CAT_DEF_DSQ", "value": 100, "evidence": ["1120-024129-ab-4d8d", "1120-025516-ab-53c4", "1120-034745-ab-8ad9", "1120-034943-ab-f683"], "by": "PM"}
 {"map": "rift", "seat": "both", "set": "CAT_DEF_DSQ", "value": 100, "evidence": ["1120-024129-ab-4d8d", "1120-025516-ab-53c4", "1120-034745-ab-8ad9", "1120-034943-ab-f683"], "by": "PM"}
 {"map": "where_are_you", "seat": "A", "set": "PM_SKIP_FAILED", "value": 2, "evidence": ["1120-034644-ab-82ee", "1120-035654-ab-a29a", "1120-041536-ab-44f2", "1120-041536-ab-59a2"], "by": "PM"}
+{"declare": "KING1_SITE", "type": "tiles", "meaning": "the first king sites, in order (Tune.CM_KING1_SITE picks one)"}

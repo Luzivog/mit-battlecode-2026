@@ -12,6 +12,7 @@ public final class Book {
     public static int seat; // 0 team A, 1 team B (set where map != 0)
     public static int symmetry; // the map's CellTracker.Symmetry ordinal (1 R, 2 H: x -> W-1-x, 3 V), 0 where map is 0
     public static long[] CAT_LANE; // tiles some cat's 2x2 covers on its EXPLORE loop (docs/theory/cm-cat-maps.md §3): tile (x, y) in it iff CAT_LANE != null && (CAT_LANE[y] >>> x & 1) != 0 (null off the book)
+    public static MapLocation[] KING1_SITE; // the first king sites, in order (Tune.CM_KING1_SITE picks one) (null off the book)
     public static MapLocation[] KING2_SITE; // second-king sites off every cat loop, in order of preference (Tune.CM_KING2_ROUND) (null off the book)
 
     public static void init() throws GameActionException {

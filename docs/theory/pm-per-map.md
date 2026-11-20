@@ -295,6 +295,73 @@ pocketsofcheese and where_are_you lane memory (+0.010 / +0.030, −0.020 / −0.
 (0.000 / 0.000), `PM_SYM` on QueenOfHearts, constrictinglattice, gridlock, mincemeat, squaresaremodernart (−0.030 to
 +0.040, all across 0).
 
+**The table at the end of PM6** (all 20 Nov campaigns, PM6's included; every `goal` map): `PM_SYM` counts only matrix
+points, so its trial-entry screens (`pm5s`: 35 maps at 40 cells; `gs*`: every map at 10) are not in its row.
+
+| switch | `goal` maps played with ≥ 20 cells (of 95) | not yet played there |
+|---|---|---|
+| `KING_PATH` | 84 | DefaultLarge, evileye, arrows, rift, ZeroDay, mercifullattice, toomuchcheese, whereisthecheese, attack_on_cat, fullofsecrets, learn_your_lesson |
+| `KING_HAND` | 90 | gelcatinouscube, groveisbeingdesecrated, isnotgold, seepastyourgreed, superioristhmus |
+| `SG_LOOK_RIGHT` | 58 | 37 maps |
+| `PM_SYM` | 11 | 84 maps |
+| `PM_COOP_HOLD` | 58 | 37 maps |
+| `PM_SKIP_FAILED` | 58 | 37 maps |
+| `PM_SIEGE` | 68 | 27 maps |
+| `CM_CAT_HUNT_START` | 65 | 30 maps |
+| `CAT_DEF_DSQ` | 65 | 30 maps |
+| `CM_LANE_MEMORY` | 49 | 46 maps |
+| `CM_LANE_FLEE` | 49 | 46 maps |
+| `DIRT_ROUND` | 70 | 25 maps |
+| `IDLE_GOHOME` | 53 | 42 maps |
+| `KING_DEF_DSQ` | 10 | 85 maps |
+| `CM_KING1_SITE` | 70 | 25 maps |
+| `CM_KING2_ROUND` | 72 | 23 maps |
+| `SPAWN_CAP` | 65 | 30 maps |
+| `SPAWN_CAP_SMALL` | 25 | 70 maps |
+| `SPAWN_RICH` | 55 | 40 maps |
+| `MINES_KING2` | 72 | 23 maps |
+
+
+## 14. PM6: the next tier of map-seats
+
+Map-seats outside the 50 maps screened since book 6 with at least 6 losses in the pooled runs of books 6–8
+(`rank-pooled.json`, about 95 games each): 29 on 20 maps. Levers (40 cells a map, against main plus the book 9 and 10
+lines, `t3/pm6-ref` `c3a25967`, which sets nothing on these maps): `PM_SIEGE` 1, `KING_PATH` 1, `DIRT_ROUND` 0,
+`SPAWN_CAP` 30 / 60, `MINES_KING2` 3 / 7 (seed base 24055), and on the map-seats lost on points `CM_CAT_HUNT_START` 500
+and `CAT_DEF_DSQ` 100; the first king's seat over CM's four site types and every reachable mine (`king1.py`,
+`king1all.py`; 2–8 candidates a map-seat, `pm6k1`, 24056); an early second king beside our nearest free mine at r30 and
+r80 and beside the next at r30 (SG's `k2cand.py`; `pm6k2a` 24057, `pm6k2b` 24058). Dropped where a screen had already
+played the value with at least 20 cells: `KING_PATH` on 12 of the 20 maps, `SPAWN_CAP` on 7, `MINES_KING2` on 3,
+`PM_SIEGE` on dirtpassageway, the cat pair on 5; sunandmoon's second king (CM books one). The first runs stalled with
+Condor's submit host (the tools' fix `93dde2c0`); the matrices were played again unchanged.
+
+Selection: the map-seat's best at p_max < 0.05, or the same candidate positive on both seats with the two together at
++0.10 or more; a read above the map-seat's loss rate (or leaning on a partner seat's such read) is chance. Eight picks
+on nine map-seats; one confirmation, all in one paired run against `origin/main` (`7b095ab7`), seed base 24059, 120
+cells a map (`1120-182050-ab-4e46`, arm `t3/pm6-arm` `1ac041f2`):
+
+| map-seat | pick (screen) | screen (seat / other) | confirmation | |
+|---|---|---|---|---|
+| groveisbeingdesecrated A | `CM_KING2_ROUND` 30, `KING2_SITE` (48, 40) by (50, 40) (`pm6k2a`) | +0.075 / +0.100 | **+0.092 [+0.040, +0.144]** (120 / 109) | confirmed |
+| groveisbeingdesecrated B | `KING1_SITE` (5, 4) (`pm6k1`, site 2) | +0.125 / +0.050 | +0.058 [−0.016, +0.133] | failed |
+| sunandmoon A | `KING1_SITE` (19, 30) (site 2) | +0.125 / +0.025 | 0.000 [−0.093, +0.093] | failed |
+| sunandmoon B | `KING1_SITE` (19, 30) (site 4) | +0.050 / +0.100 | 0.000 [−0.066, +0.066] | failed |
+| UncomfortablyClose A / B | `KING1_SITE` (1, 7) / (14, 12) (site 2) | +0.025 / +0.100 | +0.017 / −0.017 | failed |
+| averystrangespace A | `MINES_KING2` 7 (`pm6mk`) | +0.050 / +0.075 | +0.008 [−0.041, +0.058] | failed |
+| bed B | `DIRT_ROUND` 0 (`pm6dr`) | +0.075 / +0.025 | −0.017 [−0.090, +0.057] | failed |
+| canyoudig B | `PM_SIEGE` 1 (`pm6sg`) | +0.050 / +0.050 | −0.025 [−0.107, +0.057] | failed |
+
+Read as chance (above the loss rate): groveisbeingdesecrated A `DIRT_ROUND` 0 (+0.125), its second king at rank 2
+(A +0.100, B +0.200), insertmeowname A's sites and second king (+0.150 to +0.175), wallsofparadis B's site (+0.125),
+seepastyourgreed B's second king (+0.100); and insertmeowname B, wallsofparadis A, seepastyourgreed A, whose both-seat
+reads leaned on those. The other levers read within ±0.075 on every map-seat (`KING_PATH` −0.175 on seepastyourgreed B).
+
+Runs (kept): references `pm6sg` `1120-153100-ab-e7ad`, `pm6kp` `-153105-ab-b7c8`, `pm6dr` `-153108-ab-15a8`, `pm6cap`
+`-153112-ab-9bea`, `pm6mk` `-153116-ab-f8eb`, `pm6cat` `-153120-ab-a169`, `pm6k1` `-153124-ab-e5e1`, `pm6k2a`
+`-153128-ab-501b`, `pm6k2b` `-153133-ab-8d71`; picks: `pm6k2a` R30 `1120-153128-ab-78d9`, `pm6k1` site 2
+`-153125-ab-131a`, site 4 `-153126-ab-2c44`, `pm6mk` MK7 `-153117-ab-b644`, `pm6dr` `-153108-ab-987b`, `pm6sg`
+`-153100-ab-3bdf`; trial branches `t3/pm6-ref`, `t3/pm6-k1`, `t3/pm6-k2r1`, `t3/pm6-k2r2`, `t3/pm6-arm` (never merged).
+
 ## Tools
 
 `~/battlecode26-data/scratch/pm/`: `seat.py RUN` (loss classes per map-seat from results.jsonl), `pair.py REF RUN...`

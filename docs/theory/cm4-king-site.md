@@ -85,3 +85,32 @@ the best two of 24 splits looked at, so unconfirmed. Main's own king (toward the
 already stands close to the "nearest mine" type on average; the gains come from map-seats where one particular mine
 decides the income race, which no round-1 feature here names.
 
+## 4. CM5: the other maps and the near misses
+
+Screens on the fixed code's base (the 32 most-lost maps not screened in CM4, PM's four left out; then neighbours of
+CM4's near misses: the site itself, the second-nearest own mine, the second contested mine, three king steps toward
+the enemy). Entries (`D:entries5.jsonl`), each confirmed against main on the map alone, 100 games a seat:
+
+| map | seat | site | chosen from | confirmed |
+|---|---|---|---|---|
+| externalsustenance | B | (15,7), our nearest mine | `cm5a`, 23047, 40 cells, 4 candidates: +0.325 [+0.14, +0.51], adj +0.27, p_max 0.001 (`1120-084927-ab-5e5d` vs `1120-084755-ab-fcb5`) | 23049 `1120-114443-ab-c290`: +0.14 [+0.04, +0.24] (21/7) |
+| thunderdome | A | (14,21), our nearest mine | `cm5a`: +0.175 [+0.05, +0.30], adj +0.15, p_max 0.011 | 23049: +0.12 [+0.06, +0.18] (12/0); 23051: +0.11 [+0.05, +0.17] |
+| thunderdome | B | (32,13), the middle of our mines | `cm5a`: +0.15, p_max 0.058 (did not pass); 23049: +0.22 [+0.13, +0.31] (23/1) | 23051 `1120-115111-ab-e765`: +0.29 [+0.20, +0.38] (29/0) |
+| gelcatinouscube | A | (26,34), the middle of our mines | `cm5b`, 23050, 60 cells, 4 neighbours: +0.18 [+0.08, +0.29], adj +0.17, p_max 0.002 (`1120-114707-ab-2ce3` vs `1120-114526-ab-e64e`) | 23052 `1120-115154-ab-0140`: +0.16 [+0.08, +0.24] (18/2) |
+
+- `cm5a` (32 maps, runs `1120-084755-ab-fcb5` ref, s1 `-f266`, s2 `-5e5d`, s3 `-041a`, s4 `-5087`): only the two above
+  pass; groveisbeingdesecrated B +0.125 (p 0.095), pocketsofcheese A +0.125 (0.135), the rest below. The start corner
+  loses heavily where it is not neutral (DefaultMedium A −0.55, cheesefarm A −0.45, thehallway −0.33 / −0.43,
+  uneruesansfin −0.70 / −0.80).
+- `cm5b` (runs `1120-114526-ab-e64e` ref, n1 `-2ce3`, n2 `-a3b3`, n3 `-52dd`, n4 `-067b`): jail B's gain moves with the
+  tile (the second contested mine (8,3) +0.20, p_max 0.003, against CM4's (52,4) +0.13) but does not confirm (+0.05
+  [−0.04, +0.14], 23052); gelcatinouscube A's does not move (its CM4 site, the second-nearest mine and the tile toward
+  the enemy read +0.18, +0.15, +0.18); holeinthewall, moonlitriverpark and jail A pass nothing.
+- In the 23052 run gelcatinouscube B read −0.18 [−0.27, −0.09]: the arm lacked book 7's (10,8) line, the reference had
+  it, a fourth read of that line (main with it 0.97, without it 0.79).
+- Why it works where it does: through income. In the confirmation games the seated king's side delivers 130–300 more
+  cheese by r300 than main on the same cells, and its margin over awubot grows by 170–300 (kingofthehill B +445 against
+  +172 at r300, therearenowalls A +454 against +179, QueenOfHearts A +344 against +48, already +169 against −55 at
+  r100). On kingofthehill and therearenowalls the r100 margin is slightly lower (the king walks to the contested mine)
+  and the gain shows from r200: the miners' trips end beside that mine and the king picks its cheese itself.
+

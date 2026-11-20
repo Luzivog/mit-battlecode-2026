@@ -671,6 +671,7 @@ public final class Book {
                 Tune.PM_SYM = 1;
                 Tune.PM_COOP_HOLD = 1;
                 Tune.IDLE_GOHOME = 0;
+                Tune.SPAWN_RICH = 1000;
             }
             case 80 -> { // toomuchcheese seat A
                 symmetry = 1;

@@ -97,3 +97,4 @@
 {"map": "thunderdome", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-084927-ab-5e5d", "1120-084755-ab-fcb5", "1120-114443-ab-c290"], "by": "CM"}
 {"map": "thunderdome", "seat": "B", "data": "KING1_SITE", "value": [[32, 13]], "evidence": ["1120-114443-ab-c290", "1120-115111-ab-e765"], "by": "CM"}
 {"map": "thunderdome", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-114443-ab-c290", "1120-115111-ab-e765"], "by": "CM"}
+{"map": "TheHeist", "seat": "B", "set": "SPAWN_RICH", "value": 1000, "evidence": ["1120-081404-ab-3a0f", "1120-114149-ab-4242", "1120-115343-ab-114a"], "by": "SG"}

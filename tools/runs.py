@@ -34,8 +34,8 @@ from pathlib import Path
 
 from tools import backends as B
 from tools import jobs as J
-from tools import kit, provision
-from tools.piece import BEAT_S, MIN_LEFT_S, POOL_V, STALE_S
+from tools import kit, provision, remote, view
+from tools.piece import MIN_LEFT_S, POOL_V, STALE_S
 from tools.remote import (CPU_HOST, LOCAL, REMOTE_CAS, REMOTE_POOL, REMOTE_RUNS, SLURM_HOSTS, Refused, Unreachable,
                           login, login_into)
 
@@ -45,12 +45,12 @@ DEFAULT_TIME_S = 4 * 3600  # a Slurm or cpucluster1 piece's --time: at it, the p
 MAX_ROUNDS = 3  # rounds of replacement pieces a run may get, once all its pieces were lost
 QUEUED_PIECES = 4  # Condor pieces queued for a run when no backend has a free machine for it now
 ORDER = ("cpucluster1", "condor", "slurm", "local")  # of equal offers, the CPU-only cluster first, the GPU cluster last
-LIVE_S = 3 * BEAT_S  # a piece's state file older than this is a dead piece's
 GRACE_S = 20.0 if not LOCAL else 0.5  # after a placement (or the run's start), how long before pieces are added
 POOL_ROUNDS = 8  # placements a pooled run's follower may make
 STUCK_S = 90.0 if not LOCAL else 1.0  # a pooled run none of whose tasks moved for this long has stopped moving
 QUEUED_S = 120.0  # a piece queued this long no longer holds back pieces added for its run's waiting tasks
 PLACE_S = 600.0  # a follower adds pieces before tools/run's placement says it ended (`placed`) only this long after
+PLACE_WAIT_S = 300.0  # how long a placement waits for another one of this machine's to end (place_pieces)
 
 
 @dataclass(frozen=True)
@@ -109,22 +109,25 @@ def slots_of(cpus: int, mem_mb: int, task_cpus: int, task_mem_mb: int) -> int:
 
 
 def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: int, notes: list[str],
-           need: int | None = None, named: bool = False) -> list[Offer]:
+           need: int | None = None, named: bool = False, max_age: float = 0.0) -> list[Offer]:
     """What each backend of WHERES could start for this run now, read at once, best first (most slots, then ORDER).
     NEED: the tasks to run at once, the most a Slurm or cpucluster1 offer asks for (a lab machine is taken whole). A
     backend that can't be read is left out, its reason in NOTES. cpucluster1 counts only while it can take jobs (its
     read's takes_jobs), and is left out without a word otherwise, unless NAMED: asked for alone by name, it is offered
-    as read, and sbatch says why it refuses."""
+    as read, and sbatch says why it refuses. Our Condor jobs waiting in its queue will take free machines first: as
+    many of the best free machines are left out. MAX_AGE: scheduler reads of this machine's tools that recent do."""
     tc, mb_cpu = max(task_cpus, 1), max(1, -(-task_mem_mb // max(task_cpus, 1)))
 
     def condor() -> list[Offer]:
-        c = B.read_condor()
-        return [Offer("condor", s, m.cpus, m.memory_mb) for m in c.free(tc, task_mem_mb)
-                if (s := slots_of(m.cpus, m.memory_mb, task_cpus, task_mem_mb)) >= 1]
+        c = B.read_condor(max_age)
+        idle = sum(1 for j in c.jobs if j.state == "idle")
+        free = sorted(((slots_of(m.cpus, m.memory_mb, task_cpus, task_mem_mb), m) for m in c.free(tc, task_mem_mb)),
+                      key=lambda x: (-x[0], -x[1].cpus, x[1].name))[idle:]
+        return [Offer("condor", n, m.cpus, m.memory_mb) for n, m in free if n >= 1]
 
     def cpucluster() -> list[Offer]:
         try:
-            c = B.read_cpucluster()
+            c = B.read_cpucluster(max_age)
         except Refused:
             if named:
                 raise
@@ -161,7 +164,7 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
 
     def slurm() -> list[Offer]:
         units = None if need is None or not task_cpus else need * tc
-        slots = B.slurm_starts_now(B.read_slurm(), tc, units, time_s, max(B.CPU_JOB_MIN_MEM_MB, mb_cpu))
+        slots = B.slurm_starts_now(B.read_slurm(max_age), tc, units, time_s, max(B.CPU_JOB_MIN_MEM_MB, mb_cpu))
         seen: set[str] = set()
         out: list[Offer] = []
         for x in slots:  # one a node: slots on one node's several partitions are the same CPUs
@@ -311,7 +314,8 @@ def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> lis
             if j.id not in {x.id for x in js}:
                 js.append(j)
         subs = [(j, files, B.condor_sub(j.dir, j.id, max(s.task_cpus, 1), min(mem, s.task_mem_mb),
-                                        s.task_mem_mb if s.task_cpus else None, s.condor_time_s)) for j in js]
+                                        s.task_mem_mb if s.task_cpus else None, s.condor_time_s, kind_of(s)))
+                for j in js]
         clusters = J.submit_condor(subs, shared)
         slots = [o.slots for o in condor] + [1] * queued_condor
         got += [(j.id, n) for j, c, n in zip(js, clusters, slots, strict=True) if c is not None]
@@ -340,16 +344,37 @@ def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> lis
         J.say(f"run {s.id}: piece {j.id}: {o.cpus} CPUs, {o.mem_mb} MB, {o.slots} tasks at once"
               + (f" ({o.slot.node}, {o.slot.partition})" if o.slot else f" ({o.partition})" if o.partition else ""))
     if got:
+        remote.forget()  # the queues changed: the next placement reads them again
         login(f"printf '%s\\n' {' '.join(i for i, _ in got)} >> {d}/pieces")
     return got
 
 
+def kind_of(s: Settings) -> str:
+    """The runs a piece of S serves, as a Condor attribute (BC26Kind): a pooled run's task size, runtime and protocol;
+    an unpooled run's own id."""
+    return f"{s.task_cpus}-{s.task_mem_mb}-{s.env}-v{POOL_V}" if s.pool else s.id
+
+
 def place_pieces(s: Settings, need: int) -> list[str]:
-    """Pieces for NEED tasks at once on what the backends offer now, best first. The GPU cluster's slots go one at a
-    time, each from a read made after the last one's submit (each changes what our caps leave). When nothing is free,
-    QUEUED_PIECES Condor pieces wait for machines. Refused when no piece could be submitted."""
+    """Pieces for NEED tasks at once on what the backends offer now, best first, one placement of this machine's at a
+    time (a lock: each reads the queues the last one's submits changed). The GPU cluster's slots go one at a time,
+    each from a read made after the last one's submit (each changes what our caps leave). When nothing is free, Condor
+    pieces wait in its queue, QUEUED_PIECES of S's kind at most over every run: our pieces queued and running are
+    bounded by what the backends can start. Refused when no piece could be submitted and none of S's kind waits."""
+    try:
+        with remote._locked(remote.CLIENT / "place.lock", PLACE_WAIT_S):
+            return _place(s, need)
+    except Unreachable as e:
+        if not s.pool:
+            raise
+        J.say(f"run {s.id}: no placement now ({e}): its follower places pieces later")
+        return []
+
+
+def _place(s: Settings, need: int) -> list[str]:
     notes: list[str] = []
-    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need, named=s.wheres == ("cpucluster1",))
+    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need, named=s.wheres == ("cpucluster1",),
+                   max_age=remote.CACHE_S)
     took = choose(found, need, s.max_cpus)
     for n in notes:
         J.say(f"run {s.id}: {n}")
@@ -368,42 +393,39 @@ def place_pieces(s: Settings, need: int) -> list[str]:
         cpus += o.cpus
         if one and left > 0:
             slurm = offers(("slurm",), s.task_cpus, s.task_mem_mb, s.time_s, [], left)[:1]
-    if not got:
-        if "condor" not in s.wheres:
-            raise Refused(f"no piece could start on {', '.join(s.wheres)} now (`tools/compute status`)")
-        queued = min(QUEUED_PIECES, need)
-        J.say(f"run {s.id}: no backend took a piece now: {queued} Condor piece(s) wait in its queue")
-        got = submit_pieces(s, [], queued)
-        if not got:
-            raise Refused("no piece could be submitted (the reasons are above)")
+    if got:
+        return [i for i, _ in got]
+    if "condor" not in s.wheres:
+        raise Refused(f"no piece could start on {', '.join(s.wheres)} now (`tools/compute status`)")
+    waiting = queued_of_kind(kind_of(s))
+    queued = min(QUEUED_PIECES - waiting, need)
+    if queued <= 0:
+        J.say(f"run {s.id}: no backend has room now, and {waiting} pieces of its kind wait in Condor's queue: no more")
+        return []
+    J.say(f"run {s.id}: no backend has room now: {queued} Condor piece(s) wait in its queue"
+          + (f" ({waiting} of its kind already do)" if waiting else ""))
+    got = submit_pieces(s, [], queued)
+    if not got and not waiting:
+        raise Refused("no piece could be submitted (the reasons are above)")
     return [i for i, _ in got]
+
+
+def queued_of_kind(kind: str) -> int:
+    """Our Condor jobs of KIND waiting in its queue (every run's), from a read at most CACHE_S old."""
+    return sum(1 for j in B.read_condor(remote.CACHE_S).jobs if j.state == "idle" and j.kind == kind)
 
 
 # ---- the pool ----
 def read_pool() -> tuple[list[dict[str, object]], float]:
-    """Every pooled piece's state (REMOTE_POOL/pieces), each with its `age` by the volume's clock; that clock."""
-    out = login(f"mkdir -p {REMOTE_POOL}/pieces && cd {REMOTE_POOL}/pieces && c=$(mktemp ../.clock.XXXXXX) && "
-                "stat -c %Y \"$c\" && rm -f \"$c\" && for f in *; do [ -f \"$f\" ] || continue; "
-                "printf '%s\\t' \"$(stat -c %Y \"$f\")\"; head -c 4096 \"$f\" | tr -d '\\n'; echo; done")
-    lines = out.splitlines()
-    clock = float(lines[0])
-    pieces = []
-    for line in lines[1:]:
-        mtime, _, said = line.partition("\t")
-        try:
-            d = json.loads(said)
-            d["age"] = clock - float(mtime)
-        except ValueError:
-            continue
-        pieces.append(d)
-    return pieces, clock
+    """Every piece's state, each with its `live` (view.Snapshot.pool); the snapshot's time (the shared view)."""
+    return view.get().pool()
 
 
 def serving(s: Settings, pieces: list[dict[str, object]], clock: float) -> list[dict[str, object]]:
     """The live pieces of PIECES that would take S's tasks (tools/piece.py's `serves` and `fits`)."""
     out = []
     for p in pieces:
-        if float(str(p.get("age", 1e9))) > LIVE_S or p.get("v") != POOL_V or not isinstance(p.get("slots"), int) \
+        if not p.get("live") or p.get("v") != POOL_V or not isinstance(p.get("slots"), int) \
                 or not isinstance(p.get("running"), int):
             continue
         if (p.get("task_cpus"), p.get("task_mem_mb"), p.get("env")) != (s.task_cpus, s.task_mem_mb, s.env):
@@ -431,9 +453,9 @@ def place(s: Settings, need: int) -> list[str]:
         return place_pieces(s, need)
     try:
         free, live = pool_free(s)
-    except Refused as e:
-        free = live = 0
-        J.say(f"run {s.id}: the pool's state unread: {e}")
+    except Refused as e:  # unread is not empty: a piece added for it could be one too many
+        J.say(f"run {s.id}: the pool's state unread ({e}): its follower places pieces later")
+        return []
     if free:
         J.say(f"run {s.id}: {live} live piece{'s' * (live != 1)} {'have' if live != 1 else 'has'} {free} free slot"
               f"{'s' * (free != 1)}: " + ("no new piece" if free >= need else f"pieces for the other {need - free}"))
@@ -474,12 +496,15 @@ class Progress:
 
 
 def read_progress(rid: str) -> Progress:
-    d = run_dir(rid)
-    s = B.sections(login(f"cd {d} && echo ==done && ls done && echo ==claims && ls claims && echo ==pieces && "
-                         f"cat pieces && echo ==closed && {{ ls closed 2>/dev/null; true; }} && echo ==rounds && "
-                         f"{{ ls -d replace.* 2>/dev/null; true; }} && echo ==placed && {{ ls placed 2>/dev/null; "
-                         f"true; }}"))
+    """RID's progress, read now (a follower reads it through the shared view)."""
+    run_dir(rid)
+    got = view.Snapshot(0, [], [], B.sections(login(view.run_sh(rid) + "true")), None).run(rid)
+    if got is None:
+        raise Refused(f"run {rid}: no such run folder")
+    return progress_of(got)
 
+
+def progress_of(s: dict[str, list[str]]) -> Progress:
     def nums(key: str, suf: str = "") -> set[int]:
         stems = (x[:len(x) - len(suf)] for x in s.get(key, []) if x.endswith(suf))
         return {int(x) for x in stems if x.isdigit()}
@@ -561,6 +586,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
     (out / "run.json").write_text(json.dumps(asdict(s), indent=1) + "\n")
     have = {int(p.name) for p in out.iterdir() if p.name.isdigit() and (p / "result.json").exists()}
     shown, dead_since, w = "", None, J.Waiter()
+    wanted: list[str] = []  # the pieces whose states the next read brings
     finals: dict[str, J.State] = {}
     placed_at, seen_running, progress, moved_at = s.created or time.time(), set[str](), (-1, -1), time.time()
     tick = time.time()
@@ -571,13 +597,18 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
         tick = time.time()
     while True:
         try:
-            pr = read_progress(rid)
+            snap = view.get(runs=[rid], jobs=wanted)
+            sec = snap.run(rid)
+            if sec is None:
+                raise Refused(f"run {rid}: its folder is gone from the volume")
+            pr = progress_of(sec)
             new = sorted(pr.done - have)
             if new:
                 fetch(rid, new, out)
                 have |= set(new)
             live = [p for p in pr.pieces if p not in finals]
-            states = J.read_states(live) if live else {}
+            wanted = live
+            states = snap.states(live) if live else {}
         except Unreachable as e:  # a lost connection says nothing about the run: keep following
             J.say(f"run {rid}: {e}; trying again in {poll_s:.0f} s")
             pause()
@@ -693,11 +724,17 @@ def follow_pool(s: Settings, pr: Progress, alive: list[str], states: dict[str, J
         login(f"mkdir {run_dir(s.id)}/replace.{k}")  # one follower submits round K
     except Refused:
         return True
-    J.say(f"run {s.id}: {waiting} tasks wait, {free} free slots on {live} live pieces: pieces added (round {k})")
+    J.say(f"run {s.id}: {waiting} tasks wait, {free} free slots on {live} live pieces: adding pieces (round {k})")
+    got: list[str] = []
     try:
-        place_pieces(s, waiting - free)
+        got = place_pieces(s, waiting - free)
     except Refused as e:
         J.say(f"run {s.id}: {e}")
+    if not got:  # a round that added nothing (the backends full, its kind's pieces queued) isn't one of POOL_ROUNDS
+        try:
+            login(f"rmdir {run_dir(s.id)}/replace.{k}")
+        except Refused:
+            pass
     return True
 
 

@@ -20,6 +20,9 @@ from dataclasses import asdict
 from tools import backends as B
 from tools import jobs as J
 from tools import runs as R
+from tools import view
+from tools import workspace as W
+from tools import remote
 from tools.remote import LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS, Refused, login
 
 # The workspace holds 55 GB (remote.REMOTE_ROOT), and a day of tests wrote more than that with the retention below in
@@ -56,12 +59,14 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         except Refused as e:
             return e
 
-    with ThreadPoolExecutor(3) as pool:
-        fc, fs, fk = pool.submit(safe, B.read_condor), pool.submit(safe, B.read_slurm), pool.submit(
-            safe, B.read_cpucluster)
-        c, s, k = fc.result(), fs.result(), fk.result()
+    age = remote.CACHE_S  # every read below shared with this machine's other tools: one login each at most
+    with ThreadPoolExecutor(4) as pool:
+        fc, fs, fk = (pool.submit(safe, lambda f=f: f(age)) for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
+        fv = pool.submit(safe, view.get)
+        c, s, k, v = fc.result(), fs.result(), fk.result(), fv.result()
     notes: list[str] = []
-    free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes)] for o in B.WHERES}
+    free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes, max_age=age)]
+            for o in B.WHERES}
     out: dict[str, object] = {"task": {"cpus": task_cpus, "mem_mb": task_mem_mb}}
     if isinstance(c, Refused):
         out["condor"] = {"error": str(c)}
@@ -86,16 +91,15 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
                               "task_slots_now": sum(o.slots for o in free["cpucluster1"]),
                               "jobs": [asdict(j) for j in k.jobs if j.name.startswith("bc26-")]}
     out["task_slots_now"] = {w: sum(o.slots for o in free[w]) for w in B.WHERES}
-    try:
-        pieces, _ = R.read_pool()
-        live = [p for p in pieces if float(str(p.get("age", 1e9))) <= R.LIVE_S and isinstance(p.get("slots"), int)
+    if isinstance(v, Refused):
+        out["pool"] = {"error": str(v)}
+    else:
+        pieces, _ = v.pool()
+        live = [p for p in pieces if p.get("live") and isinstance(p.get("slots"), int)
                 and isinstance(p.get("running"), int)]
-        opened = login(f"ls {REMOTE_POOL}/open 2>/dev/null | wc -l").strip()
         out["pool"] = {"pieces": len(live), "slots": sum(int(str(p["slots"])) for p in live),
-                       "running": sum(int(str(p["running"])) for p in live), "open_runs": int(opened or 0),
+                       "running": sum(int(str(p["running"])) for p in live), "open_runs": len(v.open_runs()),
                        "by_backend": {w: sum(1 for p in live if p.get("backend") == w) for w in B.WHERES}}
-    except Refused as e:
-        out["pool"] = {"error": str(e)}
     if as_json:
         print(json.dumps(out, indent=1))
         return
@@ -171,7 +175,7 @@ def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
     shown: dict[str, str] = {}
     while left:
         try:
-            states = J.read_states(left)
+            states = view.get(jobs=left).states(left)
         except Refused as e:  # a lost connection says nothing about the jobs: keep waiting
             J.say(f"compute: {e}; trying again in {poll_s:.0f} s")
             time.sleep(poll_s)
@@ -211,7 +215,7 @@ def sweep(force: bool = True) -> str:
     bundles and shipped files (REMOTE_CAS) no run or job links any more go CAS_KEEP_H after their last use; the pool
     forgets closed or deleted runs and pieces silent for an hour. Its last words: the workspace's size, as Ceph
     counts it (no walk). Without FORCE, at most every SWEEP_EVERY_MIN (`.swept`'s age):
-    `run` and `tools/run` call it so."""
+    `run` and `tools/run` call it so. It rewrites MANIFEST (workspace.py) and names entries it doesn't list."""
     once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -{SWEEP_EVERY_MIN} 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
     cmd = (f"{once}touch {REMOTE_ROOT}/.swept; n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
            f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mmin +{KEEP_H * 60})\" ]; }} || "
@@ -225,8 +229,12 @@ def sweep(force: bool = True) -> str:
            f"find {REMOTE_POOL}/pieces -maxdepth 1 -type f -mmin +60 -delete 2>/dev/null; "
            f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mmin +{CAS_KEEP_H * 60} -print -delete 2>/dev/null "
            f"| wc -l); "
-           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"")
-    return login(cmd, timeout=SWEEP_S).strip().replace("\n", "; ") + " in use"
+           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"; "
+           f"{W.manifest_sh()}")
+    said = B.sections("==said\n" + login(cmd, timeout=SWEEP_S))
+    unknown = [x for x in said.get("unknown", []) if x.strip()]
+    return ("; ".join(x for x in said.get("said", []) if x.strip()) + " in use"
+            + (f"; not in the manifest: {', '.join(unknown)}" if unknown else ""))
 
 
 def sweep_daily() -> None:
@@ -283,7 +291,14 @@ def main(argv: list[str] | None = None) -> int:
     pl.add_argument("id")
     cn = sub.add_parser("cancel", help="end a job, or a run and its pieces, for good")
     cn.add_argument("id")
-    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_H} hours")
+    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_H} hours, and "
+                   "rewrite the workspace's MANIFEST")
+    em = sub.add_parser("empty", help="delete the whole workspace when no run is open and no job of ours is queued "
+                        "(say what would go, without --yes)")
+    em.add_argument("--yes", action="store_true")
+    ot = sub.add_parser("old-tree", help=f"delete {W.OLD_ROOT}, the folders' old home, once nothing uses it (say "
+                        "what holds it, without --yes)")
+    ot.add_argument("--yes", action="store_true")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "status":
@@ -303,6 +318,10 @@ def main(argv: list[str] | None = None) -> int:
             print(J.pull(a.id))
         elif a.cmd == "cancel":
             print(R.cancel(a.id) if R.is_run(a.id) else J.cancel(a.id))
+        elif a.cmd == "empty":
+            print(W.empty(a.yes))
+        elif a.cmd == "old-tree":
+            print(W.old_tree(a.yes))
         else:
             print(sweep())
     except Refused as e:

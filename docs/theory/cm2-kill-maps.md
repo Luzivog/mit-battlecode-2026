@@ -70,3 +70,24 @@ merged; confirmations are the switch on against main on the map alone.
 | `cm2f` | `CAT_DEF_DSQ` 100, 200 | closeup, externalsustenance, 23031 | seat A −0.15 to −0.175, B ≤ +0.10 n.s. | ref `1120-040149-ab-6399` |
 | lanes trial, confirmations | | closeup, externalsustenance, 23024; closeup, 23028 | per map both seats: externalsustenance +0.125 then +0.035; closeup +0.056, +0.105, +0.067; closeup B +0.03, +0.10, +0.14 | `1120-031842-ab-5e24`, `1120-034147-ab-d247` |
 | second king at the contested mine | sites per map (`D:sites.py`) | therainbow 23030; kingofthehill, therearenowalls, worldshardestgame, QueenOfHearts 23033 | therainbow +0.34 / +0.225; worldshardestgame A +0.23, B +0.07; the other three −0.23 to −0.50 | `1120-034612-ab-d3ce`, `1120-040816-ab-6a45` |
+
+## 3. CM3: main's own history on the maps without a remedy
+
+Eight revisions of `src/challenger` (the awubot copy `1ff4b32d`, `83c17482` after S2/KL/CW, `3dc0efd3` after KB/KS,
+`1435494c` KF, `5b73501f` `EXPLORE_P` 0.6, `93e83115` `STRAFE_LO` 0, `6017078f` `KING_HAND` 7, today's main
+`0a05b160`), each against awubot on kingofthehill, therearenowalls, asabovesobelow, QueenOfHearts, externalsustenance
+and closeup, 60 cells a map on seed base 23036 (runs in `D:hist.txt`, table `D:histtab.py`), each paired with today's
+main on the same cells.
+
+- No older main beats today's on QueenOfHearts, asabovesobelow, therearenowalls, kingofthehill A or closeup A: no merged
+  change costs there, and a finer bisection can only find changes that read 0 on those maps. Stopped.
+- kingofthehill B: `1435494c` +0.17 ± 0.13 and `5b73501f` +0.10 ± 0.13 over today's 0.57, back to today's level from
+  `93e83115` on; externalsustenance A `1435494c` +0.12 ± 0.14; closeup B +0.07 on several revisions.
+- The switched changes in that span screened as `book matrix cm3a` (kingofthehill, externalsustenance, closeup, 40
+  cells a map, seed base 23037, 3 candidates, ref `1120-051628-ab-6c4a`): `EXPLORE_P` 0.2 kingofthehill B +0.15 (adj
+  +0.11, p_max 0.047), closeup B +0.175 (adj +0.13, p_max 0.049); `STRAFE_LO` 3 nothing at p_max < 0.15; the cat hunt
+  off (`CM_CAT_HUNT_START` 2000) changed no game.
+- `EXPLORE_P` 0.2 confirmation, seed base 23038 (`1120-052215-ab-8764`, 100 cells a map): kingofthehill B +0.05
+  [−0.03, +0.13], closeup B −0.10 [−0.20, +0.00]: fails. Stopped: the three reads on kingofthehill B (+0.10, +0.15,
+  +0.05) average about +0.1 a map-seat, 0.05 pp of `goal`, below what a 100-cell confirmation resolves.
+

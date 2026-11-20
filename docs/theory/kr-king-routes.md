@@ -95,6 +95,27 @@ chosen value alone on its map on a fresh seed base (`D:mapseat.py`: per seat, pa
 | worldshardestgame A, KP | +0.200, 0.08 | +0.083 [−0.066, +0.233]; seat B −0.133 [−0.261, −0.006] (21006) | no |
 | therainbow A, KP | +0.167, 0.11 | +0.050 [−0.068, +0.168] (21006) | no |
 | mushroom B, L | +0.200, 0.06 | +0.067 [−0.064, +0.197] (21006, `1120-014142-ab-e4b3`) | no |
+| kr_m2b's five best (KP: starvation B, cheesefarm B, hatefullattice A, FreeTheCheese A, tiny B) | +0.133 to +0.200, 0.06–0.11 (21008) | −0.167 to +0.067, none above 0; hatefullattice A −0.167 [−0.308, −0.026], cheesefarm A −0.133 (21009, `1120-021347-ab-05cf`) | no |
+
+On main with the third book (5190e18: bed `CM_LANE_MEMORY`, RUN A `CM_CAT_HUNT_START` 500, cheddarchokehold
+`MINES_KING2` 3), matrix `kr_m2c` (bed, cheddarchokehold, RUN; 40 cells, seed base 21010; ref `1120-021834-ab-e199`, KP
+`1120-021936-ab-def3`, L `1120-022017-ab-1b71`, R `1120-022154-ab-ae0d`):
+
+| map-seat | choice (raw, p_max) | confirmation | verdict |
+|---|---|---|---|
+| RUN A, KP (on the cat hunt) | +0.025 (21010) | +0.140 [+0.061, +0.219] (21011, 100 cells, `1120-021822-ab-8c39`) | entry holds |
+| RUN B, KP | +0.075 (21010) | +0.170 [+0.091, +0.249] (same run) | entry holds |
+| cheddarchokehold B, R (`KING_HAND` 1) | +0.225 [+0.087, +0.363], 0.027 | +0.200 [+0.082, +0.318] (21012, 80 cells, `1120-022500-ab-77b2`); seat A −0.075 [−0.166, +0.016] | entry |
+| bed, any | KP A −0.675, B −0.425; L, R within ±0.075 | | no: nothing adds to the lane memory |
+
+Proposed entries (book 4):
+
+| map | seat | set | value | evidence |
+|---|---|---|---|---|
+| RUN | A | `KING_PATH` | 1 | `1120-011719-ab-619e` (choice, 21005), `1120-014142-ab-dd56` (21006), `1120-021822-ab-8c39` (21011, on the cat hunt) |
+| RUN | B | `KING_PATH` | 1 | same |
+| houseofcards | A | `KING_PATH` | 1 | `1120-011719-ab-619e` (21005), `1120-014142-ab-dd56` (21006), `1120-015006-ab-ea9e` (21007) |
+| cheddarchokehold | B | `KING_HAND` | 1 | `1120-022154-ab-ae0d` (choice, 21010), `1120-022500-ab-77b2` (21012) |
 
 - EscapeTheNight B and pocketsofcheese B: KP3 adds nothing over h7's right hand (+0.067, +0.033 on 30 cells); left
   loses there (−0.567, −0.200). AT's KP3 gains on them (+0.72, +0.31) were over the old left hand.

@@ -795,8 +795,6 @@ public final class Book {
             case 137 -> { // houseofcards seat B
                 symmetry = 2;
                 Tune.SPAWN_CAP_SMALL = 40;
-                KING1_SITE = new MapLocation[] {new MapLocation(11, 4)};
-                Tune.CM_KING1_SITE = 1;
             }
             case 140 -> { // isnotgold seat A
                 symmetry = 1;

@@ -11,6 +11,7 @@ policy that wins there, as book entries (tools/book/AGENTS.md). Branch `t3/pm-pe
 | TheHeist | both | `PM_SYM` 1 and `PM_COOP_HOLD` 1 | 24003, 300: A +0.31 ± 0.07, B +0.35 ± 0.07 | 24006, 300: A +0.33 ± 0.06, B +0.32 ± 0.06 (0.81 / 0.90 against 0.48 / 0.58) |
 | groveisbeingdesecrated | both | `PM_COOP_HOLD` 1 | 24003, 148: A +0.08 ± 0.08, B +0.11 ± 0.08 | 24007, 300: A +0.10 ± 0.04, B +0.11 ± 0.04 (0.87 / 0.67 against 0.77 / 0.56) |
 | longwayaround | both | `SPAWN_CAP` 60 | 24009, 250: A +0.09 ± 0.08, B +0.10 ± 0.08 | 24010, 300: A +0.05 ± 0.07, B +0.07 ± 0.07 (0.62 / 0.70 against 0.57 / 0.63) |
+| Nofreecheese | both | `PM_SIEGE` 1 | 24012, 100: A +0.06 ± 0.10, B +0.10 ± 0.09 | 24013, 200: A +0.11 ± 0.06, B +0.13 ± 0.06 (0.90 / 0.91 against 0.79 / 0.79) |
 
 Intervals are 95%, paired per game against main on the same (map, seed, seat). Run IDs in §6.
 
@@ -21,6 +22,8 @@ Intervals are 95%, paired per game against main on the same (map, seed, seat). R
 - `PM_COOP_HOLD`: PC1's A2 ported to today's main (`robot/LastCat.java`): in cooperation with one king, no bite or cat
   trap that could leave a cat at or below our own damage; rats remove their own cat traps once those threaten a cat in
   view; with two kings we may end the game.
+- `PM_SIEGE` (E2b's siege spawns): with an enemy in the king's vision (1), or more enemies than our rats there (2), the
+  king spawns whatever the army size.
 - Every default is main's instructions (javap, only `Tune.class` differs).
 
 ## 2. Loss classes now (main, seed base 24001, 150 games a map-seat, `1119-212800-ab-9092`)
@@ -71,7 +74,14 @@ insertmeowname: chosen as the worst, they regressed.
   (`SPAWN_RICH` 1000: +0.059; 500: +0.023) and cap 50 with line 1000 (+0.066) less.
 - The same cap is harmful on the other hard maps (§6).
 
-## 6. What did not gain
+## 6. Nofreecheese: siege spawns
+
+- An open 60×60 map with 6 mines; main loses it to early king kills (r < 450). E2b's siege spawns (no rat cap while an
+  enemy is in the king's vision) closed on `goal` at zero (RS: −0.001 on 3,000 cells) but win here on both seats on two
+  seed bases. Matrix `pmx2` (6 early-kill maps): externalsustenance read +0.05 and did not confirm (+0.030 ± 0.035, 24013);
+  DefaultSmall loses with it (A −0.15, B −0.13: E2's mine-poor bank race).
+
+## 7. What did not gain
 
 | arm | maps | seed base, cells | ours − main |
 |---|---|---|---|
@@ -88,7 +98,7 @@ insertmeowname: chosen as the worst, they regressed.
 Seat A's symmetry from the book is therefore no broad lever: it helps where main never resolves the symmetry and a
 choice hangs on it (TheHeist's cooperation king), and costs where it changes routes (therainbow).
 
-## 7. Runs
+## 8. Runs
 
 | purpose | seed base | runs (main, variants) |
 |---|---|---|
@@ -101,10 +111,12 @@ choice hangs on it (TheHeist's cooperation king), and costs where it changes rou
 | longwayaround constants | 24005, 24009 (choose), 24010 (confirm) | campaigns `clong`, `clong2`, `clong3` (`tools/tune show NAME`); confirm main `1119-234728-ab-3677`, cap 60 `-234728-ab-8a7d` |
 | constants matrix, 8 maps | 24011 | `pmx1` (`tools/book/book fit pmx1`) |
 | mine-poor cut | 24005 | `cpoor` |
+| siege matrix, 6 maps | 24012 | `pmx2`: main `1120-001937-ab-3694`, S1 `1120-002428-ab-3f20`, S2 `1120-002512-ab-4910` |
+| siege confirm, Nofreecheese and externalsustenance | 24013 | `pmx3`: main `1120-004152-ab-9935`, S1 `1120-004152-ab-cfef` |
 | `PM_SYM_B` `goal` screen | 24008 | `1119-230521-ab-e731` |
 | `PM_SYM` on `goal` by symmetry class | 24004 | VERTICAL main `1119-223502-ab-3235`, S `-223502-ab-7f14`; ROTATIONAL main `-223502-ab-5dd4`, S `-223503-ab-c5fe` |
 
-## 8. Open
+## 9. Open
 
 (filled at the end of the package)
 

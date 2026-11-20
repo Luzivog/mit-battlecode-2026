@@ -92,6 +92,9 @@ insertmeowname: chosen as the worst, they regressed.
 | `PM_SYM_B` (seat B, general) | `goal` | 24008, 1,000 | −0.002 [−0.015, +0.011]; seat B −0.004 ± 0.025; seat B where main has no symmetry by r300 −0.027 ± 0.044 |
 | `PM_SYM` | the 48 ROTATIONAL `goal` maps | 24004, 10 a map | −0.014 ± 0.027 |
 | `PM_COOP_HOLD` | TheHeist | 24003, 106 | −0.406 ± 0.104 |
+| `DIRT_ROUND` 0 / 50 (main 100) | therainbow, Excavation, DefaultSmall | 24014, 150 a map | Excavation −0.19 / −0.13 (both seats pooled), others within ±0.08, none significant |
+| `SPAWN_CAP` 60, `SPAWN_RICH` 1500, `MINES_KING2` 7 | the 8 other hard maps | 24011, 60 a map | no map-seat significant; `SPAWN_CAP` 60 down to −0.48 |
+| `PM_SIEGE` 1 / 2 | therainbow, DefaultSmall, Excavation, externalsustenance, warhammer | 24012, 100 a map | within ±0.06 except DefaultSmall S1 −0.14; externalsustenance S1 +0.05 did not confirm (+0.030 ± 0.035, 24013) |
 | `SPAWN_POOR_CUT` 0 / 20 (main 10) | therainbow, DefaultSmall, Excavation | 24005, 150 a map | −0.086 ± 0.041 / −0.369 ± 0.041; worse on each map |
 | `PM_COOP_HOLD` | longwayaround, therainbow, 7 rotational maps besides grove | 24003 | 0 (backstab maps: the hold never binds) |
 
@@ -118,7 +121,14 @@ choice hangs on it (TheHeist's cooperation king), and costs where it changes rou
 
 ## 9. Open
 
-(filled at the end of the package)
+- therainbow (0.59 / 0.63), still without an entry: losses are king kills before r450 in which our king starves (239 HP
+  a loss, 1 in wins) and is bitten (166): the bank race at the two shared mines between the kings. The rat cap (both
+  directions), digging earlier, siege spawns and the symmetry all failed; the lever would be the fight for the shared
+  mines (W3's exchange), not a constant.
+- DefaultSmall, Excavation, externalsustenance (early king kills) and warhammer, cheeseysquare, insertmeowname (mid
+  game, points) win 0.76–0.91 on fresh seeds: no constant or closed arm tried moves them.
+- Not tried: KF's site arms and E3's miner arms per map (both read zero where they were measured, on rich maps), PT's
+  delivery deadline on the r2000 maps (harmful on `goal`).
 
 ## Tools
 

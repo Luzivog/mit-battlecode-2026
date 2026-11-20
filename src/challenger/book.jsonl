@@ -40,3 +40,8 @@
 {"map": "gelcatinouscube", "seat": "B", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-025135-ab-38a2", "1120-024109-ab-14a9", "1120-030836-ab-c799"], "by": "CM"}
 {"map": "squaresaremodernart", "seat": "B", "set": "KING_HAND", "value": 0, "evidence": ["1120-035525-ab-3732", "1120-040920-ab-f67d"], "by": "SG"}
 {"map": "thehallway", "seat": "B", "set": "KING_HAND", "value": 0, "evidence": ["1120-032019-ab-9b98", "1120-035525-ab-3732", "1120-040920-ab-7945"], "by": "SG"}
+{"map": "uneruesansfin", "seat": "both", "set": "CM_CAT_HUNT_START", "value": 500, "evidence": ["1120-024129-ab-4d8d", "1120-024936-ab-a52e", "1120-034745-ab-8ad9", "1120-035916-ab-d71f"], "by": "PM"}
+{"map": "cheesebottles", "seat": "both", "set": "CM_CAT_HUNT_START", "value": 500, "evidence": ["1120-024129-ab-4d8d", "1120-024936-ab-a52e", "1120-034745-ab-8ad9", "1120-035916-ab-d71f"], "by": "PM"}
+{"map": "isnotgold", "seat": "both", "set": "CAT_DEF_DSQ", "value": 100, "evidence": ["1120-024129-ab-4d8d", "1120-025516-ab-53c4", "1120-034745-ab-8ad9", "1120-034943-ab-f683"], "by": "PM"}
+{"map": "rift", "seat": "both", "set": "CAT_DEF_DSQ", "value": 100, "evidence": ["1120-024129-ab-4d8d", "1120-025516-ab-53c4", "1120-034745-ab-8ad9", "1120-034943-ab-f683"], "by": "PM"}
+{"map": "where_are_you", "seat": "A", "set": "PM_SKIP_FAILED", "value": 2, "evidence": ["1120-034644-ab-82ee", "1120-035654-ab-a29a", "1120-041536-ab-44f2", "1120-041536-ab-59a2"], "by": "PM"}

@@ -68,11 +68,32 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 35;
                 return 0;
             }
+            case 9684807 -> {
+                scan();
+                // isnotgold seat A
+                if (id == 1 && w0 == 0x80000000L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 70;
+                return 0;
+            }
             case 13249351 -> {
                 scan();
                 // pipes seat A
                 if (id == 2 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x80300600c00fe020L && d1 == 0x80300600c03L) return 13;
+                return 0;
+            }
+            case 15548555 -> {
+                scan();
+                // cheesebottles seat A
+                if (id == 1 && w0 == 0x80000000000000L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 26;
+                return 0;
+            }
+            case 15851801 -> {
+                scan();
+                // rift seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x2000000000L
+                        && d0 == 0x0L && d1 == 0x0L) return 15;
                 return 0;
             }
             case 15892740 -> {
@@ -96,6 +117,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 92;
                 return 0;
             }
+            case 15974530 -> {
+                scan();
+                // where_are_you seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 94;
+                return 0;
+            }
             case 15974594 -> {
                 scan();
                 // wallsofparadis seat A
@@ -108,6 +136,13 @@ public final class Book {
                 // longwayaround seat A
                 if (id == 3 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x0L && d1 == 0x0L) return 73;
+                return 0;
+            }
+            case 15974710 -> {
+                scan();
+                // uneruesansfin seat A
+                if (id == 1 && w0 == 0x80000000000000L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 41;
                 return 0;
             }
             case 15974789 -> {
@@ -187,6 +222,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 54;
                 return 0;
             }
+            case 26460596 -> {
+                scan();
+                // isnotgold seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x2000000L
+                        && d0 == 0x0L && d1 == 0x0L) return 70;
+                return 0;
+            }
             case 26652996 -> {
                 scan();
                 // gelcatinouscube seat B
@@ -208,11 +250,25 @@ public final class Book {
                         && d0 == 0x80300600c0080000L && d1 == 0x80fe300600c03L) return 13;
                 return 0;
             }
+            case 32329224 -> {
+                scan();
+                // cheesebottles seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x2L
+                        && d0 == 0x0L && d1 == 0x0L) return 26;
+                return 0;
+            }
             case 32407746 -> {
                 scan();
                 // asabovesobelow seat B
                 if (id == 1 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x801803a07c000000L && d1 == 0x80f82f02a0e01L) return 51;
+                return 0;
+            }
+            case 32632260 -> {
+                scan();
+                // rift seat B
+                if (id == 2 && w0 == 0x80000L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 15;
                 return 0;
             }
             case 32669987 -> {
@@ -262,6 +318,13 @@ public final class Book {
                 // longwayaround seat B
                 if (id == 4 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x0L && d1 == 0x0L) return 73;
+                return 0;
+            }
+            case 32755141 -> {
+                scan();
+                // uneruesansfin seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x2L
+                        && d0 == 0x0L && d1 == 0x0L) return 41;
                 return 0;
             }
             case 32755257 -> {
@@ -339,6 +402,14 @@ public final class Book {
                 symmetry = 2;
                 Tune.SG_LOOK_RIGHT = 1;
             }
+            case 30 -> { // rift seat A
+                symmetry = 1;
+                Tune.CAT_DEF_DSQ = 100;
+            }
+            case 31 -> { // rift seat B
+                symmetry = 1;
+                Tune.CAT_DEF_DSQ = 100;
+            }
             case 40 -> { // wallsofparadis seat A
                 symmetry = 1;
                 Tune.MINES_KING2 = 7;
@@ -346,6 +417,14 @@ public final class Book {
             case 41 -> { // wallsofparadis seat B
                 symmetry = 1;
                 Tune.MINES_KING2 = 7;
+            }
+            case 52 -> { // cheesebottles seat A
+                symmetry = 1;
+                Tune.CM_CAT_HUNT_START = 500;
+            }
+            case 53 -> { // cheesebottles seat B
+                symmetry = 1;
+                Tune.CM_CAT_HUNT_START = 500;
             }
             case 55 -> { // closeup seat B
                 symmetry = 1;
@@ -407,6 +486,14 @@ public final class Book {
                 symmetry = 1;
                 Tune.MINES_KING2 = 7;
             }
+            case 82 -> { // uneruesansfin seat A
+                symmetry = 1;
+                Tune.CM_CAT_HUNT_START = 500;
+            }
+            case 83 -> { // uneruesansfin seat B
+                symmetry = 1;
+                Tune.CM_CAT_HUNT_START = 500;
+            }
             case 98 -> { // RUN seat A
                 symmetry = 1;
                 Tune.CM_CAT_HUNT_START = 500;
@@ -448,6 +535,14 @@ public final class Book {
             case 131 -> { // groveisbeingdesecrated seat B
                 symmetry = 1;
                 Tune.PM_COOP_HOLD = 1;
+            }
+            case 140 -> { // isnotgold seat A
+                symmetry = 1;
+                Tune.CAT_DEF_DSQ = 100;
+            }
+            case 141 -> { // isnotgold seat B
+                symmetry = 1;
+                Tune.CAT_DEF_DSQ = 100;
             }
             case 146 -> { // longwayaround seat A
                 symmetry = 2;
@@ -576,6 +671,10 @@ public final class Book {
                 symmetry = 3;
                 Tune.CM_KING2_ROUND = 30;
                 KING2_SITE = new MapLocation[] {new MapLocation(12, 34)};
+            }
+            case 188 -> { // where_are_you seat A
+                symmetry = 1;
+                Tune.PM_SKIP_FAILED = 2;
             }
             default -> {
             }

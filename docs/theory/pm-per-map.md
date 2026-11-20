@@ -153,6 +153,8 @@ Entries (both runs against the main of their day; ours − main, 95%):
 | isnotgold | both | `CAT_DEF_DSQ` 100 | 24015, 150, 3: A +0.040, B +0.093 | 24024, 200: A +0.070 ± 0.045, B +0.095 ± 0.053 |
 | rift | both | `CAT_DEF_DSQ` 100 | 24015, 150, 3: A +0.093, B +0.093 | 24024, 200: A +0.105 ± 0.053, B +0.105 ± 0.051 |
 | where_are_you | A | `PM_SKIP_FAILED` 2 | 24022, 200, 5: A +0.060 ± 0.048 | 24026, 300: A +0.093 ± 0.048 (B +0.027 ± 0.038) |
+| groveisbeingdesecrated | A | `SPAWN_CAP` 60 | 24028, 200, 3: A +0.070 ± 0.051 | 24031, 300: A +0.053 ± 0.041 (0.94 vs 0.89) |
+| groveisbeingdesecrated | B | `SPAWN_CAP` 80 | 24028, 200, 3: B +0.160 ± 0.071 | 24031, 300: B +0.123 ± 0.056 (0.87 vs 0.75) |
 
 - Cat maps: the hunt (PT 2d, from r1300 on main) or the cat defence round our king (d² 36 on main) gives our rats more
   of the cat damage. On t_minus_five_minutes every game ends in cooperation near r350 with us ahead on kings; the hunt
@@ -163,12 +165,20 @@ Entries (both runs against the main of their day; ours − main, 95%):
   every one (`robot/king/FailedSites.java`). Games ending at 3 kings: A 143 → 165 of 200, B 126 → 153. The pattern
   (kings ≤ 2 from r800 with the army at its cap, awubot ahead on kings) is 11 of the 21 such losses in the 3,000 cells;
   no other map-seat has more than 2.
+- grove (on top of the hold): seat B's king-kill losses hold our army at the cap (16 rats) for hundreds of rounds while
+  awubot's grows to 80–120 from the field mines; a higher cap is the lever (A 60, B 80).
+- Stopped, the next step costing more than the map-seat returns: longwayaround (the cheese term from r500 as our army
+  shrinks 44 → 22 rats against awubot's 46 → 51, awubot's third king first; cap, rich-spawn line, lock-in and king
+  target all flat: what is left is the rat exchange), where_are_you B (0.91 with the site skip; the rest is the same
+  missing third king), TheHeist A (holding to a third king moves the losses to r2000), insertmeowname (8 losses of
+  64; the second king's mine gate does not bind).
 - RUN: on main with `KING_PATH` 1 it wins 0.970 / 0.975 (24023); no candidate moved it.
 - Closed (docs/closed.md): the lock-in constants, the hunt in cooperation (`PM_HUNT_COOP`, never fires; removed),
   the formation timeout and join distance on where_are_you, longwayaround B cap 80, the cat levers on cheeseguardians
   and insertmeowname in both directions, RUN.
 - Runs: matrices `pmc1` (24015), `pmk1` (24016), `pmt1` (24017), `pml1` (24018), `pmt2` (24019), `pmc2` (24020),
-  `pml2` (24021), `pmk2` / `pmk3` (24022), `pmr1` (24023), `pmc3` (24024), `pmcg` (24025), `pmk4` (24026);
+  `pml2` (24021), `pmk2` / `pmk3` (24022), `pmr1` (24023), `pmc3` (24024), `pmcg` (24025), `pmk4` (24026), `pml3` (24027),
+  `pmg1` (24028), `pmh2` (24029), `pmi1` (24030), `pmg2` (24031);
   `tools/tune show NAME`, `tools/book/book fit NAME`. Every run an entry cites is kept.
 
 ## Tools

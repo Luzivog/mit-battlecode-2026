@@ -180,3 +180,40 @@ Confirmed on seed base 22029 against `origin/t3/book-9` (`3c6f4b46`, main plus b
 
 The other seats played unchanged (mushroom B 101 / 101, asabovesobelow A 119 / 119).
 
+## 7. WS7: the second king's round and site, finer
+
+Map-seats (`scratch/sg/tools/ws7plan.py`, `ws7plan.json`): WS6's map-seats whose best variant read above −0.10 and not
+in book 9 (17), the map-seats that book the second king (therainbow A and B, worldshardestgame A and B, warhammer A,
+gelcatinouscube B, and book 9's houseofcards B, mushroom A, asabovesobelow B, trapped A and B), and two skipped by WS6
+with a site beside another mine on our side (directconfrontation B, beside (21, 26); cheesefarm B, beside (20, 27)).
+Ten variants on `origin/t3/book-9` (`ee4be60a`), each setting one choice on every map-seat at once: rounds 30, 50, 80,
+120, 200 at the best (or booked) site; the other WS6 site at rounds 30 and 80 (ALT30, ALT80); round 80 at up to three
+further free sites beside mines on our side (O1–O3). 22 maps, 40 cells a map, seed base 22030 (the first launch,
+stuck behind a silent Condor submit host, was stopped and played again; `scratch/sg/ws8_runs_stopped.txt`). Runs:
+ref `1120-153028-ab-e15d`, R30 `1120-153028-ab-3978`, R50 `1120-153028-ab-ca1c`, R80 `1120-153028-ab-ca5f`, R120 `1120-153029-ab-3ab0`, R200 `1120-153029-ab-d376`,
+ALT30 `1120-153029-ab-130a`, ALT80 `1120-153030-ab-d289`, O1 `1120-153030-ab-4f7b`, O2 `1120-153030-ab-57b7`, O3 `1120-153030-ab-9541`.
+
+- No map-seat passes p_max < 0.05 (best: diamond A round 50 +0.125, p_max 0.27; knifefight A round 30 +0.100, 0.33).
+- No variant beats a booked line: every other round or site reads 0 or below on the eleven booked map-seats (mushroom
+  A −0.15 to −0.83; therainbow B round 200 −0.30, O1 −0.50; asabovesobelow B rounds 120 and 200 −0.25, −0.33). The
+  booked rounds stand.
+- Positive on both seats with +0.10 together: DefaultSmall (+0.075 / +0.025 under every variant alike: the entry, not
+  its round or site) and closeup round 30 (+0.075 / +0.025). Confirmed once against origin/main `7b095ab7` (no waiting
+  line on either map), the map alone, 120 cells, seed base 22031: DefaultSmall A +0.017 [−0.060, +0.094], B +0.017
+  [−0.040, +0.073] (`1120-183125-ab-16b7`); closeup A +0.108 [−0.012, +0.228], B −0.008 [−0.067, +0.051]
+  (`1120-183129-ab-6304`). Neither confirms.
+
+**What the second king does** (series of cheese delivered and kings every 100 rounds, arm against reference on the
+same cells; wins from the confirmations, losses from WS6's round-30 variant):
+- mushroom A: it forms by r100 (1.8 kings); income to r300 doubles (2,968 against 1,410).
+- asabovesobelow B: 1.7 kings; income +35%; games with no king left by r300 fall from 17% to 12%.
+- trapped A and B: our income falls (419 against 715), but no king is left by r300 in 0–7% of games against 17–28%,
+  and awubot's income halves: the second king is insurance, not income.
+- TheHeist A: main's own second king forms by r100–200 and its cooperation entries win 38 of 40 on points before r500;
+  a booked site blocks that formation (one king throughout) and drags the games to r2000, lost on points.
+- uneruesansfin B: two kings from r100, a little more income, but 34 of 40 lost on points at r2000 (main wins 35):
+  the second king's upkeep over a long game costs more than it brings.
+- constrictinglattice B: it forms at once, income falls (2,392 against 2,927), 1.18 kings by r300 and none in 20% of
+  games; 35 of 40 lost by kills before r1000. The formation thins the army and both kings fall.
+The losses split by map kind (long points or cooperation games; early-combat maps); no single switch avoids both.
+

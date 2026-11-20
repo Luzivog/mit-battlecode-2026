@@ -355,7 +355,7 @@ class Piece:
 
     def ready(self, r: Run) -> bool:
         """R's checkout and kit here: the job's own for its run and any run of the same content, else one made in
-        scratch from R's code.bundle and with.tgz (kept for later runs of that content). False, R set aside, when it
+        scratch from R's bundles and with.tgz (kept for later runs of that content). False, R set aside, when it
         can't be made."""
         if r.home is not None:
             if r.home.exists():
@@ -392,11 +392,11 @@ class Piece:
         return {"BC_ENGINE_JARS": ":".join(jars), "BC_CLASSPATH": ":".join(["{home}/build/classes", *jars])}
 
     def make_checkout(self, r: Run, key: str) -> Path:
-        """R's commit checked out from its code.bundle into scratch (job.sh's way), its with.tgz unpacked into it."""
+        """R's commit checked out from its base.bundle and code.bundle into scratch (job.sh's way), its with.tgz
+        unpacked into it."""
         final = self.scratch / "co" / key
         tmp = self.scratch / "co" / f".{key}.{secrets.token_hex(3)}"
         tmp.parent.mkdir(exist_ok=True)
-        bundle = str(r.dir / "code.bundle")
         t0 = time.monotonic()
 
         def git(*args: str) -> str:
@@ -406,11 +406,16 @@ class Piece:
             return p.stdout.decode(errors="replace")
         try:
             git("-c", "init.defaultBranch=job", "init", "-q", str(tmp))
-            heads = [x.split() for x in git("-C", str(tmp), "bundle", "list-heads", bundle).splitlines() if x.strip()]
-            git("-C", str(tmp), "fetch", "-q", bundle, *sorted({h[0] for h in heads}))
-            main = [h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"]
-            if main:
-                git("-C", str(tmp), "update-ref", "refs/heads/main", main[0])
+            for name in ("base.bundle", "code.bundle"):  # main first: code.bundle holds only what the commit adds
+                b = r.dir / name
+                if not (b.exists() and b.stat().st_size):
+                    continue
+                heads = [x.split() for x in git("-C", str(tmp), "bundle", "list-heads", str(b)).splitlines()
+                         if x.strip()]
+                git("-C", str(tmp), "fetch", "-q", str(b), *sorted({h[0] for h in heads}))
+                main = [h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"]
+                if main:
+                    git("-C", str(tmp), "update-ref", "refs/heads/main", main[0])
             git("-C", str(tmp), "-c", "advice.detachedHead=false", "checkout", "-q", "--detach", str(r.meta["commit"]))
             w = r.dir / "with.tgz"
             if w.exists() and w.stat().st_size:

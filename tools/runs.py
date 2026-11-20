@@ -3,13 +3,14 @@ the record, pieces (jobs.py jobs running tools/piece.py) claim its tasks, and wh
 or `tools/compute wait RUN`) fetches results, adds pieces while its tasks wait, and closes it.
 
 A run is REMOTE_RUNS/ID (ID: run-MMDD-HHMMSS-XXXX): `run.json` (its settings), `tasks.jsonl` (a task a line:
-{"argv": [...], "lines": [...]}), `commit`, `code.bundle`, `with.tgz` (hard links to REMOTE_CAS's copies, which are
-named by their content and shipped once a content; hard-linked into each piece's job folder), `kit` (a kit run's
+{"argv": [...], "lines": [...]}), `commit`, `base.bundle` (main), `code.bundle` (what the commit adds to main; absent
+when main holds it), `with.tgz` (hard links to REMOTE_CAS's copies, which are named by their content and shipped once
+a content; hard-linked into each piece's job folder), `kit` (a kit run's
 engine jars), `piece.py` (the submitter's, so a piece always speaks its follower's protocol), `pieces` (each piece's
 job id, a line), `claims/`, `lost/`, `done/` (tools/piece.py), `placed` (tools/run's own placement has ended: until
 then, or PLACE_S, a follower adds no piece), `replace.K` (round K of added pieces was submitted),
 `closed` (every task is done, or the run was cancelled: its tasks stop). Results come back to the worktree's
-runs/ID/N/ (result.json, log, out/).
+runs/ID/N/ (result.json, log, out/); once its follower has them all, done/, claims/, lost/ and tasks.jsonl go.
 
 The pool. A run of tasks of a set size (not --whole) with no --max-cpus is pooled: REMOTE_POOL/open/ID lists it while
 it is open, every live pooled piece of the same task size and runtime may take its tasks (the fewest-running run
@@ -35,6 +36,7 @@ from pathlib import Path
 from tools import backends as B
 from tools import jobs as J
 from tools import kit, provision, remote, view
+from tools import workspace as W
 from tools.piece import MIN_LEFT_S, POOL_V, STALE_S
 from tools.remote import (CPU_HOST, LOCAL, REMOTE_CAS, REMOTE_POOL, REMOTE_RUNS, SLURM_HOSTS, Refused, Unreachable,
                           login, login_into)
@@ -251,25 +253,32 @@ def create(tasks: list[Task], task_cpus: int, task_mem_mb: int, wheres: tuple[st
         if "cpucluster1" in wheres:
             J.private_root((CPU_HOST,))
         provision.ensure(hosts, repo, with_kit)
-    code_blob, with_blob = f"code-{tree.key}.bundle", f"with-{wkey}.tgz"
+    W.check_room()
+    # main once (base, 35 MB, shared by every run while main stays), then only what the commit adds to it (KB)
+    base_blob = f"base-{tree.main}.bundle" if tree.main else ""
+    code_blob = "" if tree.in_main else f"code-{tree.key}.bundle"
+    with_blob = f"with-{wkey}.tgz" if paths else ""
     size: dict[str, int] = {}
 
     def made(name: str, data: bytes) -> bytes:
         size[name] = len(data)
         return data
-    sent = J.ship_cas({code_blob: lambda: made(code_blob, tree.bundle())}
-                      | ({with_blob: lambda: made(with_blob, provision.tar_paths(repo, paths))} if paths else {}), hosts)
+    makers = {base_blob: lambda: made(base_blob, tree.base()),
+              code_blob: lambda: made(code_blob, tree.thin() if tree.main else tree.bundle()),
+              with_blob: lambda: made(with_blob, provision.tar_paths(repo, paths))}
+    sent = J.ship_cas({k: v for k, v in makers.items() if k}, hosts)
     files = {"run.json": json.dumps(asdict(s)).encode(), "commit": f"{tree.commit}\n".encode(),
              "piece.py": (Path(__file__).parent / "piece.py").read_bytes(),
              "tasks.jsonl": "".join(json.dumps({"argv": t.argv, "lines": t.lines}) + "\n" for t in tasks).encode(),
              "pieces": b""} | ({"kit": provision.kit_file(repo)} if with_kit else {})
     d = run_dir(rid)
-    links = f" && ln {REMOTE_CAS}/{code_blob} {d}/code.bundle" + (f" && ln {REMOTE_CAS}/{with_blob} {d}/with.tgz"
-                                                                     if paths else "")
+    links = "".join(f" && ln {REMOTE_CAS}/{blob} {d}/{name}" for blob, name in
+                    ((base_blob, "base.bundle"), (code_blob, "code.bundle"), (with_blob, "with.tgz")) if blob)
     opened = f" && mkdir -p {REMOTE_POOL}/open && : > {REMOTE_POOL}/open/{rid}" if pooled else ""
     login(f"mkdir -p {REMOTE_RUNS} && mkdir -m 700 {d} && tar -xf - -C {d} && mkdir {d}/claims {d}/done {d}/lost"
           f"{links}{opened}", J.folder_tar(files), hosts)
-    shipped = [f"its code ({size[code_blob] / 1e6:.1f} MB)" if code_blob in sent else "its code (on the volume)"]
+    up = [b for b in (base_blob, code_blob) if b in sent]
+    shipped = [f"its code ({sum(size[b] for b in up) / 1e6:.1f} MB)" if up else "its code (on the volume)"]
     if paths:
         shipped.append(f"{', '.join(paths)} ({size[with_blob] / 1e6:.1f} MB)" if with_blob in sent
                        else f"{', '.join(paths)} (on the volume)")
@@ -285,15 +294,16 @@ def read_settings(rid: str) -> Settings:
 
 
 # ---- pieces ----
-def piece_files(s: Settings, has_with: bool) -> tuple[dict[str, bytes], dict[str, str]]:
-    """A piece's job files, and the run's files hard-linked into its folder (name -> path)."""
+def piece_files(s: Settings, inputs: list[str]) -> tuple[dict[str, bytes], dict[str, str]]:
+    """A piece's job files, and the run's INPUTS (its bundles and with.tgz there) hard-linked into its folder
+    (name -> path)."""
     d = run_dir(s.id)
     files = {"job.sh": (Path(__file__).parent / "job.sh").read_bytes(), "commit": f"{s.commit}\n".encode(),
              "argv": b"".join(a.encode() + b"\0" for a in ["python3", f"{d}/piece.py", d]),
              "env": provision.env_file(), "exit": b"", "log": b"", "run": f"{s.id}\n".encode()}
     if s.kit:
         files["kit"] = provision.kit_file(J.REPO)
-    return files, {"code.bundle": f"{d}/code.bundle", **({"with.tgz": f"{d}/with.tgz"} if has_with else {})}
+    return files, {name: f"{d}/{name}" for name in inputs}
 
 
 def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> list[tuple[str, int]]:
@@ -301,8 +311,8 @@ def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> lis
     once) of each one submitted, appended to the run's `pieces` once its backend took it. One whose submit failed is
     named, and left out."""
     d = run_dir(s.id)
-    has_with = login(f"test -e {d}/with.tgz && echo yes; true").strip() == "yes"
-    files, shared = piece_files(s, has_with)
+    inputs = login(f"cd {d} && for f in {' '.join(J.INPUTS)}; do [ -e $f ] && echo $f; done; true").split()
+    files, shared = piece_files(s, inputs)
     got: list[tuple[str, int]] = []
     condor = [o for o in took if o.where == "condor"]
     n_condor = len(condor) + queued_condor
@@ -552,9 +562,19 @@ def close(rid: str, pieces: list[str]) -> None:
     cancel_unstarted(rid, pieces)
 
 
+def drop_results(rid: str) -> None:
+    """A closed run's results, claims and tasks deleted from the workspace once its follower has them here: results
+    live on clankerland (runs/RUN/), and the workspace holds only open runs' state. A failure leaves them to the sweep."""
+    d = run_dir(rid)
+    try:
+        login(f"rm -rf {d}/done {d}/claims {d}/lost {d}/tasks.jsonl")
+    except Refused as e:
+        J.say(f"run {rid}: its results stay on the volume for the sweep ({e})")
+
+
 def mark_closed(rid: str) -> None:
     d = run_dir(rid)
-    login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz {REMOTE_POOL}/open/{rid}")
+    login(f"touch {d}/closed && rm -f {' '.join(f'{d}/{n}' for n in J.INPUTS)} {REMOTE_POOL}/open/{rid}")
 
 
 def cancel_unstarted(rid: str, pieces: list[str]) -> None:
@@ -632,6 +652,7 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             summary = summarize(s, out, finals, pr.pieces)  # before the cancels: the run reads done at once
             if not pr.closed:
                 cancel_unstarted(rid, [p for p in pr.pieces if p not in finals])
+            drop_results(rid)
             return summary
         if not pr.placed and now - (s.created or now) < PLACE_S:  # tools/run still places its pieces
             pause()
@@ -842,7 +863,7 @@ def cancel(rid: str) -> str:
     pr = read_progress(rid)
     pooled = read_settings(rid).pool
     d = run_dir(rid)
-    login(f"touch {d}/closed && rm -f {d}/code.bundle {d}/with.tgz {REMOTE_POOL}/open/{rid}")
+    login(f"touch {d}/closed && rm -f {' '.join(f'{d}/{n}' for n in J.INPUTS)} {REMOTE_POOL}/open/{rid}")
     said, kept, ended = [], 0, []
     for pid, st in J.read_states(pr.pieces).items():
         if pooled and st.phase == "running":

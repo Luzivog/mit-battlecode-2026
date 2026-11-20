@@ -18,6 +18,10 @@ from tools.remote import (CONDOR, CPU_HOST, LOCAL, REMOTE_ROOT, SLURM_HOSTS, SUB
 
 # where the folders were until 19 Nov, deleted by `tools/compute old-tree` (tests: a folder beside the stand-in)
 OLD_ROOT = f"{LOCAL}.old" if LOCAL else "/vol/bitbucket/user/bc26"
+QUOTA_GB = 55  # the workspace's quota (ws_allocate's)
+# A new run is refused while the workspace holds more than this (after one sweep): its uploads and the results of the
+# runs already open need the rest, and a write past the quota fails mid-run
+ROOM_GB = 40
 STEP_S = 240.0  # one deletion step's bound; the next step goes on where it stopped
 STEP_ENTRIES = 400  # entries of a folder one step deletes
 MAX_STEPS = 500
@@ -167,3 +171,25 @@ def old_tree(yes: bool) -> str:
     login(f"rmdir {OLD_ROOT} 2>/dev/null; true")
     return f"{OLD_ROOT} deleted in {steps} steps"
 
+
+def used_bytes() -> int:
+    """The workspace's size: Ceph's count (no walk); `du` where there is none (the tests' stand-in)."""
+    out = login(f"getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null || "
+                f"du -sb {REMOTE_ROOT} | cut -f1").split()
+    if not out or not out[-1].isdigit():
+        raise Unreachable(f"{REMOTE_ROOT}'s size unread")
+    return int(out[-1])
+
+
+def check_room() -> None:
+    """Refused, before anything of a new run is written, while the workspace holds more than ROOM_GB after a sweep."""
+    used = used_bytes()
+    if used <= ROOM_GB * 1e9:
+        return
+    from tools import compute  # the sweep: compute imports runs, which imports this
+    compute.sweep(force=True)
+    used = used_bytes()
+    if used > ROOM_GB * 1e9:
+        raise Refused(f"{REMOTE_ROOT} holds {used / 1e9:.1f} GB of its {QUOTA_GB} GB quota, over the {ROOM_GB} GB a new "
+                      "run may start at, even after a sweep: no new run until open runs close (`tools/compute empty` "
+                      "says what holds it)")

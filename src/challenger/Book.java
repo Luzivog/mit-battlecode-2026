@@ -40,13 +40,6 @@ public final class Book {
                         && d0 == 0x100200000000000L && d1 == 0x801e000004008L) return 53;
                 return 0;
             }
-            case 7987342 -> {
-                scan();
-                // houseofcards seat A
-                if (id == 1 && w0 == 0x0L && w1 == 0x0L
-                        && d0 == 0x0L && d1 == 0x0L) return 68;
-                return 0;
-            }
             case 7987660 -> {
                 scan();
                 // dirtfulcat seat A
@@ -387,10 +380,6 @@ public final class Book {
             case 131 -> { // groveisbeingdesecrated seat B
                 symmetry = 1;
                 Tune.PM_COOP_HOLD = 1;
-            }
-            case 136 -> { // houseofcards seat A
-                symmetry = 2;
-                Tune.KING_PATH = 1;
             }
             case 146 -> { // longwayaround seat A
                 symmetry = 2;

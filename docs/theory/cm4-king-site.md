@@ -62,3 +62,26 @@ the start corner, as awubot's king does, loses on most map-seats (−0.25 to −
 - Not chosen (no candidate at p_max < 0.05): QueenOfHearts B, shell A, jail B, moonlitriverpark, cheeseysquare,
   asabovesobelow, DefaultSmall, hatefullattice, dirtpassageway, holeinthewall, trapped, constrictinglattice,
   gelcatinouscube A, AceOfSpades B, therainbow B.
+
+## 3. Is there a general form?
+
+Over every map-seat the four screens tested (`cm4a`–`cm4c`, `cm5a`: 49 maps, 98 map-seats; `D:sitetab.py`, data
+`D:sitetab.json`), each candidate's paired effect against main on the same cells, by site type (lists with fewer than
+four candidates count each type once):
+
+| site type | map-seats | mean effect | 95% (bootstrap over maps) | share > 0 |
+|---|---|---|---|---|
+| start (hold the start corner) | 98 | −0.175 | [−0.246, −0.106] | 0.27 |
+| beside our nearest mine | 90 | +0.004 | [−0.033, +0.037] | 0.53 |
+| beside the contested mine on our side | 65 | −0.086 | [−0.154, −0.019] | 0.35 |
+| nearest the middle of our mines | 69 | −0.044 | [−0.105, +0.012] | 0.45 |
+
+No type reads above 0 across maps; the best of the four per map-seat averages +0.054 (chosen, biased up). Split by what
+the king sees at round 1 (king steps from the start to the nearest mine ≤ 8 / 9–16 / > 16, whether that mine is nearer
+to us than to them, size, symmetry, cats ≤ 2 / > 2, mines ≤ 6 / 7–12 / > 12), no split moves the start, contested or
+middle types above 0. The nearest-mine site reads +0.051 [+0.008, +0.093] (36 map-seats, 0.64 positive) where the
+nearest mine is more than 16 king steps away, and +0.061 [+0.022, +0.118] (9) where it is nearer to them than to us:
+the best two of 24 splits looked at, so unconfirmed. Main's own king (toward the centre, then the nearest visible mine)
+already stands close to the "nearest mine" type on average; the gains come from map-seats where one particular mine
+decides the income race, which no round-1 feature here names.
+

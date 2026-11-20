@@ -85,6 +85,9 @@ The switch on in our bot against main, both on the same cells (paired), win rate
 | `SG_LOOK_RIGHT` 1: book matrix SGL | the 8 maps, 40 a map | 22002 | 320 | popthecork −0.075, others −0.13..0 | popthecork **+0.400 [+0.231, +0.569]**, p_max 0.000; jail +0.075, pockets +0.075, diamond −0.125 | `1119-232509-ab-d42e` (ref `1119-232310-ab-35ca`) |
 | confirmation | `map:popthecork` | 22003 | 60 | −0.033 [−0.099, +0.032] | **+0.483 [+0.332, +0.634]** | `1119-233501-ab-5796` |
 | general rule: `SG_LOOK_RIGHT` 1 everywhere | `goal` | 22004 | 1,000 | −0.001 ±0.028 (VERTICAL −0.014, HORIZONTAL −0.033, ROTATIONAL +0.020) | +0.014 ±0.029 (**VERTICAL +0.067 ±0.061**, HORIZONTAL +0.019, ROTATIONAL −0.018) | `1119-232234-ab-3b23`: +0.006 [−0.015, +0.026] |
+| `SG_LOOK_RIGHT` 2: right for team B except a chirality-1 rat on HORIZONTAL/ROTATIONAL maps (KING_HAND 7's key) | `goal` (main before h7) | 22005 | 1,000 | +0.002 ±0.008 (VERTICAL +0.014) | +0.012 ±0.029 (**VERTICAL +0.043 ±0.056**, HORIZONTAL +0.014, ROTATIONAL −0.006) | `1120-000957-ab-756c`: +0.007 ±0.015 |
+| `SG_LOOK_RIGHT` 3: the lookahead fixed (either bug's arrival, the shorter path; ties to the team's hand, right for B) | `goal` (main before h7) | 22005 | 1,000 | −0.005 ±0.019 | +0.014 ±0.029 (VERTICAL +0.018, HORIZONTAL +0.028, ROTATIONAL +0.006) | `1120-001000-ab-3e80`: +0.004 ±0.017 |
+| book: `SG_LOOK_RIGHT` 1 on the 27 VERTICAL maps' seat B | `goal` (main before h7) | 22005 | 1,000 | +0.001 ±0.006 | +0.010 ±0.017 (**VERTICAL +0.046 ±0.056**) | `1120-001005-ab-1b69`: +0.005 [−0.004, +0.016] |
 | step order rotated (`sg_morot`) | `map:closeup` | 22001 | 48 | 0.50 → 0.63 | 0.79 → 0.88 (gap kept) | `1119-232700-ab-ccfd` |
 | step order x-mirrored (`sg_mox`) | `map:knifefight` | 22001 | 48 | 0.88 → 0.85 | 0.98 → 0.96 (gap kept) | `1119-232713-ab-a30a` |
 

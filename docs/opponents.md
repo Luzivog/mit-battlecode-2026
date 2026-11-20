@@ -271,7 +271,7 @@ Incremental builds (Gradle 8.10) recompile only changed classes, so a challenger
    grep -rhE '^import' DIR | grep -vE 'import (static )?(OLD\.|battlecode\.common|java\.)' | sort | uniq -c
    grep -rnP '(?<![\w.$])OLD\b' DIR | grep -vP ':\s*(package|import)\b'   # in-code FQ refs and strings
    ```
-4. **Vendor and rename into a worktree, never into the main `src/` directly.** First `git -C /path/to/battlecode26 worktree add --detach /tmp/bc26-opponents/wt HEAD`. Then copy `*.java` and rename the package (this is the exact command used):
+4. **Vendor and rename into a worktree, never into the main `src/` directly.** First `git -C <repo> worktree add --detach /tmp/bc26-opponents/wt HEAD`. Then copy `*.java` and rename the package (this is the exact command used):
    ```
    SRC=/tmp/bc26-opponents/clones/OWNER__REPO/src/OLD; OLD=OLD; NEW=opp_slug; DEST=/tmp/bc26-opponents/wt/src/$NEW
    mkdir -p $DEST && (cd $SRC && find . -type f -name '*.java' -print0 | cpio -0 -pdm --quiet $DEST)
@@ -289,7 +289,7 @@ Incremental builds (Gradle 8.10) recompile only changed classes, so a challenger
 6. **Write `src/opp_slug/SOURCE.md`** (copy an existing one): repo URL, commit SHA, original path, license, team, result, platform handles, edits. Skip any repo whose license forbids copies.
 7. **Move it in atomically**:
    ```
-   cp -r /tmp/bc26-opponents/wt/src/opp_slug /path/to/battlecode26/.vendor_tmp_opp_slug
-   mv /path/to/battlecode26/.vendor_tmp_opp_slug /path/to/battlecode26/src/opp_slug
+   cp -r /tmp/bc26-opponents/wt/src/opp_slug <repo>/.vendor_tmp_opp_slug
+   mv <repo>/.vendor_tmp_opp_slug <repo>/src/opp_slug
    ```
    Then run `./gradlew build -x test` in the main repo, `git worktree remove /tmp/bc26-opponents/wt`, and add a row to §1 or §2.

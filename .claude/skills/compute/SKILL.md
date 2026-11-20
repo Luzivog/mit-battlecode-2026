@@ -103,7 +103,7 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
 - No idle allocations: runs close themselves and cancel pieces that never started; cancel a job you no longer need.
 - One partition a job; a Condor job takes its whole machine (`request_cpus = 1`). The tools enforce both.
 - A first job on a backend, or of a new kind, is small and under 10 minutes (`--time 10m`).
-- Our files in our workspace `/vol/gpudata/user-bc26` only (0700, written with umask 077; a 55 GB quota); never
+- Our files in our workspace (`BC26_WORKSPACE` in `.env`, `.env.example`) only (0700, written with umask 077; a 55 GB quota); never
   another project's folders, workspaces, jobs or services. Nothing on `/vol/bitbucket`.
 - **No persistent data on the shared volumes.** The workspace holds only the state of open runs and caches that make
   jobs faster (the runtime, stored code, native binaries); results live on clankerland, under the checkout's `runs/`.

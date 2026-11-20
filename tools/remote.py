@@ -20,11 +20,27 @@ from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
+
+def load_env(*files: Path) -> None:
+    """Each FILE's KEY=VALUE lines into the environment, unless the key is set already: the person's settings
+    (`.env.example` names them), kept out of git."""
+    for f in files:
+        try:
+            lines = f.read_text().splitlines()
+        except OSError:
+            continue
+        for line in lines:
+            key, sep, value = line.strip().partition("=")
+            if sep and key and not key.startswith("#"):
+                os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+
+
+load_env(Path(__file__).resolve().parents[1] / ".env", Path.home() / "battlecode26-data" / ".env")
 LOCAL = os.environ.get("BC26_LOCAL_REMOTE", "")  # tests: a folder here standing in for REMOTE_ROOT
-# Our workspace on /vol/gpudata (made by `ws_allocate bc26 365` on gpucluster2; a 55 GB quota), apart from every other
-# project's: every job's code bundle lies under it (a small file operation takes 1-6 ms there; /vol/bitbucket is full
-# and takes 250 ms and more, on login nodes and lab machines alike)
-REMOTE_ROOT = LOCAL or "/vol/gpudata/user-bc26"
+# Our workspace on /vol/gpudata (BC26_WORKSPACE, made by `ws_allocate bc26 365` on gpucluster2; a 55 GB quota), apart
+# from every other project's: every job's code bundle lies under it (a small file operation takes 1-6 ms there;
+# /vol/bitbucket is full and takes 250 ms and more, on login nodes and lab machines alike). Unset: nothing remote runs.
+REMOTE_ROOT = LOCAL or os.environ.get("BC26_WORKSPACE", "")
 REMOTE_JOBS = f"{REMOTE_ROOT}/jobs"
 REMOTE_RUNS = f"{REMOTE_ROOT}/runs"
 REMOTE_POOL = f"{REMOTE_ROOT}/pool"  # open/RUN: the runs pooled pieces serve; pieces/JOB: each live piece's state
@@ -93,6 +109,8 @@ def ssh_argv(host: str, cmd: str, stream: int = 0) -> list[str]:
     kept connection would count as its owner's load, so one login a call. STREAM: unused (one connection a host)."""
     if host not in (*SLURM_HOSTS, CPU_HOST, SUBMIT):
         raise Refused(f"no ssh to {host}: DoC allows lab machines only through Condor")
+    if not REMOTE_ROOT.startswith("/vol/gpudata/"):
+        raise Refused("no workspace: set BC26_WORKSPACE in .env (.env.example), a folder under /vol/gpudata")
     opts = list(SSH_OPTS)
     if host != SUBMIT:
         opts += ["-o", "ControlMaster=no", "-o", f"ControlPath={control_path(host)}", "-o", "ProxyCommand=/bin/false"]
@@ -409,8 +427,8 @@ def unmark_all() -> None:
 
 # ---- the Condor submit host: Condor authenticates a submit or a removal by a Kerberos ticket there ----
 BW = Path.home() / ".local" / "bin" / "bw"  # the Bitwarden CLI, unlocked by the user
-BW_ITEM = "00000000-0000-0000-0000-000000000000"  # Bitwarden's "Imperial College"
-PRINCIPAL = "user@IC.AC.UK"
+BW_ITEM = os.environ.get("BC26_BW_ITEM", "")  # the Bitwarden item holding the Kerberos password (.env)
+PRINCIPAL = os.environ.get("BC26_KERBEROS_PRINCIPAL", "")  # USER@IC.AC.UK (.env)
 # The sha256 of the last password the Kerberos server refused: never sent again (each refusal counts toward the
 # account's lockout). The previous project's record too, read only.
 KINIT_REFUSED = DATA / "kinit-refused"
@@ -422,6 +440,8 @@ KINIT_REFUSED_TEXT = re.compile(r"Password incorrect|Preauthentication failed|cr
 
 
 def bitwarden_password() -> bytes:
+    if not BW_ITEM or not PRINCIPAL:
+        raise Refused("no Kerberos login: set BC26_BW_ITEM and BC26_KERBEROS_PRINCIPAL in .env (.env.example)")
     try:
         bw = subprocess.run([str(BW), "get", "password", BW_ITEM], capture_output=True, stdin=subprocess.DEVNULL,
                             timeout=60)

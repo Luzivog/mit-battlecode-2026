@@ -2,12 +2,14 @@
 client state (session slots, the view, caches) is the test's own."""
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
 import pytest
 
-from tools import remote
+os.environ["BC26_WORKSPACE"] = "/vol/gpudata/test-bc26"  # before tools.remote reads it: the tests' own, never reached
+from tools import remote  # noqa: E402
 
 
 @pytest.fixture(autouse=True)

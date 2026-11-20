@@ -124,7 +124,8 @@ def entries(root: str) -> list[tuple[str, str]]:
 def delete_tree(root: str, keep: tuple[str, ...] = ()) -> int:
     """Everything under ROOT but KEEP deleted in steps of STEP_S at most (each deletes up to STEP_ENTRIES entries of
     each folder, deepest first through `rm -rf`; one cut short by its bound goes on in the next). The steps taken."""
-    ours = re.fullmatch(r"/vol/gpudata/user-[\w./-]+", root) or (LOCAL and root.startswith(LOCAL))
+    ours = (REMOTE_ROOT.startswith("/vol/gpudata/") and (root == REMOTE_ROOT or root.startswith(REMOTE_ROOT + "/"))
+            or (LOCAL and root.startswith(LOCAL)))
     if not ours or ".." in root:
         raise Refused(f"{root}: not a tree of ours")
     skip = " ".join(f"! -name {shlex.quote(k)}" for k in keep)

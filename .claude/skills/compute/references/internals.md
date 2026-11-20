@@ -2,7 +2,7 @@
 
 For changing `tools/compute`, `tools/run`, `tools/job.sh` or `tools/piece.py`. To run work, read `../SKILL.md`.
 
-No daemon: Slurm, Condor and the folders of our workspace `/vol/gpudata/user-bc26` are the record, and what the
+No daemon: Slurm, Condor and the folders of our workspace (`BC26_WORKSPACE` in `.env`) are the record, and what the
 tools on this machine share (session slots, the view of the remote state, cached scheduler reads) is files under
 `~/battlecode26-data/compute/`. A run's follower is `tools/run` itself or `tools/compute wait`, a process of the
 agent's.
@@ -238,7 +238,7 @@ tools/compute wait RUN --json      # in the background; exit 0 when every task e
 
 - **Condor** (lab machines, `--where condor`): submit host `ash04.doc.ic.ac.uk`, the only lab machine we ssh to, one
   login a call, no kept connection. Reads go through a GPU-cluster login node. Submits and removals need a Kerberos
-  ticket there: `kerberos_login` runs kinit with Bitwarden's password (item "Imperial College"), never twice with a
+  ticket there: `kerberos_login` runs kinit with Bitwarden's password (the item `BC26_BW_ITEM` in `.env` names), never twice with a
   password the server refused (its sha256 in `~/battlecode26-data/kinit-refused`; the previous project's record is
   read too), never an empty one. ash04 times out during ssh's banner exchange at times: a login to it that failed
   before connecting is tried again (3 tries, 10 s apart); one that may have run its command never is. A
@@ -291,7 +291,7 @@ three rounds at most. These are yours:
   longer need.
 - **Few launches per machine**: DoC logs every program launch on a lab machine (auditd and process accounting are
   active: measured below), so a job starts few processes per game.
-- **Bounded writes in our workspace on /vol/gpudata** (`/vol/gpudata/user-bc26`, from `ws_allocate bc26 365` on
+- **Bounded writes in our workspace on /vol/gpudata** (`BC26_WORKSPACE` in `.env`, from `ws_allocate bc26 365` on
   gpucluster2: CephFS, mounted on the GPU cluster's nodes, cpucluster1 and the lab machines but melchett; a 55 GB
   quota, read without a walk by `getfattr -n ceph.dir.rbytes`). Nothing on /vol/bitbucket (full, and a small file
   operation there takes 250 ms and more). A job's log stops at 64 MB, a task's log at 1 MB and its OUT at 1 GB; ended

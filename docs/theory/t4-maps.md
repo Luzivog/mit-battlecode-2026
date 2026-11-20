@@ -39,7 +39,7 @@ Top packages (§6): **WP1 starvation reserve**, **WP2 cat-safe king**, **WP3 cat
 
 | id | what | conditions | where |
 |---|---|---|---|
-| D1 | challenger vs awubot = awubot mirror, the 43 official maps, both seats (86 games, 43 distinct: every pair splits by seat) | `autoscrims/ABtest.py --pool official --engine official`: the **1.2.5** jar with the map's own seed (not 1.2.6; rules.md §0) | `/path/to/battlecode26/match_results/abtest_2026-11-18_19-30-32.*`, replays in `/path/to/battlecode26/matches/run-2026-11-18_19-30-32-*` |
+| D1 | challenger vs awubot = awubot mirror, the 43 official maps, both seats (86 games, 43 distinct: every pair splits by seat) | `autoscrims/ABtest.py --pool official --engine official`: the **1.2.5** jar with the map's own seed (not 1.2.6; rules.md §0) | `match_results/abtest_2026-11-18_19-30-32.*`, replays in `matches/run-2026-11-18_19-30-32-*` |
 | D2 | `opp_obg` vs awubot on keepout, whatsthecatdoin, tminusten, jail, both seats (8 games) | same | `~/battlecode26-data/theory/t4/replays/run-2026-11-18_20-44-09-*` |
 | D3 | `opp_obg` vs awubot and the awubot mirror on 10 maps whose cat lane passes within 2.5 tiles of a king start (`maps.tsv` `cat_route`): 9 of the 11 CATPATH maps of §3 plus shell; both seats (40 games) | same | `.../t4/replays/run-2026-11-18_20-46-41-*` (OBG), `run-2026-11-18_20-49-29-*` (mirror) |
 | D4 | static analysis of all 150 maps in `maps/` (43 official, 78 tournament, 29 team-made) | engine 1.2.6 `GameMapIO` loader | `.../t4/maps.json`, `maps.tsv`, `classes.json`, `catclock.json`, `catpark.json` |

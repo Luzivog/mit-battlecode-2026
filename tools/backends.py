@@ -526,7 +526,7 @@ CONDOR_COLUMNS = ("Machine", "State", "OpSysAndVer", "TotalCpus", "Memory", "Job
 CONDOR_RELEASE = "(HoldReasonCode == 7) && (HoldReasonSubCode == 2) && (NumShadowStarts - NumJobStarts == 1)"
 CONDOR_HELD = "PeriodicRelease HoldReason"
 # Lab machines that don't mount our workspace: every job there is held at once ("Failed to open
-# '/vol/gpudata/user-bc26/jobs/.../condor.out' as standard output": melchett, 523 pieces, 19 Nov)
+# 'WORKSPACE/jobs/.../condor.out' as standard output": melchett, 523 pieces, 19 Nov)
 CONDOR_EXCLUDE = ("melchett.doc.ic.ac.uk",)
 # A machine whose execute folder has less free (Condor's Disk, KiB) takes no piece: a piece takes no task under 2 GB
 # free (piece.DISK_MIN_MB) and ends at once, so such a machine stayed free and drew piece after piece (gpu35, 0.9 GB,

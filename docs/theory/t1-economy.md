@@ -32,7 +32,7 @@ a measurement from replays or maps, reproducible with the scratch tools in `~/ba
 
 | set | content | caveat |
 |---|---|---|
-| mirror | 153 replays in `/path/to/battlecode26/matches` (challenger = awubot code, engine 1.2.5, many seeds), 73 unique games once mirrored duplicates are removed | quick-pool maps are over-represented. "Official-pool subset": the 31 maps with exactly one seat pair (62 files, 31 unique games; identical code in swapped seats replays the same game) |
+| mirror | 153 replays in `matches/` (challenger = awubot code, engine 1.2.5, many seeds), 73 unique games once mirrored duplicates are removed | quick-pool maps are over-represented. "Official-pool subset": the 31 maps with exactly one seat pair (62 files, 31 unique games; identical code in swapped seats replays the same game) |
 | opp | 76 validation games `opp_*` vs awubot, engine 1.2.5, seed 0 (copied to `~/battlecode26-data/theory/t1/replays-opp`) | 14 each for OBG and GST, 6 for each other bot |
 | maps | the 43 official `maps/*.map26` | path distance: 8-neighbour Dijkstra, walls impassable, dirt cost 3 (a dig adds 25 action cooldown and costs 5 cheese) |
 

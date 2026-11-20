@@ -16,8 +16,8 @@ lines: `D:entries2.jsonl`. K = candidates the choice was made from.
 | gelcatinouscube | B | `CM_KING2_ROUND` 30 (no site: main's mine choice) | no mine within the king's reach; the lone king starves at r500–800 | K 6 (`cm2a`), 23018 `1120-025135-ab-38a2` vs `1120-024109-ab-14a9`: +0.20 [+0.10, +0.30], adj +0.14, p_max 0.026 | 23022 `1120-030836-ab-c799`: +0.19 [+0.08, +0.30] (27/8); a third read, 23025 `1120-032115-ab-0bf5`: +0.04 [−0.05, +0.13] |
 | closeup | B | `CAT_LANE`, `CM_LANE_MEMORY` 1, `CM_LANE_FLEE` 1 | the king pinned in cat 4's corridor (mirror of A's (12,10)) | K 4 map-seats of the lanes trial, 23024 `1120-031842-ab-5e24`: +0.10 [+0.01, +0.19] (the first trial, 23019 `1120-025412-ab-fd67`: +0.03) | 23028 `1120-034147-ab-d247`: +0.14 [+0.06, +0.23] (23/6) |
 
-Pending: worldshardestgame A, the contested-mine second king at (13,15) (choose 23033 `1120-040816-ab-6a45`: +0.23
-[+0.13, +0.34], 14/0; confirmation 23034 `1120-042000-ab-c796`).
+| worldshardestgame | A | `CM_KING2_ROUND` 30, `KING2_SITE` (13,15) | no mine within the king's reach (`ms/reach_all.txt`); the lone king starves at r500–700 | K 1 (therainbow's mechanism tried on four maps), 23033 `1120-040816-ab-6a45`: +0.23 [+0.13, +0.34] (14/0) | 23034 `1120-042000-ab-c796`: +0.17 [+0.09, +0.25] (18/1); 23035 `1120-042730-ab-56de`: +0.18 [+0.10, +0.26] |
+| worldshardestgame | B | `CM_KING2_ROUND` 30, `KING2_SITE` (26,34) | as A | 23034 `1120-042000-ab-c796`: +0.20 [+0.11, +0.29] (22/2) (23033: +0.07 [−0.01, +0.15]) | 23035 `1120-042730-ab-56de`: +0.10 [+0.04, +0.16] (10/0) |
 
 No remedy found: kingofthehill, therearenowalls and QueenOfHearts (the contested-mine king loses −0.23 to −0.50 there),
 asabovesobelow B (SG's line on main; siege does not confirm on top of it), externalsustenance (`KING_PATH`, lanes and

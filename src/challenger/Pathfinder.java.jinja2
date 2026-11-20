@@ -180,6 +180,12 @@ class BugnavInstance {
                 {{ advance("left") }}
             } else if(leftDone) {
                 {{ advance("right") }}
+            } else if(Tune.SG_LOOK_RIGHT != 0) {
+                if(rightBug.nextPathIndex > leftBug.nextPathIndex) {
+                    {{ advance("left") }}
+                } else {
+                    {{ advance("right") }}
+                }
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
                 {{ advance("right") }}
             } else {
@@ -225,29 +231,37 @@ class BugnavInstance {
         rightBug = null;
         {% endmacro %}
 
-        if(leftBug.arrived) {
-            {{ chooseBug("leftBug") }}
-        } else if(leftBug.arrived) {
-            {{ chooseBug("rightBug") }}
-        } else if(leftBug.hitEdge != rightBug.hitEdge) {
-            {{ chooseBug("rightBug.hitEdge ? leftBug : rightBug") }}
+        {% macro pickSide(a, b, sa, sb) %}
+        if({{a}}.arrived) {
+            {{ chooseBug(a) }}
+        } else if({{a}}.arrived) {
+            {{ chooseBug(b) }}
+        } else if({{a}}.hitEdge != {{b}}.hitEdge) {
+            {{ chooseBug(b ~ ".hitEdge ? " ~ a ~ " : " ~ b) }}
         } else {
-            var better = leftScore < rightScore ? leftBug : rightBug;
-            var worse = leftScore < rightScore ? rightBug : leftBug;
+            var better = {{sa}} < {{sb}} ? {{a}} : {{b}};
+            var worse = {{sa}} < {{sb}} ? {{b}} : {{a}};
             if(!better.outOfSight && worse.outOfSight) {
                 // indicate("clear winner");
                 {{ chooseBug("better") }}
             } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
                 // indicate("unclear, guessing");
-                leftScore = Math.pow(leftScore, 15);
-                rightScore = Math.pow(rightScore, 15);
-                var total = leftScore + rightScore;
-                leftScore /= total;
-                rightScore /= total;
-                // indicate(leftScore);
-                // indicate(rightScore);
-                {{ chooseBug("Rng.mcg() < rightScore * 0x7fffffff ? leftBug : rightBug") }}
+                {{sa}} = Math.pow({{sa}}, 15);
+                {{sb}} = Math.pow({{sb}}, 15);
+                var total = {{sa}} + {{sb}};
+                {{sa}} /= total;
+                {{sb}} /= total;
+                // indicate({{sa}});
+                // indicate({{sb}});
+                {{ chooseBug("Rng.mcg() < " ~ sb ~ " * 0x7fffffff ? " ~ a ~ " : " ~ b) }}
             }
+        }
+        {% endmacro %}
+        // SG_LOOK_RIGHT mirrors the left-first rules (advance order above, arrival, ties, the draw): docs/theory/sg-seat-gaps.md
+        if(Tune.SG_LOOK_RIGHT != 0) {
+{{ pickSide("rightBug", "leftBug", "rightScore", "leftScore") }}
+        } else {
+{{ pickSide("leftBug", "rightBug", "leftScore", "rightScore") }}
         }
         return true;
     }

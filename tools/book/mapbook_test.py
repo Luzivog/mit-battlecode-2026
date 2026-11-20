@@ -166,6 +166,30 @@ class Summary(unittest.TestCase):
         self.assertEqual(mb.summary({}), (0.0, 0.0, 0.0, 0))
 
 
+class PointOverBook(unittest.TestCase):
+    def test_point_drops_the_entry_on_the_matrix_maps(self):
+        book = mb.load()
+        hit = next((e for e in book["entries"] if "set" in e), None)
+        if hit is None:
+            self.skipTest("the book sets no constant")
+        p = mb.tune.parse(mb.TUNE_JAVA.read_text())[hit["set"]]
+        value = p["lo"] if p["value"] != p["lo"] else p["hi"]
+        with tempfile.TemporaryDirectory() as tmp:
+            old = mb.tune.DATA
+            mb.tune.DATA = Path(tmp)
+            try:
+                mb.tune.main(["points", "mb-unit", "--point", f"x:{hit['set']}={value}"])
+                v = mb.tune.load("mb-unit")["variants"][0]
+                dropped = mb.point_over_book(v, [hit["map"]])
+                text = mb.tune.git("show", f"{v['commit']}:src/challenger/book.jsonl")
+            finally:
+                mb.tune.git("update-ref", "-d", "refs/tune/mb-unit/x")
+                mb.tune.DATA = old
+        self.assertIn(f"{hit['map']} {hit['seat']} {hit['set']}", dropped)
+        self.assertFalse(any(e.get("set") == hit["set"] and e["map"] == hit["map"]
+                             for e in mb.load_text(text)["entries"]))
+
+
 class Repo(unittest.TestCase):
     def test_generated_current(self):
         java, tune_text = mb.generate()

@@ -26,6 +26,209 @@ public final class Book {
 
     private static int identify() throws GameActionException {
         switch ((Game.team == Team.B ? 1 << 24 : 0) | Game.mapWidth << 18 | Game.mapHeight << 12 | Game.myLocX << 6 | Game.myLocY) {
+            case 5324865 -> {
+                scan();
+                // t_minus_five_minutes seat A
+                if (id == 9 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 88;
+                return 0;
+            }
+            case 5324881 -> {
+                scan();
+                // bed seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x2007c000000L
+                        && d0 == 0x100200000000000L && d1 == 0x801e000004008L) return 53;
+                return 0;
+            }
+            case 7987660 -> {
+                scan();
+                // dirtfulcat seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x8000000088810020L && d1 == 0x400L) return 8;
+                return 0;
+            }
+            case 7987670 -> {
+                scan();
+                // toomuchcheese seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x8000000000000L
+                        && d0 == 0x0L && d1 == 0xfe000000000L) return 40;
+                return 0;
+            }
+            case 8253533 -> {
+                scan();
+                // cheddarchokehold seat A
+                if (id == 1 && w0 == 0x100000000000000L && w1 == 0x800401e004008L
+                        && d0 == 0x0L && d1 == 0x0L) return 54;
+                return 0;
+            }
+            case 9380015 -> {
+                scan();
+                // peaceinourtime seat A
+                if (id == 3 && w0 == 0x380000000000000L && w1 == 0x2004008010L
+                        && d0 == 0x0L && d1 == 0x0L) return 35;
+                return 0;
+            }
+            case 13249351 -> {
+                scan();
+                // pipes seat A
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x80300600c00fe020L && d1 == 0x80300600c03L) return 13;
+                return 0;
+            }
+            case 15892740 -> {
+                scan();
+                // TheHeist seat A
+                if (id == 3 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x600c0080000L && d1 == 0x8000200400000L) return 38;
+                return 0;
+            }
+            case 15893404 -> {
+                scan();
+                // sunandmoon seat A
+                if (id == 27 && w0 == 0x40080080000L && w1 == 0x6006004002L
+                        && d0 == 0x8038038078078020L && d1 == 0x400801L) return 86;
+                return 0;
+            }
+            case 15933953 -> {
+                scan();
+                // tminusten seat A
+                if (id == 2 && w0 == 0x40080000000L && w1 == 0x88000400001L
+                        && d0 == 0x0L && d1 == 0x0L) return 92;
+                return 0;
+            }
+            case 15974594 -> {
+                scan();
+                // wallsofparadis seat A
+                if (id == 3 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 20;
+                return 0;
+            }
+            case 15974660 -> {
+                scan();
+                // longwayaround seat A
+                if (id == 3 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 73;
+                return 0;
+            }
+            case 15974789 -> {
+                scan();
+                // Nofreecheese seat A
+                if (id == 3 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 12;
+                return 0;
+            }
+            case 15975281 -> {
+                scan();
+                // RUN seat A
+                if (id == 3 && w0 == 0x200400800000000L && w1 == 0x2004008010L
+                        && d0 == 0x180200400800000L && d1 == 0x2004008L) return 49;
+                return 0;
+            }
+            case 15977785 -> {
+                scan();
+                // groveisbeingdesecrated seat A
+                if (id == 5 && w0 == 0x100200400800000L && w1 == 0x2004008L
+                        && d0 == 0x0L && d1 == 0x0L) return 65;
+                return 0;
+            }
+            case 22102098 -> {
+                scan();
+                // t_minus_five_minutes seat B
+                if (id == 10 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 88;
+                return 0;
+            }
+            case 22103185 -> {
+                scan();
+                // bed seat B
+                if (id == 2 && w0 == 0x1f020000L && w1 == 0x0L
+                        && d0 == 0x10020040001e020L && d1 == 0x8L) return 53;
+                return 0;
+            }
+            case 24765831 -> {
+                scan();
+                // toomuchcheese seat B
+                if (id == 2 && w0 == 0x20L && w1 == 0x0L
+                        && d0 == 0xfe000L && d1 == 0x0L) return 40;
+                return 0;
+            }
+            case 24765836 -> {
+                scan();
+                // dirtfulcat seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x8010000000000000L && d1 == 0x8010222000000L) return 8;
+                return 0;
+            }
+            case 24806880 -> {
+                scan();
+                // popthecork seat B
+                if (id == 6 && w0 == 0x401806000L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 14;
+                return 0;
+            }
+            case 25030721 -> {
+                scan();
+                // cheddarchokehold seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x80403c0400801L
+                        && d0 == 0x0L && d1 == 0x0L) return 54;
+                return 0;
+            }
+            case 30023943 -> {
+                scan();
+                // pipes seat B
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x80300600c0080000L && d1 == 0x80fe300600c03L) return 13;
+                return 0;
+            }
+            case 32669987 -> {
+                scan();
+                // TheHeist seat B
+                if (id == 4 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0xc01802000L && d1 == 0x8000002004000L) return 38;
+                return 0;
+            }
+            case 32670603 -> {
+                scan();
+                // sunandmoon seat B
+                if (id == 28 && w0 == 0x80000400802000L && w1 == 0xc0300400000L
+                        && d0 == 0x300e0380f03c020L && d1 == 0x4008L) return 86;
+                return 0;
+            }
+            case 32711216 -> {
+                scan();
+                // tminusten seat B
+                if (id == 1 && w0 == 0x100000400800000L && w1 == 0x22000004000L
+                        && d0 == 0x0L && d1 == 0x0L) return 92;
+                return 0;
+            }
+            case 32752066 -> {
+                scan();
+                // groveisbeingdesecrated seat B
+                if (id == 6 && w0 == 0x20040080000000L && w1 == 0x200400801L
+                        && d0 == 0x0L && d1 == 0x0L) return 65;
+                return 0;
+            }
+            case 32755062 -> {
+                scan();
+                // Nofreecheese seat B
+                if (id == 4 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 12;
+                return 0;
+            }
+            case 32755140 -> {
+                scan();
+                // longwayaround seat B
+                if (id == 4 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 73;
+                return 0;
+            }
+            case 32755257 -> {
+                scan();
+                // wallsofparadis seat B
+                if (id == 4 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 20;
+                return 0;
+            }
             default -> {
                 return 0;
             }
@@ -55,6 +258,223 @@ public final class Book {
     private static void apply() {
         seat = Game.team == Team.A ? 0 : 1;
         switch (map << 1 | seat) {
+            case 16 -> { // dirtfulcat seat A
+                symmetry = 2;
+                Tune.CM_LANE_MEMORY = 1;
+            }
+            case 17 -> { // dirtfulcat seat B
+                symmetry = 2;
+                CAT_LANE = new long[Game.mapHeight];
+                CAT_LANE[18] = 0xf807c0L;
+                CAT_LANE[19] = 0x1fc0fe0L;
+                CAT_LANE[20] = 0x38ffc70L;
+                CAT_LANE[21] = 0x707f838L;
+                CAT_LANE[22] = 0x6073818L;
+                CAT_LANE[23] = 0x60e1c18L;
+                CAT_LANE[24] = 0x61c0e18L;
+                CAT_LANE[25] = 0x7f807f8L;
+                CAT_LANE[26] = 0x3f807f0L;
+                Tune.CM_LANE_MEMORY = 1;
+                Tune.CM_LANE_FLEE = 1;
+            }
+            case 24 -> { // Nofreecheese seat A
+                symmetry = 1;
+                Tune.PM_SIEGE = 1;
+            }
+            case 25 -> { // Nofreecheese seat B
+                symmetry = 1;
+                Tune.PM_SIEGE = 1;
+            }
+            case 26 -> { // pipes seat A
+                symmetry = 2;
+                Tune.MINES_KING2 = 7;
+            }
+            case 27 -> { // pipes seat B
+                symmetry = 2;
+                Tune.MINES_KING2 = 7;
+            }
+            case 29 -> { // popthecork seat B
+                symmetry = 2;
+                Tune.SG_LOOK_RIGHT = 1;
+            }
+            case 40 -> { // wallsofparadis seat A
+                symmetry = 1;
+                Tune.MINES_KING2 = 7;
+            }
+            case 41 -> { // wallsofparadis seat B
+                symmetry = 1;
+                Tune.MINES_KING2 = 7;
+            }
+            case 70 -> { // peaceinourtime seat A
+                symmetry = 2;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(11, 31), new MapLocation(14, 34)};
+                Tune.PM_COOP_HOLD = 1;
+            }
+            case 76 -> { // TheHeist seat A
+                symmetry = 3;
+                Tune.PM_SYM = 1;
+                Tune.PM_COOP_HOLD = 1;
+            }
+            case 77 -> { // TheHeist seat B
+                symmetry = 3;
+                Tune.PM_SYM = 1;
+                Tune.PM_COOP_HOLD = 1;
+            }
+            case 80 -> { // toomuchcheese seat A
+                symmetry = 1;
+                Tune.MINES_KING2 = 7;
+            }
+            case 81 -> { // toomuchcheese seat B
+                symmetry = 1;
+                Tune.MINES_KING2 = 7;
+            }
+            case 98 -> { // RUN seat A
+                symmetry = 1;
+                Tune.CM_CAT_HUNT_START = 500;
+            }
+            case 106 -> { // bed seat A
+                symmetry = 2;
+                Tune.CM_LANE_MEMORY = 1;
+            }
+            case 107 -> { // bed seat B
+                symmetry = 2;
+                Tune.CM_LANE_MEMORY = 1;
+            }
+            case 108 -> { // cheddarchokehold seat A
+                symmetry = 3;
+                Tune.MINES_KING2 = 3;
+            }
+            case 109 -> { // cheddarchokehold seat B
+                symmetry = 3;
+                Tune.MINES_KING2 = 3;
+            }
+            case 130 -> { // groveisbeingdesecrated seat A
+                symmetry = 1;
+                Tune.PM_COOP_HOLD = 1;
+            }
+            case 131 -> { // groveisbeingdesecrated seat B
+                symmetry = 1;
+                Tune.PM_COOP_HOLD = 1;
+            }
+            case 146 -> { // longwayaround seat A
+                symmetry = 2;
+                Tune.SPAWN_CAP = 60;
+            }
+            case 147 -> { // longwayaround seat B
+                symmetry = 2;
+                Tune.SPAWN_CAP = 60;
+            }
+            case 172 -> { // sunandmoon seat A
+                symmetry = 3;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(19, 23)};
+                CAT_LANE = new long[Game.mapHeight];
+                CAT_LANE[1] = 0x6000003ff9ffeL;
+                CAT_LANE[2] = 0x70001ffff9ffeL;
+                CAT_LANE[3] = 0x7f033ffff0ffcL;
+                CAT_LANE[4] = 0x7f07370000638L;
+                CAT_LANE[5] = 0xfe1f3e0000030L;
+                CAT_LANE[6] = 0x3efc1f3c0000000L;
+                CAT_LANE[7] = 0x3e000f38000000cL;
+                CAT_LANE[8] = 0x3c0007b001c000cL;
+                CAT_LANE[9] = 0x3800038003e000cL;
+                CAT_LANE[10] = 0x700000007ff000cL;
+                CAT_LANE[11] = 0x60000000fff800cL;
+                CAT_LANE[12] = 0xe0fc00cL;
+                CAT_LANE[13] = 0x1e0000003e00eL;
+                CAT_LANE[14] = 0x3e0000001f00eL;
+                CAT_LANE[15] = 0x7e0000000f80eL;
+                CAT_LANE[16] = 0xfe00000007c0eL;
+                CAT_LANE[17] = 0x1f600000003e06L;
+                CAT_LANE[18] = 0x1e600000001e00L;
+                CAT_LANE[19] = 0x1c600000000e00L;
+                CAT_LANE[20] = 0x1c600000000e00L;
+                CAT_LANE[21] = 0x1e600000001e00L;
+                CAT_LANE[22] = 0x1f600000003e06L;
+                CAT_LANE[23] = 0xfe00000007c0eL;
+                CAT_LANE[24] = 0x7e0000000f80eL;
+                CAT_LANE[25] = 0x3e0000001f00eL;
+                CAT_LANE[26] = 0x1e0000003e00eL;
+                CAT_LANE[27] = 0xe0fc00cL;
+                CAT_LANE[28] = 0x60000000fff800cL;
+                CAT_LANE[29] = 0x700000007ff000cL;
+                CAT_LANE[30] = 0x3800038003e000cL;
+                CAT_LANE[31] = 0x3c0007b001c000cL;
+                CAT_LANE[32] = 0x3e000f38000000cL;
+                CAT_LANE[33] = 0x3efc1f3c0000000L;
+                CAT_LANE[34] = 0xfe1f3e0000030L;
+                CAT_LANE[35] = 0x7f07370000638L;
+                CAT_LANE[36] = 0x7f033ffff0ffcL;
+                CAT_LANE[37] = 0x70001ffff9ffeL;
+                CAT_LANE[38] = 0x6000003ff9ffeL;
+                Tune.CM_LANE_MEMORY = 1;
+                Tune.CM_LANE_FLEE = 1;
+            }
+            case 173 -> { // sunandmoon seat B
+                symmetry = 3;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(19, 16)};
+                CAT_LANE = new long[Game.mapHeight];
+                CAT_LANE[1] = 0x6000003ff9ffeL;
+                CAT_LANE[2] = 0x70001ffff9ffeL;
+                CAT_LANE[3] = 0x7f033ffff0ffcL;
+                CAT_LANE[4] = 0x7f07370000638L;
+                CAT_LANE[5] = 0xfe1f3e0000030L;
+                CAT_LANE[6] = 0x3efc1f3c0000000L;
+                CAT_LANE[7] = 0x3e000f38000000cL;
+                CAT_LANE[8] = 0x3c0007b001c000cL;
+                CAT_LANE[9] = 0x3800038003e000cL;
+                CAT_LANE[10] = 0x700000007ff000cL;
+                CAT_LANE[11] = 0x60000000fff800cL;
+                CAT_LANE[12] = 0xe0fc00cL;
+                CAT_LANE[13] = 0x1e0000003e00eL;
+                CAT_LANE[14] = 0x3e0000001f00eL;
+                CAT_LANE[15] = 0x7e0000000f80eL;
+                CAT_LANE[16] = 0xfe00000007c0eL;
+                CAT_LANE[17] = 0x1f600000003e06L;
+                CAT_LANE[18] = 0x1e600000001e00L;
+                CAT_LANE[19] = 0x1c600000000e00L;
+                CAT_LANE[20] = 0x1c600000000e00L;
+                CAT_LANE[21] = 0x1e600000001e00L;
+                CAT_LANE[22] = 0x1f600000003e06L;
+                CAT_LANE[23] = 0xfe00000007c0eL;
+                CAT_LANE[24] = 0x7e0000000f80eL;
+                CAT_LANE[25] = 0x3e0000001f00eL;
+                CAT_LANE[26] = 0x1e0000003e00eL;
+                CAT_LANE[27] = 0xe0fc00cL;
+                CAT_LANE[28] = 0x60000000fff800cL;
+                CAT_LANE[29] = 0x700000007ff000cL;
+                CAT_LANE[30] = 0x3800038003e000cL;
+                CAT_LANE[31] = 0x3c0007b001c000cL;
+                CAT_LANE[32] = 0x3e000f38000000cL;
+                CAT_LANE[33] = 0x3efc1f3c0000000L;
+                CAT_LANE[34] = 0xfe1f3e0000030L;
+                CAT_LANE[35] = 0x7f07370000638L;
+                CAT_LANE[36] = 0x7f033ffff0ffcL;
+                CAT_LANE[37] = 0x70001ffff9ffeL;
+                CAT_LANE[38] = 0x6000003ff9ffeL;
+                Tune.CM_LANE_MEMORY = 1;
+                Tune.CM_LANE_FLEE = 1;
+            }
+            case 176 -> { // t_minus_five_minutes seat A
+                symmetry = 3;
+                Tune.SPAWN_RICH = 1500;
+            }
+            case 177 -> { // t_minus_five_minutes seat B
+                symmetry = 3;
+                Tune.SPAWN_RICH = 1500;
+            }
+            case 184 -> { // tminusten seat A
+                symmetry = 3;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(12, 15)};
+            }
+            case 185 -> { // tminusten seat B
+                symmetry = 3;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(12, 34)};
+            }
             default -> {
             }
         }

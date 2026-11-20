@@ -330,8 +330,7 @@ public class CombatStrategy extends Strategy {
     private static boolean formationPosted;
 
     private static boolean isCatHuntOn() {
-        return time >= CAT_HUNT_START && time - lastEnemySeen >= CAT_HUNT_QUIET && rc.getRawCheese() == 0
-            && (challenger.Tune.PM_HUNT_COOP != 0 || !rc.isCooperation())
+        return time >= CAT_HUNT_START && time - lastEnemySeen >= CAT_HUNT_QUIET && rc.getRawCheese() == 0 && !rc.isCooperation()
             && !formationPosted && rc.getGlobalCheese() > 1000;
     }
 

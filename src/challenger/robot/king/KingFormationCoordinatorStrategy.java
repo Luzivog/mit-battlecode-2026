@@ -16,7 +16,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private static final int[] MINE_THRESHOLDS = {3, Tune.MINES_KING2, 9, 15, 10000000};
     private static final int UPGRADE_COST = 50;
     private static final int MAX_FORMATION_DIST_TO_MINE_SQ = 25;
-    private static final int COORDINATION_TIMEOUT = Tune.FORM_TIMEOUT;
+    private static final int COORDINATION_TIMEOUT = 120;
 
     // King lock-in: kings formed by RAT_KING_CUTOFF_ROUND survive to the end, after it a team with 1 king can form only
     // a second (rules.md §6). From LOCK_IN_ROUND, below KING_TARGET kings, form without the 20-per-king rat gate and

@@ -160,6 +160,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 26;
                 return 0;
             }
+            case 15633858 -> {
+                scan();
+                // asabovesobelow seat A
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x803802a0bc0f8020L && d1 == 0x1f03a0601L) return 51;
+                return 0;
+            }
             case 15851801 -> {
                 scan();
                 // rift seat A
@@ -726,6 +733,11 @@ public final class Book {
             case 99 -> { // RUN seat B
                 symmetry = 1;
                 Tune.KING_PATH = 1;
+            }
+            case 102 -> { // asabovesobelow seat A
+                symmetry = 2;
+                KING1_SITE = new MapLocation[] {new MapLocation(40, 36)};
+                Tune.CM_KING1_SITE = 1;
             }
             case 103 -> { // asabovesobelow seat B
                 symmetry = 2;

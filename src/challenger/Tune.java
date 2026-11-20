@@ -17,7 +17,7 @@ public final class Tune {
 
     // Spawning (robot/king/KingSpawningStrategy): a rat is built while its cost is at most the threshold.
     public static int SPAWN_CAP = 40; // tune: 10 [20, 80] threshold on a normal map: 16 rats
-    public static final int SPAWN_CAP_SMALL = 30; // tune: 10 [10, 60] threshold on maps of <= 900 tiles before r400
+    public static int SPAWN_CAP_SMALL = 30; // tune: 10 [10, 60] threshold on maps of <= 900 tiles before r400
     public static final int SPAWN_CHEESE_DIV = 10; // tune: 3 [4, 30] threshold at most global / DIV + 10
     public static int SPAWN_RICH = 2000; // tune: 500 [500, 5000] 32 rats from global >= RICH - t/2 (t >= 100)
     public static final int SPAWN_VRICH = 3000; // tune: 750 [1000, 6000] no cap from global >= VRICH - 3t/4

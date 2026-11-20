@@ -299,6 +299,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             MapLocation myMine = decode2x2(Game.knownCheeseMines.at(i));
             if (myMine == null) continue;
 
+            if (Tune.PM_SKIP_FAILED != 0 && FailedSites.has(myMine)) continue;
             if (GlobalArray.isMineAssignedToAnyKing(myMine)) continue;
             if (isInTabooZone(myMine)) continue;
             if (coop && !isOnOurSide(myMine)) continue;
@@ -387,6 +388,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private void monitorFormation() throws GameActionException {
         if (time - coordinationStartTurn > COORDINATION_TIMEOUT) {
+            if (Tune.PM_SKIP_FAILED != 0) FailedSites.add(targetMine);
             // indicate("FORMATION: coordination timed out");
             abortFormation();
             return;

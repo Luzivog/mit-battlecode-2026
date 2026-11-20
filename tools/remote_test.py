@@ -111,7 +111,7 @@ def test_a_full_connection_is_waited_for_not_left(monkeypatch: pytest.MonkeyPatc
     """sshd refusing a session (its 10 already open) is asked again; the call never opens a connection of its own."""
     monkeypatch.setattr(remote, "LOCAL", "")
     monkeypatch.setattr(remote, "CLIENT", tmp_path / "client")
-    monkeypatch.setattr(remote, "_CONTROL", {h: f"/run/x/bc26-ssh-{h}" for h in remote.SLURM_HOSTS})
+    monkeypatch.setattr(remote, "control_path", lambda h: f"/run/x/bc26-ssh-{h}")
     monkeypatch.setattr(remote, "master_up", lambda host: True)
     monkeypatch.setattr(remote.time, "sleep", lambda s: None)
     answers = [255, 255, 255, 0]
@@ -130,7 +130,7 @@ def test_a_full_connection_is_waited_for_not_left(monkeypatch: pytest.MonkeyPatc
 def test_a_gone_connection_is_made_again_once(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setattr(remote, "LOCAL", "")
     monkeypatch.setattr(remote, "CLIENT", tmp_path / "client")
-    monkeypatch.setattr(remote, "_CONTROL", {h: "/run/x/bc26-ssh-one" for h in remote.SLURM_HOSTS})
+    monkeypatch.setattr(remote, "control_path", lambda h: "/run/x/bc26-ssh-one")
     up = [False]
     made: list[str] = []
     monkeypatch.setattr(remote, "master_up", lambda host: up[0])
@@ -145,7 +145,7 @@ def test_names_of_one_connection_are_tried_once(monkeypatch: pytest.MonkeyPatch,
     """Two names of one kept connection: a call that failed on one isn't run again on the other."""
     monkeypatch.setattr(remote, "LOCAL", "")
     monkeypatch.setattr(remote, "CLIENT", tmp_path / "client")
-    monkeypatch.setattr(remote, "_CONTROL", {h: "/run/x/bc26-ssh-one" for h in remote.SLURM_HOSTS})
+    monkeypatch.setattr(remote, "control_path", lambda h: "/run/x/bc26-ssh-one")
     monkeypatch.setattr(remote, "master_up", lambda host: True)
     calls: list[list[str]] = []
     monkeypatch.setattr(remote.subprocess, "run", lambda argv, **kw: (

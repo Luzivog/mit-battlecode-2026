@@ -30,7 +30,7 @@ from pathlib import Path
 from tools import backends as B
 from tools import kit, provision
 from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR,
-                          Refused, login, login_into, submit_host)
+                          Refused, forget, login, login_into, submit_host)
 
 REPO = Path(__file__).resolve().parent.parent
 LOCAL_RUNS = REPO / "runs"
@@ -272,8 +272,10 @@ def sbatch(j: Job, files: dict[str, bytes], args: list[str], hosts: tuple[str, .
     probe, queue = shlex.join([cmd[0], "--test-only", *cmd[1:]]), shlex.join([cmd[0], "--parsable", *cmd[1:]])
     never = ('case "$a" in *" to start at "*) ;; *) printf \'slurm says it would not start: %s\\n\' '
              '"$(printf \'%s\\n\' "$a" | grep -v \'\\*\\*\\*\' | tail -n 3 | tr \'\\n\' \' \')" >&2; false ;; esac')
-    return login(f"{unpack_cmd(j)}{pre} && {{ a=$({probe} 2>&1); {never} && {queue} > {j.dir}/backend-id || "
-                 f"{{ rm -rf {j.dir}; false; }}; }} && cat {j.dir}/backend-id", folder_tar(files), hosts).strip()
+    sid = login(f"{unpack_cmd(j)}{pre} && {{ a=$({probe} 2>&1); {never} && {queue} > {j.dir}/backend-id || "
+                f"{{ rm -rf {j.dir}; false; }}; }} && cat {j.dir}/backend-id", folder_tar(files), hosts).strip()
+    forget()  # our queue changed: the shared scheduler reads are stale
+    return sid
 
 
 def submit_slurm(j: Job, files: dict[str, bytes], slot: B.CpuSlot, time_s: int) -> str:
@@ -311,6 +313,8 @@ def submit_condor(jobs: list[tuple[Job, dict[str, bytes], str]], shared: dict[st
                           f"for f in {subs}; do cat \"$f.said\"; rm -f \"$f.said\"; done")
     except Refused as e:
         return reconcile(jobs, str(e))
+    finally:
+        forget()  # our queue changed: the shared scheduler reads are stale
     said = [line.split(" ", 1) for line in out.splitlines() if line[:2] in ("C ", "F ")]
     if len(said) != len(jobs):
         raise Refused(f"condor_submit answered {len(said)} of {len(jobs)} jobs: {out.strip()[-300:]}")
@@ -470,20 +474,23 @@ printf 'J\t%s\t1\t%s\t%s\t%s\t%s\n' "$j" "$e" "$b" "$f" "$p"; else printf 'J\t%s
 
 
 def read_states(ids: list[str]) -> dict[str, State]:
-    """Every job of IDS: its folder's record and its backend's word, in one login a cluster."""
+    """Every job of IDS: its folder's record and its backend's word, in one login a cluster (now: a follower reads
+    them through tools/view.py instead)."""
     out: dict[str, State] = {}
     for hosts in (SLURM_HOSTS, (CPU_HOST,)):
         js = [job(i) for i in ids if hosts_of(job(i).where) == hosts]
         if js:
-            out |= _read(js, hosts)
+            out |= parse_states(js, B.sections(login(states_cmd(js) + "true", hosts=hosts)))
     return out
 
 
-def _read(js: list[Job], hosts: tuple[str, ...]) -> dict[str, State]:
+def states_cmd(js: list[Job], queues: bool = False) -> str:
+    """The command reading JS's folders and our queue of each of their schedulers (QUEUES: of every scheduler the
+    login node reaches, whatever JS holds), in parse_states's sections."""
     script = FOLDER_SH.replace("JOBS", REMOTE_JOBS)
     cmd = f"echo ==folders; set -- {' '.join(j.id for j in js)}; {script}; "
-    slurm = [j for j in js if j.where in B.SLURMS]
-    condor = [j for j in js if j.where == "condor"]
+    slurm = queues or any(j.where in B.SLURMS for j in js)
+    condor = queues or any(j.where == "condor" for j in js)
     local = [j for j in js if j.where == "local"]
     # every job of ours in one listing each (a list of ids would fail whole on one Slurm has forgotten)
     if slurm:
@@ -494,16 +501,21 @@ def _read(js: list[Job], hosts: tuple[str, ...]) -> dict[str, State]:
     if local:
         cmd += ("echo ==local; for j in " + " ".join(j.id for j in local) + f"; do set -- $(cat {REMOTE_JOBS}/$j/"
                 "backend-id 2>/dev/null); [ -n \"${2:-}\" ] && kill -0 \"$2\" 2>/dev/null && echo \"$2\"; done; ")
-    s = B.sections(login(cmd + "true", hosts=hosts))
+    return cmd
+
+
+def parse_states(js: list[Job], s: dict[str, list[str]]) -> dict[str, State]:
+    """JS's states from states_cmd's sections S."""
     squeue = {f[0]: f for f in (line.split("|") for line in s.get("slurm", [])) if len(f) >= 4}
     slurm_ok = s.get("slurm_rc", ["0"]) == ["0"]
     condor_ok = s.get("condor_rc", ["0"]) == ["0"]
     cq = {f[0]: f for f in ((line.split(maxsplit=4) + [""] * 5)[:5] for line in s.get("condor", [])) if f[0]}
     alive = set(s.get("local", []))
+    wanted = {j.id for j in js}
     out: dict[str, State] = {}
     for line in s.get("folders", []):
         f = line.split("\t")
-        if len(f) < 7 or f[0] != "J":
+        if len(f) < 7 or f[0] != "J" or f[1] not in wanted:
             continue
         jid, exists, ex, bid, flags, peak = f[1], f[2], f[3], f[4], f[5], f[6]
         j = job(jid)
@@ -683,4 +695,5 @@ def cancel_many(job_ids: list[str]) -> dict[str, str]:
                             f"Condor cluster {c} removed or already gone" if c in gone else
                             f"Condor cluster {c}: condor_rm said {said.strip()[-300:]!r}")
         login(f"rm -f {' '.join(f'{j.dir}/{n}' for j in js for n in INPUTS)}", hosts=hosts)
+    forget()
     return out

@@ -144,3 +144,39 @@ on the 11 sited map-seats without a second-king entry (AceOfSpades A and shell B
 `origin/t3/book-8` (`667b0472`), the map alone, 120 cells, seed base 22026 (`1120-130216-ab-61c0`): seat B
 **+0.208 [+0.095, +0.322]** (95 / 70); seat A unchanged (89 / 89).
 
+houseofcards B lost its first-king site in book 9 (MB: +0.000 on 300 games). Without it, main's first king leaves
+(27, 14) for the mine at (18, 4) (six local games: at (20–23, 14–15) by r50), so the rule's free mine is (11, 4). Both
+second-king sites against `origin/t3/book-9` (`3c6f4b46`), houseofcards alone, 150 cells, seed base 22028: (16, 4)
+seat B **+0.200 [+0.105, +0.295]** (126 / 96, `1120-131439-ab-47cb`); (13, 4), by (11, 4), +0.233 [+0.146, +0.321]
+(131 / 96, `1120-131612-ab-22ee`); seat A unchanged in both. The line is (16, 4), the one chosen on its own run.
+
+## 6. WS6: the early second king at a site, on the maps never played with one
+
+Map-seats: the top 60 of `rank-book6.json` minus those already played with a `KING2_SITE` (the campaigns' variants,
+main's book, AT3's four starving maps): 44, of which 35 have a free site (`scratch/sg/tools/k2cand.py`: the first
+king's mine is its `KING1_SITE` or the mine nearest our start; a formation site beside the nearest other mine, rank 1,
+and the next, rank 2; free 3x3 off every cat loop within Chebyshev 2, else 3 with dirt). No site at either mine:
+directconfrontation B, cheesefarm B, AceOfSpades A and B, pocketsofcheese A and B, gridlock A, mincemeat A; none at
+rank 1: thehallway B; one other mine only: houseofcards A, averyfineline B.
+
+Three candidates on main (`151e1fbe`), 29 maps, 40 cells a map, seed base 22027: rank 1 at round 30
+(`1120-130839-ab-5280`), rank 1 at round 80 (`1120-130844-ab-15a4`), rank 2 at round 30 (`1120-130848-ab-7bf7`);
+main's games `1120-132622-ab-89c0` (from the cache). The second king loses on most map-seats:
+mean −0.25, −0.20, −0.26 over them (TheHeist A −0.80 to −0.95, uneruesansfin B −0.83, constrictinglattice B −0.78,
+longwayaround −0.53 to −0.65, squaresaremodernart B −0.55 to −0.63). No round-1 feature separates gain from loss:
+the mine being nearer them than us (−0.15 against −0.35), or fewer than half the mines on our side (−0.09 against
+−0.29), lean the right way but every class loses on average; king steps and reachability nothing.
+
+Picks (fit over the three; p_max < 0.05, or the same candidate positive on both seats): mushroom A rank 2 r30 +0.375
+(p_max 0.001), asabovesobelow B rank 1 r80 +0.350 (0.001), trapped A rank 1 r80 +0.250 (0.021) and B +0.200 (0.063).
+Confirmed on seed base 22029 against `origin/t3/book-9` (`3c6f4b46`, main plus book 9's lines), the map alone, 120 cells:
+
+| map | seat | `CM_KING2_ROUND` | `KING2_SITE` (mine) | effect | wins | run |
+|---|---|---|---|---|---|---|
+| mushroom | A | 30 | (20, 16) (22, 16) | **+0.217 [+0.136, +0.298]** | 117 / 91 | `1120-132728-ab-3b99` |
+| asabovesobelow | B | 80 | (29, 21) (29, 23) | **+0.167 [+0.067, +0.266]** | 96 / 76 | `1120-132734-ab-0ee3` |
+| trapped | A | 80 | (6, 19) (8, 19) | **+0.183 [+0.114, +0.253]** | 120 / 98 | `1120-132738-ab-477f` |
+| trapped | B | 80 | (6, 30) (8, 30) | **+0.258 [+0.173, +0.344]** | 112 / 81 | `1120-132738-ab-477f` |
+
+The other seats played unchanged (mushroom B 101 / 101, asabovesobelow A 119 / 119).
+

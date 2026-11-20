@@ -5,6 +5,25 @@ played, confirmed on fresh seeds; and main's map-seat table now. Tools and data:
 (§5). "Seat" is our seat. An effect is a paired difference (arm − its own base main, both against awubot) in win
 rate on that map-seat; on `goal` one map-seat weighs 1/190, so +0.19 there is +0.1 pp of `goal`.
 
+## 0. Summary
+
+1. **Confirmed entries: about +1.0 pp of `goal`** (round-2 effects only, so no selection bonus), §2:
+   KP3 king route planner on EscapeTheNight B (+0.38 pp), pocketsofcheese B (+0.17), houseofcards B (+0.04);
+   `MINES_KING2` 7 on toomuchcheese (+0.15) and wallsofparadis (+0.08), 3 on cheddarchokehold (+0.11);
+   `SPAWN_RICH` 1500 on t_minus_five_minutes (+0.08).
+2. **Map-seat effects are real for a few structural arms and constants, absent for the rest.** Of 261 per-base arms,
+   35 show heterogeneity beyond the sign-flip null at p < 1/31 (9 expected by chance); the strong ones act on kings,
+   cooperation or spawning (KP3, PC1's last-cat hold, `MINES_KING2`, `SPAWN_RICH`). Two constants replicate per map
+   across independent tune screens (`MINES_KING2` r +0.66 to +0.74 over s1, s2, s5; `SPAWN_RICH` +0.67 over s1, s5);
+   the other eight shared constants do not (−0.24 to +0.35, mean ≈ 0).
+3. **Effects measured on old bases transfer about 70%.** Over 25 tested predictions the fresh-seed effect on today's
+   main was 0.72 of the atlas's (r +0.46); one entry reversed (PC1 on TheHeist, +0.26 → −0.39 after MC), and
+   `SPAWN_RICH` 2500 on uneruesansfin and `MINES_KING2` 7 on RUN read 0.
+4. **The whole shelf, gated, is worth about +1 to +1.5 pp out of sample** (§4.3): split-half +1.7 to +2.0 pp
+   within the recorded bases, times the 0.7 transfer. The confirmed entries already hold most of it.
+5. Main's map-seat table now (§3): mean 0.830; worst EscapeTheNight B 0.06, houseofcards B 0.29, popthecork B 0.36,
+   bed B 0.37. Only bed A moved clearly since W3's table (0.66 → 0.86).
+
 ## 1. Method
 
 - **Data.** Every `results.jsonl` under `games/runs/` (903 runs, 993k games, snapshot of 19 Nov 21:28), engine
@@ -99,6 +118,65 @@ Moved since W3's table (two-proportion z on the raw rates): 19 pairs at |z| ≥ 
 clears |z| 3 (0.66 → 0.86). Down: Meow A 0.98 → 0.86, grove B 0.71 → 0.54, isnotgold B 0.89 → 0.76. Up: insertmeowname
 A 0.71 → 0.89, Nofreecheese A 0.68 → 0.87, mushroom B 0.71 → 0.89, Excavation B 0.71 → 0.89, DefaultSmall A 0.57 →
 0.74, knifefight A 0.61 → 0.75, worldshardestgame A 0.61 → 0.76, and eight more at z +2.0 to +2.4.
+
+## 4. The atlas, the shortlist and the shelf
+
+### 4.1 The atlas
+
+282 arms with ≥ 200 paired goal games (261 per base, 21 pooled over bases; 2.03 M paired games counting tune
+pseudo-arms), of which 168 are eligible switches (not in main, a commit to play, or a screened constant). Per arm:
+`fits2.pkl` (heterogeneity LR, its sign-flip and shuffle p, split-half gain and r); per arm × map-seat and arm × map:
+`cands2.pkl` (θ, sd, P(θ > 0), n, raw mean). The arms with the strongest map-seat structure (LR, both nulls at their
+floor): PC1's last-cat hold (LR 111, concentration 0.9: an all-or-nothing effect by map), KP3 (45), `tune:ALL:
+MINES_KING2` (31), `tune:ALL:SPAWN_RICH` (26); then MS's map-knowledge oracles (worktree builds, not playable) and
+the EXPLORE_P variants (already merged). Within one screen a constant's pseudo-arm can look heterogeneous from the
+other constants' per-map effects (`GOHOME_PCT`: LR 19 in s1, 17 in s2, but s1-against-s2 r +0.05): for constants the
+test is replication across screens.
+
+### 4.2 The shortlist
+
+Score = shrunk θ × P(θ > 0), over eligible arms, both seat and map level, at ≥ 20 games: 23,560 candidates.
+Correction: the sign-flip null's maximum score over all of them (100 replicates, `null20.py`): median 0.090, 95%
+0.154, max 0.190. Above it:
+
+| arm (base) | map | seat | θ ± sd | games | family-wise p | fresh seeds |
+|---|---|---|---|---|---|---|
+| KP3 (`21af908`) | EscapeTheNight | B | +0.371 ± 0.075 | 42 | 0.01 | +0.72, twice |
+| PC1 last-cat hold (`3762a45`, `25338f1`) | TheHeist | A, B, both | +0.21 to +0.34 | 30–179 | 0.01–0.02 | −0.39 on the post-MC base |
+| KP3 | EscapeTheNight | both | +0.197 ± 0.040 | 84 | 0.01 | as above |
+| K2 D' (`076be2a`) | bed | B | +0.187 ± 0.119 | 21 | 0.02 | §2 |
+
+Next (family-wise p 0.08–0.24): KP3 houseofcards, pocketsofcheese, gelcatinouscube; PC1 on grove and peaceinourtime
+A; `SPAWN_RICH` on uneruesansfin; `GOHOME_PCT` (s1 alone) on popthecork B and stareintotheabyss B. The constant
+entries of §2 came from the cross-screen replication (§0.2), not from this score: their per-map θ (0.05–0.14) sits
+below the family-wise bar, but three screens agreeing is its own replication.
+
+### 4.3 What gating the whole shelf adds
+
+`shelf.py`: on one seed half, fit every eligible arm and give each goal map-seat the arm with the largest θ above a
+threshold; score that choice on the other half's raw paired mean; both ways. Null: the same with every game's sign
+flipped (10 replicates).
+
+| threshold on θ | map-seats gated | gain, pp of `goal` | null mean ± sd |
+|---|---|---|---|
+| 0 | 190 | +1.1 | −0.3 ± 1.1 |
+| 0.05 | 94 | +1.7 | −0.4 ± 1.0 |
+| 0.08 | 42 | +2.0 | +0.0 ± 1.3 |
+
+This is within the arms' own bases. On today's main the fresh-seed effects were 0.72 of the atlas's (§0.3), so the
+whole shelf is worth about +1.2 to +1.4 pp; the confirmed entries hold +1.0. Each half sees half the games, so this
+reads low for the arms with few games, and the 1-sd null band is as wide as the gain.
+
+### 4.4 Arms worth porting as switches, by confirmed gain
+
+| arm | branch, size | confirmed entries (pp of `goal`) | maps by agent |
+|---|---|---|---|
+| KP3: the king plans its route over its own map | `t3/ms-arm-kp3` (`2dbed577`, on main `419fa32`): 5 files, +568 −6 (`KingPath.java`, `CellTracker`, `KingMiningStrategy`) | EscapeTheNight B +0.38, pocketsofcheese B +0.17, houseofcards B +0.04; RUN pending | KR: EscapeTheNight, houseofcards (KR's `KING_HAND` 1 is the cheap alternative on EscapeTheNight B); SG: pocketsofcheese; CM: RUN |
+| `MINES_KING2` per map | `Tune.java`, needs a book-settable constant | toomuchcheese 7 +0.15, wallsofparadis 7 +0.08, cheddarchokehold 3 +0.11; pipes 7 pending | KR: cheddarchokehold; toomuchcheese, wallsofparadis, pipes: no agent's list |
+| `SPAWN_RICH` per map | `Tune.java`, book-settable constant | t_minus_five_minutes 1500 +0.08; warhammer, peaceinourtime, TheHeist, safelycontained pending | PM: warhammer, TheHeist; CM: peaceinourtime; t_minus_five_minutes, safelycontained: no agent's list |
+
+Not worth porting from this data: PC1's last-cat hold (reversed on the newer base), the E2 rat-cap variants and the
+other arms main already holds (`excluded.txt`), and every micro or fight-weight arm (no map-seat structure).
 
 ## 5. Tools
 

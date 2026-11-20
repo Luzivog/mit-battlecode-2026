@@ -425,3 +425,15 @@ def test_its_state_is_written_seldom(tmp_path: Path, monkeypatch) -> None:  # ty
     step(1, 1)
     step(piece.STATE_BEAT_S, 1)  # unchanged: every STATE_BEAT_S
     assert writes == [1, 0, 1, 1, 0, 1, 0, 1]
+
+
+def test_a_failed_checkout_costs_no_start(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A piece that can't check a run out (its code is a shape this piece can't read) releases its claim unrun and
+    uncounted: three such pieces ended every task of 60 runs LOST."""
+    run = make_run(tmp_path, [stamp("0")])
+    for k, v in env(tmp_path, cpus=1).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(run)
+    monkeypatch.setattr(p, "ready", lambda r: False)
+    assert p.fill() == 0
+    assert not (run / "claims" / "0").exists() and not list((run / "lost").iterdir())

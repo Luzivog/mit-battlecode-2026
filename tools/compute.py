@@ -31,7 +31,6 @@ KEEP_H = 6  # an ended job's or a closed run's folder is deleted this long after
 STALE_DAYS = 2  # a run nothing has touched for this long is deleted, closed or not
 CAS_KEEP_H = 6  # a stored bundle or shipped file no run or job holds is deleted this long after its last use
 SWEEP_EVERY_MIN = 60  # `run` and `tools/run` sweep at most this often
-QUOTA_GB = 55
 SWEEP_S = 600.0  # the sweep's bound: it walks every job and run folder
 
 
@@ -52,6 +51,9 @@ def duration(spec: str) -> int:
 
 
 # ---- status ----
+STATUS_WAIT_S = 8.0  # status waits this long for a session or another process's read, then says what it couldn't read
+
+
 def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_MEM_MB) -> None:
     def safe(f):  # type: ignore[no-untyped-def]
         try:
@@ -59,6 +61,7 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         except Refused as e:
             return e
 
+    remote.SLOT_WAIT_S = view.LOCK_WAIT_S = STATUS_WAIT_S  # a busy machine makes status say so, not wait
     age = remote.CACHE_S  # every read below shared with this machine's other tools: one login each at most
     with ThreadPoolExecutor(4) as pool:
         fc, fs, fk = (pool.submit(safe, lambda f=f: f(age)) for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
@@ -229,7 +232,7 @@ def sweep(force: bool = True) -> str:
            f"find {REMOTE_POOL}/pieces -maxdepth 1 -type f -mmin +60 -delete 2>/dev/null; "
            f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mmin +{CAS_KEEP_H * 60} -print -delete 2>/dev/null "
            f"| wc -l); "
-           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"; "
+           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {W.QUOTA_GB} GB\"; }} || echo \"size unread\"; "
            f"{W.manifest_sh()}")
     said = B.sections("==said\n" + login(cmd, timeout=SWEEP_S))
     unknown = [x for x in said.get("unknown", []) if x.strip()]
@@ -247,6 +250,9 @@ def sweep_daily() -> None:
                   f"{sum(n for _, n in packed) / 1e6:.0f} MB freed")
     except OSError as e:
         J.say(f"compute: packing old run results: {e}")
+    if remote.fresh("swept", SWEEP_EVERY_MIN * 60):  # a tool here swept within the hour: no login to ask
+        return
+    remote.mark("swept")
     try:
         said = sweep(force=False)
         if "deleted" in said and not said.startswith("0 jobs and 0 runs deleted, 0 stored"):

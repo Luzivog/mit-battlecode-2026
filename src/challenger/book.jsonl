@@ -65,3 +65,22 @@
 {"map": "cheddarchokehold", "seat": "B", "set": "SG_LOOK_RIGHT", "value": 1, "evidence": ["1120-050342-ab-783d", "1120-065755-ab-eb06"], "by": "SG"}
 {"map": "cheeseguardians", "seat": "A", "set": "SPAWN_CAP", "value": 60, "evidence": ["1120-054920-ab-1b76", "1120-065757-ab-e1e5"], "by": "SG"}
 {"map": "cheeseguardians", "seat": "B", "set": "SPAWN_CAP", "value": 60, "evidence": ["1120-054920-ab-1b76", "1120-065757-ab-e1e5"], "by": "SG"}
+{"map": "houseofcards", "seat": "B", "set": "SPAWN_CAP_SMALL", "value": 40, "evidence": ["1120-075035-ab-e918", "1120-075603-ab-1b8c", "1120-081118-ab-3142", "1120-081558-ab-c9aa"], "by": "PM"}
+{"map": "kingofthehill", "seat": "A", "data": "KING1_SITE", "value": [[25, 17]], "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "kingofthehill", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "kingofthehill", "seat": "B", "data": "KING1_SITE", "value": [[34, 17]], "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "kingofthehill", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "therearenowalls", "seat": "A", "data": "KING1_SITE", "value": [[32, 8]], "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "therearenowalls", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "therearenowalls", "seat": "B", "data": "KING1_SITE", "value": [[22, 8]], "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "therearenowalls", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-074603-ab-6aec", "1120-074340-ab-3489", "1120-075509-ab-9b9c"], "by": "CM"}
+{"map": "QueenOfHearts", "seat": "A", "data": "KING1_SITE", "value": [[11, 8]], "evidence": ["1120-074540-ab-d7e8", "1120-074340-ab-3489", "1120-075509-ab-9b9c", "1120-080105-ab-eab8"], "by": "CM"}
+{"map": "QueenOfHearts", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-074540-ab-d7e8", "1120-074340-ab-3489", "1120-075509-ab-9b9c", "1120-080105-ab-eab8"], "by": "CM"}
+{"map": "shell", "seat": "B", "data": "KING1_SITE", "value": [[42, 17]], "evidence": ["1120-075837-ab-7581", "1120-075548-ab-587d", "1120-080421-ab-a33d"], "by": "CM"}
+{"map": "shell", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-075837-ab-7581", "1120-075548-ab-587d", "1120-080421-ab-a33d"], "by": "CM"}
+{"map": "gelcatinouscube", "seat": "B", "data": "KING1_SITE", "value": [[10, 8]], "evidence": ["1120-080421-ab-a33d", "1120-081449-ab-8fc4"], "by": "CM"}
+{"map": "gelcatinouscube", "seat": "B", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-080421-ab-a33d", "1120-081449-ab-8fc4"], "by": "CM"}
+{"map": "AceOfSpades", "seat": "A", "data": "KING1_SITE", "value": [[36, 23]], "evidence": ["1120-080940-ab-9b54", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}
+{"map": "AceOfSpades", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-080940-ab-9b54", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}
+{"map": "therainbow", "seat": "A", "data": "KING1_SITE", "value": [[17, 3]], "evidence": ["1120-080722-ab-3caf", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}
+{"map": "therainbow", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-080722-ab-3caf", "1120-080527-ab-0040", "1120-082624-ab-6edd"], "by": "CM"}

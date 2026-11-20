@@ -117,4 +117,6 @@ public final class Tune {
     // SG (docs/theory/sg-seat-gaps.md). The rats' bug lookahead (Pathfinder.doLookahead) prefers its left-hand bug:
     // it advances it first on equal paths, takes only its arrival and breaks score ties to it; 1 mirrors each rule.
     public static int SG_LOOK_RIGHT = 0; // tune: 1 [0, 1] the rats' lookahead's preferred hand: 0 left, 1 right
+    // 1: the king plans its walk to a mine or the centre over its own map (robot/king/KingPath, MS's KP3) instead of the bug.
+    public static final int KING_PATH = 0; // tune: 1 [0, 1] the king's route planner: 0 off (main), 1 on
 }

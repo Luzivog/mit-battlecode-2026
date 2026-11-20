@@ -76,6 +76,15 @@ public class CellTracker {
     }
     {% endfor %}
 
+    // Copies the seen, passable and dirt rows into arrays of MAX_MAP_SIZE rows (KingPath).
+    public static void copyRows(long[] seenOut, long[] passableOut, long[] dirtOut) {
+        {% for i in range(MAX_MAP_SIZE) %}
+        seenOut[{{i}}] = seen{{i}};
+        passableOut[{{i}}] = passable{{i}};
+        dirtOut[{{i}}] = dirt{{i}};
+        {% endfor %}
+    }
+
     public static boolean isWallAdjacent(MapLocation loc) {
         if(loc.y == mapHeight - 1 || loc.x == 0 || loc.x == mapWidth - 1) return true;
         switch(loc.y) {

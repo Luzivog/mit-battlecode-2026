@@ -14,6 +14,7 @@ import static challenger.util.Util.*;
 
 import challenger.CatLanes;
 import challenger.CellTracker;
+import challenger.Tune;
 
 // TODO: clean up
 
@@ -126,6 +127,7 @@ public class KingMiningStrategy extends Strategy {
         // indicate("stuckTurns: " + stuckTurns);
         pathedNearCat = false;
         if (challenger.Tune.CM_LANE_MEMORY != 0) CatLanes.markVisibleCats();
+        if (Tune.KING_PATH != 0) routed = false;
         scanForCheeseMines();
 
         if (!foundCheeseMine) {
@@ -161,7 +163,7 @@ public class KingMiningStrategy extends Strategy {
         }
         if (nearestCheese != null) {
             if (!rc.canPickUpCheese(nearestCheese)) {
-                if(rc.isMovementReady() && !skipPath(nearestCheese)) {
+                if((Tune.KING_PATH == 0 || !routed) && rc.isMovementReady() && !skipPath(nearestCheese)) {
                     Direction dir = Pathfinder.getMove(nearestCheese);
                     // indicate("moving toward cheese at " + nearestCheese + " dir " + dir);
                     if (!(challenger.Tune.CM_LANE_MEMORY != 0 ? stepIntoKnownLane(dir, nearestCheese) : stepIntoCatLane(dir))) {
@@ -250,7 +252,7 @@ public class KingMiningStrategy extends Strategy {
             }
         }
         if (!myLoc.equals(resetLoc)) {
-            if(rc.isMovementReady() && !skipPath(resetLoc)) {
+            if((Tune.KING_PATH == 0 || !routed) && rc.isMovementReady() && !skipPath(resetLoc)) {
                 Direction dir = Pathfinder.getMove(resetLoc);
                 if (!(challenger.Tune.CM_LANE_MEMORY != 0 ? stepIntoKnownLane(dir, resetLoc) : stepIntoCatLane(dir))) {
                     digDirtInDirection(dir);
@@ -297,8 +299,35 @@ public class KingMiningStrategy extends Strategy {
 
     private static int stuckTurns = 0;
     private static boolean pending5x5 = false;
+    // KingPath moved the king or dug, or plans, this turn: tryCollectCheese does not walk too
+    private static boolean routed;
+
     private void moveIfBugTargetFar(MapLocation target) throws GameActionException {
         if(skipPath(target)) return;
+        if(Tune.KING_PATH != 0 && KingPath.handles(target)) {
+            routed = true;
+            if(!rc.isMovementReady()) {
+                KingPath.prepare(target);
+                return;
+            }
+            var planned = KingPath.next(target);
+            if(planned == null || planned == Direction.CENTER) return;
+            stuckTurns = 0;
+            if(stepIntoCatLane(planned)) return;
+            digDirtInDirection(planned);
+            if(!rc.canMove(planned) && !dirtAhead(planned)) {
+                // a robot stands in the way: step round it beside the path
+                var around = KingPath.around(planned);
+                if(around != null && !stepIntoCatLane(around)) planned = around;
+            }
+            if(rc.canMove(planned)) {
+                RatKing.rawMove(planned);
+                if(pending5x5 && CellTracker.isPassable5x5(myLoc)) {
+                    RatKing.is5x5 = true;
+                }
+            }
+            return;
+        }
         var dir = Pathfinder.getMove(target);
         if(Pathfinder.getBugPos().distanceSquaredTo(myLoc) > 2) {
             if(dir != Direction.CENTER) {
@@ -321,11 +350,27 @@ public class KingMiningStrategy extends Strategy {
         }
     }
 
+    // seen dirt in the 3x3 the king would step onto
+    private static boolean dirtAhead(Direction dir) {
+        int x = myLocX + dir.dx, y = myLocY + dir.dy;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (CellTracker.isDirt(x + dx, y + dy)) return true;
+            }
+        }
+        return false;
+    }
+
     private void moveTowardCenter() throws GameActionException {
         moveIfBugTargetFar(centerTarget);
     }
 
     private void moveTowardMine() throws GameActionException {
+        if (Tune.KING_PATH != 0 && mineTarget != null && !rc.isMovementReady()) {
+            // plan the route to a far mine in the turns the king cannot move (KingPath)
+            if (myLoc.distanceSquaredTo(mineTarget) >= 5 && KingPath.handles(mineTarget)) moveIfBugTargetFar(mineTarget);
+            return;
+        }
         if (!rc.isMovementReady() || mineTarget == null) return;
         if (myLoc.distanceSquaredTo(mineTarget) < 5) {
             // find nearest cheese

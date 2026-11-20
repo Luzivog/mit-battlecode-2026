@@ -181,6 +181,38 @@ Entries (both runs against the main of their day; ours − main, 95%):
   `pmg1` (24028), `pmh2` (24029), `pmi1` (24030), `pmg2` (24031);
   `tools/tune show NAME`, `tools/book/book fit NAME`. Every run an entry cites is kept.
 
+## 11. PM3: houseofcards B, diamond B, EscapeTheNight B, mushroom A
+
+Main on seed base 24032, 60 cells a map, every replay kept (`1120-074134-ab-629e`); replay readers
+`scratch/pm/java/Opening.java` (the first kings' positions every 25 rounds to r300, first hit, first crowd of 3 enemy
+rats within d² 36, alive rats), W1's `MineControl` (cheese picked per mine and window), `TeamTL` (per-team series),
+`KingBc` (the first kings' bytecode in rounds 1–3); `scratch/pm/pm3sum.py` summarises them.
+
+| map-seat (win A / B) | how the worse seat loses | entry |
+|---|---|---|
+| houseofcards B (0.58 / 0.40) | 30×30, 2 mines: E2's mine-poor cut and the small-map cap leave us 8 rats against awubot's 12; by r100 we have delivered 35–64 against 118–208, the bank is empty by r200, the king falls before r450 to bites, throws and starvation | `SPAWN_CAP_SMALL` 40 (12 rats) and the first king at the far mine (11, 4) |
+| diamond B (0.93 / 0.62) | even to r500; the losses keep one king all game and the bank drains after r500 (starvation 341 HP a loss); in wins our second king stands by r500 | the first king at the inner mine (28, 12) |
+| EscapeTheNight B (1.00 / 0.65) | a race of the two first kings for the centre column: in our wins ours sits at x 22–26 by r300 and awubot's stays home, in our losses awubot's is there first and ours stops at x 29–35; our deliveries start late (0 by r100), the bank falls to 175 by r300 | none |
+| mushroom A (0.58 / 0.78) | the bank falls faster from the start (888 against 1,180 at r100, 221 against 642 at r200), stays near 240, the king starves late (528 HP a loss) | none |
+
+Entries (ours − main on the same (map, seed, seat), 95%):
+
+| map | seat | entry | chosen on (seed base, cells, candidates) | confirmed on (seed base, cells) |
+|---|---|---|---|---|
+| houseofcards | B | `SPAWN_CAP_SMALL` 40 | 24033, 100, 3: +0.200 ± 0.131 | 24037, 200: +0.175 ± 0.095 (0.53 vs 0.35) |
+| houseofcards | B | `KING1_SITE` (11, 4), `CM_KING1_SITE` 1 | 24039, 100, 3: +0.120 [−0.012, +0.252] | 24041, 150, against the cap-40 variant: +0.160 ± 0.108 (0.69 vs 0.53); with the cap, against main +0.407 ± 0.100 |
+| diamond | B | `KING1_SITE` (28, 12), `CM_KING1_SITE` 1 | 24039, 100, 3: +0.180 [+0.061, +0.299] | 24040, 120: +0.125 ± 0.100 (0.70 vs 0.57) |
+
+- The king sites are CM's `KING1_SITE` (branch `t3/cm4`): the first king records its site in round 1 and walks from
+  round 2. Chosen on CM's first code (which overran round 1), confirmed on its fixed code (`a3c32f99`); the first king's
+  turns in rounds 1–3 on the fixed code: diamond B 13,053 / 11,330 / 11,988, houseofcards B 14,658 / 12,271 / ≤ 13,633.
+- Failed (docs/closed.md): EscapeTheNight B `KING1_SITE` (22, 17) +0.033 ± 0.109 on 24040 after +0.170 on 24039, siege
+  spawns, cap 60, exploration 0.2; mushroom A `KING1_SITE` (27, 17) −0.108 ± 0.111 after +0.100, cap 30, cheese-free
+  bites, fewer traps; diamond's earlier second king, its mine gate 3, the site skip; houseofcards A every arm (the
+  bigger army −0.20, the sites −0.05).
+- Matrices: `pmh3` (24033), `pme1` (24034), `pmm1` (24035), `pmd1` (24036), `pmh4` (24037), `pmsk` (24038), `pmk1s`
+  (24039), `pmkc` (24040), `pmkh` (24041); the king-site candidates on branch `t3/pm3-trial` (never merged).
+
 ## Tools
 
 `~/battlecode26-data/scratch/pm/`: `seat.py RUN` (loss classes per map-seat from results.jsonl), `pair.py REF RUN...`

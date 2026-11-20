@@ -17,6 +17,7 @@ map-seat without entries, the bot plays exactly as main. How an entry is chosen 
 | the method on simulated null and planted matrices | `tools/book/book fit --simulate` |
 | the book against main: goal 3,000 cells, its maps, maps outside it (3 runs) | `tools/book/book confirm --seed-base B` |
 | a confirm's results | `tools/book/book confirm-show FILE` |
+| then smoke and the gauntlet on the book's commit, against main | `tools/games ab challenger@REV awubot --pool smoke --remote`; `tools/games gauntlet challenger@REV --ref challenger@origin/main --remote` |
 
 After `gen`, regenerate nothing else; run `./gradlew build -x test` and commit `book.jsonl`, `Book.java` and
 `Tune.java` together.

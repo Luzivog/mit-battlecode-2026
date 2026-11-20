@@ -67,7 +67,8 @@ the bots are compiled then: later edits don't reach a running test.
 - **Plain** (`--ref none`; the default when A is not `challenger`): A against B alone, on the cell trinomial, H0
   score 0.5, H1 0.5 + δ (gain) or 0.5 − δ (harm). Use it for progress rows ("challenger@main vs awubot") and
   calibration, never to accept a package once main is above 50%.
-- **Gauntlet**: a harm test of A against each sparring bot, paired with the ref's games (default main's challenger;
+- **Gauntlet**: a harm test of A against each sparring bot, paired with the ref's games (default main's challenger
+  when A is `challenger`, awubot when A is `challenger@REV`: pass `--ref challenger@origin/main` for a commit;
   `--ref awubot` for the integrator's rows).
   - `opp_obg` and `opp_gst` (the main gate) play on `goal`, up to `--max-cells`.
   - The rest play two passes of `quick`: `opp_spaark`, `opp_cerr`, `opp_parmesan`, `opp_gravy`, `opp_goobie`,
@@ -179,6 +180,9 @@ entries are chosen and confirmed map by map, then as a whole:
    the verdict alone: a book of k map-seats moves `goal` by about k/190 of its own effect (5 map-seats at +0.23 are
    +0.6 pp), inside the ±1 pp of 3,000 cells; the entries' own maps see it directly (book 1: +0.231 [+0.108, +0.333],
    `1119-232956-ab-98ba`).
+   Then smoke and the gauntlet as for any bot change, the book's commit against main:
+   `tools/games ab challenger@REV awubot --pool smoke --remote` and `tools/games gauntlet challenger@REV --ref
+   challenger@origin/main --remote` (with `challenger@REV` the gauntlet's default reference is awubot, not main).
 
 **Measured (19 Nov, seed bases 25001-25004).**
 - Empty book against main, 1,000 `goal` cells (`1119-214049-ab-32c9`): −0.002 [−0.009, +0.005]; 52 cells scored

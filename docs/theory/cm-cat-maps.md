@@ -16,7 +16,7 @@ both seats; diff [95%], games better/worse of the confirmation). The entry lines
 | dirtfulcat | A | kings mine into cat lanes | `CM_LANE_MEMORY` 1 | 23004 same run: +0.11 | 23008 same run: +0.15 [+0.06, +0.24] (19/4) |
 | dirtfulcat | B | as A; memory alone +0.03 to +0.06 | `CAT_LANE`, `CM_LANE_MEMORY` 1, `CM_LANE_FLEE` 1 | 23004 `1119-213916-ab-2c3b`: +0.29 | 23010 `1119-230504-ab-5b8e`: +0.21 [+0.11, +0.31] (25/4) |
 | tminusten | A, B | every centre the king can reach is on a cat loop; it is pinned at r22 and dies at r101–117 with a bank of 2,000 and 16 babies; the backstab comes before r50, so the cooperation second king never forms | `CM_KING2_ROUND` 30, `KING2_SITE` A (12,15), B (12,34) | 23007 `1119-223519-ab-64a3`: A +0.475, B +0.30 | 23009 `1119-225939-ab-b3f0`: A +0.475 [+0.37, +0.59] (38/0), B +0.21 [+0.12, +0.30] (17/0) |
-| peaceinourtime | A | awubot kills its own cat first (r363–487); ours kills our first king near r500; our own rats, traps and king then kill the last cat at 1 king to 2, and the cooperation ending scores kings 30 | `CM_KING2_ROUND` 30, `KING2_SITE` (11,31), (14,34), `CM_LAST_CAT_HOLD` 1 | 23009 `1119-230006-ab-646c`: +0.44; the hold over the second king alone on the same cells +0.075 [+0.01, +0.14] (7/1) | 23013 `1119-231831-ab-eddf`: +0.45 [+0.34, +0.56] (49/4) |
+| peaceinourtime | A | awubot kills its own cat first (r363–487); ours kills our first king near r500; our own rats, traps and king then kill the last cat at 1 king to 2, and the cooperation ending scores kings 30 | `CM_KING2_ROUND` 30, `KING2_SITE` (11,31), (14,34), `PM_COOP_HOLD` 1 | 23009 `1119-230006-ab-646c`: +0.44; the hold over the second king alone on the same cells +0.075 [+0.01, +0.14] (7/1) | 23013 `1119-231831-ab-eddf`: +0.45 [+0.34, +0.56] (49/4) |
 | sunandmoon | A, B | the king flees along cat 6's (5's) lane from the mine into its waypoint dead end (26,28) / (26,11) | `CM_KING2_ROUND` 30, `KING2_SITE` A (19,23), B (19,16), `CAT_LANE`, `CM_LANE_MEMORY` 1, `CM_LANE_FLEE` 1 | 23009 `1119-225957-ab-2215`: A +0.19, B +0.36 (the lanes over the second king alone: B +0.125 [+0.02, +0.23]) | 23012 `1119-231544-ab-1b88`: A +0.21 [+0.10, +0.32] (29/8), B +0.17 [+0.06, +0.29] (27/10) |
 | RUN | A | ends on points at r2000 after the backstab; cat damage counts 30 | `CM_CAT_HUNT_START` 500 | 23014 `1119-231919-ab-a923`: +0.21 [+0.10, +0.32] (800: +0.10) | 23015 `1119-232514-ab-45ee`: +0.15 [+0.04, +0.26] (25/10) |
 
@@ -61,7 +61,7 @@ keep its default (Book.apply writes after `Tune` loads), so there is none. Defau
 - `CM_KING2_ROUND` (2000 = off): from that round, with one king, form a second as the cooperation rule does (no rat
   gate, no known-mine threshold, ≥ 12 rats, global ≥ 150), whatever the cooperation, at the first book site with none
   of our kings within d² 8; without a site, main's mine choice. A backstab does not abort it.
-- `CM_LAST_CAT_HOLD` (PC1 A2, `t3/pc1-last-cat`): in cooperation with one king, no bite, king bite or new cat trap
+- `PM_COOP_HOLD` (was `CM_LAST_CAT_HOLD`, the same code as PM's switch, merged under PM's name; PC1 A2, `t3/pc1-last-cat`): in cooperation with one king, no bite, king bite or new cat trap
   that leaves a cat at or below the damage our cat traps could deal; rats defuse their own traps around such a cat.
 - `CM_CAT_HUNT_START` (main 1300): the round PT 2d's late cat hunt starts.
 
@@ -106,7 +106,7 @@ Arms turn one or more switches on everywhere; each is read per map-seat, paired 
 | `CM_KING2_ROUND` 15 | site (12,13) | tminusten, 23007 | A +0.44, B +0.29 (120) | `1119-223333-ab-05e2` |
 | `CM_KING2_ROUND` 30, sites k2s1 | §3 sites | tminusten, sunandmoon, peaceinourtime, 23007 | tminusten A +0.475, B +0.30; sunandmoon A +0.175 [+0.04, +0.31], B +0.15 [+0.02, +0.28]; peaceinourtime A +0.49 [+0.36, +0.62], B −0.16 [−0.26, −0.07] (80) | `1119-223519-ab-64a3` |
 | `CM_KING2_ROUND` 30, sites k2s2 | alternatives | same, 23007 | sunandmoon ≈ 0; peaceinourtime A +0.30, B −0.20 (60, stopped) | `1119-223543-ab-7bf2` |
-| `CM_LAST_CAT_HOLD` | | peaceinourtime, tminusten, sunandmoon, RUN, 23005 | peaceinourtime A +0.22 [+0.13, +0.31] (23/1); others within ±0.06 (100) | `1119-214120-ab-082d` |
+| `PM_COOP_HOLD` | | peaceinourtime, tminusten, sunandmoon, RUN, 23005 | peaceinourtime A +0.22 [+0.13, +0.31] (23/1); others within ±0.06 (100) | `1119-214120-ab-082d` |
 | `COOP_ROUND` 30 / 50 | tools/tune `cm1` | 6 maps, 23003 | 30: tminusten A +0.175, B +0.11; 50: nothing outside peaceinourtime (80) | `1119-215158-ab-20ea`, `1119-214446-ab-3a31` vs `1119-213437-ab-97ce` |
 | `LOCK_IN_ROUND` 300 / 450 | tools/tune `cm1` | 6 maps, 23003 | 300: peaceinourtime A −0.05; 450: nothing (80) | `1119-220628-ab-4ca0`, `1119-215922-ab-2080` |
 

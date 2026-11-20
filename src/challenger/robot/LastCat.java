@@ -24,9 +24,8 @@ public final class LastCat {
         return !rc.isCooperation() || cat.health > damage + TRAP_DAMAGE * rc.getNumberCatTraps() || mayEnd();
     }
 
-    // With PM_COOP_HOLD 2, the hold lasts to the third king (TheHeist seat A ends at 2 kings each, behind on cheese).
     private static boolean mayEnd() {
-        return GlobalArray.countRatKings() >= (challenger.Tune.PM_COOP_HOLD == 2 ? 3 : 2);
+        return GlobalArray.countRatKings() >= 2;
     }
 
     // Our traps already threaten to kill a cat in view: a baby rat removes its own cat traps around it (free, no

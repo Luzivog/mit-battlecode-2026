@@ -243,6 +243,40 @@ lock-in constants on the top-50 maps (WS3, WS4). What is left on these map-seats
 and throws first, starvation after) and, on the cat maps, a king caught between cats and rats that neither the cat
 defence nor the lane memory frees: no switch reaches either. Closed rows in docs/closed.md.
 
+## 13. PM5: where each switch has been screened
+
+Every `tools/tune` campaign records its variants' values and its runs' pools (`~/battlecode26-data/tune/*/campaign.json`):
+`scratch/pm/coverage.py WORKTREE` writes, per Tune constant and map, the most cells one campaign played a variant setting
+that constant on that map (`scratch/pm/coverage.json`, with the campaigns). A map counts as screened from 20 cells (both
+seats). Runs made outside campaigns (branch arms with `tools/games ab`: KR's first hands, MS's planner on `goal`) are not
+in it; they played `goal` at 10–30 cells a map. `PM_SYM` acts only on a book map-seat (`Book.symmetry` is 0 elsewhere),
+so a matrix point alone does not play it: its screens need trial entries (`t3/pm5-sym`). `SPAWN_CAP_SMALL` acts only on
+maps of at most 900 tiles. Table of 20 Nov (115 campaigns), gaps among the 43 maps of the top 60 map-seats of
+`rank-book6.json`:
+
+| switch | maps played with ≥ 20 cells (of 95) | campaigns (examples) | gaps among the top-60 map-seats' 43 maps |
+|---|---|---|---|
+| `KING_PATH` | 76 | WS, WSALL, at5m, cm2a, cm6b, kr_m2a … | none |
+| `KING_HAND` | 87 | SGK, SGM, SGN, cm2c, kr2_rotb, kr_m2a … | DefaultMedium, holeinthewall, shell |
+| `SG_LOOK_RIGHT` | 52 | SGL, SGM, SGN, WS, WSALL, at2m1 … | DefaultMedium, TheHeist, averyfineline, cheesefarm, gridlock, mincemeat |
+| `PM_SYM` | 11 | gshor, gsrot, gsver, hcf, pmhor, pmrot … | 35 maps |
+| `PM_COOP_HOLD` | 51 | WS, WSALL, at2m1, gcf, hcf, pmh2 … | DefaultMedium, averyfineline, cheesefarm, gridlock, mincemeat, pocketsofcheese, popthecork |
+| `PM_SKIP_FAILED` | 50 | WS, WSALL, pmk3, pmk4, pmsk | DefaultMedium, TheHeist, averyfineline, cheesefarm, gridlock, mincemeat, pocketsofcheese, popthecork |
+| `PM_SIEGE` | 34 | at2m1, cm2a, cm6b, pmc5, pme1, pmt4a … | 15 maps |
+| `CM_CAT_HUNT_START` | 52 | WS, WSALL, at2m1, cm3a, pmc1, pmc2 … | DefaultMedium, TheHeist, averyfineline, cheesefarm, gridlock, mincemeat, pocketsofcheese, popthecork |
+| `CAT_DEF_DSQ` | 53 | WS, WSALL, at2m2, cm2f, pm1, pmc1 … | DefaultMedium, averyfineline, cheesefarm, gridlock, mincemeat, pocketsofcheese, popthecork |
+| `CM_LANE_MEMORY` | 27 | at2m5, cm2a, pmcl, pmcx, pmdc, pmt4b | 22 maps |
+| `CM_LANE_FLEE` | 27 | at2m5, cm2a, pmcl, pmcx, pmdc, pmt4b | 22 maps |
+| `DIRT_ROUND` | 50 | WS6, pmx4, ws4 | none |
+| `IDLE_GOHOME` | 53 | WS6, pm1, s1, s2, ws4 | none |
+| `KING_DEF_DSQ` | 10 | fls1, pmc5, pmx5 | 33 maps |
+| `CM_KING1_SITE` | 53 | cm4a, cm4b, cm4c, cm5a, cm5b, cm6a … | none |
+| `CM_KING2_ROUND` | 61 | WS, WSALL, cm2a, cm6b, pmd1, ws4 | none |
+| `SPAWN_CAP` | 52 | WS2, WS3, WS6, WSALL, at2m1, clong … | DefaultMedium, averyfineline, cheesefarm, mincemeat, pocketsofcheese, popthecork |
+| `SPAWN_CAP_SMALL` | 25 | at2m2, at2m3, pm1, pmh3, pmh4, pmkh | 24 maps |
+| `SPAWN_RICH` | 55 | WS5, WS6, at2m1, clong, clong2, cm2b … | none |
+| `MINES_KING2` | 55 | WS5, WS6, at2m1, cm2a, cm2b, cm6b … | none |
+
 ## Tools
 
 `~/battlecode26-data/scratch/pm/`: `seat.py RUN` (loss classes per map-seat from results.jsonl), `pair.py REF RUN...`

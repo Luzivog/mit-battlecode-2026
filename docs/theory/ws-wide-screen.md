@@ -48,7 +48,7 @@ t_minus_five_minutes A), and the maps where one switch read at least +0.1 on bot
 30 beside seat B's entry).
 
 What the screen shows beyond the entries:
-- `SPAWN_CAP` 60 and 80 lose on most maps (−0.2 to −0.6 on 20 map-seats); 30 helps a few starving ones by up to +0.2
+- `SPAWN_CAP` 60 or 80 reads −0.2 or worse on 49 of the 100 map-seats; 30 helps a few starving ones by up to +0.2
   at p_max ≥ 0.12 (jail A, constrictinglattice B, dirtpassageway B, which AT2 booked); `PM_SKIP_FAILED` 2 and
   `PM_COOP_HOLD` 1 change almost no game outside their maps; `CM_KING2_ROUND` 30 loses heavily where no site is
   booked (constrictinglattice B −0.70, uneruesansfin B −0.60, mushroom A −0.33).

@@ -367,7 +367,7 @@ def slurm_sizes(slots: list[CpuSlot], least: int, est: int | None) -> list[CpuSl
 
     script = WILL_RUN + "".join(shlex.join(["ask", str(i), str(c), *cpu_slot_args(at(slot, c), est)]) + "\n"
                                 for i, slot in enumerate(slots) for c in rungs[i])
-    got = answered(login("bash -s", script.encode(), timeout=PROBE_S))
+    got = answered(cached(script, timeout=PROBE_S))  # shared for CACHE_S, as the read it follows; a submit forgets it
     return [at(slot, got[i]) if i in got else None for i, slot in enumerate(slots)]
 
 

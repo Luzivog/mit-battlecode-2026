@@ -39,7 +39,8 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
 - A new run is refused while the workspace holds over 40 of its 55 GB after a sweep: the message says so.
 - Pieces never pile up in a queue: our Condor pieces waiting in its queue take free machines first, and at most 4
   pieces of a kind (task size and runtime) wait over every run. When every machine is busy, a new run's tasks wait
-  for the pool's free slots (`no backend has room now ... no more`): that is not an error.
+  for the pool's free slots (`... pieces of its kind wait in Condor's queue: no more`): that is not an error. However
+  many machines look free, at most 32 pieces of a kind wait in Condor's queue.
 
 ## Wait in the background
 
@@ -54,8 +55,8 @@ tools/compute wait "$RUN" --json          # run_in_background; exit = the run's 
   they come, and ends with one line an id saying where they are. Run it again after a restart: it picks up.
 - Or run `tools/run ...` itself in the background: same output, same exit code.
 - `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs. It
-  answers in a second or two: every tool on this machine shares one read of the remote state (at most every 5 s), and
-  a backend that can't be read is named as unreadable.
+  never waits for another process's read: the pool line says how old its snapshot is (under 30 s, or older while
+  another process reads it anew); a backend that can't be read is named as unreadable.
 - `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run: its tasks stop, its queued pieces are
   cancelled; its running pieces go on with other runs' tasks, or end).
 - When a run's last task is done its follower writes `summary.json` first, then cancels the pieces that never

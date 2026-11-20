@@ -25,7 +25,7 @@ import tarfile
 import tempfile
 import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 from tools import backends as B
@@ -423,14 +423,20 @@ def place(where: str, cpus: int, time_s: int | None, mem_mb: int | None) -> Plac
         best = B.cpucluster_best(c, cpus, per, est)
         if best is not None:
             return Place(where, cpus, cpus * per, est, partition=best[0])
+        # "ever": an empty node of a partition and our caps with none of them in use; today's use only delays it
+        unused = replace(c, cap=B.Limit(c.cap.cap, 0), mem=B.Limit(c.mem.cap, 0))
         big = [p for p in c.partitions.values() if (p.max_time_s is None or est <= p.max_time_s)
-               and B.cpu_free(c, B.CpuNode(True, p.node_cpus, p.node_cpus, p.node_cpus * per, 0), per) >= cpus]
+               and B.cpu_free(unused, B.CpuNode(True, p.node_cpus, p.node_cpus, p.node_cpus * per, 0), per) >= cpus]
         if not big:
             raise Refused(f"--cpu {cpus}: one job runs on one node, and no cpucluster1 node can ever give a job of "
                           f"ours {cpus} CPUs at {per} MB each within our caps (`tools/compute status`)")
         part = max(big, key=lambda p: p.idle_cpus)
+        full = [f"our CPUs {c.cap.used}/{c.cap.cap}" if c.cap.cap is not None and c.cap.cap - c.cap.used < cpus else "",
+                f"our memory {c.mem.used}/{c.mem.cap} MB" if c.mem.cap is not None and c.mem.cap - c.mem.used < cpus * per
+                else ""]
+        why = ", ".join(x for x in full if x) or "no node has the CPUs and memory free"
         return Place(where, cpus, cpus * per, est, partition=part.name,
-                     note=f"no node can start it now: it waits in {part.name}'s queue")
+                     note=f"no node can start it now ({why}): it waits in {part.name}'s queue")
     if where == "condor":
         return Place(where, cpus, mem_mb or 0, time_s)
     if where == "local":

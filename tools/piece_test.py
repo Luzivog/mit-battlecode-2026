@@ -305,16 +305,18 @@ def test_its_state_says_its_free_slots(tmp_path: Path) -> None:
     root = tmp_path / "root"
     a = pooled_run(root, "run-1118-120000-aaaa", [{"argv": ["sleep", "3"], "lines": []}], 1.0)
     p = start_piece(tmp_path, a, cpus=3)
-    f = root / "pool" / "pieces" / "local-1118-120000-0001"
+    from tools import view
+    d = root / "pool" / "pieces"
     end = time.monotonic() + BOUND_S
-    while not f.exists():
+    while not (names := [x.name for x in d.iterdir()] if d.exists() else []):
         assert time.monotonic() < end
         time.sleep(0.05)
-    st = json.loads(f.read_text())
-    assert (st["slots"], st["running"], st["task_mem_mb"], st["env"], st["backend"]) == (3, 1, 100, "e1", "local")
-    assert abs(st["at"] - time.time()) < 10  # its own time: a reader needs no stat
+    st = view.parse_state(names[0])  # its state is its file's name: read by a listing, no file opened
+    assert (st["job"], st["slots"], st["running"], st["task_mem_mb"], st["env"]) == (
+        "local-1118-120000-0001", 3, 1, 100, "e1")
+    assert abs(int(str(st["at"])) - time.time()) < 10 and (d / names[0]).stat().st_size == 0
     p.communicate(timeout=BOUND_S)
-    assert not f.exists()
+    assert not list(d.iterdir())
 
 
 def bundle_repo(tmp: Path) -> tuple[Path, str]:
@@ -407,15 +409,16 @@ def test_its_state_is_written_seldom(tmp_path: Path, monkeypatch) -> None:  # ty
     p = piece.Piece(a)
     clock = [1000.0]
     monkeypatch.setattr(piece.time, "monotonic", lambda: clock[0])
-    f = root / "pool" / "pieces" / "local-1118-120000-0009"
+    d = root / "pool" / "pieces"
     writes: list[int] = []
 
     def step(dt: float, running: int) -> None:
         clock[0] += dt
         p.running = {(a.name, i): None for i in range(running)}  # type: ignore[misc]
-        f.unlink(missing_ok=True)
+        before = p.state_at
         p.write_state()
-        writes.append(int(f.exists()))
+        writes.append(int(p.state_at != before))
+        assert [x.name for x in d.iterdir()] == [p.state_file]  # one file, renamed
     step(0, 0)  # its start
     step(1, 1)  # a change, free slots left: waits for STATE_S
     step(1, 3)  # full: at once

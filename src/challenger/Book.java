@@ -651,7 +651,6 @@ public final class Book {
             case 176 -> { // t_minus_five_minutes seat A
                 symmetry = 3;
                 Tune.SPAWN_RICH = 1500;
-                Tune.CAT_DEF_DSQ = 100;
             }
             case 177 -> { // t_minus_five_minutes seat B
                 symmetry = 3;

@@ -321,6 +321,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 63;
                 return 0;
             }
+            case 27388316 -> {
+                scan();
+                // diamond seat B
+                if (id == 2 && w0 == 0x802000L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 58;
+                return 0;
+            }
             case 27427141 -> {
                 scan();
                 // thehallway seat B
@@ -631,6 +638,7 @@ public final class Book {
                 symmetry = 3;
                 Tune.PM_SYM = 1;
                 Tune.PM_COOP_HOLD = 1;
+                Tune.IDLE_GOHOME = 0;
             }
             case 80 -> { // toomuchcheese seat A
                 symmetry = 1;
@@ -690,6 +698,11 @@ public final class Book {
                 Tune.KING_HAND = 1;
                 Tune.SG_LOOK_RIGHT = 1;
             }
+            case 117 -> { // diamond seat B
+                symmetry = 2;
+                KING1_SITE = new MapLocation[] {new MapLocation(28, 12)};
+                Tune.CM_KING1_SITE = 1;
+            }
             case 127 -> { // gelcatinouscube seat B
                 symmetry = 1;
                 Tune.CM_KING2_ROUND = 30;
@@ -709,6 +722,8 @@ public final class Book {
             case 137 -> { // houseofcards seat B
                 symmetry = 2;
                 Tune.SPAWN_CAP_SMALL = 40;
+                KING1_SITE = new MapLocation[] {new MapLocation(11, 4)};
+                Tune.CM_KING1_SITE = 1;
             }
             case 140 -> { // isnotgold seat A
                 symmetry = 1;

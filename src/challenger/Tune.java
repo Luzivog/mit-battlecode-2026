@@ -27,7 +27,7 @@ public final class Tune {
     public static final double EXPLORE_P = 0.6; // tune: 0.1 [0.0, 1.0] share of trips that explore once mines are known
     public static final int GOHOME_PCT = 100; // tune: 30 [40, 200] go-home loads (10, 25, 40, 60, 80, 105 by distance) in percent
     public static final int EXPLORE_KING_DSQ = 36; // tune: 20 [0, 200] exploration targets lie farther than this d² from our kings
-    public static final int IDLE_GOHOME = 50; // tune: 25 [0, 150] with nothing to do, go home above this raw cheese
+    public static int IDLE_GOHOME = 50; // tune: 25 [0, 150] with nothing to do, go home above this raw cheese
 
     // New kings (robot/king/KingFormationCoordinatorStrategy, robot/rat/FormationStrategy).
     public static final int LOCK_IN_ROUND = 800; // tune: 200 [300, 1150] from it, form kings up to 3 without the rat gate

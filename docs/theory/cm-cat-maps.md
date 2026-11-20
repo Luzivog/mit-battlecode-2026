@@ -61,7 +61,7 @@ keep its default (Book.apply writes after `Tune` loads), so there is none. Defau
 - `CM_KING2_ROUND` (2000 = off): from that round, with one king, form a second as the cooperation rule does (no rat
   gate, no known-mine threshold, ≥ 12 rats, global ≥ 150), whatever the cooperation, at the first book site with none
   of our kings within d² 8; without a site, main's mine choice. A backstab does not abort it.
-- `PM_COOP_HOLD` (was `CM_LAST_CAT_HOLD`, the same code as PM's switch, merged under PM's name; PC1 A2, `t3/pc1-last-cat`): in cooperation with one king, no bite, king bite or new cat trap
+- `PM_COOP_HOLD` (was `PM_COOP_HOLD`, the same code as PM's switch, merged under PM's name; PC1 A2, `t3/pc1-last-cat`): in cooperation with one king, no bite, king bite or new cat trap
   that leaves a cat at or below the damage our cat traps could deal; rats defuse their own traps around such a cat.
 - `CM_CAT_HUNT_START` (main 1300): the round PT 2d's late cat hunt starts.
 

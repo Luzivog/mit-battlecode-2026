@@ -85,6 +85,15 @@ public class CellTracker {
         {% endfor %}
     }
 
+    // Loads whole rows (a book switch, Tune.AT_MAP: the map's walls and round-1 dirt from the book, every cell seen).
+    public static void loadRows(long[] seenIn, long[] passableIn, long[] dirtIn) {
+        {% for i in range(MAX_MAP_SIZE) %}
+        seen{{i}} = seenIn[{{i}}];
+        passable{{i}} = passableIn[{{i}}];
+        dirt{{i}} = dirtIn[{{i}}];
+        {% endfor %}
+    }
+
     public static boolean isWallAdjacent(MapLocation loc) {
         if(loc.y == mapHeight - 1 || loc.x == 0 || loc.x == mapWidth - 1) return true;
         switch(loc.y) {

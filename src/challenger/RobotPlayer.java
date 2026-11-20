@@ -31,6 +31,8 @@ public class RobotPlayer {
         Rng.init();
         EnemyManager.init();
         GlobalArray.init();
+        // A book switch (Tune.CM_MINE_BOOK): baby rats know the map's mines from the book.
+        if (Tune.CM_MINE_BOOK != 0) MineBook.load();
         CellTracker.init();
         // A book switch (Tune.PM_SYM): on a book map-seat, the map's symmetry from its file, known from round 1.
         if (Tune.PM_SYM != 0) CellTracker.setSymmetry(Book.symmetry);
@@ -85,6 +87,9 @@ public class RobotPlayer {
 
                 GlobalArray.postTick();
                 Game.postTick();
+                // A book switch (Tune.AT_MAP): the map's walls and round-1 dirt from the book, every cell seen, loaded at
+                // the end of the first turn with 5,000 bytecodes left (the load costs ~3k), so it causes no overrun.
+                if (Tune.AT_MAP != 0 && !MapBook.loaded && Clock.getBytecodesLeft() > 5000) MapBook.load();
             } catch (Throwable t) {
             } finally {// println
                 if (isRatKing) GlobalArray.endTurn();

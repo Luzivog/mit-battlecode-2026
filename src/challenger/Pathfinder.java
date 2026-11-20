@@ -19,7 +19,7 @@ class Config {
     public static boolean allowDirt() {
         if(dirtAllowed) return true;
         var globalCheese = rc.getGlobalCheese();
-        if(time >= 100 && globalCheese >= Tune.DIRT_CHEESE || globalCheese >= 3000) {
+        if(time >= Tune.DIRT_ROUND && globalCheese >= Tune.DIRT_CHEESE || globalCheese >= 3000) {
             dirtAllowed = true;
         }
         return dirtAllowed;
@@ -379,6 +379,22 @@ class BugnavInstance {
             // indicate(rightBug.pos);
             // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
+            } else if(Tune.SG_LOOK_RIGHT != 0) {
+                if(rightBug.nextPathIndex > leftBug.nextPathIndex) {
+                                // indicate("advance left");
+            leftBug.outOfSight = false;
+            leftDone = !leftBug.advance();
+            // indicate(leftBug.pos);
+            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
+
+                } else {
+                                // indicate("advance right");
+            rightBug.outOfSight = false;
+            rightDone = !rightBug.advance();
+            // indicate(rightBug.pos);
+            // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+
+                }
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
                             // indicate("advance right");
             rightBug.outOfSight = false;
@@ -412,6 +428,244 @@ class BugnavInstance {
         // indicate(rightScore);
 
 
+        // SG_LOOK_RIGHT mirrors the left-first rules (advance order above, arrival, ties, the draw): docs/theory/sg-seat-gaps.md
+        if(Tune.SG_LOOK_RIGHT != 0) {
+        if(rightBug.arrived) {
+                    var bug = rightBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+        }
+        leftBug = null;
+        rightBug = null;
+
+        } else if(rightBug.arrived) {
+                    var bug = leftBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+        }
+        leftBug = null;
+        rightBug = null;
+
+        } else if(rightBug.hitEdge != leftBug.hitEdge) {
+                    var bug = leftBug.hitEdge ? rightBug : leftBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+        }
+        leftBug = null;
+        rightBug = null;
+
+        } else {
+            var better = rightScore < leftScore ? rightBug : leftBug;
+            var worse = rightScore < leftScore ? leftBug : rightBug;
+            if(!better.outOfSight && worse.outOfSight) {
+                // indicate("clear winner");
+                        var bug = better;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+        }
+        leftBug = null;
+        rightBug = null;
+
+            } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
+                // indicate("unclear, guessing");
+                rightScore = Math.pow(rightScore, 15);
+                leftScore = Math.pow(leftScore, 15);
+                var total = rightScore + leftScore;
+                rightScore /= total;
+                leftScore /= total;
+                // indicate(rightScore);
+                // indicate(leftScore);
+                        var bug = Rng.mcg() < leftScore * 0x7fffffff ? rightBug : leftBug;
+        if(bug.leftTurn) {
+            guessedLeft[pos.y] |= 1l << pos.x;
+        } else {
+            guessedRight[pos.y] |= 1l << pos.x;
+        }
+        pos = bug.pos;
+        stackSize = bug.stackSize;
+        emptyStackTurns = bug.emptyStackTurns;
+        leftTurn = bug.leftTurn;
+        bottomDir = bug.bottomDir;
+        topDir = bug.topDir;
+        outOfSightLoc = bug.outOfSightLoc;
+        copyPath: {
+            appendPosition(bug.path0);
+            if(bug.nextPathIndex == 1) break copyPath;
+            appendPosition(bug.path1);
+            if(bug.nextPathIndex == 2) break copyPath;
+            appendPosition(bug.path2);
+            if(bug.nextPathIndex == 3) break copyPath;
+            appendPosition(bug.path3);
+            if(bug.nextPathIndex == 4) break copyPath;
+            appendPosition(bug.path4);
+            if(bug.nextPathIndex == 5) break copyPath;
+            appendPosition(bug.path5);
+            if(bug.nextPathIndex == 6) break copyPath;
+            appendPosition(bug.path6);
+            if(bug.nextPathIndex == 7) break copyPath;
+            appendPosition(bug.path7);
+            if(bug.nextPathIndex == 8) break copyPath;
+            appendPosition(bug.path8);
+            if(bug.nextPathIndex == 9) break copyPath;
+            appendPosition(bug.path9);
+            if(bug.nextPathIndex == 10) break copyPath;
+            appendPosition(bug.path10);
+            if(bug.nextPathIndex == 11) break copyPath;
+            appendPosition(bug.path11);
+            if(bug.nextPathIndex == 12) break copyPath;
+            appendPosition(bug.path12);
+        }
+        leftBug = null;
+        rightBug = null;
+
+            }
+        }
+
+        } else {
         if(leftBug.arrived) {
                     var bug = leftBug;
         if(bug.leftTurn) {
@@ -645,6 +899,8 @@ class BugnavInstance {
         rightBug = null;
 
             }
+        }
+
         }
         return true;
     }

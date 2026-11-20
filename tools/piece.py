@@ -16,8 +16,10 @@ oldest first among equals: a small run submitted behind a big one gets the next 
 since a run's running count only rises when it is served and an older run wins every tie. Another run's tasks run in
 that run's own checkout, made once a content (its commit and its shipped files) in the piece's scratch, with that
 run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
-state (slots, running, task size, runtime, deadline) is POOL/pieces/JOB_ID, rewritten as it changes (at most every
-STATE_S, at least every BEAT_S) and removed at its end: `tools/run` counts the live pieces' free slots from it.
+state (slots, running, task size, runtime, deadline, its time) is POOL/pieces/JOB_ID, written when it changes (at
+most every STATE_S, at once when its free slots reach or leave 0) and every STATE_BEAT_S, removed at its end:
+`tools/run` counts the live pieces' free slots from it (tools/view.py: a piece its scheduler no longer lists is dead,
+and its file goes).
 
 A task's result is done/N.tar (result.json, log, out/), written whole under a temporary name and renamed in. Its
 command runs with {} (its line), {file} (a file of its lines), {out} (its OUT) and {cpus} (its CPUs) replaced, in the
@@ -54,15 +56,20 @@ MAX_STARTS = 3  # a task's starts, the first included
 LOG_BYTES = 1 << 20  # the end of a task's output kept
 OUT_CAP = 1 << 30  # the most a task's OUT may hold: a run's writes on the shared volume are bounded
 LOST = -1  # the code of a task whose every start was lost
-# The pool's protocol: a piece serves only runs that speak its version. 2: pieces of version 1 lose their checkouts
-# (prune_checkouts) and stall or crash, and the runs they serve lose their tasks for 300 s or more (19 Nov: tasks run
-# a third time after two such pieces), so runs of version 2 are served by pieces of version 2 alone; GIVE_BACK.
-POOL_V = 2
+# The pool's protocol: a piece serves only runs that speak its version. 3: its state file is written seldom (STATE_S,
+# STATE_BEAT_S) and says its time (`at`); a piece is live while its scheduler lists it running (tools/view.py), so a
+# version-2 follower would take version-3 pieces for dead.
+POOL_V = 3
 SCAN_S = 2.0  # between two looks for work while a slot is free and the last look found none
-FULL_S = 30.0  # a run found with nothing claimable is looked at again after this long
+FULL_S = 60.0  # a run found with nothing claimable is looked at again after this long (its claims come back only
+# from a dead piece's, after STALE_S, or a stopped task's)
 STALE_CHECK_S = 120.0  # a run's claims are read for dead pieces' at most this often
 CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
-STATE_S = 5.0  # the piece's state file is rewritten at most this often, and at least every BEAT_S
+# The piece's state file: a change is written at most every STATE_S (at once when it starts, or when its free slots
+# reach or leave 0), an unchanged state every STATE_BEAT_S. Rewritten every 5 s, 325 such files took a reader 8 s on
+# CephFS (19 Nov): a file another machine just wrote costs a read 30 ms there.
+STATE_S = 30.0
+STATE_BEAT_S = 600.0
 MIN_LEFT_S = 1200.0  # a piece with a deadline takes another run's task only with this long left (or half its limit)
 CHECKOUTS = 4  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
 # a piece claims a task only with this much free where its tasks write (a checkout is ~350 MB, a binary 100 MB)
@@ -152,6 +159,7 @@ class Piece:
         self.next_scan = 0.0
         self.state_at = 0.0
         self.state_said = ""
+        self.state_free = True
         self.stopping = ""
         self.refusing = ""  # why this piece takes no more tasks (its host can't run them), once a task said so
         self.low_disk = False
@@ -598,17 +606,20 @@ class Piece:
                            "task_mem_mb": self.task_mem, "env": self.meta.get("env"), "deadline": self.deadline,
                            "limit": self.limit, "runs": per})
         now = time.monotonic()
-        if not force and (now - self.state_at < STATE_S or (said == self.state_said and now - self.state_at < BEAT_S)):
+        free = len(self.running) < self.slots
+        due = (not self.state_at or free != self.state_free or now - self.state_at >= STATE_BEAT_S
+               or (said != self.state_said and now - self.state_at >= STATE_S))
+        if not (force or due):
             return
         try:
             d = self.pool / "pieces"
             d.mkdir(parents=True, exist_ok=True)
             tmp = d / f".{self.me}.{secrets.token_hex(3)}"
-            tmp.write_text(said + "\n")
+            tmp.write_text(said[:-1] + f', "at": {time.time():.0f}}}\n')
             os.rename(tmp, d / self.me)
         except OSError:
             return
-        self.state_at, self.state_said = now, said
+        self.state_at, self.state_said, self.state_free = now, said, free
 
     def drop_state(self) -> None:
         if self.pooled:

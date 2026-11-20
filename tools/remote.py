@@ -312,6 +312,43 @@ def login_into(cmd: str, into: Path, hosts: tuple[str, ...] = SLURM_HOSTS, strea
     raise Unreachable(f"on {hosts[0]}: exit 255")
 
 
+# Reads of the schedulers (sinfo, condor_status, our queues), shared by every process here for CACHE_S: 66 placements at
+# once each read them (19 Nov). A submit makes them stale at once (forget).
+CACHE_S = 0.5 if LOCAL else 5.0
+
+
+def cached(cmd: str, hosts: tuple[str, ...] = SLURM_HOSTS, max_age: float = CACHE_S, timeout: float | None = None
+           ) -> str:
+    """CMD's stdout as any process here read it within MAX_AGE, else read now (one process at a time a command)."""
+    key = hashlib.sha256(f"{hosts} {cmd}".encode()).hexdigest()[:20]
+    f = CLIENT / "cache" / key
+
+    def fresh() -> str | None:
+        try:
+            if time.time() - f.stat().st_mtime <= max_age:
+                return f.read_bytes().decode(errors=ESC)
+        except OSError:
+            pass
+        return None
+    if max_age > 0 and (got := fresh()) is not None:
+        return got
+    with _locked(f.with_name(f"{key}.lock"), 2 * (timeout or READ_S) + SLACK_S):
+        if max_age > 0 and (got := fresh()) is not None:
+            return got
+        out = login(cmd, hosts=hosts, timeout=timeout)
+        tmp = f.with_name(f".{key}.{os.getpid()}")
+        tmp.write_bytes(out.encode(errors=ESC))
+        os.replace(tmp, f)
+        return out
+
+
+def forget() -> None:
+    """Every cached read stale: something of ours was just submitted or removed."""
+    for f in (CLIENT / "cache").glob("*"):
+        if not f.name.endswith(".lock"):
+            f.unlink(missing_ok=True)
+
+
 # ---- the Condor submit host: Condor authenticates a submit or a removal by a Kerberos ticket there ----
 BW = Path.home() / ".local" / "bin" / "bw"  # the Bitwarden CLI, unlocked by the user
 BW_ITEM = "00000000-0000-0000-0000-000000000000"  # Bitwarden's "Imperial College"

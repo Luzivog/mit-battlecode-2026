@@ -228,6 +228,7 @@ agent adds its H0s here; the integrator adds them when an agent did not. Diffs a
 | 2026-11-20 | AT2 | `CAT_DEF_DSQ` 100, 200; `SPAWN_FLOOR` 250; `SPAWN_CHEESE_DIV` 20; `SPAWN_CAP_SMALL` 20 on AT2's 17 maps | `book matrix at2m2`, 80 cells a map, 26006 | no map-seat with p_max < 0.18 | spending less loses 0.1–0.2 on the starving maps (an income loss); `SPAWN_CAP_SMALL` 20 loses 0.4–0.8 on the 900-tile maps |
 | 2026-11-20 | AT2 | `SPAWN_CAP_SMALL` 40, 50, `SPAWN_POOR_CUT` 0, 20 on DefaultSmall | `book matrix at2m3`, 120 cells, 26008 | −0.19 to −0.78 both seats | main's small-map cap is DefaultSmall's optimum in both directions |
 | 2026-11-20 | AT2 | `EXPLORE_P` 0.2, 0.4, 0.8 on the 8 starving maps | `book matrix at2m4`, 100 cells a map, 26009 | τ 0.019, one lead (constrictinglattice A 0.8, p_max 0.034) | exploration share has no per-map structure here; the lead read −0.060 [−0.127, +0.007] on 26011 (`1120-052434-ab-1bd0`) |
+| 2026-11-20 | AT2 | `CM_LANE_MEMORY` 1, with and without `CM_LANE_FLEE` 1, on AT2's 17 maps | `book matrix at2m5`, 80 cells a map, 26012 | best p_max 0.196, τ 0.015 | 13 of 34 map-seats change no game; directconfrontation's cat losses −0.01 to −0.03 |
 
 Why E1 cannot gain (all three arms, paired replays): the spawn cap is already a reserve. `thresh = min(global/10 + 10, …)`
 builds a cost-c rat only with global ≥ 10·(c − 10): 100 for cost 20, 200 for 30, 300 for 40. Outside the +10 to +30

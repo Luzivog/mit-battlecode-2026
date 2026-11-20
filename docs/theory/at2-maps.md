@@ -47,7 +47,7 @@ Every screen: `tools/book/book matrix` against main, the maps' `map:` pool, both
 | at2m2 | 26006 | 17, 80 | `CAT_DEF_DSQ` 100 and 200, `SPAWN_FLOOR` 250, `SPAWN_CHEESE_DIV` 20, `SPAWN_CAP_SMALL` 20 (5) | nothing (every p_max ≥ 0.18); `CAT_DEF_DSQ` does nothing on these maps; `SPAWN_FLOOR` 250 and `SPAWN_CHEESE_DIV` 20 lose 0.1–0.2 on the starving maps; `SPAWN_CAP_SMALL` 20 loses 0.4–0.8 on the three 900-tile maps |
 | at2m3 | 26008 | DefaultSmall, warhammer, directconfrontation, Excavation, 120 | `SPAWN_CAP_SMALL` 40 and 50, `SPAWN_POOR_CUT` 0 and 20 (4) | warhammer's entries; DefaultSmall loses with every change (−0.19 to −0.78): main's cap is its optimum |
 | at2m4 | 26009 | the 8 starving maps, 100 | `EXPLORE_P` 0.2, 0.4, 0.8 (3) | no map structure (τ 0.019); its one lead failed (§3) |
-| at2m5 | 26012 | 17, 80 | `CM_LANE_MEMORY` 1; with `CM_LANE_FLEE` 1 (2) | playing |
+| at2m5 | 26012 | 17, 80 | `CM_LANE_MEMORY` 1; with `CM_LANE_FLEE` 1 (2) | nothing (τ 0.015; 13 map-seats with no game changed; directconfrontation −0.01 to −0.03): our kings meet few cats here |
 
 ## 3. Failed on fresh seeds
 
@@ -60,3 +60,15 @@ Every screen: `tools/book/book matrix` against main, the maps' `map:` pool, both
 
 `p_max` is the test of one map-seat's best of K; over 34 map-seats a p_max of 0.002 arises by chance about once in
 15 screens, so the confirmation decides (cheeseysquare A).
+
+## 4. What is left
+
+The screens hold every switch that exists today (`KING_HAND` and `KING_PATH` excepted: KR screened them on every map)
+and the spawning, exploration and cat constants. What they leave:
+
+- DefaultSmall (both seats, 53 losses of 160): every change of the small-map cap or the poor-map cut loses; the losses
+  are the r175–320 fights (34 of 53). Needs reading the fights, not a constant.
+- The starving maps (moonlitriverpark, shell, cheeseysquare, jail): deliveries at half awubot's; spending less loses.
+  The remedy is income: the king's site and the miners' targets on those maps, as book data.
+- trapped, thunderdome, stareintotheabyss, streetsofnewyork, Excavation: early fights, untouched by any screen.
+- directconfrontation: cat kills, untouched by the lane memory, the cat defence radius and the cat hunt.

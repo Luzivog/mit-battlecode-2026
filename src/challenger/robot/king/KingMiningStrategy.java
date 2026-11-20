@@ -64,6 +64,9 @@ public class KingMiningStrategy extends Strategy {
         mineTarget = sites[Math.min(Tune.CM_KING1_SITE, sites.length) - 1];
         foundCheeseMine = true;
         GlobalArray.writeKingMineAssignment(kingId, mineTarget);
+        // Round 1's turn already holds the book's scan and the king's setup: the first path to the site waits a round,
+        // or the turn overruns its 20,000 bytecodes (7 of 9 booked map-seats, 1120-084751-ab-9a8f).
+        if (time == 1) return true;
         moveTowardMine();
         tryCollectCheese();
         return true;

@@ -391,12 +391,17 @@ def place_pieces(s: Settings, need: int) -> list[str]:
 
 def _place(s: Settings, need: int) -> list[str]:
     notes: list[str] = []
-    found = offers(s.wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need, named=s.wheres == ("cpucluster1",),
+    wheres = s.wheres
+    down = remote.submit_down() if "condor" in wheres else None
+    if down is not None:  # Condor left out: the other backends still get pieces
+        wheres = tuple(w for w in wheres if w != "condor")
+        J.say(f"run {s.id}: Condor's submit host gave no answer {down:.0f} s ago: no Condor piece now")
+    found = offers(wheres, s.task_cpus, s.task_mem_mb, s.time_s, notes, need, named=s.wheres == ("cpucluster1",),
                    max_age=remote.CACHE_S)
     took = choose(found, need, s.max_cpus)
     for n in notes:
         J.say(f"run {s.id}: {n}")
-    waiting = queued_of_kind(kind_of(s))
+    waiting = queued_of_kind(kind_of(s)) if "condor" in wheres else 0
     condor = [o for o in took if o.where == "condor"]
     room = max(0, IDLE_CAP - waiting)  # a Condor piece waits in the queue until matched, even for a free machine
     if len(condor) > room:
@@ -421,7 +426,10 @@ def _place(s: Settings, need: int) -> list[str]:
             slurm = offers(("slurm",), s.task_cpus, s.task_mem_mb, s.time_s, [], left)[:1]
     if got:
         return [i for i, _ in got]
-    if "condor" not in s.wheres:
+    if "condor" not in wheres:
+        if down is not None and s.pool:
+            J.say(f"run {s.id}: no piece added now: its tasks wait for the pool's free slots")
+            return []
         raise Refused(f"no piece could start on {', '.join(s.wheres)} now (`tools/compute status`)")
     queued = min(QUEUED_PIECES - waiting, need)
     if queued <= 0:

@@ -31,7 +31,7 @@ from pathlib import Path
 from tools import backends as B
 from tools import kit, provision, remote
 from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR,
-                          Refused, forget, login, login_into, submit_host)
+                          Refused, Unreachable, forget, login, login_into, submit_host)
 
 REPO = Path(__file__).resolve().parent.parent
 LOCAL_RUNS = REPO / "runs"
@@ -327,7 +327,8 @@ def submit_condor(jobs: list[tuple[Job, dict[str, bytes], str]], shared: dict[st
                   ) -> list[str | None]:
     """Each (job, files, submit description) in one login that makes every folder (SHARED: file name -> a path
     already on the volume, hard-linked in), then their condor_submits on the submit host, eight at a time. Each
-    job's cluster, or None where condor_submit failed (its folder left with no backend-id: it never runs)."""
+    job's cluster, or None where condor_submit failed (its folder left with no backend-id: it never runs). When the
+    submit host gives no answer, none was submitted: their folders are removed and each is None."""
     if not jobs:
         return []
     tar = folder_tar({f"{j.id}/{name}": data for j, f, sub in jobs
@@ -341,6 +342,10 @@ def submit_condor(jobs: list[tuple[Job, dict[str, bytes], str]], shared: dict[st
                           f"else echo \"F $(printf %s \"$o\" | tr '\\n' ' ' | cut -c1-300)\"; fi; }} > \"$f.said\" & "
                           f"[ \"$(jobs -pr | wc -l)\" -lt 8 ] || wait -n; done; wait; "
                           f"for f in {subs}; do cat \"$f.said\"; rm -f \"$f.said\"; done")
+    except Unreachable as e:  # no condor_submit ran: nothing is queued
+        say(f"compute: no Condor job submitted ({e})")
+        login(f"rm -rf {' '.join(j.dir for j, _, _ in jobs)}", hosts=SLURM_HOSTS)
+        return [None] * len(jobs)
     except Refused as e:
         return reconcile(jobs, str(e))
     finally:

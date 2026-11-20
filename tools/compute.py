@@ -108,12 +108,17 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
                        "slots": sum(int(str(p["slots"])) for p in live),
                        "running": sum(int(str(p["running"])) for p in live), "open_runs": len(v.open_runs()),
                        "by_backend": {w: sum(1 for p in live if p.get("backend") == w) for w in B.WHERES}}
+    cd = out["condor"]
+    assert isinstance(cd, dict)
+    down = remote.submit_down()
+    if down is not None:
+        cd["submit_down_s"] = round(down)
     if as_json:
         print(json.dumps(out, indent=1))
         return
     t = f"{task_cpus} CPU{'s' * (task_cpus != 1)} and {task_mem_mb} MB"
-    cd = out["condor"]
-    assert isinstance(cd, dict)
+    if down is not None:
+        print(f"Condor: its submit host ({remote.SUBMIT}) gave no answer {down:.0f} s ago: no piece goes there now")
     if "error" in cd:
         print(f"Condor: unreadable: {cd['error']}")
     else:

@@ -176,6 +176,56 @@ def test_the_submit_host_answer_is_taken_at_once() -> None:
     assert p.returncode == 0 and not answers
 
 
+def test_a_submit_host_that_gives_no_answer_is_noted_and_gets_no_password(monkeypatch: pytest.MonkeyPatch) -> None:
+    """ash04 down on 20 Nov: each call waited for the ticket check, then sent the password to the same dead host."""
+    monkeypatch.setattr(remote, "kerberos_login", lambda *a, **k: pytest.fail("a password for a host that is silent"))
+    assert remote.submit_down() is None
+    with pytest.raises(remote.Unreachable, match="gave no answer: tests reach no DoC host"):
+        remote.submit_host("condor_submit x")
+    age = remote.submit_down()
+    assert age is not None and age < 60
+    monkeypatch.setattr(remote, "_submit_run", lambda argv, stdin=None: ok(0))
+    assert remote.submit_host("true") == ""
+    assert remote.submit_down() is None  # its next answer ends the note
+
+
+def test_no_condor_job_is_kept_when_the_submit_host_gives_no_answer(monkeypatch: pytest.MonkeyPatch,
+                                                                     capsys: pytest.CaptureFixture[str]) -> None:
+    logins: list[str] = []
+    monkeypatch.setattr(J, "login", lambda cmd, *a, **k: logins.append(cmd) or "")
+
+    def silent(cmd: str, ticket: bool = True) -> str:
+        raise remote.Unreachable("ash04.doc.ic.ac.uk gave no answer: Connection timed out during banner exchange")
+    monkeypatch.setattr(J, "submit_host", silent)
+    js = [J.job("condor-1120-000000-aaaaaa"), J.job("condor-1120-000000-bbbbbb")]
+    assert J.submit_condor([(j, {"job.sh": b"x"}, "queue") for j in js]) == [None, None]
+    assert logins[-1] == f"rm -rf {js[0].dir} {js[1].dir}"  # nothing ran there: no queue to read, no folder left
+    assert "no Condor job submitted" in capsys.readouterr().err
+
+
+def test_a_placement_leaves_condor_out_while_its_submit_host_is_down(monkeypatch: pytest.MonkeyPatch,
+                                                                     capsys: pytest.CaptureFixture[str]) -> None:
+    """On 20 Nov every placement failed on the submit host, each holding the placement lock for minutes, and no piece
+    went to cpucluster1, which was free. Now the other backends get the pieces, and a pooled run with none waits."""
+    from dataclasses import replace
+
+    from tools import runs as R
+    s = R.Settings("run-1120-000000-abcdef", 10, 1, 1700, ("condor", "cpucluster1"), 3600, None, None, False, ".",
+                   "c", (), True, R.POOL_V, "e", 0.0, "k", "")
+    asked: list[tuple[str, ...]] = []
+    monkeypatch.setattr(R, "offers", lambda wheres, *a, **k: asked.append(wheres) or [])
+    monkeypatch.setattr(R, "queued_of_kind", lambda kind: pytest.fail("Condor's queue read for a piece count"))
+    monkeypatch.setattr(R, "submit_pieces", lambda *a, **k: pytest.fail("a piece submitted with nothing offered"))
+    remote.CLIENT.mkdir(parents=True, exist_ok=True)
+    (remote.CLIENT / "submit-down").touch()
+    assert R.place_pieces(s, 10) == []
+    assert asked == [("cpucluster1",)]
+    said = capsys.readouterr().err
+    assert "Condor's submit host gave no answer" in said and "its tasks wait for the pool's free slots" in said
+    with pytest.raises(remote.Refused, match="no piece could start on condor, cpucluster1 now"):
+        R.place_pieces(replace(s, pool=False), 10)
+
+
 # cpucluster1 as its login node read it on 18 Nov 2026 21:40, its controller's StateSaveLocation full (0 KB free), and
 # the same read with 5 GB free there: the only difference between a cluster that takes jobs and one that can't
 FULL = (FIX / "cpucluster1_read_full.txt").read_text()

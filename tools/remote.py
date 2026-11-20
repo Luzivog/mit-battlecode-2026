@@ -465,6 +465,9 @@ NOT_CONNECTED = re.compile(r"banner exchange|kex_exchange_identification|Connect
                            r"Could not resolve hostname|Connection closed by .* port 22$")
 SUBMIT_TRIES, SUBMIT_PAUSE_S = 3, 10.0
 SUBMIT_S = 120.0  # a command on the submit host (a login a call: the jump host and a lab machine's sshd included)
+# After the submit host gave no answer, placements leave Condor out this long (submit_down): a try costs 2 to 7 minutes
+# under the placement lock, and on 20 Nov, ash04 down, every placement failed on it with cpucluster1 free
+SUBMIT_DOWN_S = 600.0
 
 
 def _submit_run(argv: list[str], stdin: bytes | None = None) -> subprocess.CompletedProcess[bytes]:
@@ -492,11 +495,29 @@ def ssh_submit(cmd: str, sleep: Callable[[float], None] = time.sleep,
     raise AssertionError("unreachable")
 
 
+def submit_down() -> float | None:
+    """How many seconds ago SUBMIT gave this machine's tools no answer (submit_host), while under SUBMIT_DOWN_S."""
+    try:
+        age = time.time() - (CLIENT / "submit-down").stat().st_mtime
+    except OSError:
+        return None
+    return age if age < SUBMIT_DOWN_S else None
+
+
 def submit_host(cmd: str, ticket: bool = True) -> str:
     """One condor command on SUBMIT; with TICKET, after making sure it holds a Kerberos ticket (a submit or a removal
-    needs one; a read doesn't)."""
-    if ticket and ssh_submit("klist -s").returncode:
-        kerberos_login()
+    needs one; a read doesn't). Unreachable when the ticket check got no answer (ssh's 255): CMD did not run, no
+    password is sent, and the time is noted (submit_down)."""
+    if ticket:
+        k = ssh_submit("klist -s")
+        note = CLIENT / "submit-down"
+        if k.returncode == 255:
+            note.parent.mkdir(parents=True, exist_ok=True)
+            note.touch()
+            raise Unreachable(f"{SUBMIT} gave no answer: {k.stderr.decode(errors=ESC).strip()[-300:]}")
+        note.unlink(missing_ok=True)
+        if k.returncode:
+            kerberos_login()
     p = ssh_submit(f"{UMASK}{CONDOR}; {cmd}")
     if p.returncode:
         raise Refused(f"{SUBMIT}: {cmd.split()[0]}: exit {p.returncode}: {p.stderr.decode(errors=ESC).strip()[-500:]}")

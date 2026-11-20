@@ -41,6 +41,8 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
   pieces of a kind (task size and runtime) wait over every run. When every machine is busy, a new run's tasks wait
   for the pool's free slots (`... pieces of its kind wait in Condor's queue: no more`): that is not an error. However
   many machines look free, at most 32 pieces of a kind wait in Condor's queue.
+- When Condor's submit host gives no answer, runs get pieces on cpucluster1 and the GPU cluster alone (`Condor's
+  submit host gave no answer ... s ago: no Condor piece now`), tried again every 10 minutes: that is not an error.
 
 ## Wait in the background
 

@@ -119,7 +119,10 @@ queue: a read of free machines is a moment's, and a piece waits until Condor mat
 can't take the lock in `PLACE_WAIT_S`, or whose pool read failed, adds nothing: the follower places later. A piece
 counts once its backend took it (appended to `pieces`). Condor requirements leave out machines that don't mount the
 workspace (`CONDOR_EXCLUDE`) and machines with under 4 GiB free to execute in (`CONDOR_DISK_KB`): a piece there
-takes no task and ends, so the machine stays free and draws piece after piece.
+takes no task and ends, so the machine stays free and draws piece after piece. A submit host that gives no answer to
+the ticket check (`remote.submit_host`: ssh's 255) is noted (`CLIENT/submit-down`): no Condor job was submitted,
+no password is sent, and for `SUBMIT_DOWN_S` (10 min) placements leave Condor out (`remote.submit_down`), so the
+other backends get the pieces; a pooled run that gets none waits for the pool.
 
 The follower (`runs.follow`, behind `tools/run` and `tools/compute wait RUN`) polls every 30 s: fetches new
 `done/` tars over one tar stream (each unpacked aside and renamed into `N/`, so a reader sees a task's folder whole),

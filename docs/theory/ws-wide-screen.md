@@ -120,3 +120,27 @@ TheHeist B then gained AT's `IDLE_GOHOME` 0 (book 8). On top of it (reference: m
 `4d0d4ef`; arm: the same plus `SPAWN_RICH` 1000 on TheHeist B, `469cab7`; the map alone, 120 cells, seed base 22024,
 `1120-115343-ab-114a`): seat B **+0.117 [+0.050, +0.183]** (117 / 103); seat A unchanged (99 / 99). The two add.
 
+## 5. WS5: re-tuning around the first-king sites
+
+Books 7 and 8 seat the first king (`KING1_SITE`) on kingofthehill A, B, therearenowalls A, B, QueenOfHearts A, shell B,
+gelcatinouscube A, B, AceOfSpades A, therainbow A, diamond B, houseofcards B, externalsustenance B, thunderdome A, B.
+Screen on their 11 maps, the map alone, both seats, 60 cells a map, seed base 22025, against `origin/t3/book-8`
+(`79f2e78a`): 16 constant candidates (`SPAWN_CAP` 25, 30, 50, 60; `SPAWN_RICH` 1000, 1500; `MINES_KING2` 3, 7;
+`SPAWN_CHEESE_DIV` 5, 20; `SPAWN_FLOOR` 0, 250; `GOHOME_PCT` 70, 130; `DIRT_ROUND` 0; `IDLE_GOHOME` 0) as campaign
+WS6 (runs: `1120-121419-ab-8352`, `1120-121624-ab-942d`, `1120-122109-ab-f013`, `1120-122348-ab-b0a7`, `1120-122419-ab-8b41`, `1120-122534-ab-dc4d`, `1120-122746-ab-4ba0`, `1120-122811-ab-f024`, `1120-122944-ab-84fe`, `1120-123117-ab-193c`, `1120-123226-ab-2d22`, `1120-123346-ab-be1d`, `1120-123404-ab-1fb5`, `1120-123444-ab-1aea`, `1120-123525-ab-a4b1`, `1120-123628-ab-b29a`, `1120-123925-ab-1f8d`), and one early second king (`CM_KING2_ROUND` 30 with a `KING2_SITE` by
+our nearest mine that the first king does not take: the mine nearest the first-king site is the taken one, the site a
+free 3x3 off every cat loop within Chebyshev 2 of the next mine, else 3 with dirt allowed; `scratch/sg/tools/k2sites.py`)
+on the 11 sited map-seats without a second-king entry (AceOfSpades A and shell B have no such site), `1120-120743-ab-182b`.
+`SPAWN_CAP_SMALL` binds only on houseofcards, whose seat B books it: not played. Fit over the 17 together.
+
+- The constants barely move around the new sites: no map-seat passes p_max < 0.05; the best reads are houseofcards A
+  `DIRT_ROUND` 0 +0.133 (p_max 0.11) and externalsustenance A `SPAWN_CAP` 30 +0.150 (0.17); no value reads positive on
+  both seats of the three maps sited on both (at most +0.083).
+- The second king beside a seated first king: houseofcards B **+0.267 [+0.168, +0.365], p_max 0.005**, gelcatinouscube
+  A +0.167 (p_max 0.15), and heavy losses elsewhere (QueenOfHearts A −0.683, therearenowalls A −0.633, B −0.500,
+  kingofthehill B −0.150, thunderdome B −0.117): where the next mine is the other team's seat or far, it costs.
+
+**Confirmed:** houseofcards B, `CM_KING2_ROUND` 30 and `KING2_SITE` [[16, 4]] (by the mine at (18, 4)), on top of
+`origin/t3/book-8` (`667b0472`), the map alone, 120 cells, seed base 22026 (`1120-130216-ab-61c0`): seat B
+**+0.208 [+0.095, +0.322]** (95 / 70); seat A unchanged (89 / 89).
+

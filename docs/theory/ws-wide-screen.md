@@ -92,3 +92,27 @@ map alone, 120 cells, seed base 22021, `1120-074933-ab-772d`) the reference wins
 loses: **A −0.100 [−0.159, −0.041] (107 / 119), B −0.092 [−0.148, −0.035] (108 / 119)**. Both answer the same
 starvation and do not add; the cap is not a line.
 
+## 4. WS3: spawning and income constants per map
+
+Twelve candidates (main's value in brackets): `MINES_KING2` 3, 7 [5]; `SPAWN_RICH` 1000, 1500 [2000];
+`SPAWN_CHEESE_DIV` 5, 20 [10]; `SPAWN_FLOOR` 0, 250 [100]; `SPAWN_POOR_CUT` 0, 20 [10]; `GOHOME_PCT` 70, 130 [100].
+Maps: the 50 holding most of main's losses after the sixth book (`rank-book6.json`, 607 of 722 losses), 40 cells a map,
+seed base 22022, against main `e976a786` (matrix WS5; runs, ref first: `1120-080131-ab-68b2`, `1120-080256-ab-b3a6`, `1120-080340-ab-cd70`, `1120-080457-ab-bef9`, `1120-080645-ab-5b1c`, `1120-081347-ab-4710`, `1120-081404-ab-3a0f`, `1120-081633-ab-acc8`, `1120-081738-ab-1728`, `1120-081812-ab-fc42`, `1120-081917-ab-fedb`, `1120-081949-ab-35da`, `1120-082554-ab-896b`). Fit over
+the twelve together; no map-seat had the same constant booked.
+
+Picks: p_max < 0.05 (TheHeist B `SPAWN_RICH` 1000 +0.225, p_max 0.014; longwayaround A `MINES_KING2` 7 +0.250, 0.026),
+and one value at +0.10 or more on both seats (TheHeist `SPAWN_RICH` 1000 A +0.125; longwayaround `SPAWN_RICH` 1500
++0.175 / +0.125 and `GOHOME_PCT` 130 +0.100 / +0.100; hatefullattice `GOHOME_PCT` 130 +0.100 / +0.200). Confirmed on
+seed base 22023 against main `31f0a2aa` (the sixth book), the map alone, 100 cells:
+
+| map | constant | value | seat A | seat B | run |
+|---|---|---|---|---|---|
+| **TheHeist** | `SPAWN_RICH` | **1000** | **+0.100 [+0.041, +0.159]** (100 / 90) | **+0.050 [+0.007, +0.093]** (100 / 95) | `1120-114149-ab-4242` |
+| **longwayaround** | `MINES_KING2` | **7** | **+0.110 [+0.010, +0.210]** (75 / 64) | +0.060 [−0.054, +0.174] | `1120-114203-ab-60fe` |
+| longwayaround | `SPAWN_RICH` | 1500 | +0.010 [−0.096, +0.116] | +0.050 [−0.069, +0.169] | `1120-114210-ab-213b` |
+| longwayaround | `GOHOME_PCT` | 130 | −0.090 [−0.202, +0.022] | +0.060 [−0.064, +0.184] | `1120-114221-ab-d807` |
+| hatefullattice | `GOHOME_PCT` | 130 | +0.000 [−0.084, +0.084] | +0.090 [−0.032, +0.212] | `1120-114228-ab-35c2` |
+
+Lines: TheHeist both seats `SPAWN_RICH` 1000 (on top of PM's `PM_SYM` and `PM_COOP_HOLD` there), longwayaround A
+`MINES_KING2` 7 (on top of `SPAWN_CAP` 60).
+

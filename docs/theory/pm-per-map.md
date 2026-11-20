@@ -10,6 +10,7 @@ policy that wins there, as book entries (tools/book/AGENTS.md). Branch `t3/pm-pe
 |---|---|---|---|---|
 | TheHeist | both | `PM_SYM` 1 and `PM_COOP_HOLD` 1 | 24003, 300: A +0.31 ± 0.07, B +0.35 ± 0.07 | 24006, 300: A +0.33 ± 0.06, B +0.32 ± 0.06 (0.81 / 0.90 against 0.48 / 0.58) |
 | groveisbeingdesecrated | both | `PM_COOP_HOLD` 1 | 24003, 148: A +0.08 ± 0.08, B +0.11 ± 0.08 | 24007, 300: A +0.10 ± 0.04, B +0.11 ± 0.04 (0.87 / 0.67 against 0.77 / 0.56) |
+| longwayaround | both | `SPAWN_CAP` 60 | 24009, 250: A +0.09 ± 0.08, B +0.10 ± 0.08 | 24010, 300: A +0.05 ± 0.07, B +0.07 ± 0.07 (0.62 / 0.70 against 0.57 / 0.63) |
 
 Intervals are 95%, paired per game against main on the same (map, seed, seat). Run IDs in §6.
 
@@ -62,7 +63,15 @@ insertmeowname: chosen as the worst, they regressed.
   forms the second king: cooperation endings at 1 v 1 vanish, and the losses are king kills r900–1200.
 - `PM_SYM` on grove (main resolves its symmetry by r300): no gain (+0.04, both seats pooled, 24003).
 
-## 5. What did not gain
+## 5. longwayaround: a larger army
+
+- A 60×60 map with 20 mines, decided at r2000 on points or by late king kills: awubot transfers ~12,800 more cheese and
+  holds 56 rats to our 16. The rat cap (`SPAWN_CAP`, 40 = 16 rats) binds. Dose (ours − main): cap 50 +0.055 ± 0.063
+  (24005, 200 cells), 60 +0.096 ± 0.055 (24009), 80 +0.055 ± 0.047 (24010; A −0.02, B +0.13); the rich-spawn line
+  (`SPAWN_RICH` 1000: +0.059; 500: +0.023) and cap 50 with line 1000 (+0.066) less.
+- The same cap is harmful on the other hard maps (§6).
+
+## 6. What did not gain
 
 | arm | maps | seed base, cells | ours − main |
 |---|---|---|---|
@@ -79,7 +88,7 @@ insertmeowname: chosen as the worst, they regressed.
 Seat A's symmetry from the book is therefore no broad lever: it helps where main never resolves the symmetry and a
 choice hangs on it (TheHeist's cooperation king), and costs where it changes routes (therainbow).
 
-## 6. Runs
+## 7. Runs
 
 | purpose | seed base | runs (main, variants) |
 |---|---|---|
@@ -89,9 +98,13 @@ choice hangs on it (TheHeist's cooperation king), and costs where it changes rou
 | 8 rotational maps choose | 24003 | main `1119-214235-ab-9a21`; S `-220336-ab-ed1b`, H `-215149-ab-29ad`, SH `-215924-ab-f8e8` |
 | grove confirm | 24007 | main `1119-225213-ab-8bfc`; H `-225213-ab-6ae7` |
 | longwayaround, therainbow choose | 24003 | main `1119-214235-ab-de0c`; S `-215446-ab-acf6`, H `-214946-ab-5273`, SH `-220447-ab-c246` |
+| longwayaround constants | 24005, 24009 (choose), 24010 (confirm) | campaigns `clong`, `clong2`, `clong3` (`tools/tune show NAME`); confirm main `1119-234728-ab-3677`, cap 60 `-234728-ab-8a7d` |
+| constants matrix, 8 maps | 24011 | `pmx1` (`tools/book/book fit pmx1`) |
+| mine-poor cut | 24005 | `cpoor` |
+| `PM_SYM_B` `goal` screen | 24008 | `1119-230521-ab-e731` |
 | `PM_SYM` on `goal` by symmetry class | 24004 | VERTICAL main `1119-223502-ab-3235`, S `-223502-ab-7f14`; ROTATIONAL main `-223502-ab-5dd4`, S `-223503-ab-c5fe` |
 
-## 7. Open
+## 8. Open
 
 (filled at the end of the package)
 

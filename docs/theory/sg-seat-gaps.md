@@ -109,6 +109,52 @@ lookahead step (2 bytecodes each).
   TryPosition), king spawn and site tie-breaks, the cats' own fixed draws on CENTER-facing cats (`E:InternalRobot`
   static `Random(1092)`, fixed per map; on closeup the first facings came out rotation-consistent).
 
+## 7. SG2: the gaps left on main with the fourth book
+
+Nine map-seats (main on 3,000 `goal` cells, `1120-022339-ab-124d`): EscapeTheNight B, squaresaremodernart B,
+houseofcards B, diamond B, thehallway B, hellofromtheotherside A, knifefight A, mushroom A, Meow B.
+
+**Self-play** (team A's win rate minus team B's, the same bot on both sides; 64 games a map, seed base 22008;
+`1120-024038-ab-339f`, `1120-024041-ab-74ee`): our code leans the way of every one of our gaps; awubot's agrees on
+squaresaremodernart, diamond, hellofromtheotherside, knifefight, houseofcards, EscapeTheNight (+1.00) and is even or
+opposite on thehallway, Meow and mushroom.
+
+| map | challenger | awubot |
+|---|---|---|
+| thehallway | +0.62 | −0.03 |
+| squaresaremodernart | +0.44 | +0.40 |
+| Meow | +0.31 | −0.31 |
+| diamond | +0.31 | +0.40 |
+| houseofcards | +0.31 | +0.15 |
+| EscapeTheNight | +0.19 | +1.00 |
+| hellofromtheotherside | −0.25 | −0.32 |
+| knifefight | −0.19 | −0.31 |
+| mushroom | −0.25 | +0.07 |
+
+**Bisection of main's history** (self-play at 10 of the 54 commits into `src/challenger` since `caterpillow-final`,
+80 games a map, seed base 22010): thehallway is level (−0.25 to +0.10) up to `ab49c269` and +0.50 from `6017078f`,
+KR's `KING_HAND` 7. On thehallway and squaresaremodernart team B's king has chirality 0, so h7 makes it right-handed,
+and a rotation keeps hands: the seats stop being images. Meow leans +0.35 at the champion's own code (the first
+commit): the shared code. mushroom drifts from −0.10 to −0.55 over the KD to FL commits with no single step.
+
+**The mirror probe** (`sg_mir`: the worse seat plays through a `RobotController` that hands the bot the image of the
+world under the map's symmetry, every location and direction transformed, chiralities flipped, the king's hand that
+of the image's team; `sg_mir0` its twin, the same calls untransformed). The probe costs bytecode, so both play on the
+Java engine with the limits raised tenfold (a patched `UnitType` on the boot class path, no cache); 32 cells a map,
+seed base 22009, `run-1120-025100-8452e6`. Wins of the worse seat, twin / probe: thehallway B 17 / 29, Meow B 23 / 29,
+knifefight A 26 / 31, houseofcards B 9 / 16, squaresaremodernart B 18 / 24, diamond B 17 / 20, hellofromtheotherside
+A 25 / 27, EscapeTheNight B 21 / 21, mushroom A 24 / 25 (no gap in that run). Our own code carries thehallway, Meow
+and knifefight and part of houseofcards and squaresaremodernart; EscapeTheNight's gap is awubot's.
+
+**Choosing among the image's two known switches** (the king's hand and the lookahead's hand):
+
+| matrix | candidates | maps | cells a map | seed base | best per worse seat | run IDs |
+|---|---|---|---|---|---|---|
+| SGK | `KING_HAND` 0 | the 7 ROTATIONAL maps whose team-B king has chirality 0 | 40 | 22011 | thehallway B +0.100 (p_max 0.16), squaresaremodernart B +0.050, QueenOfHearts B −0.175 | ref `1120-031922-ab-c511`, `1120-032019-ab-9b98` |
+| SGM | `KING_HAND` 1, `SG_LOOK_RIGHT` 1, both | Meow, hellofromtheotherside, knifefight, houseofcards, diamond | 40 | 22012 | Meow B +0.125 (p_max 0.11), diamond B +0.125 (0.18), knifefight A +0.025, houseofcards B 0, hello A −0.025 | ref `1120-033705-ab-bacc`, `-5d23`, `-0eda`, `1120-033807-ab-e0e7` |
+
+None passes p_max < 0.05. On 22011 main's thehallway seat B wins 34 of 40, so its gap moves with the seed base.
+
 ## 6. Data and tools (`~/battlecode26-data/scratch/sg/`)
 
 - `tools/seats.py LABEL=RUN[:ROLE]...`: per map our win rate by seat, patched maps folded onto their original.

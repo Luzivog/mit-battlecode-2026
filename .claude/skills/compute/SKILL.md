@@ -34,7 +34,12 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
 - Runs share one pool (not `--whole`, not `--max-cpus`): a live piece of any run takes tasks of every open run of the
   same `--task-cpus`, `--task-mem` and backends, the run with the fewest running tasks first, and ends as soon as
   nothing is left. A new run asks for pieces only beyond the live pieces' free slots, so its tasks often start within
-  seconds. Code and `--with` files go up once a content.
+  seconds. Code goes up as main once (shared by every run while main stays) and each run's own commits (a few KB);
+  `--with` files once a content. A closed run's results are deleted from the workspace once they are here.
+- A new run is refused while the workspace holds over 40 of its 55 GB after a sweep: the message says so.
+- Pieces never pile up in a queue: our Condor pieces waiting in its queue take free machines first, and at most 4
+  pieces of a kind (task size and runtime) wait over every run. When every machine is busy, a new run's tasks wait
+  for the pool's free slots (`no backend has room now ... no more`): that is not an error.
 
 ## Wait in the background
 
@@ -48,7 +53,9 @@ tools/compute wait "$RUN" --json          # run_in_background; exit = the run's 
 - `tools/compute wait ID...` takes runs and jobs, polls every 30 s, survives lost connections, fetches results as
   they come, and ends with one line an id saying where they are. Run it again after a restart: it picks up.
 - Or run `tools/run ...` itself in the background: same output, same exit code.
-- `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs.
+- `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs. It
+  answers in a second or two: every tool on this machine shares one read of the remote state (at most every 5 s), and
+  a backend that can't be read is named as unreadable.
 - `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run: its tasks stop, its queued pieces are
   cancelled; its running pieces go on with other runs' tasks, or end).
 - When a run's last task is done its follower writes `summary.json` first, then cancels the pieces that never
@@ -61,8 +68,8 @@ on a node (no toolchain) only specs naming a native binary (`bcx`) play natively
 `tools/run --kit --each SPECS.jsonl --chunk K --gather results.jsonl -- tools/play {file} {out} --workers 1`, and the
 results come back as `runs/RUN/results.jsonl` in SPECS's order. The exact interface (what a task gets, how SPECS is
 cut, what comes back, how a lost machine is handled): references/internals.md, "The games interface".
-- A lab machine's disk can fill under a run (19 Nov: cedar06, rowan24). Its games then fail with `cannot write ...`
-  or `OSError: [Errno 28] No space left on device`: that is the node, not the code; re-run those games.
+- A lab machine's disk can fill under a run. Its games then fail with `cannot write ...` or `OSError: [Errno 28] No
+  space left on device`: that is the node, not the code; re-run those games.
 
 ## One job on a chosen backend
 
@@ -74,22 +81,17 @@ It runs HEAD (commit first), prints the job id, and returns. `--time` is require
 comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Results: `tools/compute wait ID` pulls
 `log`, `exit` and `out/` to `runs/ID/`.
 
-## Measured (18 Nov 2026)
+## Sizes
 
-- Remote games equal local ones byte for byte (winner, round, replay sha256): 108 games on Condor, the GPU cluster
-  and cpucluster1, none different (references/internals.md, "Verification").
-- A game runs 3 to 6 times slower on DoC's CPUs than on clankerland (DefaultSmall: 20 s here, 62 s on a lab Xeon or
-  a GPU-cluster node, 120 s on a busy cpucluster1 node). A JVM peaked at 1.67 GB.
-- Throughput on the quick pool (48 games, mean 620 rounds), at full load: a Condor lab machine of 80 threads
-  (gallifrey), 48 games at once, 222 s a game: 13 games a minute; a GPU-cluster slot of 36 CPUs (dove02), 165 s a
-  game: 13 a minute; clankerland, 8 workers, 49 s a game: 9.7 a minute. About 0.3 games a minute per busy CPU on DoC.
-- Free on 18 Nov at 21:13 (`status`), in game tasks at once: Condor 2,654 (266 idle lab machines, 4,884 CPUs; most
-  machines hold 8 to 16 games, memory binding first), the GPU cluster 36 (its best slot; up to 112 CPUs under our
-  caps), cpucluster1 148 (288 CPUs under our cap).
-- A launch on a lab machine costs 1.5 ms (`/bin/true`; 0.2 ms here) and `java -version` 89 ms (14 ms here): DoC's
-  auditd and process accounting log every exec. One JVM a game is fine; avoid scripts that fork per line.
-- The pool (19 Nov): `tools/games` refill batches started 3 s after submission (median; 20 s before it), sequential
-  tests ran in half the wall time (references/internals.md, "The pool, measured").
+- Remote games equal local ones byte for byte (winner, round, replay sha256), on every backend.
+- A game runs 3 to 6 times slower on DoC's CPUs than on clankerland (DefaultSmall: 20 s here, about 60 s on a lab
+  Xeon or a GPU-cluster node, 120 s on a busy cpucluster1 node); a JVM peaks near 1.7 GB. About 0.3 games a minute
+  per busy CPU on DoC.
+- Condor has about 340 lab machines, most holding 8 to 16 game tasks (memory binds first); the GPU cluster gives one
+  slot at a time within our caps (48 and 64 CPUs, 3 and 4 cards); cpucluster1 288 CPUs under our cap.
+  `tools/compute status --json` gives `task_slots_now` per backend for a task size.
+- A launch on a lab machine costs 1.5 ms and `java -version` 89 ms (DoC audits every exec): one JVM a game is fine;
+  never fork per line or per round.
 
 ## Rules
 
@@ -99,11 +101,19 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
 - One partition a job; a Condor job takes its whole machine (`request_cpus = 1`). The tools enforce both.
 - A first job on a backend, or of a new kind, is small and under 10 minutes (`--time 10m`).
 - Our files in our workspace `/vol/gpudata/user-bc26` only (0700, written with umask 077; a 55 GB quota); never
-  another project's folders, workspaces, jobs or services. Ended jobs and closed runs are deleted after 6 hours
-  (`tools/compute sweep`). Nothing new goes on `/vol/bitbucket`: it is full and slow.
+  another project's folders, workspaces, jobs or services. Nothing on `/vol/bitbucket`.
+- **No persistent data on the shared volumes.** The workspace holds only the state of open runs and caches that make
+  jobs faster (the runtime, stored code, native binaries); results live on clankerland, under the checkout's `runs/`.
+  Its `MANIFEST` names every top-level entry: what it is, the tool that writes it, how long an entry lives, what
+  breaks if it goes. The tools write it (`tools/compute sweep`); a new kind of entry is added to `tools/workspace.py`'s
+  `ENTRIES`, never put there by hand. Ended jobs and closed runs go after 6 hours (`tools/compute sweep`, hourly).
+- `tools/compute empty` says what the workspace holds and what still uses it; `--yes` deletes all of it once no job
+  of ours has its folder there and no open run there moved in the last hour. `tools/compute old-tree [--yes]` does
+  the same for the folders' old home, `/vol/bitbucket/user/bc26`.
 - Never work around a limit. If a backend refuses, report its exact error.
 
 ## Changing the tools
 
 Read `references/internals.md` before changing `tools/compute`, `tools/run`, `tools/job.sh` or `tools/piece.py`.
-Tests: `.venv/bin/pytest tools/`.
+Tests: `.venv/bin/pytest tools/*_test.py` (they never reach DoC: `tools/conftest.py`) and
+`.venv/bin/python -m unittest discover -s tools/bcgames -t tools -p '*_test.py'`.

@@ -16,8 +16,10 @@ oldest first among equals: a small run submitted behind a big one gets the next 
 since a run's running count only rises when it is served and an older run wins every tie. Another run's tasks run in
 that run's own checkout, made once a content (its commit and its shipped files) in the piece's scratch, with that
 run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
-state (slots, running, task size, runtime, deadline) is POOL/pieces/JOB_ID, rewritten as it changes (at most every
-STATE_S, at least every BEAT_S) and removed at its end: `tools/run` counts the live pieces' free slots from it.
+state (slots, running, task size, runtime, deadline, its time) is POOL/pieces/JOB_ID, written when it changes (at
+most every STATE_S, at once when its free slots reach or leave 0) and every STATE_BEAT_S, removed at its end:
+`tools/run` counts the live pieces' free slots from it (tools/view.py: a piece its scheduler no longer lists is dead,
+and its file goes).
 
 A task's result is done/N.tar (result.json, log, out/), written whole under a temporary name and renamed in. Its
 command runs with {} (its line), {file} (a file of its lines), {out} (its OUT) and {cpus} (its CPUs) replaced, in the
@@ -54,15 +56,19 @@ MAX_STARTS = 3  # a task's starts, the first included
 LOG_BYTES = 1 << 20  # the end of a task's output kept
 OUT_CAP = 1 << 30  # the most a task's OUT may hold: a run's writes on the shared volume are bounded
 LOST = -1  # the code of a task whose every start was lost
-# The pool's protocol: a piece serves only runs that speak its version. 2: pieces of version 1 lose their checkouts
-# (prune_checkouts) and stall or crash, and the runs they serve lose their tasks for 300 s or more (19 Nov: tasks run
-# a third time after two such pieces), so runs of version 2 are served by pieces of version 2 alone; GIVE_BACK.
-POOL_V = 2
+# The pool's protocol: a piece serves only runs that speak its version. 4: a run's code is base.bundle (main) and a
+# thin code.bundle, which a version-3 piece can't check out. 3: the state file is written seldom and says its time.
+POOL_V = 4
 SCAN_S = 2.0  # between two looks for work while a slot is free and the last look found none
-FULL_S = 30.0  # a run found with nothing claimable is looked at again after this long
+FULL_S = 60.0  # a run found with nothing claimable is looked at again after this long (its claims come back only
+# from a dead piece's, after STALE_S, or a stopped task's)
 STALE_CHECK_S = 120.0  # a run's claims are read for dead pieces' at most this often
 CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
-STATE_S = 5.0  # the piece's state file is rewritten at most this often, and at least every BEAT_S
+# The piece's state file: a change is written at most every STATE_S (at once when it starts, or when its free slots
+# reach or leave 0), an unchanged state every STATE_BEAT_S. Rewritten every 5 s, 325 such files took a reader 8 s on
+# CephFS (19 Nov): a file another machine just wrote costs a read 30 ms there.
+STATE_S = 30.0
+STATE_BEAT_S = 600.0
 MIN_LEFT_S = 1200.0  # a piece with a deadline takes another run's task only with this long left (or half its limit)
 CHECKOUTS = 4  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
 # a piece claims a task only with this much free where its tasks write (a checkout is ~350 MB, a binary 100 MB)
@@ -152,6 +158,7 @@ class Piece:
         self.next_scan = 0.0
         self.state_at = 0.0
         self.state_said = ""
+        self.state_free = True
         self.stopping = ""
         self.refusing = ""  # why this piece takes no more tasks (its host can't run them), once a task said so
         self.low_disk = False
@@ -238,6 +245,16 @@ class Piece:
         try:
             os.rename(r.dir / "claims" / str(n), r.dir / "lost" / f"{n}.{secrets.token_hex(4)}")
             self.say(f"{self.name(r, n)}: claim given up ({why})")
+        except OSError:
+            pass
+
+    def release(self, r: Run, n: int, why: str) -> None:
+        """Task N's claim removed unrun, not counted as a start: this piece can't run it (its checkout failed here), any
+        other piece may. Counted as a start, three pieces of an older protocol that can't read a run's bundles ended
+        its tasks LOST."""
+        try:
+            shutil.rmtree(r.dir / "claims" / str(n))
+            self.say(f"{self.name(r, n)}: claim released ({why})")
         except OSError:
             pass
 
@@ -331,7 +348,7 @@ class Piece:
                 self.lost(r, n)
                 continue
             if not self.ready(r):
-                self.give_back(r, n, "its checkout failed here")
+                self.release(r, n, "its checkout failed here")
                 cand.pop(rid, None)
                 continue
             self.start(r, n)
@@ -347,7 +364,7 @@ class Piece:
 
     def ready(self, r: Run) -> bool:
         """R's checkout and kit here: the job's own for its run and any run of the same content, else one made in
-        scratch from R's code.bundle and with.tgz (kept for later runs of that content). False, R set aside, when it
+        scratch from R's bundles and with.tgz (kept for later runs of that content). False, R set aside, when it
         can't be made."""
         if r.home is not None:
             if r.home.exists():
@@ -384,11 +401,11 @@ class Piece:
         return {"BC_ENGINE_JARS": ":".join(jars), "BC_CLASSPATH": ":".join(["{home}/build/classes", *jars])}
 
     def make_checkout(self, r: Run, key: str) -> Path:
-        """R's commit checked out from its code.bundle into scratch (job.sh's way), its with.tgz unpacked into it."""
+        """R's commit checked out from its base.bundle and code.bundle into scratch (job.sh's way), its with.tgz
+        unpacked into it."""
         final = self.scratch / "co" / key
         tmp = self.scratch / "co" / f".{key}.{secrets.token_hex(3)}"
         tmp.parent.mkdir(exist_ok=True)
-        bundle = str(r.dir / "code.bundle")
         t0 = time.monotonic()
 
         def git(*args: str) -> str:
@@ -398,11 +415,16 @@ class Piece:
             return p.stdout.decode(errors="replace")
         try:
             git("-c", "init.defaultBranch=job", "init", "-q", str(tmp))
-            heads = [x.split() for x in git("-C", str(tmp), "bundle", "list-heads", bundle).splitlines() if x.strip()]
-            git("-C", str(tmp), "fetch", "-q", bundle, *sorted({h[0] for h in heads}))
-            main = [h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"]
-            if main:
-                git("-C", str(tmp), "update-ref", "refs/heads/main", main[0])
+            for name in ("base.bundle", "code.bundle"):  # main first: code.bundle holds only what the commit adds
+                b = r.dir / name
+                if not (b.exists() and b.stat().st_size):
+                    continue
+                heads = [x.split() for x in git("-C", str(tmp), "bundle", "list-heads", str(b)).splitlines()
+                         if x.strip()]
+                git("-C", str(tmp), "fetch", "-q", str(b), *sorted({h[0] for h in heads}))
+                main = [h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"]
+                if main:
+                    git("-C", str(tmp), "update-ref", "refs/heads/main", main[0])
             git("-C", str(tmp), "-c", "advice.detachedHead=false", "checkout", "-q", "--detach", str(r.meta["commit"]))
             w = r.dir / "with.tgz"
             if w.exists() and w.stat().st_size:
@@ -598,17 +620,20 @@ class Piece:
                            "task_mem_mb": self.task_mem, "env": self.meta.get("env"), "deadline": self.deadline,
                            "limit": self.limit, "runs": per})
         now = time.monotonic()
-        if not force and (now - self.state_at < STATE_S or (said == self.state_said and now - self.state_at < BEAT_S)):
+        free = len(self.running) < self.slots
+        due = (not self.state_at or free != self.state_free or now - self.state_at >= STATE_BEAT_S
+               or (said != self.state_said and now - self.state_at >= STATE_S))
+        if not (force or due):
             return
         try:
             d = self.pool / "pieces"
             d.mkdir(parents=True, exist_ok=True)
             tmp = d / f".{self.me}.{secrets.token_hex(3)}"
-            tmp.write_text(said + "\n")
+            tmp.write_text(said[:-1] + f', "at": {time.time():.0f}}}\n')
             os.rename(tmp, d / self.me)
         except OSError:
             return
-        self.state_at, self.state_said = now, said
+        self.state_at, self.state_said, self.state_free = now, said, free
 
     def drop_state(self) -> None:
         if self.pooled:

@@ -1,12 +1,13 @@
 """Jobs: one command on one remote allocation (a lab machine, a GPU-cluster CPU slot, a cpucluster1 allocation).
 
 A job is a folder, REMOTE_JOBS/ID, ID's first word its backend. Its files are job.sh's interface (change them only
-with it): `commit` (the hash), `code.bundle` (a git bundle of that commit and main), `argv` (the command's words,
+with it): `commit` (the hash), `code.bundle` (a git bundle of that commit and main; or, beside `base.bundle`, a bundle
+of main, only what the commit adds to it, absent when main holds the commit), `argv` (the command's words,
 each ended by NUL), `with.tgz` (gzip'd tar of files the commit lacks, unpacked into the checkout; absent when none),
 `env` (`NAME VALUE` lines job.sh exports; PATH's go first on PATH), `kit` (the engine's jars, a line each; a kit job's
 only), `exit` (empty until the job has ended for good, then its code), `log` (every attempt's output), `out/` (the
 command's $OUT), `backend-id` (Slurm's job id, or `SCHEDD CLUSTER` for Condor), `cancelled` (cancel asked its end),
-`run` (the run a piece serves, tools/runs.py). `code.bundle` and `with.tgz` go once the job has ended for good.
+`run` (the run a piece serves, tools/runs.py). The bundles and `with.tgz` go once the job has ended for good.
 
 Results come back to the worktree's runs/ID (gitignored).
 """
@@ -28,9 +29,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from tools import backends as B
-from tools import kit, provision
+from tools import kit, provision, remote
 from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR,
-                          Refused, login, login_into, submit_host)
+                          Refused, forget, login, login_into, submit_host)
 
 REPO = Path(__file__).resolve().parent.parent
 LOCAL_RUNS = REPO / "runs"
@@ -44,7 +45,7 @@ HELD, ENDED_UNRECORDED = 3, 4  # wait's and logs -f's codes for a held job and o
 POLL_S = float(os.environ.get("BC26_POLL_S", "30")) if LOCAL else 30.0
 # a job its backend no longer lists, whose exit file a login node may not see yet (NFS caching); none here in tests
 GONE_GRACE_S = 0 if LOCAL else 120
-INPUTS = ("code.bundle", "with.tgz")
+INPUTS = ("base.bundle", "code.bundle", "with.tgz")
 LOG_CAP = 64 << 20  # bytes of a job's output kept in its log: a job's writes on the volume are bounded
 START_LINE = re.compile(r"^== .* start on ", re.M)
 
@@ -108,6 +109,25 @@ class Tree:
         finally:
             git(self.repo, "update-ref", "-d", ref)
 
+    @property
+    def in_main(self) -> bool:
+        """Main holds the commit: base.bundle alone carries it."""
+        return bool(self.main) and subprocess.run(["git", "-C", str(self.repo), "merge-base", "--is-ancestor",
+                                                   self.commit, self.main], capture_output=True).returncode == 0
+
+    def thin(self) -> bytes:
+        """A bundle of what the commit adds to main (beside base()'s: 35 MB of main a run became a few KB)."""
+        ref = f"refs/bc26-run/{secrets.token_hex(4)}"
+        git(self.repo, "update-ref", ref, self.commit)
+        try:
+            return git(self.repo, "bundle", "create", "-", ref, "--not", self.main)
+        finally:
+            git(self.repo, "update-ref", "-d", ref)
+
+    def base(self) -> bytes:
+        """A bundle of main, shared by every run made while main is this commit (named by it)."""
+        return git(self.repo, "bundle", "create", "-", "refs/heads/main")
+
 
 def tree_commit(repo: Path = REPO) -> Tree:
     """The working tree as a commit whose parent is HEAD, made with a copy of the index (nothing in the repo changes
@@ -160,11 +180,21 @@ def ship_cas(blobs: dict[str, Callable[[], bytes]], hosts: tuple[str, ...]) -> l
     login finds those there (their times refreshed, for the sweep), the rest are made here and uploaded under a
     temporary name, renamed in whole. The names uploaded."""
     names = sorted(blobs)
-    have = login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(names)}; do "
-                 f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split()
-    sent = [n for n in names if n not in have]
-    for n in sent:
-        login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](), hosts)
+
+    def there(ns: list[str]) -> set[str]:
+        return set(login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(ns)}; do "
+                         f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split())
+    have = there(names)
+    sent = []
+    for n in (n for n in names if n not in have):
+        # one upload of a blob at a time on this machine (60 runs made at once each sent main's 35 MB): the one
+        # that waited finds it there
+        with remote.locked(remote.CLIENT / "ship" / n, remote.SLOT_WAIT_S):
+            if n in there([n]):
+                continue
+            login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](),
+                  hosts)
+            sent.append(n)
     return sent
 
 
@@ -272,8 +302,10 @@ def sbatch(j: Job, files: dict[str, bytes], args: list[str], hosts: tuple[str, .
     probe, queue = shlex.join([cmd[0], "--test-only", *cmd[1:]]), shlex.join([cmd[0], "--parsable", *cmd[1:]])
     never = ('case "$a" in *" to start at "*) ;; *) printf \'slurm says it would not start: %s\\n\' '
              '"$(printf \'%s\\n\' "$a" | grep -v \'\\*\\*\\*\' | tail -n 3 | tr \'\\n\' \' \')" >&2; false ;; esac')
-    return login(f"{unpack_cmd(j)}{pre} && {{ a=$({probe} 2>&1); {never} && {queue} > {j.dir}/backend-id || "
-                 f"{{ rm -rf {j.dir}; false; }}; }} && cat {j.dir}/backend-id", folder_tar(files), hosts).strip()
+    sid = login(f"{unpack_cmd(j)}{pre} && {{ a=$({probe} 2>&1); {never} && {queue} > {j.dir}/backend-id || "
+                f"{{ rm -rf {j.dir}; false; }}; }} && cat {j.dir}/backend-id", folder_tar(files), hosts).strip()
+    forget()  # our queue changed: the shared scheduler reads are stale
+    return sid
 
 
 def submit_slurm(j: Job, files: dict[str, bytes], slot: B.CpuSlot, time_s: int) -> str:
@@ -311,6 +343,8 @@ def submit_condor(jobs: list[tuple[Job, dict[str, bytes], str]], shared: dict[st
                           f"for f in {subs}; do cat \"$f.said\"; rm -f \"$f.said\"; done")
     except Refused as e:
         return reconcile(jobs, str(e))
+    finally:
+        forget()  # our queue changed: the shared scheduler reads are stale
     said = [line.split(" ", 1) for line in out.splitlines() if line[:2] in ("C ", "F ")]
     if len(said) != len(jobs):
         raise Refused(f"condor_submit answered {len(said)} of {len(jobs)} jobs: {out.strip()[-300:]}")
@@ -470,20 +504,23 @@ printf 'J\t%s\t1\t%s\t%s\t%s\t%s\n' "$j" "$e" "$b" "$f" "$p"; else printf 'J\t%s
 
 
 def read_states(ids: list[str]) -> dict[str, State]:
-    """Every job of IDS: its folder's record and its backend's word, in one login a cluster."""
+    """Every job of IDS: its folder's record and its backend's word, in one login a cluster (now: a follower reads
+    them through tools/view.py instead)."""
     out: dict[str, State] = {}
     for hosts in (SLURM_HOSTS, (CPU_HOST,)):
         js = [job(i) for i in ids if hosts_of(job(i).where) == hosts]
         if js:
-            out |= _read(js, hosts)
+            out |= parse_states(js, B.sections(login(states_cmd(js) + "true", hosts=hosts)))
     return out
 
 
-def _read(js: list[Job], hosts: tuple[str, ...]) -> dict[str, State]:
+def states_cmd(js: list[Job], queues: bool = False) -> str:
+    """The command reading JS's folders and our queue of each of their schedulers (QUEUES: of every scheduler the
+    login node reaches, whatever JS holds), in parse_states's sections."""
     script = FOLDER_SH.replace("JOBS", REMOTE_JOBS)
     cmd = f"echo ==folders; set -- {' '.join(j.id for j in js)}; {script}; "
-    slurm = [j for j in js if j.where in B.SLURMS]
-    condor = [j for j in js if j.where == "condor"]
+    slurm = queues or any(j.where in B.SLURMS for j in js)
+    condor = queues or any(j.where == "condor" for j in js)
     local = [j for j in js if j.where == "local"]
     # every job of ours in one listing each (a list of ids would fail whole on one Slurm has forgotten)
     if slurm:
@@ -494,16 +531,21 @@ def _read(js: list[Job], hosts: tuple[str, ...]) -> dict[str, State]:
     if local:
         cmd += ("echo ==local; for j in " + " ".join(j.id for j in local) + f"; do set -- $(cat {REMOTE_JOBS}/$j/"
                 "backend-id 2>/dev/null); [ -n \"${2:-}\" ] && kill -0 \"$2\" 2>/dev/null && echo \"$2\"; done; ")
-    s = B.sections(login(cmd + "true", hosts=hosts))
+    return cmd
+
+
+def parse_states(js: list[Job], s: dict[str, list[str]]) -> dict[str, State]:
+    """JS's states from states_cmd's sections S."""
     squeue = {f[0]: f for f in (line.split("|") for line in s.get("slurm", [])) if len(f) >= 4}
     slurm_ok = s.get("slurm_rc", ["0"]) == ["0"]
     condor_ok = s.get("condor_rc", ["0"]) == ["0"]
     cq = {f[0]: f for f in ((line.split(maxsplit=4) + [""] * 5)[:5] for line in s.get("condor", [])) if f[0]}
     alive = set(s.get("local", []))
+    wanted = {j.id for j in js}
     out: dict[str, State] = {}
     for line in s.get("folders", []):
         f = line.split("\t")
-        if len(f) < 7 or f[0] != "J":
+        if len(f) < 7 or f[0] != "J" or f[1] not in wanted:
             continue
         jid, exists, ex, bid, flags, peak = f[1], f[2], f[3], f[4], f[5], f[6]
         j = job(jid)
@@ -683,4 +725,5 @@ def cancel_many(job_ids: list[str]) -> dict[str, str]:
                             f"Condor cluster {c} removed or already gone" if c in gone else
                             f"Condor cluster {c}: condor_rm said {said.strip()[-300:]!r}")
         login(f"rm -f {' '.join(f'{j.dir}/{n}' for j in js for n in INPUTS)}", hosts=hosts)
+    forget()
     return out

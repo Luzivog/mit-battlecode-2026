@@ -312,6 +312,7 @@ def test_its_state_says_its_free_slots(tmp_path: Path) -> None:
         time.sleep(0.05)
     st = json.loads(f.read_text())
     assert (st["slots"], st["running"], st["task_mem_mb"], st["env"], st["backend"]) == (3, 1, 100, "e1", "local")
+    assert abs(st["at"] - time.time()) < 10  # its own time: a reader needs no stat
     p.communicate(timeout=BOUND_S)
     assert not f.exists()
 
@@ -393,3 +394,46 @@ def test_a_checkout_is_made_only_for_a_claimed_task(tmp_path: Path, monkeypatch)
     assert p.fill() == 1
     assert calls == ["room", "room", "claim 0", "room", "claim 1", "room", "claim 2", "ready", "start 2", "room",
                      "claim 3"]
+
+
+def test_its_state_is_written_seldom(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """At its start; a change at most every STATE_S, at once when its free slots reach or leave 0; else every
+    STATE_BEAT_S."""
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [{"argv": ["true"], "lines": []}] * 3, 1.0)
+    monkeypatch.setenv("JOB_ID", "local-1118-120000-0009")
+    monkeypatch.setenv("JOB_CPUS", "3")
+    monkeypatch.setenv("TMPDIR", str(tmp_path))
+    p = piece.Piece(a)
+    clock = [1000.0]
+    monkeypatch.setattr(piece.time, "monotonic", lambda: clock[0])
+    f = root / "pool" / "pieces" / "local-1118-120000-0009"
+    writes: list[int] = []
+
+    def step(dt: float, running: int) -> None:
+        clock[0] += dt
+        p.running = {(a.name, i): None for i in range(running)}  # type: ignore[misc]
+        f.unlink(missing_ok=True)
+        p.write_state()
+        writes.append(int(f.exists()))
+    step(0, 0)  # its start
+    step(1, 1)  # a change, free slots left: waits for STATE_S
+    step(1, 3)  # full: at once
+    step(1, 2)  # free again: at once
+    step(1, 1)  # a change within STATE_S
+    step(piece.STATE_S, 1)  # ... written once STATE_S has passed
+    step(1, 1)
+    step(piece.STATE_BEAT_S, 1)  # unchanged: every STATE_BEAT_S
+    assert writes == [1, 0, 1, 1, 0, 1, 0, 1]
+
+
+def test_a_failed_checkout_costs_no_start(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A piece that can't check a run out (its code is a shape this piece can't read) releases its claim unrun and
+    uncounted: three such pieces ended every task of 60 runs LOST."""
+    run = make_run(tmp_path, [stamp("0")])
+    for k, v in env(tmp_path, cpus=1).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(run)
+    monkeypatch.setattr(p, "ready", lambda r: False)
+    assert p.fill() == 0
+    assert not (run / "claims" / "0").exists() and not list((run / "lost").iterdir())

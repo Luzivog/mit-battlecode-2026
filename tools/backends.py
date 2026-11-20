@@ -14,7 +14,7 @@ import re
 import shlex
 from dataclasses import dataclass, field, replace
 
-from tools.remote import CONDOR, CPU_HOST, SLURM_HOSTS, SUBMIT, Refused, login
+from tools.remote import CONDOR, CPU_HOST, SLURM_HOSTS, SUBMIT, Refused, cached, login
 
 Where = str  # "slurm", "cpucluster1" or "condor" ("local" in tests)
 WHERES = ("condor", "slurm", "cpucluster1")
@@ -40,6 +40,7 @@ SLURM_CARDS = {"nvidia_a100_80gb_pcie": "a100", "nvidia_a40": "a40", "nvidia_a30
 SLURM_WHOLE_ASK, SLURM_TASK_CPUS = 9, 6
 CPU_JOB_MIN_MEM_MB = 1000  # the least memory a Slurm CPU job gets a CPU (a convention)
 USR1_LEAD_S = 120  # SIGUSR1 this long before --time: the job saves and requeues (job.sh)
+PROBE_S = 120.0  # a login of sbatch --test-only probes (one a size of each slot tried)
 
 
 @dataclass(frozen=True)
@@ -222,8 +223,8 @@ def parse_slurm(text: str) -> Slurm:
     return Slurm(partitions, nodes, parse_qos(s.get("qos", [])), parse_jobs(s.get("jobs", [])))
 
 
-def read_slurm() -> Slurm:
-    return parse_slurm(login(SLURM_READ))
+def read_slurm(max_age: float = 0.0) -> Slurm:
+    return parse_slurm(cached(SLURM_READ, max_age=max_age))
 
 
 # ---- GPU-cluster CPU slots ----
@@ -366,7 +367,7 @@ def slurm_sizes(slots: list[CpuSlot], least: int, est: int | None) -> list[CpuSl
 
     script = WILL_RUN + "".join(shlex.join(["ask", str(i), str(c), *cpu_slot_args(at(slot, c), est)]) + "\n"
                                 for i, slot in enumerate(slots) for c in rungs[i])
-    got = answered(login("bash -s", script.encode()))
+    got = answered(login("bash -s", script.encode(), timeout=PROBE_S))
     return [at(slot, got[i]) if i in got else None for i, slot in enumerate(slots)]
 
 
@@ -469,8 +470,8 @@ def parse_cpucluster(text: str) -> CpuCluster:
                       takes_jobs(s.get("statesave", [])))
 
 
-def read_cpucluster() -> CpuCluster:
-    return parse_cpucluster(login(CPU_READ, hosts=(CPU_HOST,)))
+def read_cpucluster(max_age: float = 0.0) -> CpuCluster:
+    return parse_cpucluster(cached(CPU_READ, (CPU_HOST,), max_age))
 
 
 def cpu_free(c: CpuCluster, n: CpuNode, mb_per_cpu: int) -> int:
@@ -512,7 +513,7 @@ def cpucluster_grants(asks: list[tuple[str, int, int]], est: int) -> list[int | 
     script = WILL_RUN + "".join(shlex.join(["ask", str(i), str(x), "-p", part, f"--cpus-per-task={x}",
                                             f"--mem-per-cpu={mb}M", *checkpointed(est)]) + "\n"
                                 for i, (part, _, mb) in enumerate(asks) for x in rungs[i])
-    got = answered(login("bash -s", script.encode(), (CPU_HOST,)))
+    got = answered(login("bash -s", script.encode(), (CPU_HOST,), timeout=PROBE_S))
     return [got.get(i) for i in range(len(asks))]
 
 
@@ -524,6 +525,13 @@ CONDOR_COLUMNS = ("Machine", "State", "OpSysAndVer", "TotalCpus", "Memory", "Job
 # subcode 2: no condor.out to open; 12 of 5,982 jobs, the previous project's measurement), released once onto another
 CONDOR_RELEASE = "(HoldReasonCode == 7) && (HoldReasonSubCode == 2) && (NumShadowStarts - NumJobStarts == 1)"
 CONDOR_HELD = "PeriodicRelease HoldReason"
+# Lab machines that don't mount our workspace: every job there is held at once ("Failed to open
+# '/vol/gpudata/user-bc26/jobs/.../condor.out' as standard output": melchett, 523 pieces, 19 Nov)
+CONDOR_EXCLUDE = ("melchett.doc.ic.ac.uk",)
+# A machine whose execute folder has less free (Condor's Disk, KiB) takes no piece: a piece takes no task under 2 GB
+# free (piece.DISK_MIN_MB) and ends at once, so such a machine stayed free and drew piece after piece (gpu35, 0.9 GB,
+# 19 Nov; 8 of 343 machines under 4 GB)
+CONDOR_DISK_KB = 4 << 20
 
 
 @dataclass(frozen=True)
@@ -544,6 +552,7 @@ class CondorJob:
     host: str
     hold_reason: str
     releases: bool
+    kind: str = ""  # a piece's BC26Kind (condor_sub): the runs it serves
 
 
 @dataclass(frozen=True)
@@ -556,7 +565,7 @@ class Condor:
     def free(self, cpus: int = 1, mem_mb: int = 0) -> list[CondorMachine]:
         """Unclaimed machines a job could take: of our releases, with CPUS cores and MEM_MB MiB."""
         return [m for m in self.machines.values() if m.state == "Unclaimed" and m.release in CONDOR_OSES
-                and m.cpus >= cpus and m.memory_mb >= mem_mb]
+                and m.cpus >= cpus and m.memory_mb >= mem_mb and m.name not in CONDOR_EXCLUDE]
 
 
 def parse_condor(text: str) -> Condor:
@@ -578,9 +587,9 @@ def parse_condor(text: str) -> Condor:
             refused.append(line[:200])
             continue
         machines[m.name] = m
-    jobs = [CondorJob(f[0], f[1], CONDOR_STATE.get(int(f[2]), f[2]), f[3], "" if f[5] in ("undefined", "") else f[5],
-                      f[4] == "true")
-            for f in ((line.split(maxsplit=5) + [""])[:6] for line in s.get("jobs", [])) if f[2].isdigit()]
+    jobs = [CondorJob(f[0], f[1], CONDOR_STATE.get(int(f[2]), f[2]), f[3], "" if f[6] in ("undefined", "") else f[6],
+                      f[4] == "true", "" if f[5] == "undefined" else f[5])
+            for f in ((line.split(maxsplit=6) + ["", ""])[:7] for line in s.get("jobs", [])) if f[2].isdigit()]
     c = Condor(machines, jobs, tuple(refused))
     for m in c.free():
         c.by_os[m.release] = c.by_os.get(m.release, 0) + m.cpus
@@ -588,20 +597,23 @@ def parse_condor(text: str) -> Condor:
 
 
 CONDOR_READ = (f"{CONDOR}; echo ==machines; condor_status -af:, {' '.join(CONDOR_COLUMNS)}; echo ==jobs; "
-               f"condor_q -name {SUBMIT} $USER -af JobBatchName ClusterId JobStatus RemoteHost {CONDOR_HELD}; "
+               f"condor_q -name {SUBMIT} $USER -af JobBatchName ClusterId JobStatus RemoteHost PeriodicRelease "
+               "BC26Kind HoldReason; "
                "echo ==end")
 
 
-def read_condor() -> Condor:
+def read_condor(max_age: float = 0.0) -> Condor:
     """The pool and our jobs, read from a GPU-cluster login node (no lab machine logged into)."""
-    return parse_condor(login(CONDOR_READ))
+    return parse_condor(cached(CONDOR_READ, max_age=max_age))
 
 
-def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int | None, remove_s: int | None) -> str:
+def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int | None, remove_s: int | None,
+               kind: str = "") -> str:
     """The submit description: request_cpus = 1 (a lab machine is one static slot, so this claims all of it, DoC's
     rule) on a machine of our releases with CPUS cores and MEM_MB MiB, read and written in place on the shared volume.
     Ranked by the workers it runs (SLOT_MB a worker: the CPUs its memory holds; None: its CPUs), the machine of its
-    last start last. REMOVE_S: removed once it has run that long (a bound, for a first job)."""
+    last start last. REMOVE_S: removed once it has run that long (a bound, for a first job). KIND: the runs a piece
+    serves (BC26Kind: placement counts the queued pieces of each kind)."""
     release = " || ".join(f'OpSysAndVer == "{o}"' for o in CONDOR_OSES)
     workers = ("TARGET.TotalCpus" if slot_mb is None else
                f"ifThenElse(TARGET.TotalCpus * {slot_mb} <= TARGET.Memory, TARGET.TotalCpus, "
@@ -609,10 +621,12 @@ def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int |
     return "\n".join([
         "universe = vanilla", "executable = /bin/bash", "transfer_executable = false",
         f'arguments = "{job_dir}/job.sh {job_dir} condor"', "should_transfer_files = NO", "request_cpus = 1",
-        f"requirements = ({release}) && (TotalCpus >= {cpus}) && (Memory >= {mem_mb})",
+        f"requirements = ({release}) && (TotalCpus >= {cpus}) && (Memory >= {mem_mb}) && (Disk >= {CONDOR_DISK_KB})"
+        + "".join(f' && (Machine != "{m}")' for m in CONDOR_EXCLUDE),
         "job_machine_attrs = Machine", f"rank = ifThenElse(TARGET.Machine =?= MY.MachineAttrMachine0, 0, {workers})",
         f"output = {job_dir}/condor.out", f"error = {job_dir}/condor.err", f"log = {job_dir}/condor.log",
         f'JobBatchName = "bc26-{job_id}"', "notification = never", f"periodic_release = {CONDOR_RELEASE}",
+        *([f'+BC26Kind = "{kind}"'] if kind else []),
         *([f"periodic_remove = (JobStatus == 2) && (time() - EnteredCurrentStatus > {remove_s})"] if remove_s else []),
         "queue", ""])
 

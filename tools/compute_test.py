@@ -80,7 +80,8 @@ def test_condor_sub_takes_a_whole_machine() -> None:
     lines = sub.splitlines()
     assert "request_cpus = 1" in lines  # DoC's rule: the one static slot, the whole machine
     assert "should_transfer_files = NO" in lines
-    assert any(x.startswith("requirements = ") and "(TotalCpus >= 4)" in x and "(Memory >= 1700)" in x for x in lines)
+    assert any(x.startswith("requirements = ") and "(TotalCpus >= 4)" in x and "(Memory >= 1700)" in x
+               and "(Disk >= 4194304)" in x and '(Machine != "melchett.doc.ic.ac.uk")' in x for x in lines)
     assert "periodic_remove = (JobStatus == 2) && (time() - EnteredCurrentStatus > 600)" in lines
     assert lines[-1] == "queue" and sub.endswith("\n")
 
@@ -92,7 +93,9 @@ def test_checkpointed_time() -> None:
 def test_ssh_only_to_login_nodes() -> None:
     for host in (*remote.SLURM_HOSTS, remote.CPU_HOST):
         argv = remote.ssh_argv(host, "true")
-        assert "ControlMaster=auto" in argv and argv[-2:] == [host, "true"]
+        # only over the kept connection: no master of its own, and a proxy that fails if it tried to connect itself
+        assert "ControlMaster=no" in argv and "ProxyCommand=/bin/false" in argv and argv[-2:] == [host, "true"]
+        assert not any("%" in a for a in argv if a.startswith("ControlPath="))  # resolved: %C hashes the proxy
     sub = remote.ssh_argv(remote.SUBMIT, "true")
     assert not any("ControlMaster" in a for a in sub)  # a lab machine: one login a call
     for lab in ("beech17.doc.ic.ac.uk", "gallifrey.doc.ic.ac.uk", "ash05.doc.ic.ac.uk", "shell5"):
@@ -193,17 +196,19 @@ def fake_doc(monkeypatch: pytest.MonkeyPatch, cpucluster1: str | None) -> None:
     """Every read answered from the fixtures (cpucluster1's with CPUCLUSTER1; None: its login node unreachable), and
     no Slurm slot granted."""
     def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = remote.SLURM_HOSTS,
-              stream: int = 0) -> str:
+              stream: int = 0, timeout: float | None = None) -> str:
         if hosts == (remote.CPU_HOST,):
             if cpucluster1 is None:
                 raise remote.Unreachable("on cpucluster1.doc.ic.ac.uk: exit 255")
             return cpucluster1
         if cmd == "bash -s":
             return ""
+        if "==clock" in cmd:  # the shared view: no piece, no open run
+            return "==clock\n1000\n==pieces\n==open\n"
         return (FIX / ("condor_read.txt" if "condor_status" in cmd else "slurm_read.txt")).read_text()
     monkeypatch.setattr(B, "login", login)
-    from tools import compute, runs
-    monkeypatch.setattr(runs, "login", lambda cmd, *a, **k: "1000\n")  # the pool: no piece
+    monkeypatch.setattr(remote, "login", login)
+    from tools import compute
     monkeypatch.setattr(compute, "login", lambda cmd, *a, **k: "0\n")
 
 
@@ -333,7 +338,8 @@ def test_cancel_many_is_one_removal_a_scheduler(monkeypatch: pytest.MonkeyPatch)
     logins: list[str] = []
     removals: list[str] = []
 
-    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = (), stream: int = 0) -> str:
+    def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = (), stream: int = 0,
+              timeout: float | None = None) -> str:
         logins.append(cmd)
         if cmd.startswith("touch") or "; touch" in cmd:
             return "".join(f"{j} {bid[j]}\n" for j in ids if f"jobs/{j}/cancelled" in cmd)
@@ -367,3 +373,74 @@ def test_ids_have_six_hex_digits_and_old_ones_still_read() -> None:
         assert J.job(jid).where == "condor"
     assert R.run_dir("run-1119-180652-dd6e").endswith("dd6e") and R.run_dir("run-1119-180652-dd6e01")
     assert R.submitted("slurm-1119-180811-8b25aa") == R.submitted("slurm-1119-180811-8b25") > 0
+
+
+def condor_with(jobs: list[tuple[str, int, str]], machines: bool = True) -> str:
+    """The captured Condor read with our jobs JOBS ((id, JobStatus, BC26Kind) each), and every machine taken when not
+    MACHINES."""
+    read = (FIX / "condor_read.txt").read_text()
+    if not machines:
+        read = read.replace(", Unclaimed, ", ", Claimed, ")
+    rows = "".join(f"bc26-{j} {900 + i} {st} undefined false {kind or 'undefined'} undefined\n"
+                   for i, (j, st, kind) in enumerate(jobs))
+    return read.replace("==jobs\n", "==jobs\n" + rows)
+
+
+def test_queued_pieces_take_free_machines_first(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Our idle Condor jobs (any run's) will take free machines: offers leave out as many of the best ones, so runs
+    placing at once never queue more pieces than there are machines."""
+    from tools import runs as R
+    def offered(idle: int) -> list[int]:
+        read = condor_with([(f"condor-1119-000000-{i:04x}", 1, "k") for i in range(idle)])
+        monkeypatch.setattr(remote, "login", lambda cmd, *a, **k: read)
+        remote.forget()
+        return [o.slots for o in R.offers(("condor",), 1, 1700, 600, [])]
+    every = offered(0)
+    assert len(every) > 20
+    assert offered(5) == every[5:]
+    assert offered(len(every) + 40) == []
+
+
+def test_queued_pieces_wait_at_most_four_of_a_kind(monkeypatch: pytest.MonkeyPatch,
+                                                    capsys: pytest.CaptureFixture[str]) -> None:
+    """With no machine free, a run's placement queues pieces only up to QUEUED_PIECES of its kind over every run, and
+    a run whose kind already has them gets none and isn't refused: those pieces serve it."""
+    from tools import runs as R
+    s = R.Settings("run-1119-000000-abcd", 10, 1, 1700, ("condor",), 3600, None, None, False, ".", "c", (),
+                   True, R.POOL_V, "e", 0.0, "k", "")
+    kind = R.kind_of(s)
+    asked: list[int] = []
+    monkeypatch.setattr(R, "submit_pieces", lambda s, took, queued=0: (asked.append(queued),
+                                                                         [(f"q{i}", 1) for i in range(queued)])[1])
+
+    def place(idle_of_kind: int, other: int = 0) -> list[str]:
+        jobs = [(f"condor-1119-000000-{i:04x}", 1, kind) for i in range(idle_of_kind)]
+        jobs += [(f"condor-1119-000001-{i:04x}", 1, "1-1700-other-v3") for i in range(other)]
+        read = condor_with(jobs, machines=False)
+        monkeypatch.setattr(remote, "login", lambda cmd, *a, **k: read)
+        remote.forget()
+        return R.place_pieces(s, 10)
+    assert len(place(0, other=50)) == R.QUEUED_PIECES  # other kinds' queued pieces don't serve this run
+    assert len(place(1)) == R.QUEUED_PIECES - 1
+    assert place(R.QUEUED_PIECES) == [] and asked[-1] == R.QUEUED_PIECES - 1
+    assert f"{R.QUEUED_PIECES} pieces of its kind wait in Condor's queue: no more" in capsys.readouterr().err
+
+
+def test_an_unread_pool_adds_no_piece(monkeypatch: pytest.MonkeyPatch) -> None:
+    from tools import runs as R
+    s = R.Settings("run-1119-000000-abcd", 10, 1, 1700, ("condor",), 3600, None, None, False, ".", "c", (),
+                   True, R.POOL_V, "e", 0.0, "k", "")
+
+    def unread(s: R.Settings) -> tuple[int, int]:
+        raise remote.Unreachable("on gpucluster2: no answer within 40 s")
+    monkeypatch.setattr(R, "pool_free", unread)
+    monkeypatch.setattr(R, "place_pieces", lambda s, need: pytest.fail("placed blind"))
+    assert R.place(s, 10) == []
+
+
+def test_condor_pieces_say_their_kind() -> None:
+    sub = B.condor_sub("/vol/x/jobs/condor-1", "condor-1", 1, 1700, 1700, None, "1-1700-e-v3")
+    assert '+BC26Kind = "1-1700-e-v3"' in sub.splitlines()
+    c = B.parse_condor(condor_with([("condor-1119-000000-abcd", 5, "1-1700-e-v3")]).replace(
+        " undefined\n", " Held by a test\n"))
+    assert c.jobs[0].kind == "1-1700-e-v3" and c.jobs[0].state == "held" and c.jobs[0].hold_reason == "Held by a test"

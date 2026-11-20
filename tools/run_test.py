@@ -9,6 +9,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -169,6 +170,67 @@ def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]
     assert p.returncode == 0 and p.stdout.startswith("1 jobs and 2 runs deleted"), p.stdout + p.stderr
     assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "running"]
     assert [x.name for x in (root / "runs").iterdir()] == ["run-1118-000000-open"]
+    manifest = (root / "MANIFEST").read_text()
+    assert all(f"\n{name} | " in manifest for name in ("jobs", "runs", "pool", "cas", "runtime"))
+    (root / "stray").mkdir()  # an entry no tool notes
+    p = tool(repo, env, "compute", "sweep")
+    assert "not in the manifest: stray" in p.stdout, p.stdout + p.stderr
+
+
+def fake_queues(tmp: Path, env: dict[str, str], condor: str = "") -> dict[str, str]:
+    """squeue answering no job and condor_q answering CONDOR, on PATH."""
+    b = tmp / "bin"
+    b.mkdir(exist_ok=True)
+    (b / "squeue").write_text("#!/bin/bash\ntrue\n")
+    (b / "condor_q").write_text(f"#!/bin/bash\nprintf '%b' {json.dumps(condor)}\n")
+    for f in b.iterdir():
+        f.chmod(0o755)
+    return dict(env, PATH=f"{b}:{env['PATH']}")
+
+
+def test_empty_deletes_the_workspace_only_when_nothing_uses_it(world: tuple[Path, dict[str, str]],
+                                                               tmp_path: Path) -> None:
+    repo, env = world
+    root = Path(env["BC26_LOCAL_REMOTE"])
+    run = root / "runs" / "run-1119-000000-open"
+    (run / "done").mkdir(parents=True)
+    (root / "pool" / "open").mkdir(parents=True)
+    (root / "pool" / "open" / run.name).touch()
+    (root / "cas" / "x").mkdir(parents=True)
+    for i in range(30):
+        (root / "jobs" / f"condor-1119-000000-{i:04x}").mkdir(parents=True)
+    e = fake_queues(tmp_path, env, f"bc26-condor-1119-000000-0001, 1, {root}/jobs/condor-1119-000000-0001/job.sh x\n")
+    p = tool(repo, e, "compute", "empty", "--yes")
+    assert p.returncode == 0 and "in use, nothing deleted" in p.stdout, p.stdout + p.stderr
+    assert "1 jobs of ours use it" in p.stdout
+    assert "2 open runs there changed in the last 60 minutes: runs/ (a run made), run-1119-000000-open" in p.stdout
+    (run / "closed").touch()
+    subprocess.run(["touch", "-d", "2 hours ago", str(root / "runs")], check=True)
+    e = fake_queues(tmp_path, env)
+    p = tool(repo, e, "compute", "empty")
+    assert "would delete everything" in p.stdout and (root / "jobs").exists(), p.stdout + p.stderr
+    tool(repo, e, "compute", "sweep")
+    p = tool(repo, e, "compute", "empty", "--yes")
+    assert p.returncode == 0 and "emptied" in p.stdout, p.stdout + p.stderr
+    assert [x.name for x in root.iterdir()] == ["MANIFEST"]
+
+
+def test_the_old_tree_goes_once_nothing_uses_it(world: tuple[Path, dict[str, str]], tmp_path: Path) -> None:
+    repo, env = world
+    old = Path(env["BC26_LOCAL_REMOTE"] + ".old")
+    for i in range(900):  # more than one step's entries
+        (old / "jobs" / f"condor-1118-000000-{i:04x}").mkdir(parents=True)
+    (old / "pool" / "pieces").mkdir(parents=True)
+    (old / "runs").mkdir()
+    subprocess.run(["touch", "-d", "2 hours ago", str(old / "runs")], check=True)
+    e = fake_queues(tmp_path, env, f"bc26-condor-1118-000000-0001, 2, {old}/jobs/condor-1118-000000-0001/job.sh x\n")
+    p = tool(repo, e, "compute", "old-tree", "--yes")
+    assert "in use, nothing deleted" in p.stdout and old.exists(), p.stdout + p.stderr
+    e = fake_queues(tmp_path, env)
+    p = tool(repo, e, "compute", "old-tree")
+    assert "nothing uses" in p.stdout and "jobs: 902 entries" in p.stdout, p.stdout + p.stderr
+    p = tool(repo, e, "compute", "old-tree", "--yes")
+    assert p.returncode == 0 and "deleted in 3 steps" in p.stdout and not old.exists(), p.stdout + p.stderr
 
 
 # ---- the pool ----
@@ -192,6 +254,12 @@ def piece_states(remote: Path) -> list[dict[str, object]]:
     return out
 
 
+def seen() -> None:
+    """A change on the stand-in volume is in the tools' shared view once the view is older than its MAX_AGE_S (0.5 s
+    on the stand-in)."""
+    time.sleep(0.7)
+
+
 def test_a_new_run_takes_live_pieces_free_slots(world: tuple[Path, dict[str, str]]) -> None:
     repo, env = world
     remote = Path(env["BC26_LOCAL_REMOTE"])
@@ -200,6 +268,7 @@ def test_a_new_run_takes_live_pieces_free_slots(world: tuple[Path, dict[str, str
                  "sleep", "6")
     assert first.returncode == 0, first.stderr
     wait_for(lambda: any(p["running"] == 1 for p in piece_states(remote)), "the first run's piece runs its task")
+    seen()
     p = tool(repo, env, "run", "--where", "local", "--task-mem", "100M", "--json", "--each", "one.txt", "--", "bash",
              "-c", "echo served")
     assert p.returncode == 0, p.stderr
@@ -236,6 +305,7 @@ def test_cancelling_a_pooled_run_spares_the_tasks_its_pieces_serve(world: tuple[
                  "sleep", "30")
     rid1 = first.stdout.strip()
     wait_for(lambda: any(p["running"] == 1 for p in piece_states(remote)), "the first run's piece runs its task")
+    seen()
     second = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
                   "bash", "-c", "sleep 3; echo done")
     rid2 = second.stdout.strip()
@@ -261,14 +331,16 @@ def test_the_follower_adds_pieces_while_tasks_wait(world: tuple[Path, dict[str, 
     runtime = json.loads((remote / "runs" / p.stdout.splitlines()[0] / "run.json").read_text())["env"]
     fake = remote / "pool" / "pieces" / "local-1118-000000-fake"
     fake.write_text(json.dumps({"v": POOL_V, "job": fake.name, "backend": "local", "slots": 4, "running": 0,
-                                "task_cpus": 1, "task_mem_mb": 100, "env": runtime, "deadline": None}))
+                                "task_cpus": 1, "task_mem_mb": 100, "env": runtime, "deadline": None,
+                                "at": time.time()}))
+    seen()
     p = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "two.txt", "--", "true")
     assert p.returncode == 0 and "has 4 free slots: no new piece" in p.stderr, p.stderr
     assert (remote / "runs" / p.stdout.strip() / "placed").exists()  # its follower may add pieces now
     fake.unlink()  # that piece ended before taking them
     p = tool(repo, env, "compute", "wait", p.stdout.strip(), "--json", "--poll", "0.3")
     assert p.returncode == 0, p.stderr
-    assert "2 tasks wait, 0 free slots on 0 live pieces: pieces added (round 1)" in p.stderr
+    assert "2 tasks wait, 0 free slots on 0 live pieces: adding pieces (round 1)" in p.stderr
 
 
 def test_old_run_results_are_packed(tmp_path: Path) -> None:
@@ -316,3 +388,51 @@ def test_the_summary_is_written_before_the_cancels(world: tuple[Path, dict[str, 
                        timeout=BOUND_S)
     assert p.returncode == 0, p.stderr
     assert p.stdout.split("\n")[:2] == ["summary before the cancels: True", "1"], p.stdout
+
+
+def test_runs_share_main_and_ship_only_their_commits(world: tuple[Path, dict[str, str]]) -> None:
+    """main goes up once (base.bundle) for every run made while it stays; a run ships only what its commit adds (a
+    thin code.bundle), and its task sees its commit with main beside it. A closed run keeps no results there."""
+    repo, env = world
+    root = Path(env["BC26_LOCAL_REMOTE"])
+    (repo / "big.bin").write_bytes(os.urandom(1 << 20))  # main grows by a MB nobody's run changes
+    git(repo, "checkout", "-q", "main")
+    git(repo, "add", "big.bin")
+    git(repo, "commit", "-qm", "big")
+    git(repo, "checkout", "-qb", "feature")
+    said = []
+    for i in range(2):
+        (repo / "mine.txt").write_text(f"change {i}\n")
+        git(repo, "add", "mine.txt")
+        git(repo, "commit", "-qm", f"change {i}")
+        p = tool(repo, env, "run", "--where", "local", "--json", "--each", "mine.txt", "--", "bash", "-c",
+                 'cat mine.txt; git log --format=%s -1 main; git log --format=%s -1')
+        assert p.returncode == 0, p.stderr
+        rid = p.stdout.splitlines()[0]
+        said.append(p.stderr)
+        assert (repo / "runs" / rid / "0" / "log").read_text() == f"change {i}\nbig\nchange {i}\n"
+        assert sorted(x.name for x in (root / "runs" / rid).iterdir() if x.name in ("done", "claims", "tasks.jsonl")) \
+            == []  # its results are here, not there
+    blobs = sorted(x.name.split("-")[0] for x in (root / "cas").iterdir())
+    assert blobs == ["base", "code", "code"]  # one main, two thin bundles
+    thin = [x.stat().st_size for x in (root / "cas").iterdir() if x.name.startswith("code-")]
+    assert max(thin) < 20_000
+    assert "its code (1." in said[0] and "its code (0.0 MB)" in said[1]  # the second run sent its commit alone
+
+
+def test_a_full_workspace_refuses_a_new_run(monkeypatch, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+    import pytest
+
+    from tools import compute, remote, workspace
+    sizes = [50e9, 45e9]
+    swept: list[bool] = []
+    monkeypatch.setattr(workspace, "used_bytes", lambda: int(sizes.pop(0)))
+    monkeypatch.setattr(compute, "sweep", lambda force=True: swept.append(force) or "")
+    with pytest.raises(remote.Refused, match="holds 45.0 GB of its 55 GB quota"):
+        workspace.check_room()
+    assert swept == [True]  # a sweep first
+    sizes[:] = [50e9, 12e9]
+    workspace.check_room()  # the sweep made room
+    sizes[:] = [3e9]
+    workspace.check_room()
+    assert swept == [True, True]

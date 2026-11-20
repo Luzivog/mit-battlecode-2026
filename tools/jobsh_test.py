@@ -146,9 +146,10 @@ def wait_started(d: Path) -> None:
     time.sleep(0.3)
 
 
-@pytest.mark.parametrize("backend,want", [("local", "143"), ("condor", "")])
+@pytest.mark.parametrize("backend,want", [("local", "143")] * 6 + [("condor", "")])
 def test_sigterm_ends_it(tmp_path: Path, repo: tuple[Path, str], backend: str, want: str) -> None:
-    """A cancel's SIGTERM reaches the command; on Condor (an eviction) no exit file, since Condor runs it again."""
+    """A cancel's SIGTERM reaches the command; on Condor (an eviction) no exit file, since Condor runs it again. Six
+    times: a second wait for a command already waited for answered 127, which went into `exit` one time in three."""
     d = make_job(tmp_path, repo, ["sleep", "30"])
     p = subprocess.Popen(["bash", str(d / "job.sh"), str(d), backend], env=clean_env())
     wait_started(d)

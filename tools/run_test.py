@@ -243,15 +243,9 @@ def wait_for(cond, what: str) -> None:  # type: ignore[no-untyped-def]
 
 
 def piece_states(remote: Path) -> list[dict[str, object]]:
+    from tools import view
     d = remote / "pool" / "pieces"
-    out = []
-    for f in (d.iterdir() if d.exists() else []):
-        if not f.name.startswith("."):
-            try:
-                out.append(json.loads(f.read_text()))
-            except ValueError:
-                pass
-    return out
+    return [st for f in (d.iterdir() if d.exists() else []) if (st := view.parse_state(f.name))]
 
 
 def seen() -> None:
@@ -329,10 +323,10 @@ def test_the_follower_adds_pieces_while_tasks_wait(world: tuple[Path, dict[str, 
     p = tool(repo, env, "run", "--where", "local", "--json", "--task-mem", "100M", "--each", "two.txt", "--", "true")
     assert p.returncode == 0, p.stderr
     runtime = json.loads((remote / "runs" / p.stdout.splitlines()[0] / "run.json").read_text())["env"]
-    fake = remote / "pool" / "pieces" / "local-1118-000000-fake"
-    fake.write_text(json.dumps({"v": POOL_V, "job": fake.name, "backend": "local", "slots": 4, "running": 0,
-                                "task_cpus": 1, "task_mem_mb": 100, "env": runtime, "deadline": None,
-                                "at": time.time()}))
+    from tools.piece import state_name
+    fake = remote / "pool" / "pieces" / state_name("local-1118-000000-abcd", 4, 0, 1, 100, runtime, None, None,
+                                                   time.time())
+    fake.touch()
     seen()
     p = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "two.txt", "--", "true")
     assert p.returncode == 0 and "has 4 free slots: no new piece" in p.stderr, p.stderr

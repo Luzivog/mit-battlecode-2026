@@ -62,10 +62,11 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
             return e
 
     remote.SLOT_WAIT_S = view.LOCK_WAIT_S = STATUS_WAIT_S  # a busy machine makes status say so, not wait
+    remote.STALE_OK = True  # another process's read under way: the last one, not a wait
     age = remote.CACHE_S  # every read below shared with this machine's other tools: one login each at most
     with ThreadPoolExecutor(4) as pool:
         fc, fs, fk = (pool.submit(safe, lambda f=f: f(age)) for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
-        fv = pool.submit(safe, view.get)
+        fv = pool.submit(safe, lambda: view.get(wait=False))  # another process's refresh: the last snapshot
         c, s, k, v = fc.result(), fs.result(), fk.result(), fv.result()
     notes: list[str] = []
     free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes, max_age=age)]
@@ -100,7 +101,8 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         pieces, _ = v.pool()
         live = [p for p in pieces if p.get("live") and isinstance(p.get("slots"), int)
                 and isinstance(p.get("running"), int)]
-        out["pool"] = {"pieces": len(live), "slots": sum(int(str(p["slots"])) for p in live),
+        out["pool"] = {"age_s": round(time.time() - v.at, 1), "pieces": len(live),
+                       "slots": sum(int(str(p["slots"])) for p in live),
                        "running": sum(int(str(p["running"])) for p in live), "open_runs": len(v.open_runs()),
                        "by_backend": {w: sum(1 for p in live if p.get("backend") == w) for w in B.WHERES}}
     if as_json:
@@ -149,7 +151,8 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
     pd = out["pool"]
     assert isinstance(pd, dict)
     print(f"Pool: unread: {pd['error']}" if "error" in pd else
-          f"Pool: {pd['pieces']} live pieces, {pd['running']} of {pd['slots']} slots running, {pd['open_runs']} open "
+          f"Pool ({pd['age_s']:.0f} s ago): {pd['pieces']} live pieces, {pd['running']} of {pd['slots']} slots running, "
+          f"{pd['open_runs']} open "
           "runs")
     print("Our jobs:" + ("\n" + "\n".join(rows) if rows else " none"))
 

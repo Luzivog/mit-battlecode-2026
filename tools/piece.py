@@ -16,8 +16,9 @@ oldest first among equals: a small run submitted behind a big one gets the next 
 since a run's running count only rises when it is served and an older run wins every tie. Another run's tasks run in
 that run's own checkout, made once a content (its commit and its shipped files) in the piece's scratch, with that
 run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
-state (slots, running, task size, runtime, deadline, its time) is POOL/pieces/JOB_ID, written when it changes (at
-most every STATE_S, at once when its free slots reach or leave 0) and every STATE_BEAT_S, removed at its end:
+state (slots, running, task size, runtime, deadline, its time) is the name of an empty file in POOL/pieces
+(state_name), renamed when it changes (at most every STATE_S, at once when its free slots reach or leave 0) and every
+STATE_BEAT_S, removed at its end:
 `tools/run` counts the live pieces' free slots from it (tools/view.py: a piece its scheduler no longer lists is dead,
 and its file goes).
 
@@ -64,9 +65,9 @@ FULL_S = 60.0  # a run found with nothing claimable is looked at again after thi
 # from a dead piece's, after STALE_S, or a stopped task's)
 STALE_CHECK_S = 120.0  # a run's claims are read for dead pieces' at most this often
 CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
-# The piece's state file: a change is written at most every STATE_S (at once when it starts, or when its free slots
-# reach or leave 0), an unchanged state every STATE_BEAT_S. Rewritten every 5 s, 325 such files took a reader 8 s on
-# CephFS (19 Nov): a file another machine just wrote costs a read 30 ms there.
+# The piece's state, the name of an empty file (state_name): a change is renamed in at most every STATE_S (at once when
+# it starts, or when its free slots reach or leave 0), an unchanged state every STATE_BEAT_S. A state in a file's
+# content cost a reader 16 ms a file on CephFS (236 pieces: 3.9 s), a listing of the folder 0.2 s.
 STATE_S = 30.0
 STATE_BEAT_S = 600.0
 MIN_LEFT_S = 1200.0  # a piece with a deadline takes another run's task only with this long left (or half its limit)
@@ -75,6 +76,16 @@ CHECKOUTS = 4  # other runs' checkouts kept unused in scratch (beyond those task
 DISK_MIN_MB = int(os.environ.get("BC26_DISK_MIN_MB", "2048"))
 GIVE_BACK = 75  # a task's code saying its host can't run it (EX_TEMPFAIL): its claim goes back, the piece stops
 USR1_LEAD_S = 120  # Slurm's SIGUSR1 comes this long before --time (tools/backends.py)
+
+
+def state_name(job: str, slots: int, running: int, task_cpus: int, task_mem_mb: int, env: str,
+               deadline: float | None, limit: float | None, at: float) -> str:
+    """A pooled piece's state as a file name, fields joined by commas: its job id, POOL_V, slots, running, task CPUs,
+    task memory, runtime, deadline and limit (epoch s and s, `-` for none), the time it was written (epoch s)."""
+    def num(x: float | None) -> str:
+        return "-" if x is None else str(int(x))
+    return ",".join([job, str(POOL_V), str(slots), str(running), str(task_cpus), str(task_mem_mb), env, num(deadline),
+                     num(limit), num(at)])
 
 
 def now_on(volume: Path, me: str) -> float:
@@ -159,6 +170,7 @@ class Piece:
         self.state_at = 0.0
         self.state_said = ""
         self.state_free = True
+        self.state_file = ""  # its state's current name in POOL/pieces
         self.stopping = ""
         self.refusing = ""  # why this piece takes no more tasks (its host can't run them), once a task said so
         self.low_disk = False
@@ -609,36 +621,37 @@ class Piece:
                 pass
 
     def write_state(self, force: bool = False) -> None:
-        """POOL/pieces/JOB_ID: what this piece holds, for tools/run's count of free slots (pooled pieces only)."""
+        """POOL/pieces/STATE: what this piece holds, for tools/run's count of free slots (pooled pieces only), in the
+        name of an empty file (state_name), renamed as it changes: a reader lists the folder and opens no file."""
         if not self.pooled:
             return
-        per: dict[str, int] = {}
-        for rid, _ in self.running:
-            per[rid] = per.get(rid, 0) + 1
-        said = json.dumps({"v": POOL_V, "job": self.me, "host": self.host, "backend": self.backend,
-                           "slots": self.slots, "running": len(self.running), "task_cpus": self.task_cpus,
-                           "task_mem_mb": self.task_mem, "env": self.meta.get("env"), "deadline": self.deadline,
-                           "limit": self.limit, "runs": per})
+        said = state_name(self.me, self.slots, len(self.running), self.task_cpus, self.task_mem,
+                          str(self.meta.get("env") or ""), self.deadline, self.limit, 0)
         now = time.monotonic()
         free = len(self.running) < self.slots
         due = (not self.state_at or free != self.state_free or now - self.state_at >= STATE_BEAT_S
                or (said != self.state_said and now - self.state_at >= STATE_S))
         if not (force or due):
             return
+        name = state_name(self.me, self.slots, len(self.running), self.task_cpus, self.task_mem,
+                          str(self.meta.get("env") or ""), self.deadline, self.limit, time.time())
+        d = self.pool / "pieces"
         try:
-            d = self.pool / "pieces"
             d.mkdir(parents=True, exist_ok=True)
-            tmp = d / f".{self.me}.{secrets.token_hex(3)}"
-            tmp.write_text(said[:-1] + f', "at": {time.time():.0f}}}\n')
-            os.rename(tmp, d / self.me)
+            try:
+                if not self.state_file:
+                    raise FileNotFoundError
+                os.rename(d / self.state_file, d / name)
+            except FileNotFoundError:  # its first, or one removed (taken for a dead piece's)
+                (d / name).touch()
         except OSError:
             return
-        self.state_at, self.state_said, self.state_free = now, said, free
+        self.state_file, self.state_at, self.state_said, self.state_free = name, now, said, free
 
     def drop_state(self) -> None:
-        if self.pooled:
+        if self.pooled and self.state_file:
             try:
-                os.unlink(self.pool / "pieces" / self.me)
+                os.unlink(self.pool / "pieces" / self.state_file)
             except OSError:
                 pass
 

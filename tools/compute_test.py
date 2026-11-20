@@ -444,3 +444,53 @@ def test_condor_pieces_say_their_kind() -> None:
     c = B.parse_condor(condor_with([("condor-1119-000000-abcd", 5, "1-1700-e-v3")]).replace(
         " undefined\n", " Held by a test\n"))
     assert c.jobs[0].kind == "1-1700-e-v3" and c.jobs[0].state == "held" and c.jobs[0].hold_reason == "Held by a test"
+
+
+def test_waiting_pieces_of_a_kind_stay_capped_however_many_runs_open(monkeypatch: pytest.MonkeyPatch,
+                                                                    capsys: pytest.CaptureFixture[str]) -> None:
+    """Ten runs placing one after another while the read shows every lab machine free: the pieces each queues are in
+    the next one's read (its submits started a new generation of reads), and together they never pass IDLE_CAP."""
+    from tools import runs as R
+    s = R.Settings("run-1119-000000-abcd", 400, 1, 1700, ("condor",), 3600, None, None, False, ".", "c", (),
+                   True, R.POOL_V, "e", 0.0, "k", "")
+    queued: list[tuple[str, int, str]] = []
+
+    def submit(s: R.Settings, took: list[R.Offer], q: int = 0) -> list[tuple[str, int]]:
+        new = [(f"condor-1120-0000{len(queued) + i:02d}-abcd", 1, R.kind_of(s)) for i in range(len(took) + q)]
+        queued.extend(new)
+        remote.forget()
+        return [(j, 16) for j, _, _ in new]
+    monkeypatch.setattr(R, "submit_pieces", submit)
+    monkeypatch.setattr(remote, "login", lambda cmd, *a, **k: condor_with(queued).replace(", Owner, ", ", Unclaimed, "))
+    remote.forget()
+    for _ in range(10):
+        R.place_pieces(s, 400)
+    assert len(queued) == R.IDLE_CAP
+    assert f"{R.IDLE_CAP} pieces of its kind wait in Condor's queue: no more" in capsys.readouterr().err
+
+
+def test_a_read_begun_before_a_submit_is_never_taken_after_it(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[str] = []
+
+    def slow(cmd: str, *a: object, **k: object) -> str:
+        calls.append(cmd)
+        if len(calls) == 1:
+            remote.forget()  # another process submitted while this read was under way
+            return "before the submit"
+        return "after the submit"
+    monkeypatch.setattr(remote, "login", slow)
+    assert remote.cached("condor_q") == "before the submit"  # its caller gets it...
+    assert remote.cached("condor_q") == "after the submit"  # ...but no later caller does
+
+
+def test_cpucluster1_full_today_is_a_wait_not_never(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Our allowance full now: the job waits, saying what is full; only what no node could ever give is refused."""
+    full = (FIX / "cpucluster1_read.txt").read_text().replace("MaxTRESPU=cpu=288(0),mem=512000(0)",
+                                                              "MaxTRESPU=cpu=288(288),mem=512000(510000)")
+    monkeypatch.setattr(B, "login", lambda cmd, *a, **k: full)
+    monkeypatch.setattr(remote, "login", lambda cmd, *a, **k: full)
+    remote.forget()
+    p = J.place("cpucluster1", 1, 2700, None)
+    assert "our CPUs 288/288" in p.note and "our memory 510000/512000 MB" in p.note and "waits in" in p.note
+    with pytest.raises(remote.Refused, match="can ever"):
+        J.place("cpucluster1", 64, 2700, None)  # 32 CPUs a job a node at most

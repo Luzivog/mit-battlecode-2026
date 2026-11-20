@@ -61,3 +61,34 @@ What the screen shows beyond the entries:
 | closeup | A, B | `KING_PATH` 1 | +0.125 both | A −0.087 [−0.228, +0.053], B −0.025 | `1120-065755-ab-65ad` |
 | insertmeowname | A, B | `KING_PATH` 1 | +0.125, +0.100 | +0.000, +0.013 | `1120-065755-ab-d9b5` |
 | gelcatinouscube | A | `CM_KING2_ROUND` 30 | +0.125 | +0.062 [−0.032, +0.157] | `1120-065757-ab-a07c` |
+
+## 3. WS2: the army cap per map
+
+From the 22017 screen: every map where a cap value read positive on both seats, and every map-seat where one read
++0.10 or more, the cap lines already taken left out (17 maps: Meow, QueenOfHearts, cheddarchokehold,
+constrictinglattice, externalsustenance, hatefullattice, holeinthewall, insertmeowname, isnotgold, jail,
+moonlitriverpark, shell, therearenowalls, trapped, uneruesansfin, where_are_you, worldshardestgame). None is 900 tiles
+or smaller, so `SPAWN_CAP_SMALL` never binds there; it was not played.
+
+Matrix WS3 (`SPAWN_CAP` 25, 30, 35, 50, 60; main 40), 100 cells a map, seed base 22019, against main `878973d9`:
+ref `1120-070420-ab-3602`, C30 `1120-070504-ab-ae2e`, C25 `1120-070542-ab-cb7b`, C35 `1120-070609-ab-3573`, C50
+`1120-070644-ab-3421`, C60 `1120-070713-ab-729c`. Caps 30 and 35 play the same games on every map: a rat costs 10 more
+every fourth rat, so both thresholds build the same army; the fit's K of 5 holds 4 distinct candidates.
+
+Picks: p_max < 0.05 (where_are_you A 30 +0.160, p_max 0.012; worldshardestgame B 25 +0.150, 0.040; hatefullattice A 60
++0.170, already booked), and one value positive on both seats (trapped 30 +0.100 / +0.100; cheddarchokehold 60 +0.090
+/ +0.150). Confirmed on seed base 22020 against main `bdb370f3` (the fifth book), the map alone, 100 cells:
+
+| map | cap | seat A | seat B | run |
+|---|---|---|---|---|
+| **worldshardestgame** | **25** | **+0.110 [+0.006, +0.214]** (88 / 77) | **+0.100 [+0.029, +0.171]** (97 / 87) | `1120-073911-ab-a7c9` |
+| where_are_you | 30 | +0.030 [−0.060, +0.120] | −0.020 | `1120-073908-ab-6488` |
+| trapped | 30 | +0.050 [−0.066, +0.166] | +0.100 [−0.017, +0.217] | `1120-073915-ab-95ab` |
+| cheddarchokehold | 60 | +0.040 [−0.033, +0.113] | +0.070 [−0.046, +0.186] | `1120-073916-ab-2880` |
+
+That confirmation was against a main without worldshardestgame's early second king (CM's `CM_KING2_ROUND` 30 and
+`KING2_SITE` on both seats, in the sixth book). On top of those four lines (reference `d1d75f2`, arm `a0bcafa`, the
+map alone, 120 cells, seed base 22021, `1120-074933-ab-772d`) the reference wins 119 of 120 on each seat and the cap
+loses: **A −0.100 [−0.159, −0.041] (107 / 119), B −0.092 [−0.148, −0.035] (108 / 119)**. Both answer the same
+starvation and do not add; the cap is not a line.
+

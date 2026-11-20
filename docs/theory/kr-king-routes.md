@@ -124,10 +124,21 @@ Proposed entries (book 4):
   kingofthehill, QueenOfHearts, diamond, longwayaround, popthecork: no candidate passes.
 - `KING_PATH` 0 plays as main: 1,000 `goal` cells, all identical (`1120-011153-ab-7024`, seed base 21004).
 
+KR2, the hand of a chirality-1 team-B king on ROTATIONAL maps by the half it starts in: `KING_HAND` 1 on the 33
+ROTATIONAL `goal` maps whose team-B king has chirality 1 and starts in the right half, 100 cells a map, seed base
+21013, against main 5f28842b (`book matrix kr2_rotb`; runs `1120-042309-ab-6f2c`, `1120-042412-ab-458c`;
+`D:pairruns.py`): seat B +0.006 [−0.004, +0.016] on 3,300 games (1,597 changed), seat A +0.006. No seat moves; the
+largest per-map reads (cheeseysquare −0.15, externalsustenance +0.09 on 100 games) are within 2.5 standard errors of
+0 over 33 maps. Closed. A chirality-0 team-B king learns the symmetry only when the rats find it, too late for its
+first routes (h5, §2), so a left-half rule for it cannot act at round 1; those map-seats stay book entries (SG's
+thehallway B and squaresaremodernart B).
+
 ## 5. Data and tools (`~/battlecode26-data/scratch/kr/`)
 
 - `MapChir.java` (`java -cp cls_tools:$(cat cp.txt) MapChir maps MAP...`): symmetry and each team's starting king (id,
   location, chirality) from the map files; `mapchir.txt`, `mapchir.json` for all of `maps/`.
 - `chir.py RUN`: a paired run by symmetry, team A's chirality and our seat (games, changed, ours, ref).
+- `pairruns.py REF ARM [SEAT]`: two runs on the same cells (a matrix's ref and variant), per seat and map, with a
+  bootstrap over maps.
 - `chg.py RUN`: the same by symmetry and seat only. `mapseat.py RUN [MIN_CHANGED]`: per map-seat, sorted, with a
   paired 95% interval. `runs.txt`: every run of this package.

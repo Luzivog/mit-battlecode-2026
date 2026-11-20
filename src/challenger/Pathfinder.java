@@ -380,19 +380,19 @@ class BugnavInstance {
             // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
             } else if(Tune.SG_LOOK_RIGHT != 0) {
-                if(rightBug.nextPathIndex > leftBug.nextPathIndex) {
-                                // indicate("advance left");
-            leftBug.outOfSight = false;
-            leftDone = !leftBug.advance();
-            // indicate(leftBug.pos);
-            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
-
-                } else {
+                if(leftBug.nextPathIndex > rightBug.nextPathIndex || leftBug.nextPathIndex == rightBug.nextPathIndex && Pathfinder.lookRight) {
                                 // indicate("advance right");
             rightBug.outOfSight = false;
             rightDone = !rightBug.advance();
             // indicate(rightBug.pos);
             // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
+
+                } else {
+                                // indicate("advance left");
+            leftBug.outOfSight = false;
+            leftDone = !leftBug.advance();
+            // indicate(leftBug.pos);
+            // rc.setIndicatorDot(leftBug.pos, 255, 0, 255);
 
                 }
             } else if(leftBug.nextPathIndex > rightBug.nextPathIndex) {
@@ -428,10 +428,15 @@ class BugnavInstance {
         // indicate(rightScore);
 
 
-        // SG_LOOK_RIGHT mirrors the left-first rules (advance order above, arrival, ties, the draw): docs/theory/sg-seat-gaps.md
+        // SG_LOOK_RIGHT: the hand main prefers (left) becomes Pathfinder.lookRight's, in the advance order above, the
+        // arrival, the score ties and the draw; 3 also takes the other bug's arrival (docs/theory/sg-seat-gaps.md)
         if(Tune.SG_LOOK_RIGHT != 0) {
-        if(rightBug.arrived) {
-                    var bug = rightBug;
+            var first = Pathfinder.lookRight ? rightBug : leftBug;
+            var second = Pathfinder.lookRight ? leftBug : rightBug;
+            double sf = Pathfinder.lookRight ? rightScore : leftScore;
+            double ss = Pathfinder.lookRight ? leftScore : rightScore;
+            if(first.arrived && (Tune.SG_LOOK_RIGHT != 3 || !second.arrived || first.nextPathIndex <= second.nextPathIndex)) {
+                        var bug = first;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
         } else {
@@ -474,8 +479,8 @@ class BugnavInstance {
         leftBug = null;
         rightBug = null;
 
-        } else if(rightBug.arrived) {
-                    var bug = leftBug;
+            } else if(Tune.SG_LOOK_RIGHT == 3 && second.arrived) {
+                        var bug = second;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
         } else {
@@ -518,8 +523,8 @@ class BugnavInstance {
         leftBug = null;
         rightBug = null;
 
-        } else if(rightBug.hitEdge != leftBug.hitEdge) {
-                    var bug = leftBug.hitEdge ? rightBug : leftBug;
+            } else if(first.hitEdge != second.hitEdge) {
+                        var bug = second.hitEdge ? first : second;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
         } else {
@@ -562,12 +567,11 @@ class BugnavInstance {
         leftBug = null;
         rightBug = null;
 
-        } else {
-            var better = rightScore < leftScore ? rightBug : leftBug;
-            var worse = rightScore < leftScore ? leftBug : rightBug;
-            if(!better.outOfSight && worse.outOfSight) {
-                // indicate("clear winner");
-                        var bug = better;
+            } else {
+                var better = sf < ss || Tune.SG_LOOK_RIGHT == 3 && sf == ss ? first : second;
+                var worse = better == first ? second : first;
+                if(!better.outOfSight && worse.outOfSight) {
+                            var bug = better;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
         } else {
@@ -610,16 +614,12 @@ class BugnavInstance {
         leftBug = null;
         rightBug = null;
 
-            } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
-                // indicate("unclear, guessing");
-                rightScore = Math.pow(rightScore, 15);
-                leftScore = Math.pow(leftScore, 15);
-                var total = rightScore + leftScore;
-                rightScore /= total;
-                leftScore /= total;
-                // indicate(rightScore);
-                // indicate(leftScore);
-                        var bug = Rng.mcg() < leftScore * 0x7fffffff ? rightBug : leftBug;
+                } else if(!better.outOfSight || myLoc.isAdjacentTo(pos)) {
+                    sf = Math.pow(sf, 15);
+                    ss = Math.pow(ss, 15);
+                    var total = sf + ss;
+                    ss /= total;
+                            var bug = Rng.mcg() < ss * 0x7fffffff ? first : second;
         if(bug.leftTurn) {
             guessedLeft[pos.y] |= 1l << pos.x;
         } else {
@@ -662,9 +662,8 @@ class BugnavInstance {
         leftBug = null;
         rightBug = null;
 
+                }
             }
-        }
-
         } else {
         if(leftBug.arrived) {
                     var bug = leftBug;
@@ -2069,10 +2068,33 @@ class BugnavInstance {
 }
 
 public class Pathfinder {
-    public static void init() {
+    // the rats' lookahead's preferred hand (Tune.SG_LOOK_RIGHT): 1 right; 2 right for team B, except a chirality-1 rat
+    // on a HORIZONTAL or ROTATIONAL map (its sensing order tells which, as for the king's hand); 3 right for team B
+    static boolean lookRight;
+
+    public static void init() throws GameActionException {
         if(time <= 2) {
             Config.dirtAllowed = true;
         }
+        if(Tune.SG_LOOK_RIGHT != 0) {
+            lookRight = Tune.SG_LOOK_RIGHT == 1 || team == Team.B;
+            if(Tune.SG_LOOK_RIGHT == 2 && lookRight && rc.senseRobot(rc.getID()).getChirality() == 1) {
+                lookRight = xReversedScan(rc.senseNearbyMapInfos(8));
+            }
+        }
+    }
+
+    // chirality 1 lists cells x descending on VERTICAL and ROTATIONAL maps, y descending on HORIZONTAL and ROTATIONAL;
+    // true for VERTICAL (x descending, y ascending within a column)
+    static boolean xReversedScan(MapInfo[] infos) {
+        boolean xDesc = false, yDesc = false;
+        for(int i = infos.length - 1; i > 0; i--) {
+            var a = infos[i - 1].getMapLocation();
+            var b = infos[i].getMapLocation();
+            if(a.x == b.x) yDesc = b.y < a.y;
+            else xDesc = b.x < a.x;
+        }
+        return xDesc && !yDesc;
     }
     static BugnavInstance bug;
     static int lastDist = 0;

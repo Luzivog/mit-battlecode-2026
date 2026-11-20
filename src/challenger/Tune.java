@@ -87,6 +87,8 @@ public final class Tune {
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
 
     // SG (docs/theory/sg-seat-gaps.md). The rats' bug lookahead (Pathfinder.doLookahead) prefers its left-hand bug:
-    // it advances it first on equal paths, takes only its arrival and breaks score ties to it; 1 mirrors each rule.
-    public static final int SG_LOOK_RIGHT = 0; // tune: 1 [0, 1] the rats' lookahead's preferred hand: 0 left, 1 right
+    // it advances it first on equal paths, takes only its arrival and breaks score ties to the other. 1 mirrors each
+    // rule; 2 mirrors them for team B except a chirality-1 rat on a HORIZONTAL or ROTATIONAL map; 3 takes either bug's
+    // arrival (the shorter path), breaks score ties to the preferred hand, and prefers right for team B.
+    public static final int SG_LOOK_RIGHT = 0; // tune: 1 [0, 3] the rats' lookahead's hand: 0 left (main), 1 right, 2 team B (as KING_HAND 7), 3 fixed, by team
 }

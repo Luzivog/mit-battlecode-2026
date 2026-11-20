@@ -92,4 +92,6 @@ public final class Tune {
     // chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0 king of team B knows the
     // symmetry once the rats find it.
     public static final int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
+    // 1: the king plans its walk to a mine or the centre over its own map (robot/king/KingPath, MS's KP3) instead of the bug.
+    public static final int KING_PATH = 0; // tune: 1 [0, 1] the king's route planner: 0 off (main), 1 on
 }

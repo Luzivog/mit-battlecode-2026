@@ -76,7 +76,7 @@ public final class MapInfo {
             RobotInfo r = bs[k];
             sb.append(k > 0 ? "," : "").append("{\"id\":").append(r.ID).append(",\"team\":\"").append(r.team)
                     .append("\",\"type\":\"").append(r.type).append("\",\"x\":").append(r.location.x)
-                    .append(",\"y\":").append(r.location.y).append('}');
+                    .append(",\"y\":").append(r.location.y).append(",\"chir\":").append(r.chirality).append('}');
         }
         sb.append("],\"cat_waypoints\":[");
         ArrayList<Integer> ids = m.getCatWaypointIDs();

@@ -180,6 +180,13 @@ public final class Book {
                         && d0 == 0x80300600c0080000L && d1 == 0x80fe300600c03L) return 13;
                 return 0;
             }
+            case 32407746 -> {
+                scan();
+                // asabovesobelow seat B
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x801803a07c000000L && d1 == 0x80f82f02a0e01L) return 51;
+                return 0;
+            }
             case 32669987 -> {
                 scan();
                 // TheHeist seat B
@@ -332,6 +339,10 @@ public final class Book {
             case 98 -> { // RUN seat A
                 symmetry = 1;
                 Tune.CM_CAT_HUNT_START = 500;
+            }
+            case 103 -> { // asabovesobelow seat B
+                symmetry = 2;
+                Tune.SG_LOOK_RIGHT = 1;
             }
             case 106 -> { // bed seat A
                 symmetry = 2;

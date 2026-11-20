@@ -29,3 +29,4 @@
 {"map": "cheddarchokehold", "seat": "both", "set": "MINES_KING2", "value": 3, "evidence": ["1119-222628-ab-3827", "1119-231244-ab-ca9c"], "by": "AT"}
 {"map": "t_minus_five_minutes", "seat": "both", "set": "SPAWN_RICH", "value": 1500, "evidence": ["1119-222650-ab-9629", "1119-225539-ab-8994"], "by": "AT"}
 {"map": "pipes", "seat": "both", "set": "MINES_KING2", "value": 7, "evidence": ["1119-231245-ab-1aa0", "1120-003847-ab-05f4"], "by": "AT"}
+{"map": "asabovesobelow", "seat": "B", "set": "SG_LOOK_RIGHT", "value": 1, "evidence": ["1120-001005-ab-1b69", "1120-011037-ab-db91", "1120-022013-ab-872f"], "by": "SG"}

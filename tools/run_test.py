@@ -219,24 +219,6 @@ def test_empty_deletes_the_workspace_only_when_nothing_uses_it(world: tuple[Path
     assert [x.name for x in root.iterdir()] == ["MANIFEST"]
 
 
-def test_the_old_tree_goes_once_nothing_uses_it(world: tuple[Path, dict[str, str]], tmp_path: Path) -> None:
-    repo, env = world
-    old = Path(env["BC26_LOCAL_REMOTE"] + ".old")
-    for i in range(900):  # more than one step's entries
-        (old / "jobs" / f"condor-1118-000000-{i:04x}").mkdir(parents=True)
-    (old / "pool" / "pieces").mkdir(parents=True)
-    (old / "runs").mkdir()
-    subprocess.run(["touch", "-d", "2 hours ago", str(old / "runs")], check=True)
-    e = fake_queues(tmp_path, env, f"bc26-condor-1118-000000-0001, 2, {old}/jobs/condor-1118-000000-0001/job.sh x\n")
-    p = tool(repo, e, "compute", "old-tree", "--yes")
-    assert "in use, nothing deleted" in p.stdout and old.exists(), p.stdout + p.stderr
-    e = fake_queues(tmp_path, env)
-    p = tool(repo, e, "compute", "old-tree")
-    assert "nothing uses" in p.stdout and "jobs: 902 entries" in p.stdout, p.stdout + p.stderr
-    p = tool(repo, e, "compute", "old-tree", "--yes")
-    assert p.returncode == 0 and "deleted in 3 steps" in p.stdout and not old.exists(), p.stdout + p.stderr
-
-
 # ---- the pool ----
 def wait_for(cond, what: str) -> None:  # type: ignore[no-untyped-def]
     import time

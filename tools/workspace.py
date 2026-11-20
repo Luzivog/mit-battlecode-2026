@@ -3,10 +3,9 @@ open run or a cache that makes jobs faster, and results live on clankerland. MAN
 top-level entry: what it is, the tool that writes it, how long an entry lives, what breaks if it is deleted. The tools
 write it (`tools/compute sweep` rewrites it and names any entry it doesn't list), never a person.
 
-`tools/compute empty` deletes the whole workspace, and `tools/compute old-tree` the tree of the folders' old home on
-/vol/bitbucket, once no job of ours (queued, running or held) has its folder there and no open run there changed in
-the last hour. Both
-say what they would delete and why they can't yet, and delete only with --yes, in bounded steps.
+`tools/compute empty` deletes the whole workspace once no job of ours (queued, running or held) has its folder there
+and no open run there changed in the last hour. It says what it would delete and why it can't yet, and deletes only
+with --yes, in bounded steps.
 """
 from __future__ import annotations
 
@@ -16,8 +15,6 @@ import shlex
 from tools.remote import (CONDOR, CPU_HOST, LOCAL, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, Refused, Unreachable, forget,
                           login, unmark_all)
 
-# where the folders were until 19 Nov, deleted by `tools/compute old-tree` (tests: a folder beside the stand-in)
-OLD_ROOT = f"{LOCAL}.old" if LOCAL else "/vol/bitbucket/user/bc26"
 QUOTA_GB = 55  # the workspace's quota (ws_allocate's)
 # A new run is refused while the workspace holds more than this (after one sweep): its uploads and the results of the
 # runs already open need the rest, and a write past the quota fails mid-run
@@ -91,7 +88,7 @@ ACTIVE_MIN = 60  # a run not closed whose folder, done/ or claims/ changed this 
 def active_runs(root: str) -> list[str]:
     """ROOT's open pooled runs (pool/open) not closed whose folder, results or claims changed in the last ACTIVE_MIN
     minutes, and `runs/` itself when a run was made there that recently. One read of a few folders: a walk of every
-    run folder outlasted its bound on /vol/bitbucket (8,398 of them)."""
+    run folder outlasts its bound when there are thousands."""
     out = login(f"cd {root} 2>/dev/null || exit 0; [ -n \"$(find runs -maxdepth 0 -mmin -{ACTIVE_MIN} 2>/dev/null)\" ] "
                 "&& echo 'runs/ (a run made)'; for f in pool/open/*; do r=${f##*/}; d=runs/$r; [ -e \"$f\" ] && "
                 f"[ ! -e \"$d/closed\" ] && [ -n \"$(find \"$d\" \"$d/done\" \"$d/claims\" -maxdepth 0 -mmin "
@@ -127,7 +124,7 @@ def entries(root: str) -> list[tuple[str, str]]:
 def delete_tree(root: str, keep: tuple[str, ...] = ()) -> int:
     """Everything under ROOT but KEEP deleted in steps of STEP_S at most (each deletes up to STEP_ENTRIES entries of
     each folder, deepest first through `rm -rf`; one cut short by its bound goes on in the next). The steps taken."""
-    ours = re.fullmatch(r"/vol/(gpudata|bitbucket)/user[/-][\w./-]+", root) or (LOCAL and root.startswith(LOCAL))
+    ours = re.fullmatch(r"/vol/gpudata/user-[\w./-]+", root) or (LOCAL and root.startswith(LOCAL))
     if not ours or ".." in root:
         raise Refused(f"{root}: not a tree of ours")
     skip = " ".join(f"! -name {shlex.quote(k)}" for k in keep)
@@ -158,19 +155,6 @@ def empty(yes: bool) -> str:
     forget()
     unmark_all()  # the runtime went with it: the next run puts it back
     return f"{REMOTE_ROOT} emptied in {steps} steps"
-
-
-def old_tree(yes: bool) -> str:
-    """OLD_ROOT deleted once no job of ours uses it and no run there is open; without YES, what it holds."""
-    why = busy(OLD_ROOT)
-    listing = "\n".join(f"  {name}: {size}" for name, size in entries(OLD_ROOT)) or "  (gone)"
-    if why:
-        return f"{OLD_ROOT} is in use, nothing deleted: " + "; ".join(why) + f"\n{listing}"
-    if not yes:
-        return f"nothing uses {OLD_ROOT}; it holds:\n{listing}\n`tools/compute old-tree --yes` deletes it"
-    steps = delete_tree(OLD_ROOT)
-    login(f"rmdir {OLD_ROOT} 2>/dev/null; true")
-    return f"{OLD_ROOT} deleted in {steps} steps"
 
 
 def used_bytes() -> int:

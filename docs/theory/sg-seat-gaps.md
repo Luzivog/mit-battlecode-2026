@@ -179,6 +179,28 @@ probe's other transformed parts (the micro's direction loops, spawn and site tie
 untried; a probe that mirrors only some of them must keep the whole team in one frame (shared array and squeaks hold
 locations), so it has to be built per module, not per unit type.
 
+## 8. SG3: what the mirror probe moves on Meow, knifefight, houseofcards, diamond, hellofromtheotherside
+
+- **Direction tables.** Almost every direction loop in the bot is unrolled by the generator (44 `{% for %}` loops over
+  `directions` in the templates: Pathfinder, CombatCommon, CombatTracker and the six move generators), so a runtime
+  table read by every robot covers only four loops (`BabyRat`'s cat-trap turn, `RatKing`'s, `LastCat`, `Util`'s
+  exploration helper). A table switch would leave the rest of the order untouched; it was not built.
+- **The micro's hand.** The generator orders the micro's candidate moves clockwise first relative to the facing
+  (`jinja.py`: `try_ord = [0, 4, 1, -1, 3, -3, 2, -2]`, `wide_related_map_center`), and `Util`'s related-direction
+  tables the same way: a hand that a reflection reverses and a rotation keeps, and all five map-seats are on
+  reflective maps. A probe generated with all of them mirrored (`sg_mh`), paired with main:
+
+| run | seed base | cells | Meow B | knifefight A | houseofcards B | diamond B | hello A |
+|---|---|---|---|---|---|---|---|
+| `1120-042625-ab-aa6b` | 22015 | 60 a map | −0.050 | −0.133 | +0.067 | **+0.150 [+0.012, +0.288]** | 0.000 |
+| `1120-043333-ab-477e` | 22016 | 80 a map | – | – | +0.037 (A −0.100) | +0.013 [−0.120, +0.145] | – |
+
+  It does not carry the probe's gain on Meow or knifefight, and its diamond read did not replicate.
+- **What is left in the probe's transform:** coordinate comparisons and ties inside the unrolled code (the
+  generator's fixed offsets, bitboard scans in bit order), the order the bot walks each sensed array (its own loops
+  index forward), the cats' bottom-left convention. Each sits inside generated code, so a switch for any of them is a
+  second copy of the generated module: the module-by-module rebuild. SG3 stops here; the five map-seats have no entry.
+
 ## 6. Data and tools (`~/battlecode26-data/scratch/sg/`)
 
 - `tools/seats.py LABEL=RUN[:ROLE]...`: per map our win rate by seat, patched maps folded onto their original.

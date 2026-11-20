@@ -2,7 +2,8 @@
 # The node side of tools/compute: `job.sh JOB_DIR BACKEND` (slurm, cpucluster1, condor; local in tests). The files
 # JOB_DIR holds are tools/jobs.py's docstring's (an interface: change them only together).
 #
-# It clones the submitted commit from code.bundle into scratch (deleted at the end), unpacks with.tgz into it, and runs
+# It clones the submitted commit from base.bundle (when there: main, shared by many runs) then code.bundle (when
+# there: what the commit adds to main) into scratch (deleted at the end), unpacks with.tgz into it, and runs
 # argv there with: JOB_ID, JOB_DIR, JOB_OUT and OUT (JOB_DIR/out, where results go), JOB_CPUS (the CPUs it may use),
 # JOB_MEM_MB (the memory it may use), `env`'s names (java and python3 first on PATH), and for a kit job BC_ENGINE_JARS
 # and BC_CLASSPATH (tools/kit.py). HOME and TMPDIR are scratch. Its output goes to JOB_DIR/log, cut at LOG_CAP bytes.
@@ -51,19 +52,23 @@ memory_() {
 	[ "${kills:-0}" = 0 ] || echo "== the kernel's OOM killer took $kills of this job's processes"
 }
 # Ended for good: its inputs go, and the exit file gets the code.
-done_() { memory_; rm -f "$dir/code.bundle" "$dir/with.tgz"; echo "$1" >"$dir/exit"; exit 0; }
+done_() { memory_; rm -f "$dir/base.bundle" "$dir/code.bundle" "$dir/with.tgz"; echo "$1" >"$dir/exit"; exit 0; }
 setup_() { echo "== setup failed: $1"; done_ 255; }
 scratch=$(mktemp -d "${TMPDIR:-/tmp}/bc26-job-XXXXXX") || setup_ "no scratch folder"
 trap 'trap "" TERM; rm -rf "$scratch"' EXIT
 read -r commit <"$dir/commit" || setup_ "no commit file"
 mkdir -p "$JOB_OUT" "$scratch/home" "$scratch/tmp" || setup_ "mkdir"
 code=$scratch/code
-# The bundle holds the commit and main: every head fetched by its hash, main kept as main (git log main works)
-{ git -c init.defaultBranch=job init -q "$code" &&
-	heads=$(git -C "$code" bundle list-heads "$dir/code.bundle") &&
-	git -C "$code" fetch -q "$dir/code.bundle" $(printf '%s\n' "$heads" | cut -d' ' -f1 | sort -u) &&
-	main=$(printf '%s\n' "$heads" | sed -n 's| refs/heads/main$||p') &&
-	{ [ -z "$main" ] || git -C "$code" update-ref refs/heads/main "$main"; } &&
+# The bundles hold the commit and main, base first (code.bundle may need its commits): every head fetched by its hash,
+# main kept as main (git log main works)
+fetch_() {
+	[ -s "$1" ] || return 0
+	heads=$(git -C "$code" bundle list-heads "$1") &&
+		git -C "$code" fetch -q "$1" $(printf '%s\n' "$heads" | cut -d' ' -f1 | sort -u) &&
+		main=$(printf '%s\n' "$heads" | sed -n 's| refs/heads/main$||p') &&
+		{ [ -z "$main" ] || git -C "$code" update-ref refs/heads/main "$main"; }
+}
+{ git -c init.defaultBranch=job init -q "$code" && fetch_ "$dir/base.bundle" && fetch_ "$dir/code.bundle" &&
 	git -C "$code" -c advice.detachedHead=false checkout -q --detach "$commit"; } || setup_ "checkout of $commit"
 if [ -s "$dir/with.tgz" ]; then
 	tar -xzf "$dir/with.tgz" -C "$code" || setup_ "unpacking with.tgz"
@@ -97,13 +102,21 @@ mkfifo "$scratch/fifo" || setup_ "mkfifo"
 	n=$(wc -c)
 	[ "$n" = 0 ] || printf '\n== log cut at %s bytes: %s more dropped\n' "$LOG_CAP" "$n"
 } <"$scratch/fifo" & cap=$!
-sig= pid=
-trap 'sig=USR1; kill -USR1 $pid 2>/dev/null' USR1
-trap 'sig=TERM; kill -TERM $pid 2>/dev/null' TERM
+sig= pid= intr=
+trap 'sig=USR1 intr=1; kill -USR1 $pid 2>/dev/null' USR1
+trap 'sig=TERM intr=1; kill -TERM $pid 2>/dev/null' TERM
 (cd "$code" && exec "${argv[@]}") >"$scratch/fifo" 2>&1 </dev/null & pid=$!
-# A trapped signal ends a wait early, so wait again until the command is gone; the last wait returns its status.
-while :; do wait $pid; rc=$?; kill -0 $pid 2>/dev/null || break; done
-wait $pid; rc=$?
+# A trapped signal ends a wait early (its status is the signal's, not the command's), so only then wait again, until
+# a wait returns the command's own status. A pid already waited for answers 127 (a trap that came just after the
+# command's own status): the status kept is that one.
+rc=
+while :; do
+	intr=
+	wait $pid; r=$?
+	[ "$r" = 127 ] && [ -n "$rc" ] && break
+	rc=$r
+	[ -n "$intr" ] || break
+done
 wait $cap
 echo "== $(date -u +%FT%TZ) exit $rc${sig:+ after SIG$sig}"
 # HOME is scratch, deleted with the job: a job that would end 0 having left a file there ends 253, naming it.

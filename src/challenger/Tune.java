@@ -9,7 +9,7 @@ public final class Tune {
     // PM (per-map tuning, docs/theory/pm-per-map.md): switches and constants for the book. Each default is main's.
     public static int PM_SYM = 0; // tune: 1 [0, 1] 1: on a book map-seat the robots know Book.symmetry from round 1 (0: they learn it)
     public static final int PM_SYM_B = 0; // tune: 1 [0, 1] 1: seat B's king reads the symmetry from its first scan's order (a general rule)
-    public static int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
+    public static int PM_COOP_HOLD = 0; // tune: 1 [0, 2] in cooperation, never deal a cat its last HP with one king (1, PC1 A2) or below three kings (2)
     public static int PM_SIEGE = 0; // tune: 1 [0, 2] E2b's siege spawns: no rat cap with an enemy in the king's vision (1), or more enemies than our rats there (2)
     public static final int PM_SKIP_FAILED = 0; // tune: 1 [0, 2] the coordinator skips mines whose formation timed out: 1 the last one (KF's T), 2 every one
     public static final int DIRT_ROUND = 100; // tune: 50 [0, 400] rats path through dirt (and dig it) from this round once global >= DIRT_CHEESE

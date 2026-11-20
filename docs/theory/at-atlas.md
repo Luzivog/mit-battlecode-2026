@@ -7,20 +7,23 @@ rate on that map-seat; on `goal` one map-seat weighs 1/190, so +0.19 there is +0
 
 ## 0. Summary
 
-1. **Confirmed entries: about +1.0 pp of `goal`** (round-2 effects only, so no selection bonus), §2:
-   KP3 king route planner on EscapeTheNight B (+0.38 pp), pocketsofcheese B (+0.17), houseofcards B (+0.04);
-   `MINES_KING2` 7 on toomuchcheese (+0.15) and wallsofparadis (+0.08), 3 on cheddarchokehold (+0.11);
-   `SPAWN_RICH` 1500 on t_minus_five_minutes (+0.08).
-2. **Map-seat effects are real for a few structural arms and constants, absent for the rest.** Of 261 per-base arms,
+1. **An effect measured on an old base does not carry to today's main.** Over 25 tested predictions the fresh-seed
+   effect on today's main was 0.72 of the atlas's (r +0.46). PC1's last-cat hold on TheHeist reversed (+0.26 in the
+   atlas from S4-era bases, −0.39 on the post-MC base); `SPAWN_RICH` 2500 on uneruesansfin (+0.12 in two screens) and
+   `MINES_KING2` 7 on RUN read 0 on today's main. Only a test against today's main (or the arm's newest base) counts.
+2. **Confirmed entries: about +1.3 pp of `goal`** (round-2 effects only, so no selection bonus), §2:
+   KP3 king route planner on EscapeTheNight B (+0.38 pp), RUN both seats (+0.19), pocketsofcheese B (+0.17),
+   houseofcards B (+0.04); `MINES_KING2` 7 on toomuchcheese (+0.15), wallsofparadis (+0.08), pipes (+0.03), 3 on
+   cheddarchokehold (+0.11); `SPAWN_RICH` 1500 on t_minus_five_minutes (+0.08), TheHeist (+0.05), safelycontained
+   (+0.04). K2 D' on bed against its own stale
+   base: B +0.57, A +0.19 (not yet on today's main).
+3. **Map-seat effects are real for a few structural arms and constants, absent for the rest.** Of 261 per-base arms,
    35 show heterogeneity beyond the sign-flip null at p < 1/31 (9 expected by chance); the strong ones act on kings,
    cooperation or spawning (KP3, PC1's last-cat hold, `MINES_KING2`, `SPAWN_RICH`). Two constants replicate per map
    across independent tune screens (`MINES_KING2` r +0.66 to +0.74 over s1, s2, s5; `SPAWN_RICH` +0.67 over s1, s5);
    the other eight shared constants do not (−0.24 to +0.35, mean ≈ 0).
-3. **Effects measured on old bases transfer about 70%.** Over 25 tested predictions the fresh-seed effect on today's
-   main was 0.72 of the atlas's (r +0.46); one entry reversed (PC1 on TheHeist, +0.26 → −0.39 after MC), and
-   `SPAWN_RICH` 2500 on uneruesansfin and `MINES_KING2` 7 on RUN read 0.
-4. **The whole shelf, gated, is worth about +1 to +1.5 pp out of sample** (§4.3): split-half +1.7 to +2.0 pp
-   within the recorded bases, times the 0.7 transfer. The confirmed entries already hold most of it.
+4. **The whole shelf, gated, is worth about +1.2 to +1.4 pp out of sample** (§4.3): split-half +1.7 to +2.0 pp
+   within the recorded bases, times the 0.72 transfer. The confirmed entries already hold most of it.
 5. Main's map-seat table now (§3): mean 0.830; worst EscapeTheNight B 0.06, houseofcards B 0.29, popthecork B 0.36,
    bed B 0.37. Only bed A moved clearly since W3's table (0.66 → 0.86).
 
@@ -66,22 +69,34 @@ variants of main `de6e5b8` (`tools/tune points at1`: mk7 `92e8328`, mk3 `a89d404
 | toomuchcheese | both | `MINES_KING2` | 7 | +0.205 [+0.161, +0.249] | +0.147 [+0.104, +0.191] | `1119-222609-ab-f5d6`, `1119-231244-ab-111b` |
 | wallsofparadis | both | `MINES_KING2` | 7 | +0.075 [+0.046, +0.104] | +0.075 [+0.047, +0.103] | same |
 | cheddarchokehold | both | `MINES_KING2` | 3 | +0.165 [+0.124, +0.206] | +0.102 [+0.066, +0.139] | `1119-222628-ab-3827`, `1119-231244-ab-ca9c` |
+| RUN | both | KP3 king route planner | on | +0.190 [+0.137, +0.243] | +0.182 [+0.138, +0.227] | `1119-231244-ab-b1f2`, `1120-003846-ab-59f9` |
+| houseofcards | B | KP3 king route planner | on | +0.150 [+0.064, +0.236] | +0.073 [+0.002, +0.145] (third base; the second read +0.040 [−0.035, +0.115]) | `1119-222443-ab-c11a`, `1120-003847-ab-58a8` (`1119-225701-ab-f186`) |
+| pipes | both | `MINES_KING2` | 7 | +0.047 [+0.023, +0.071] | +0.030 [+0.014, +0.046] | `1119-231245-ab-1aa0`, `1120-003847-ab-05f4` |
 | t_minus_five_minutes | both | `SPAWN_RICH` | 1500 | +0.068 [+0.027, +0.108] | +0.078 [+0.042, +0.115] | `1119-222650-ab-9629`, `1119-225539-ab-8994` |
+| safelycontained | both | `SPAWN_RICH` | 1500 | +0.023 [+0.002, +0.045] | +0.037 [+0.016, +0.059] | `1119-231245-ab-66da`, `1120-003847-ab-ef4d` |
+| TheHeist | both | `SPAWN_RICH` | 1500 | +0.050 [+0.001, +0.099] | +0.043 [+0.002, +0.083] | same |
 
 By seat: toomuchcheese A +0.240/+0.190, B +0.170/+0.105; cheddarchokehold A +0.110/+0.055, B +0.220/+0.150;
 wallsofparadis and t_minus_five_minutes level. KP3 leaves seat A of EscapeTheNight and pocketsofcheese unchanged
 (+0.007, +0.000/+0.013).
 
-**Round 1 passed, round 2 running:** KP3 RUN both +0.190 [+0.137, +0.243] (A +0.267, B +0.113; `1119-231244-ab-b1f2`);
-`MINES_KING2` 7 pipes +0.047 [+0.023, +0.071] (`1119-231245-ab-1aa0`); `SPAWN_RICH` 1500 warhammer +0.063 [+0.019,
-+0.108], peaceinourtime A +0.120 [+0.020, +0.220], safelycontained +0.023 [+0.002, +0.045], TheHeist +0.050 [+0.001,
-+0.099] (`1119-231245-ab-66da`). KP3 houseofcards: round 1 both +0.133 [+0.073, +0.192] (`1119-222443-ab-c11a`), round 2
-+0.052 [+0.000, +0.104] (`1119-225701-ab-f186`): a third base runs.
+RUN by seat: A +0.267/+0.205, B +0.113/+0.160. Every run here is against plain main (KP3: `419fa32`; constants:
+`de6e5b8`), never on top of a book entry.
+
+**Against the arm's own (stale) base only:** K2 D' (`t3/k2-proj`, `502c01d9` against `71402d9`, 34 merges behind
+main): bed B +0.505 [+0.422, +0.588] and +0.573 [+0.486, +0.661], bed A +0.155 [+0.084, +0.226] and +0.193 [+0.118,
++0.269] (`1120-004703-ab-2c89`, `1120-005256-ab-2bef`). Today's main already wins bed A 0.86 (that base: 0.76), B 0.37.
+
+**`SPAWN_RICH` 1500, second base (`1120-003847-ab-ef4d`, against plain main):** safelycontained +0.037 [+0.016, +0.059]
+(first +0.023 [+0.002, +0.045]) and TheHeist both seats +0.043 [+0.002, +0.083] (first +0.050 [+0.001, +0.099]; seat A
++0.090 [+0.034, +0.146], B −0.005) hold; warhammer +0.030 [−0.014, +0.074] (first +0.063) and peaceinourtime A +0.025
+[−0.069, +0.119] (first +0.120) do not. TheHeist's books 1 and 2 entries were not under these runs: the entry needs a
+measurement on top of them.
 
 **Failed on fresh seeds:** PC1's cooperation last-cat hold on TheHeist against its post-MC base, −0.390 [−0.449,
 −0.331] (`1119-222444-ab-1b90`; +0.31 in the atlas, from older bases); `SPAWN_RICH` 2500 on uneruesansfin −0.018 and
 rift +0.022 (`1119-222641-ab-d100`; +0.12 and +0.08 in the screens, which ran on older mains); `MINES_KING2` 7 on RUN
-and constrictinglattice (no game changed), diamond, neitheroptionisgood, where_are_you; KP3 on diamond, gelcatinouscube,
+(+0.000), constrictinglattice and neitheroptionisgood (no game changed), diamond, where_are_you; KP3 on diamond, gelcatinouscube,
 closeup (+0.04 to +0.06, intervals across 0).
 
 ## 3. Main's map-seat table now
@@ -164,16 +179,17 @@ flipped (10 replicates).
 | 0.08 | 42 | +2.0 | +0.0 ± 1.3 |
 
 This is within the arms' own bases. On today's main the fresh-seed effects were 0.72 of the atlas's (§0.3), so the
-whole shelf is worth about +1.2 to +1.4 pp; the confirmed entries hold +1.0. Each half sees half the games, so this
+whole shelf is worth about +1.2 to +1.4 pp; the confirmed entries hold +1.3. Each half sees half the games, so this
 reads low for the arms with few games, and the 1-sd null band is as wide as the gain.
 
 ### 4.4 Arms worth porting as switches, by confirmed gain
 
 | arm | branch, size | confirmed entries (pp of `goal`) | maps by agent |
 |---|---|---|---|
-| KP3: the king plans its route over its own map | `t3/ms-arm-kp3` (`2dbed577`, on main `419fa32`): 5 files, +568 −6 (`KingPath.java`, `CellTracker`, `KingMiningStrategy`) | EscapeTheNight B +0.38, pocketsofcheese B +0.17, houseofcards B +0.04; RUN pending | KR: EscapeTheNight, houseofcards (KR's `KING_HAND` 1 is the cheap alternative on EscapeTheNight B); SG: pocketsofcheese; CM: RUN |
-| `MINES_KING2` per map | `Tune.java`, needs a book-settable constant | toomuchcheese 7 +0.15, wallsofparadis 7 +0.08, cheddarchokehold 3 +0.11; pipes 7 pending | KR: cheddarchokehold; toomuchcheese, wallsofparadis, pipes: no agent's list |
-| `SPAWN_RICH` per map | `Tune.java`, book-settable constant | t_minus_five_minutes 1500 +0.08; warhammer, peaceinourtime, TheHeist, safelycontained pending | PM: warhammer, TheHeist; CM: peaceinourtime; t_minus_five_minutes, safelycontained: no agent's list |
+| KP3: the king plans its route over its own map | `t3/ms-arm-kp3` (`2dbed577`, on main `419fa32`): 5 files, +568 −6 (`KingPath.java`, `CellTracker`, `KingMiningStrategy`) | EscapeTheNight B +0.38, RUN both +0.19, pocketsofcheese B +0.17, houseofcards B +0.04 | KR: EscapeTheNight, houseofcards (KR's `KING_HAND` 1 is the cheap alternative on EscapeTheNight B); SG: pocketsofcheese; CM: RUN |
+| `MINES_KING2` per map | `Tune.java`, needs a book-settable constant | toomuchcheese 7 +0.15, wallsofparadis 7 +0.08, cheddarchokehold 3 +0.11, pipes 7 +0.03 | KR: cheddarchokehold; toomuchcheese, wallsofparadis, pipes: no agent's list |
+| K2 D': kings remember cat footprints, no mining step into a known lane (closed.md K2 D') | `t3/k2-proj` (`502c01d9`), 34 merges behind main: rebase and test on today's main first | bed B +0.30, A +0.10 against its own base | KR: bed |
+| `SPAWN_RICH` per map | `Tune.java`, book-settable constant | t_minus_five_minutes 1500 +0.08, TheHeist 1500 +0.05 (on plain main), safelycontained 1500 +0.04; warhammer and peaceinourtime A failed round 2 | PM: TheHeist, warhammer; CM: peaceinourtime; t_minus_five_minutes, safelycontained: no agent's list |
 
 Not worth porting from this data: PC1's last-cat hold (reversed on the newer base), the E2 rat-cap variants and the
 other arms main already holds (`excluded.txt`), and every micro or fight-weight arm (no map-seat structure).

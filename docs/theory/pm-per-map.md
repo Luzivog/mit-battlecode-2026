@@ -92,7 +92,7 @@ insertmeowname: chosen as the worst, they regressed.
 | `PM_SYM_B` (seat B, general) | `goal` | 24008, 1,000 | −0.002 [−0.015, +0.011]; seat B −0.004 ± 0.025; seat B where main has no symmetry by r300 −0.027 ± 0.044 |
 | `PM_SYM` | the 48 ROTATIONAL `goal` maps | 24004, 10 a map | −0.014 ± 0.027 |
 | `PM_COOP_HOLD` | TheHeist | 24003, 106 | −0.406 ± 0.104 |
-| `DIRT_ROUND` 0 / 50 (main 100) | therainbow, Excavation, DefaultSmall | 24014, 150 a map | Excavation −0.19 / −0.13 (both seats pooled), others within ±0.08, none significant |
+| `DIRT_ROUND` 0 / 50 (main 100) | therainbow, Excavation, DefaultSmall | 24014, 150 a map | Excavation −0.15 / −0.13 (both seats pooled), others within ±0.08, none significant |
 | `SPAWN_CAP` 60, `SPAWN_RICH` 1500, `MINES_KING2` 7 | the 8 other hard maps | 24011, 60 a map | no map-seat significant; `SPAWN_CAP` 60 down to −0.48 |
 | `PM_SIEGE` 1 / 2 | therainbow, DefaultSmall, Excavation, externalsustenance, warhammer | 24012, 100 a map | within ±0.06 except DefaultSmall S1 −0.14; externalsustenance S1 +0.05 did not confirm (+0.030 ± 0.035, 24013) |
 | `SPAWN_POOR_CUT` 0 / 20 (main 10) | therainbow, DefaultSmall, Excavation | 24005, 150 a map | −0.086 ± 0.041 / −0.369 ± 0.041; worse on each map |

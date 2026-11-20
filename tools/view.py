@@ -227,7 +227,7 @@ def get(runs: list[str] | None = None, jobs: list[str] | None = None) -> Snapsho
     _want(runs, jobs)
     s = _load()
     if s is None or time.time() - s.at > MAX_AGE_S or not s.covers(runs, jobs):
-        with remote._locked(remote.CLIENT / "view.lock", 3 * VIEW_S):
+        with remote.locked(remote.CLIENT / "view.lock", 3 * VIEW_S):
             s = _load()
             if s is None or time.time() - s.at > MAX_AGE_S or not s.covers(runs, jobs):
                 if s is not None and time.time() - s.at < MIN_GAP_S:

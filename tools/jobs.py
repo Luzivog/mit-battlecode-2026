@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from tools import backends as B
-from tools import kit, provision
+from tools import kit, provision, remote
 from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR,
                           Refused, forget, login, login_into, submit_host)
 
@@ -180,11 +180,21 @@ def ship_cas(blobs: dict[str, Callable[[], bytes]], hosts: tuple[str, ...]) -> l
     login finds those there (their times refreshed, for the sweep), the rest are made here and uploaded under a
     temporary name, renamed in whole. The names uploaded."""
     names = sorted(blobs)
-    have = login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(names)}; do "
-                 f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split()
-    sent = [n for n in names if n not in have]
-    for n in sent:
-        login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](), hosts)
+
+    def there(ns: list[str]) -> set[str]:
+        return set(login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(ns)}; do "
+                         f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split())
+    have = there(names)
+    sent = []
+    for n in (n for n in names if n not in have):
+        # one upload of a blob at a time on this machine (60 runs made at once each sent main's 35 MB): the one
+        # that waited finds it there
+        with remote.locked(remote.CLIENT / "ship" / n, remote.SLOT_WAIT_S):
+            if n in there([n]):
+                continue
+            login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](),
+                  hosts)
+            sent.append(n)
     return sent
 
 

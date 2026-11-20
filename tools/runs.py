@@ -372,7 +372,7 @@ def place_pieces(s: Settings, need: int) -> list[str]:
     pieces wait in its queue, QUEUED_PIECES of S's kind at most over every run: our pieces queued and running are
     bounded by what the backends can start. Refused when no piece could be submitted and none of S's kind waits."""
     try:
-        with remote._locked(remote.CLIENT / "place.lock", PLACE_WAIT_S):
+        with remote.locked(remote.CLIENT / "place.lock", PLACE_WAIT_S):
             return _place(s, need)
     except Unreachable as e:
         if not s.pool:

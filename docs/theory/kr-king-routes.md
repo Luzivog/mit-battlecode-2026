@@ -74,9 +74,39 @@ All paired with main on the same cells, `--remote`, `goal`.
   B +0.09; the worst thehallway B −0.13, therainbow B −0.10, mushroom B, squaresaremodernart B, worldshardestgame B
   −0.06. Candidates for book entries (KING_HAND 0 or 1 on one map-seat) are milestone 2's.
 
-## 4. Data and tools (`~/battlecode26-data/scratch/kr/`)
+## 4. Per map-seat routes (milestone 2)
+
+Candidates against main with `KING_HAND` 7 on the same cells, both seats (`tools/book/book matrix`, 30 cells a map;
+`fit`): KP `KING_PATH` 1 (MS's KP3 planner, `C:robot/king/KingPath.java`), L `KING_HAND` 0, R `KING_HAND` 1. Then the
+chosen value alone on its map on a fresh seed base (`D:mapseat.py`: per seat, paired 95% interval).
+
+- `kr_m2a`, 18 maps (the brief's, h7's moved seats, bed, RUN, cheddarchokehold), seed base 21005: runs ref
+  `1120-011244-ab-2b23`, L `1120-011444-ab-e6b2`, R `1120-011618-ab-13ad`, KP `1120-011719-ab-619e`.
+- `kr_m2b`, the other 34 VERTICAL and HORIZONTAL `goal` maps, seed base 21008: ref `1120-015013-ab-70ac`, KP
+  `1120-015013-ab-c66e`, L `1120-015014-ab-f024`, R `1120-015014-ab-2a77`. No map-seat reaches p_max < 0.05.
+
+| map-seat | choice (raw, p_max) | confirmation | verdict |
+|---|---|---|---|
+| RUN A, KP | +0.333 [+0.180, +0.487], 0.001 (21005) | +0.233 [+0.107, +0.360] (21006, 60 cells, `1120-014142-ab-dd56`) | entry |
+| RUN B, KP | +0.167 (R +0.200, 0.043) | +0.150 [+0.038, +0.262] (same run) | entry |
+| houseofcards A, KP | +0.133, 0.26 | +0.133 [−0.017, +0.284] (21006); +0.125 [+0.017, +0.233] (21007, 120 cells, `1120-015006-ab-ea9e`) | entry |
+| houseofcards B, KP | +0.133, 0.24 | +0.133 [−0.038, +0.304] (21006); −0.025 [−0.132, +0.082] (21007) | no |
+| squaresaremodernart B, KP | +0.233, 0.09 | +0.083 [−0.087, +0.253] (21006) | no |
+| worldshardestgame A, KP | +0.200, 0.08 | +0.083 [−0.066, +0.233]; seat B −0.133 [−0.261, −0.006] (21006) | no |
+| therainbow A, KP | +0.167, 0.11 | +0.050 [−0.068, +0.168] (21006) | no |
+| mushroom B, L | +0.200, 0.06 | +0.067 [−0.064, +0.197] (21006, `1120-014142-ab-e4b3`) | no |
+
+- EscapeTheNight B and pocketsofcheese B: KP3 adds nothing over h7's right hand (+0.067, +0.033 on 30 cells); left
+  loses there (−0.567, −0.200). AT's KP3 gains on them (+0.72, +0.31) were over the old left hand.
+- thehallway B, therainbow B (h7's losses): left reads +0.033 and 0.000. No entry.
+- bed: KP and R lose seat A (−0.533, −0.500), as MS found; kingofthehill B: KP −0.300. AceOfSpades, asabovesobelow,
+  kingofthehill, QueenOfHearts, diamond, longwayaround, popthecork: no candidate passes.
+- `KING_PATH` 0 plays as main: 1,000 `goal` cells, all identical (`1120-011153-ab-7024`, seed base 21004).
+
+## 5. Data and tools (`~/battlecode26-data/scratch/kr/`)
 
 - `MapChir.java` (`java -cp cls_tools:$(cat cp.txt) MapChir maps MAP...`): symmetry and each team's starting king (id,
   location, chirality) from the map files; `mapchir.txt`, `mapchir.json` for all of `maps/`.
 - `chir.py RUN`: a paired run by symmetry, team A's chirality and our seat (games, changed, ours, ref).
-- `chg.py RUN`: the same by symmetry and seat only. `runs.txt`: every run of this package.
+- `chg.py RUN`: the same by symmetry and seat only. `mapseat.py RUN [MIN_CHANGED]`: per map-seat, sorted, with a
+  paired 95% interval. `runs.txt`: every run of this package.

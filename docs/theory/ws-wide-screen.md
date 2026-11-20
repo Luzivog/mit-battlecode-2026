@@ -86,5 +86,9 @@ Picks: p_max < 0.05 (where_are_you A 30 +0.160, p_max 0.012; worldshardestgame B
 | trapped | 30 | +0.050 [−0.066, +0.166] | +0.100 [−0.017, +0.217] | `1120-073915-ab-95ab` |
 | cheddarchokehold | 60 | +0.040 [−0.033, +0.113] | +0.070 [−0.046, +0.186] | `1120-073916-ab-2880` |
 
-worldshardestgame holds `CM_KING2_ROUND` 30 on both seats on main; the cap goes on top of it.
+That confirmation was against a main without worldshardestgame's early second king (CM's `CM_KING2_ROUND` 30 and
+`KING2_SITE` on both seats, in the sixth book). On top of those four lines (reference `d1d75f2`, arm `a0bcafa`, the
+map alone, 120 cells, seed base 22021, `1120-074933-ab-772d`) the reference wins 119 of 120 on each seat and the cap
+loses: **A −0.100 [−0.159, −0.041] (107 / 119), B −0.092 [−0.148, −0.035] (108 / 119)**. Both answer the same
+starvation and do not add; the cap is not a line.
 

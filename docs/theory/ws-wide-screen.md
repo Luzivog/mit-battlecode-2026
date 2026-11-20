@@ -116,3 +116,7 @@ seed base 22023 against main `31f0a2aa` (the sixth book), the map alone, 100 cel
 Lines: TheHeist both seats `SPAWN_RICH` 1000 (on top of PM's `PM_SYM` and `PM_COOP_HOLD` there), longwayaround A
 `MINES_KING2` 7 (on top of `SPAWN_CAP` 60).
 
+TheHeist B then gained AT's `IDLE_GOHOME` 0 (book 8). On top of it (reference: main `c5ddbdb1` plus that line,
+`4d0d4ef`; arm: the same plus `SPAWN_RICH` 1000 on TheHeist B, `469cab7`; the map alone, 120 cells, seed base 22024,
+`1120-115343-ab-114a`): seat B **+0.117 [+0.050, +0.183]** (117 / 103); seat A unchanged (99 / 99). The two add.
+

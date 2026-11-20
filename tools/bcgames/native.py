@@ -369,7 +369,10 @@ def build(plan: Plan) -> tuple[str, Path]:
         finally:
             fcntl.flock(lock, fcntl.LOCK_UN)
             lock.close()
-        gc()
+        try:
+            gc()
+        except OSError as e:  # the bound on bin/ is the next gc's: never a reason to play this run on Java
+            _say(f"gc of {NDATA / 'bin'}: {e}")
     why = bad(key)
     if why:
         raise BuildError(f"binary {key} is marked bad: {why}")
@@ -452,8 +455,21 @@ def hold(key: str) -> None:
 
 
 def gc(dry: bool = False) -> list[tuple[str, int]]:
-    """bin/ bounded (the module's docstring): the binaries removed (or, DRY, to be), with their bytes."""
+    """bin/ bounded (the module's docstring): the binaries removed (or, DRY, to be), with their bytes. One process
+    at a time (bin/.gc.lock; a second skips): a binary another gc removed while this one sized it raised
+    FileNotFoundError out of build(), and the runs waiting on that build played Java (21:46:09 on 19 Nov: three
+    processes released by one build's lock all ran gc at once)."""
     bins = NDATA / "bin"
+    lock = _flock(bins / ".gc.lock", block=False)
+    if lock is None:
+        return []
+    try:
+        return _gc(bins, dry)
+    finally:
+        lock.close()
+
+
+def _gc(bins: Path, dry: bool) -> list[tuple[str, int]]:
     try:
         found = [d for d in bins.iterdir() if d.is_dir() and not d.name.startswith(".")]
     except OSError:
@@ -468,7 +484,10 @@ def gc(dry: bool = False) -> list[tuple[str, int]]:
         return 0.0
 
     def size(d: Path) -> int:
-        return sum(f.stat().st_size for f in d.iterdir() if f.is_file())
+        try:
+            return sum(f.stat().st_size for f in d.iterdir() if f.is_file())
+        except OSError:  # removed meanwhile (a build's rename, a gc of an older version of this code)
+            return 0
 
     now = time.time()
     gone, kept, total = [], 0, 0

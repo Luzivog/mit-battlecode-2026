@@ -1,12 +1,13 @@
 """Jobs: one command on one remote allocation (a lab machine, a GPU-cluster CPU slot, a cpucluster1 allocation).
 
 A job is a folder, REMOTE_JOBS/ID, ID's first word its backend. Its files are job.sh's interface (change them only
-with it): `commit` (the hash), `code.bundle` (a git bundle of that commit and main), `argv` (the command's words,
+with it): `commit` (the hash), `code.bundle` (a git bundle of that commit and main; or, beside `base.bundle`, a bundle
+of main, only what the commit adds to it, absent when main holds the commit), `argv` (the command's words,
 each ended by NUL), `with.tgz` (gzip'd tar of files the commit lacks, unpacked into the checkout; absent when none),
 `env` (`NAME VALUE` lines job.sh exports; PATH's go first on PATH), `kit` (the engine's jars, a line each; a kit job's
 only), `exit` (empty until the job has ended for good, then its code), `log` (every attempt's output), `out/` (the
 command's $OUT), `backend-id` (Slurm's job id, or `SCHEDD CLUSTER` for Condor), `cancelled` (cancel asked its end),
-`run` (the run a piece serves, tools/runs.py). `code.bundle` and `with.tgz` go once the job has ended for good.
+`run` (the run a piece serves, tools/runs.py). The bundles and `with.tgz` go once the job has ended for good.
 
 Results come back to the worktree's runs/ID (gitignored).
 """
@@ -28,7 +29,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from tools import backends as B
-from tools import kit, provision
+from tools import kit, provision, remote
 from tools.remote import (CPU_HOST, ESC, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, CONDOR,
                           Refused, forget, login, login_into, submit_host)
 
@@ -44,7 +45,7 @@ HELD, ENDED_UNRECORDED = 3, 4  # wait's and logs -f's codes for a held job and o
 POLL_S = float(os.environ.get("BC26_POLL_S", "30")) if LOCAL else 30.0
 # a job its backend no longer lists, whose exit file a login node may not see yet (NFS caching); none here in tests
 GONE_GRACE_S = 0 if LOCAL else 120
-INPUTS = ("code.bundle", "with.tgz")
+INPUTS = ("base.bundle", "code.bundle", "with.tgz")
 LOG_CAP = 64 << 20  # bytes of a job's output kept in its log: a job's writes on the volume are bounded
 START_LINE = re.compile(r"^== .* start on ", re.M)
 
@@ -108,6 +109,25 @@ class Tree:
         finally:
             git(self.repo, "update-ref", "-d", ref)
 
+    @property
+    def in_main(self) -> bool:
+        """Main holds the commit: base.bundle alone carries it."""
+        return bool(self.main) and subprocess.run(["git", "-C", str(self.repo), "merge-base", "--is-ancestor",
+                                                   self.commit, self.main], capture_output=True).returncode == 0
+
+    def thin(self) -> bytes:
+        """A bundle of what the commit adds to main (beside base()'s: 35 MB of main a run became a few KB)."""
+        ref = f"refs/bc26-run/{secrets.token_hex(4)}"
+        git(self.repo, "update-ref", ref, self.commit)
+        try:
+            return git(self.repo, "bundle", "create", "-", ref, "--not", self.main)
+        finally:
+            git(self.repo, "update-ref", "-d", ref)
+
+    def base(self) -> bytes:
+        """A bundle of main, shared by every run made while main is this commit (named by it)."""
+        return git(self.repo, "bundle", "create", "-", "refs/heads/main")
+
 
 def tree_commit(repo: Path = REPO) -> Tree:
     """The working tree as a commit whose parent is HEAD, made with a copy of the index (nothing in the repo changes
@@ -160,11 +180,21 @@ def ship_cas(blobs: dict[str, Callable[[], bytes]], hosts: tuple[str, ...]) -> l
     login finds those there (their times refreshed, for the sweep), the rest are made here and uploaded under a
     temporary name, renamed in whole. The names uploaded."""
     names = sorted(blobs)
-    have = login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(names)}; do "
-                 f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split()
-    sent = [n for n in names if n not in have]
-    for n in sent:
-        login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](), hosts)
+
+    def there(ns: list[str]) -> set[str]:
+        return set(login(f"mkdir -p {REMOTE_CAS} && cd {REMOTE_CAS} && for f in {' '.join(ns)}; do "
+                         f"[ -s \"$f\" ] && touch \"$f\" && echo \"$f\"; done; true", hosts=hosts).split())
+    have = there(names)
+    sent = []
+    for n in (n for n in names if n not in have):
+        # one upload of a blob at a time on this machine (60 runs made at once each sent main's 35 MB): the one
+        # that waited finds it there
+        with remote.locked(remote.CLIENT / "ship" / n, remote.SLOT_WAIT_S):
+            if n in there([n]):
+                continue
+            login(f't=$(mktemp {REMOTE_CAS}/.{n}.XXXXXX) && cat > "$t" && mv -f "$t" {REMOTE_CAS}/{n}', blobs[n](),
+                  hosts)
+            sent.append(n)
     return sent
 
 

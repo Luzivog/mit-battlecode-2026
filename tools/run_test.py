@@ -388,3 +388,51 @@ def test_the_summary_is_written_before_the_cancels(world: tuple[Path, dict[str, 
                        timeout=BOUND_S)
     assert p.returncode == 0, p.stderr
     assert p.stdout.split("\n")[:2] == ["summary before the cancels: True", "1"], p.stdout
+
+
+def test_runs_share_main_and_ship_only_their_commits(world: tuple[Path, dict[str, str]]) -> None:
+    """main goes up once (base.bundle) for every run made while it stays; a run ships only what its commit adds (a
+    thin code.bundle), and its task sees its commit with main beside it. A closed run keeps no results there."""
+    repo, env = world
+    root = Path(env["BC26_LOCAL_REMOTE"])
+    (repo / "big.bin").write_bytes(os.urandom(1 << 20))  # main grows by a MB nobody's run changes
+    git(repo, "checkout", "-q", "main")
+    git(repo, "add", "big.bin")
+    git(repo, "commit", "-qm", "big")
+    git(repo, "checkout", "-qb", "feature")
+    said = []
+    for i in range(2):
+        (repo / "mine.txt").write_text(f"change {i}\n")
+        git(repo, "add", "mine.txt")
+        git(repo, "commit", "-qm", f"change {i}")
+        p = tool(repo, env, "run", "--where", "local", "--json", "--each", "mine.txt", "--", "bash", "-c",
+                 'cat mine.txt; git log --format=%s -1 main; git log --format=%s -1')
+        assert p.returncode == 0, p.stderr
+        rid = p.stdout.splitlines()[0]
+        said.append(p.stderr)
+        assert (repo / "runs" / rid / "0" / "log").read_text() == f"change {i}\nbig\nchange {i}\n"
+        assert sorted(x.name for x in (root / "runs" / rid).iterdir() if x.name in ("done", "claims", "tasks.jsonl")) \
+            == []  # its results are here, not there
+    blobs = sorted(x.name.split("-")[0] for x in (root / "cas").iterdir())
+    assert blobs == ["base", "code", "code"]  # one main, two thin bundles
+    thin = [x.stat().st_size for x in (root / "cas").iterdir() if x.name.startswith("code-")]
+    assert max(thin) < 20_000
+    assert "its code (1." in said[0] and "its code (0.0 MB)" in said[1]  # the second run sent its commit alone
+
+
+def test_a_full_workspace_refuses_a_new_run(monkeypatch, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+    import pytest
+
+    from tools import compute, remote, workspace
+    sizes = [50e9, 45e9]
+    swept: list[bool] = []
+    monkeypatch.setattr(workspace, "used_bytes", lambda: int(sizes.pop(0)))
+    monkeypatch.setattr(compute, "sweep", lambda force=True: swept.append(force) or "")
+    with pytest.raises(remote.Refused, match="holds 45.0 GB of its 55 GB quota"):
+        workspace.check_room()
+    assert swept == [True]  # a sweep first
+    sizes[:] = [50e9, 12e9]
+    workspace.check_room()  # the sweep made room
+    sizes[:] = [3e9]
+    workspace.check_room()
+    assert swept == [True, True]

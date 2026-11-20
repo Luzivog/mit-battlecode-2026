@@ -319,9 +319,6 @@ def main(argv: list[str] | None = None) -> int:
     em = sub.add_parser("empty", help="delete the whole workspace when no run is open and no job of ours is queued "
                         "(say what would go, without --yes)")
     em.add_argument("--yes", action="store_true")
-    ot = sub.add_parser("old-tree", help=f"delete {W.OLD_ROOT}, the folders' old home, once nothing uses it (say "
-                        "what holds it, without --yes)")
-    ot.add_argument("--yes", action="store_true")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "status":
@@ -343,8 +340,6 @@ def main(argv: list[str] | None = None) -> int:
             print(R.cancel(a.id) if R.is_run(a.id) else J.cancel(a.id))
         elif a.cmd == "empty":
             print(W.empty(a.yes))
-        elif a.cmd == "old-tree":
-            print(W.old_tree(a.yes))
         else:
             print(sweep())
     except Refused as e:

@@ -109,8 +109,7 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
   breaks if it goes. The tools write it (`tools/compute sweep`); a new kind of entry is added to `tools/workspace.py`'s
   `ENTRIES`, never put there by hand. Ended jobs and closed runs go after 6 hours (`tools/compute sweep`, hourly).
 - `tools/compute empty` says what the workspace holds and what still uses it; `--yes` deletes all of it once no job
-  of ours has its folder there and no open run there moved in the last hour. `tools/compute old-tree [--yes]` does
-  the same for the folders' old home, `/vol/bitbucket/user/bc26`.
+  of ours has its folder there and no open run there moved in the last hour.
 - Never work around a limit. If a backend refuses, report its exact error.
 
 ## Changing the tools

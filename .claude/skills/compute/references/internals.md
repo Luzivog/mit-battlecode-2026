@@ -18,7 +18,7 @@ agent's.
 | `tools/kit.py` | the game kit's classpath, here and on a node |
 | `tools/runs.py`, `tools/piece.py` | runs (client) and pieces (node); the pool |
 | `tools/view.py` | the remote state every tool here shares, read by one process at a time |
-| `tools/workspace.py` | the workspace's MANIFEST, `tools/compute empty`, `tools/compute old-tree` |
+| `tools/workspace.py` | the workspace's MANIFEST, `tools/compute empty` |
 | `tools/compute.py`, `tools/grid.py` | the CLIs `tools/compute` and `tools/run` |
 | `tools/kitgame` | a smoke game runner: the same game here and on a node |
 | `tools/fixtures/` | reads captured from DoC, the verification games, `launchcost.sh` |
@@ -299,7 +299,7 @@ three rounds at most. These are yours:
   files silent for an hour go. Never `chmod` anything open.
 - **No persistent data there.** Every entry is an open run's state or a cache (`tools/workspace.py`'s `ENTRIES`,
   written to `MANIFEST` by every sweep, which names any entry it doesn't list). `tools/compute empty --yes` deletes
-  the whole workspace, `tools/compute old-tree --yes` the old tree on /vol/bitbucket, each once no job of ours
+  the whole workspace once no job of ours
   (queued, running or held) has its folder there and no open pooled run there moved in the last hour (`busy`), in
   bounded steps (`STEP_S`, 400 entries of each folder a step).
 - **Quotas are facts.** The NFS home has a quota; nothing of ours writes to it (HOME is scratch in a job).

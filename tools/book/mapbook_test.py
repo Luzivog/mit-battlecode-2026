@@ -166,6 +166,17 @@ class Summary(unittest.TestCase):
         self.assertEqual(mb.summary({}), (0.0, 0.0, 0.0, 0))
 
 
+class Changed(unittest.TestCase):
+    def test_changed_seats(self):
+        old = book_of([{"map": "bed", "seat": "both", "set": "A", "value": 50, "evidence": []},
+                       {"map": "rift", "seat": "A", "set": "A", "value": 50, "evidence": []}])
+        new = book_of([{"map": "bed", "seat": "A", "set": "A", "value": 50, "evidence": []},
+                       {"map": "bed", "seat": "B", "set": "A", "value": 60, "evidence": []},
+                       {"map": "rift", "seat": "A", "set": "A", "value": 50, "evidence": []},
+                       {"map": "tiny", "seat": "B", "set": "B", "value": 1, "evidence": []}])
+        self.assertEqual(mb.changed_seats(new, old), {("bed", "B"), ("tiny", "B")})
+
+
 class PointOverBook(unittest.TestCase):
     def test_point_drops_the_entry_on_the_matrix_maps(self):
         book = mb.load()

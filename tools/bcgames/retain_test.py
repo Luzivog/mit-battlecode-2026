@@ -155,6 +155,26 @@ class Binaries(unittest.TestCase):
         p.wait()
         self.assertEqual([k for k, _ in native.gc()], ["held"])  # its process ended: no longer in use
 
+    def test_gc_runs_one_at_a_time_and_survives_a_vanished_binary(self):
+        native.KEEP, native.KEEP_S, native.KEEP_BYTES = 0, 0, 0
+        self.binary("old", 10)
+        lock = native._flock(self.tmp / "bin" / ".gc.lock")
+        try:
+            self.assertEqual(native.gc(), [])  # another process's gc runs: this one skips
+        finally:
+            lock.close()
+        real = Path.iterdir
+
+        def vanishing(d):  # the binary goes between the listing and its sizing
+            if d.name == "old":
+                raise FileNotFoundError(2, "No such file or directory", str(d))
+            return real(d)
+        Path.iterdir = vanishing
+        try:
+            native.gc()
+        finally:
+            Path.iterdir = real
+
     def test_hold_keeps_it_from_this_process_too(self):
         native.KEEP, native.KEEP_S, native.KEEP_BYTES = 0, 0, 0
         self.binary("mine", 10)

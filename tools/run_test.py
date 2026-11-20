@@ -146,7 +146,7 @@ def test_refusals(world: tuple[Path, dict[str, str]]) -> None:
     assert p.returncode == 2
 
 
-def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]) -> None:
+def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]], tmp_path: Path) -> None:
     repo, env = world
     root = Path(env["BC26_LOCAL_REMOTE"])
     for name, age in (("old", "10 days ago"), ("new", "1 hour ago")):
@@ -166,9 +166,13 @@ def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]
             subprocess.run(["touch", "-d", closed_age, str(d / "closed")], check=True)
         if run_age:
             subprocess.run(["touch", "-d", run_age, str(d), str(d / "done")], check=True)
+    env = fake_queues(tmp_path, env, "bc26-queued\n")  # one of the job folders is a job still queued
+    (root / "jobs" / "queued").mkdir()
+    (root / "jobs" / "queued" / "cancelled").touch()  # its cancel's removal failed
+    subprocess.run(["touch", "-d", "10 days ago", str(root / "jobs" / "queued" / "cancelled")], check=True)
     p = tool(repo, env, "compute", "sweep")
     assert p.returncode == 0 and p.stdout.startswith("1 jobs and 2 runs deleted"), p.stdout + p.stderr
-    assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "running"]
+    assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "queued", "running"]
     assert [x.name for x in (root / "runs").iterdir()] == ["run-1118-000000-open"]
     manifest = (root / "MANIFEST").read_text()
     assert all(f"\n{name} | " in manifest for name in ("jobs", "runs", "pool", "cas", "runtime"))
@@ -430,3 +434,16 @@ def test_a_full_workspace_refuses_a_new_run(monkeypatch, tmp_path: Path) -> None
     sizes[:] = [3e9]
     workspace.check_room()
     assert swept == [True, True]
+
+
+def test_an_unread_queue_keeps_every_job_folder(world: tuple[Path, dict[str, str]], tmp_path: Path) -> None:
+    repo, env = world
+    root = Path(env["BC26_LOCAL_REMOTE"])
+    (root / "jobs" / "old").mkdir(parents=True)
+    (root / "jobs" / "old" / "exit").write_text("0\n")
+    subprocess.run(["touch", "-d", "10 days ago", str(root / "jobs" / "old" / "exit")], check=True)
+    e = fake_queues(tmp_path, env)
+    (tmp_path / "bin" / "condor_q").write_text("#!/bin/bash\nexit 1\n")  # the queue didn't answer
+    p = tool(repo, e, "compute", "sweep")
+    assert p.returncode == 0 and p.stdout.startswith("0 jobs"), p.stdout + p.stderr
+    assert (root / "jobs" / "old").exists()

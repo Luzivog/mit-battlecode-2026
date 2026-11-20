@@ -23,7 +23,8 @@ from tools import runs as R
 from tools import view
 from tools import workspace as W
 from tools import remote
-from tools.remote import LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS, Refused, login
+from tools.remote import (CONDOR, CPU_HOST, LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS,
+                          SUBMIT, Refused, login)
 
 # The workspace holds 55 GB (remote.REMOTE_ROOT), and a day of tests wrote more than that with the retention below in
 # days: results are pulled as they come, so what has ended goes within hours
@@ -52,6 +53,7 @@ def duration(spec: str) -> int:
 
 # ---- status ----
 STATUS_WAIT_S = 8.0  # status waits this long for a session or another process's read, then says what it couldn't read
+STATUS_AGE_S = 30.0  # status shows the pool as the shared view last read it when that is this recent
 
 
 def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_MEM_MB) -> None:
@@ -66,7 +68,8 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
     age = remote.CACHE_S  # every read below shared with this machine's other tools: one login each at most
     with ThreadPoolExecutor(4) as pool:
         fc, fs, fk = (pool.submit(safe, lambda f=f: f(age)) for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
-        fv = pool.submit(safe, lambda: view.get(wait=False))  # another process's refresh: the last snapshot
+        # the last snapshot when young enough or while another process refreshes it: its age is printed
+        fv = pool.submit(safe, lambda: view.get(wait=False, max_age=STATUS_AGE_S))
         c, s, k, v = fc.result(), fs.result(), fk.result(), fv.result()
     notes: list[str] = []
     free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes, max_age=age)]
@@ -223,7 +226,18 @@ def sweep(force: bool = True) -> str:
     counts it (no walk). Without FORCE, at most every SWEEP_EVERY_MIN (`.swept`'s age):
     `run` and `tools/run` call it so. It rewrites MANIFEST (workspace.py) and names entries it doesn't list."""
     once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -{SWEEP_EVERY_MIN} 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
-    cmd = (f"{once}touch {REMOTE_ROOT}/.swept; n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
+    # a job still in a queue keeps its folder, whatever its files say (a cancel whose removal failed): our queues are
+    # read first, and no job folder goes when one of them can't be read
+    try:
+        cpu_q = login("squeue -u \"$USER\" -h -o %j", hosts=(CPU_HOST,)).split()
+    except Refused:
+        cpu_q = None
+    queued = (f"ok=1; q=$({{ squeue -u \"$USER\" -h -o %j && {CONDOR} && condor_q -name {SUBMIT} \"$USER\" -af "
+              f"JobBatchName; }} 2>/dev/null) || ok=; qs=\" $(printf '%s ' $q {' '.join(cpu_q or [])}) \"; "
+              + ("cok=; " if cpu_q is None else "cok=1; "))
+    cmd = (f"{once}touch {REMOTE_ROOT}/.swept; {queued}n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; "
+           f"[ -d \"$d\" ] || continue; [ -n \"$ok\" ] || break; case ${{d##*/}} in cpucluster1-*) [ -n \"$cok\" ] || "
+           f"continue ;; esac; case \"$qs\" in *\" bc26-${{d##*/}} \"*) continue ;; esac; "
            f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mmin +{KEEP_H * 60})\" ]; }} || "
            f"{{ [ -e $d/cancelled ] && [ -n \"$(find $d/cancelled -mmin +{KEEP_H * 60})\" ]; }}; "
            f"then rm -rf $d && n=$((n+1)); fi; done; "

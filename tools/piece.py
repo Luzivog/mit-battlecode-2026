@@ -642,6 +642,7 @@ class Piece:
                 if not self.state_file:
                     raise FileNotFoundError
                 os.rename(d / self.state_file, d / name)
+                os.utime(d / name)  # a rename keeps the old time: the sweep takes a file silent for an hour
             except FileNotFoundError:  # its first, or one removed (taken for a dead piece's)
                 (d / name).touch()
         except OSError:

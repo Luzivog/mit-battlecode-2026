@@ -36,7 +36,8 @@ RUN_REREAD_S = 0.3 if remote.LOCAL else 8.0
 RUN_AGE_S = 0.6 if remote.LOCAL else 15.0
 LOCK_WAIT_S = 3 * VIEW_S  # how long a reader waits for another process's refresh (tools/compute status: less)
 
-SNAP = "view.json"
+# The snapshot and its lock, named by the snapshot's form: a tool of another form shares neither (its sections differ)
+SNAP, LOCK = "view2.json", "view2.lock"
 _me = f"{os.getpid()}-{secrets.token_hex(3)}"
 _said: tuple[str, float] = ("", 0.0)
 
@@ -260,22 +261,23 @@ def refresh() -> Snapshot:
     return snap
 
 
-def get(runs: list[str] | None = None, jobs: list[str] | None = None, wait: bool = True) -> Snapshot:
+def get(runs: list[str] | None = None, jobs: list[str] | None = None, wait: bool = True,
+        max_age: float = MAX_AGE_S) -> Snapshot:
     """The shared state, with RUNS and JOBS in it (they become this process's interest): the snapshot when it is
     fresh enough and has them, else a refresh (one process at a time, MIN_GAP_S apart). Unreachable when the last
     refresh couldn't read the GPU cluster. Not WAIT (tools/compute status): the last snapshot, however old, while
-    another process refreshes it."""
+    another process refreshes it. MAX_AGE: the oldest snapshot taken as it is."""
     runs, jobs = list(runs or []), list(jobs or [])
     _want(runs, jobs)
     s = _load()
-    if s is not None and not wait and time.time() - s.at > MAX_AGE_S and remote.held(remote.CLIENT / "view.lock"):
+    if s is not None and not wait and time.time() - s.at > max_age and remote.held(remote.CLIENT / LOCK):
         if s.error:
             raise Unreachable(s.error)
         return s
-    if s is None or time.time() - s.at > MAX_AGE_S or not s.covers(runs, jobs):
-        with remote.locked(remote.CLIENT / "view.lock", LOCK_WAIT_S):
+    if s is None or time.time() - s.at > max_age or not s.covers(runs, jobs):
+        with remote.locked(remote.CLIENT / LOCK, LOCK_WAIT_S):
             s = _load()
-            if s is None or time.time() - s.at > MAX_AGE_S or not s.covers(runs, jobs):
+            if s is None or time.time() - s.at > max_age or not s.covers(runs, jobs):
                 if s is not None and time.time() - s.at < MIN_GAP_S:
                     time.sleep(MIN_GAP_S - (time.time() - s.at))
                 s = refresh()

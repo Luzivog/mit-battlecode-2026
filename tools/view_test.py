@@ -51,7 +51,7 @@ def test_many_followers_share_one_reader(tmp_path: Path) -> None:
         asks += int(out)
     lines = [x.split() for x in log.read_text().splitlines()]
     starts = [float(t) for t, w in lines if w == "start"]
-    assert asks > 150
+    assert asks > 3 * len(starts)  # many asks a read (how many depends on this machine's load)
     print(f"{asks} asks, {len(starts)} reads")
     # a refresh runs squeue twice (the pool's liveness, the jobs' states): ~one refresh a MIN_GAP_S plus its own time
     # on the stand-in (0.2 s + 0.4 s), not one an ask
@@ -147,7 +147,7 @@ def test_status_takes_the_last_snapshot_while_another_process_refreshes(monkeypa
     remote.CLIENT.mkdir(parents=True, exist_ok=True)
     view._store(old)
     monkeypatch.setattr(remote, "login", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no read")))
-    lock = open(remote.CLIENT / "view.lock", "a")
+    lock = open(remote.CLIENT / view.LOCK, "a")
     fcntl.flock(lock, fcntl.LOCK_EX)  # another process's refresh under way
     try:
         t0 = time.monotonic()

@@ -46,6 +46,10 @@ DEFAULT_TASK_MEM_MB = 1700  # a game's JVM peaks at 0.5-1.6 GB (docs/testing.md 
 DEFAULT_TIME_S = 4 * 3600  # a Slurm or cpucluster1 piece's --time: at it, the piece gives its tasks back and requeues
 MAX_ROUNDS = 3  # rounds of replacement pieces a run may get, once all its pieces were lost
 QUEUED_PIECES = 4  # Condor pieces queued for a run when no backend has a free machine for it now
+# Condor pieces of a kind waiting in its queue at most, over every run, however many lab machines look free: each read
+# of the free machines is a moment's, and ten runs opened in one minute queued 96, 101 and 220 pieces for machines that
+# looked free; 181 of them waited at once (20 Nov)
+IDLE_CAP = 32
 ORDER = ("cpucluster1", "condor", "slurm", "local")  # of equal offers, the CPU-only cluster first, the GPU cluster last
 GRACE_S = 20.0 if not LOCAL else 0.5  # after a placement (or the run's start), how long before pieces are added
 POOL_ROUNDS = 8  # placements a pooled run's follower may make
@@ -392,6 +396,14 @@ def _place(s: Settings, need: int) -> list[str]:
     took = choose(found, need, s.max_cpus)
     for n in notes:
         J.say(f"run {s.id}: {n}")
+    waiting = queued_of_kind(kind_of(s))
+    condor = [o for o in took if o.where == "condor"]
+    room = max(0, IDLE_CAP - waiting)  # a Condor piece waits in the queue until matched, even for a free machine
+    if len(condor) > room:
+        J.say(f"run {s.id}: {len(condor)} lab machines look free, {waiting} pieces of its kind wait in Condor's queue: "
+              f"{room} more at most ({IDLE_CAP} waiting of a kind)")
+        drop = condor[room:]
+        took = [o for o in took if not any(o is x for x in drop)]
     got = submit_pieces(s, [o for o in took if o.where != "slurm"]) if any(o.where != "slurm" for o in took) else []
     left, cpus = need - sum(n for _, n in got), sum(o.cpus for o in took if o.where != "slurm")
     slurm = [o for o in took if o.where == "slurm"]
@@ -411,10 +423,9 @@ def _place(s: Settings, need: int) -> list[str]:
         return [i for i, _ in got]
     if "condor" not in s.wheres:
         raise Refused(f"no piece could start on {', '.join(s.wheres)} now (`tools/compute status`)")
-    waiting = queued_of_kind(kind_of(s))
     queued = min(QUEUED_PIECES - waiting, need)
     if queued <= 0:
-        J.say(f"run {s.id}: no backend has room now, and {waiting} pieces of its kind wait in Condor's queue: no more")
+        J.say(f"run {s.id}: no piece added now, and {waiting} pieces of its kind wait in Condor's queue: no more")
         return []
     J.say(f"run {s.id}: no backend has room now: {queued} Condor piece(s) wait in its queue"
           + (f" ({waiting} of its kind already do)" if waiting else ""))

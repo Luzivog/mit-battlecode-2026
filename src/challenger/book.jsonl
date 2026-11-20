@@ -1,0 +1,2 @@
+{"declare": "CAT_LANE", "type": "tileset", "meaning": "tiles some cat's 2x2 covers on its EXPLORE loop (docs/theory/cm-cat-maps.md §3)"}
+{"declare": "KING2_SITE", "type": "tiles", "meaning": "second-king sites off every cat loop, in order of preference (Tune.CM_KING2_ROUND)"}

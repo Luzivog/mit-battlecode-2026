@@ -186,6 +186,14 @@ public class KingCombatStrategy extends Strategy {
             }
             {% endfor %}
         }
+        // Tune.CM_LANE_FLEE: with the cat lanes known (Book.CAT_LANE), a step that puts more loop footprint under the king loses
+        // 4 a tile, so a king that keeps away from a cat also walks off its loop.
+        if(challenger.Tune.CM_LANE_FLEE != 0 && RobotTracker.numCats > 0 && challenger.CatLanes.version != 0) {
+            int o = challenger.CatLanes.kingOverlap(myLocX, myLocY);
+            {% for i in range(8) %}
+            score{{i}} -= 4 * (challenger.CatLanes.kingOverlap(myLocX + {{dir_dx[directions[i]]}}, myLocY + {{dir_dy[directions[i]]}}) - o);
+            {% endfor %}
+        }
         {
             int best = -1;
             var move = Direction.CENTER;

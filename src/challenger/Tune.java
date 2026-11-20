@@ -100,4 +100,17 @@ public final class Tune {
     // chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0 king of team B knows the
     // symmetry once the rats find it.
     public static final int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
+
+    // CM (book switches, docs/theory/cm-cat-maps.md): each default leaves main's games unchanged; 1 turns a 0/1 switch on.
+    // The last-cat hold is PM_COOP_HOLD (above): CM's CM_LAST_CAT_HOLD was the same code.
+    // From this round, with one king, a second king at the book's site Book.KING2_SITE, else main's mine choice, whatever
+    // the cooperation (robot/king/KingFormationCoordinatorStrategy); 2000 or more: never.
+    public static final int CM_KING2_ROUND = 2000; // tune: 30 [15, 2000] round of the early second king (2000 never)
+    // K2 D': kings remember cat footprints (CatLanes, from round 1 the book's Book.CAT_LANE where it has one), park and
+    // chase cheese off them, take no mining step into a known lane (robot/king/KingMiningStrategy).
+    public static final int CM_LANE_MEMORY = 0; // tune: 1 [0, 1] kings' cat-lane memory for mining (0 off)
+    // With a cat in view and lanes known, the king's flee loses 4 a lane tile its step adds (robot/king/KingCombatStrategy).
+    public static final int CM_LANE_FLEE = 0; // tune: 1 [0, 1] the king's flee off known cat lanes (0 off)
+    // PT 2d's late cat hunt starts at this round (robot/rat/combat/CombatStrategy).
+    public static final int CM_CAT_HUNT_START = 1300; // tune: 300 [300, 2000] round from which idle rats hunt cats
 }

@@ -316,7 +316,7 @@ public class CombatStrategy extends Strategy {
       so from CAT_HUNT_START every rat without raw cheese takes on the cats it sees, unless it saw or heard of an enemy in
       the last CAT_HUNT_QUIET rounds. In cooperation the last cat's death ends the game, so the hunt waits for the backstab.
     */
-    private static final int CAT_HUNT_START = 1300;
+    private static final int CAT_HUNT_START = challenger.Tune.CM_CAT_HUNT_START;
     private static final int CAT_HUNT_QUIET = 50;
     private static int lastEnemySeen = -CAT_HUNT_QUIET;
     // A cat walks a tile per 2 rounds (move cooldown 20), so after this many rounds it may have left the rat's vision

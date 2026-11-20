@@ -170,6 +170,67 @@ def test_sweep_deletes_only_old_ended_folders(world: tuple[Path, dict[str, str]]
     assert p.returncode == 0 and p.stdout.startswith("1 jobs and 2 runs deleted"), p.stdout + p.stderr
     assert sorted(x.name for x in (root / "jobs").iterdir()) == ["new", "running"]
     assert [x.name for x in (root / "runs").iterdir()] == ["run-1118-000000-open"]
+    manifest = (root / "MANIFEST").read_text()
+    assert all(f"\n{name} | " in manifest for name in ("jobs", "runs", "pool", "cas", "runtime"))
+    (root / "stray").mkdir()  # an entry no tool notes
+    p = tool(repo, env, "compute", "sweep")
+    assert "not in the manifest: stray" in p.stdout, p.stdout + p.stderr
+
+
+def fake_queues(tmp: Path, env: dict[str, str], condor: str = "") -> dict[str, str]:
+    """squeue answering no job and condor_q answering CONDOR, on PATH."""
+    b = tmp / "bin"
+    b.mkdir(exist_ok=True)
+    (b / "squeue").write_text("#!/bin/bash\ntrue\n")
+    (b / "condor_q").write_text(f"#!/bin/bash\nprintf '%b' {json.dumps(condor)}\n")
+    for f in b.iterdir():
+        f.chmod(0o755)
+    return dict(env, PATH=f"{b}:{env['PATH']}")
+
+
+def test_empty_deletes_the_workspace_only_when_nothing_uses_it(world: tuple[Path, dict[str, str]],
+                                                               tmp_path: Path) -> None:
+    repo, env = world
+    root = Path(env["BC26_LOCAL_REMOTE"])
+    run = root / "runs" / "run-1119-000000-open"
+    (run / "done").mkdir(parents=True)
+    (root / "pool" / "open").mkdir(parents=True)
+    (root / "pool" / "open" / run.name).touch()
+    (root / "cas" / "x").mkdir(parents=True)
+    for i in range(30):
+        (root / "jobs" / f"condor-1119-000000-{i:04x}").mkdir(parents=True)
+    e = fake_queues(tmp_path, env, f"bc26-condor-1119-000000-0001, 1, {root}/jobs/condor-1119-000000-0001/job.sh x\n")
+    p = tool(repo, e, "compute", "empty", "--yes")
+    assert p.returncode == 0 and "in use, nothing deleted" in p.stdout, p.stdout + p.stderr
+    assert "1 jobs of ours use it" in p.stdout
+    assert "2 open runs there changed in the last 60 minutes: runs/ (a run made), run-1119-000000-open" in p.stdout
+    (run / "closed").touch()
+    subprocess.run(["touch", "-d", "2 hours ago", str(root / "runs")], check=True)
+    e = fake_queues(tmp_path, env)
+    p = tool(repo, e, "compute", "empty")
+    assert "would delete everything" in p.stdout and (root / "jobs").exists(), p.stdout + p.stderr
+    tool(repo, e, "compute", "sweep")
+    p = tool(repo, e, "compute", "empty", "--yes")
+    assert p.returncode == 0 and "emptied" in p.stdout, p.stdout + p.stderr
+    assert [x.name for x in root.iterdir()] == ["MANIFEST"]
+
+
+def test_the_old_tree_goes_once_nothing_uses_it(world: tuple[Path, dict[str, str]], tmp_path: Path) -> None:
+    repo, env = world
+    old = Path(env["BC26_LOCAL_REMOTE"] + ".old")
+    for i in range(900):  # more than one step's entries
+        (old / "jobs" / f"condor-1118-000000-{i:04x}").mkdir(parents=True)
+    (old / "pool" / "pieces").mkdir(parents=True)
+    (old / "runs").mkdir()
+    subprocess.run(["touch", "-d", "2 hours ago", str(old / "runs")], check=True)
+    e = fake_queues(tmp_path, env, f"bc26-condor-1118-000000-0001, 2, {old}/jobs/condor-1118-000000-0001/job.sh x\n")
+    p = tool(repo, e, "compute", "old-tree", "--yes")
+    assert "in use, nothing deleted" in p.stdout and old.exists(), p.stdout + p.stderr
+    e = fake_queues(tmp_path, env)
+    p = tool(repo, e, "compute", "old-tree")
+    assert "nothing uses" in p.stdout and "jobs: 902 entries" in p.stdout, p.stdout + p.stderr
+    p = tool(repo, e, "compute", "old-tree", "--yes")
+    assert p.returncode == 0 and "deleted in 3 steps" in p.stdout and not old.exists(), p.stdout + p.stderr
 
 
 # ---- the pool ----

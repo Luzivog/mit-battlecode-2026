@@ -80,7 +80,8 @@ def test_condor_sub_takes_a_whole_machine() -> None:
     lines = sub.splitlines()
     assert "request_cpus = 1" in lines  # DoC's rule: the one static slot, the whole machine
     assert "should_transfer_files = NO" in lines
-    assert any(x.startswith("requirements = ") and "(TotalCpus >= 4)" in x and "(Memory >= 1700)" in x for x in lines)
+    assert any(x.startswith("requirements = ") and "(TotalCpus >= 4)" in x and "(Memory >= 1700)" in x
+               and "(Disk >= 4194304)" in x and '(Machine != "melchett.doc.ic.ac.uk")' in x for x in lines)
     assert "periodic_remove = (JobStatus == 2) && (time() - EnteredCurrentStatus > 600)" in lines
     assert lines[-1] == "queue" and sub.endswith("\n")
 

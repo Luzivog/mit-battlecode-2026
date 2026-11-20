@@ -528,6 +528,10 @@ CONDOR_HELD = "PeriodicRelease HoldReason"
 # Lab machines that don't mount our workspace: every job there is held at once ("Failed to open
 # '/vol/gpudata/user-bc26/jobs/.../condor.out' as standard output": melchett, 523 pieces, 19 Nov)
 CONDOR_EXCLUDE = ("melchett.doc.ic.ac.uk",)
+# A machine whose execute folder has less free (Condor's Disk, KiB) takes no piece: a piece takes no task under 2 GB
+# free (piece.DISK_MIN_MB) and ends at once, so such a machine stayed free and drew piece after piece (gpu35, 0.9 GB,
+# 19 Nov; 8 of 343 machines under 4 GB)
+CONDOR_DISK_KB = 4 << 20
 
 
 @dataclass(frozen=True)
@@ -617,7 +621,7 @@ def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int |
     return "\n".join([
         "universe = vanilla", "executable = /bin/bash", "transfer_executable = false",
         f'arguments = "{job_dir}/job.sh {job_dir} condor"', "should_transfer_files = NO", "request_cpus = 1",
-        f"requirements = ({release}) && (TotalCpus >= {cpus}) && (Memory >= {mem_mb})"
+        f"requirements = ({release}) && (TotalCpus >= {cpus}) && (Memory >= {mem_mb}) && (Disk >= {CONDOR_DISK_KB})"
         + "".join(f' && (Machine != "{m}")' for m in CONDOR_EXCLUDE),
         "job_machine_attrs = Machine", f"rank = ifThenElse(TARGET.Machine =?= MY.MachineAttrMachine0, 0, {workers})",
         f"output = {job_dir}/condor.out", f"error = {job_dir}/condor.err", f"log = {job_dir}/condor.log",

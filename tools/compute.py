@@ -21,6 +21,7 @@ from tools import backends as B
 from tools import jobs as J
 from tools import runs as R
 from tools import view
+from tools import workspace as W
 from tools import remote
 from tools.remote import LOCAL, REMOTE_CAS, REMOTE_JOBS, REMOTE_POOL, REMOTE_ROOT, REMOTE_RUNS, Refused, login
 
@@ -214,7 +215,7 @@ def sweep(force: bool = True) -> str:
     bundles and shipped files (REMOTE_CAS) no run or job links any more go CAS_KEEP_H after their last use; the pool
     forgets closed or deleted runs and pieces silent for an hour. Its last words: the workspace's size, as Ceph
     counts it (no walk). Without FORCE, at most every SWEEP_EVERY_MIN (`.swept`'s age):
-    `run` and `tools/run` call it so."""
+    `run` and `tools/run` call it so. It rewrites MANIFEST (workspace.py) and names entries it doesn't list."""
     once = "" if force else f'[ -z "$(find {REMOTE_ROOT}/.swept -mmin -{SWEEP_EVERY_MIN} 2>/dev/null)" ] || {{ echo skipped; exit 0; }}; '
     cmd = (f"{once}touch {REMOTE_ROOT}/.swept; n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; [ -d \"$d\" ] || continue; "
            f"if {{ [ -s $d/exit ] && [ -n \"$(find $d/exit -mmin +{KEEP_H * 60})\" ]; }} || "
@@ -228,8 +229,12 @@ def sweep(force: bool = True) -> str:
            f"find {REMOTE_POOL}/pieces -maxdepth 1 -type f -mmin +60 -delete 2>/dev/null; "
            f"c=$(find {REMOTE_CAS} -maxdepth 1 -type f -links 1 -mmin +{CAS_KEEP_H * 60} -print -delete 2>/dev/null "
            f"| wc -l); "
-           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"")
-    return login(cmd, timeout=SWEEP_S).strip().replace("\n", "; ") + " in use"
+           f"echo \"$n jobs and $m runs deleted, $c stored blobs\"; {{ b=$(getfattr -n ceph.dir.rbytes --only-values {REMOTE_ROOT} 2>/dev/null) && [ -n \"$b\" ] && echo \"$((b / 1000000000)) of {QUOTA_GB} GB\"; }} || echo \"size unread\"; "
+           f"{W.manifest_sh()}")
+    said = B.sections("==said\n" + login(cmd, timeout=SWEEP_S))
+    unknown = [x for x in said.get("unknown", []) if x.strip()]
+    return ("; ".join(x for x in said.get("said", []) if x.strip()) + " in use"
+            + (f"; not in the manifest: {', '.join(unknown)}" if unknown else ""))
 
 
 def sweep_daily() -> None:
@@ -286,7 +291,14 @@ def main(argv: list[str] | None = None) -> int:
     pl.add_argument("id")
     cn = sub.add_parser("cancel", help="end a job, or a run and its pieces, for good")
     cn.add_argument("id")
-    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_H} hours")
+    sub.add_parser("sweep", help=f"delete our ended jobs' and closed runs' folders older than {KEEP_H} hours, and "
+                   "rewrite the workspace's MANIFEST")
+    em = sub.add_parser("empty", help="delete the whole workspace when no run is open and no job of ours is queued "
+                        "(say what would go, without --yes)")
+    em.add_argument("--yes", action="store_true")
+    ot = sub.add_parser("old-tree", help=f"delete {W.OLD_ROOT}, the folders' old home, once nothing uses it (say "
+                        "what holds it, without --yes)")
+    ot.add_argument("--yes", action="store_true")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "status":
@@ -306,6 +318,10 @@ def main(argv: list[str] | None = None) -> int:
             print(J.pull(a.id))
         elif a.cmd == "cancel":
             print(R.cancel(a.id) if R.is_run(a.id) else J.cancel(a.id))
+        elif a.cmd == "empty":
+            print(W.empty(a.yes))
+        elif a.cmd == "old-tree":
+            print(W.old_tree(a.yes))
         else:
             print(sweep())
     except Refused as e:

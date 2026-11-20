@@ -35,6 +35,9 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
   same `--task-cpus`, `--task-mem` and backends, the run with the fewest running tasks first, and ends as soon as
   nothing is left. A new run asks for pieces only beyond the live pieces' free slots, so its tasks often start within
   seconds. Code and `--with` files go up once a content.
+- Pieces never pile up in a queue: our Condor pieces waiting in its queue take free machines first, and at most 4
+  pieces of a kind (task size and runtime) wait over every run. When every machine is busy, a new run's tasks wait
+  for the pool's free slots (`no backend has room now ... no more`): that is not an error.
 
 ## Wait in the background
 
@@ -48,7 +51,9 @@ tools/compute wait "$RUN" --json          # run_in_background; exit = the run's 
 - `tools/compute wait ID...` takes runs and jobs, polls every 30 s, survives lost connections, fetches results as
   they come, and ends with one line an id saying where they are. Run it again after a restart: it picks up.
 - Or run `tools/run ...` itself in the background: same output, same exit code.
-- `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs.
+- `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs. It
+  answers in a second or two: every tool on this machine shares one read of the remote state (at most every 5 s), and
+  a backend that can't be read is named as unreadable.
 - `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run: its tasks stop, its queued pieces are
   cancelled; its running pieces go on with other runs' tasks, or end).
 - When a run's last task is done its follower writes `summary.json` first, then cancels the pieces that never
@@ -99,8 +104,15 @@ comes 120 s before it: save to `$OUT`, exit 0, and the job requeues itself). Res
 - One partition a job; a Condor job takes its whole machine (`request_cpus = 1`). The tools enforce both.
 - A first job on a backend, or of a new kind, is small and under 10 minutes (`--time 10m`).
 - Our files in our workspace `/vol/gpudata/user-bc26` only (0700, written with umask 077; a 55 GB quota); never
-  another project's folders, workspaces, jobs or services. Ended jobs and closed runs are deleted after 6 hours
-  (`tools/compute sweep`). Nothing new goes on `/vol/bitbucket`: it is full and slow.
+  another project's folders, workspaces, jobs or services. Nothing on `/vol/bitbucket`.
+- **No persistent data on the shared volumes.** The workspace holds only the state of open runs and caches that make
+  jobs faster (the runtime, stored code, native binaries); results live on clankerland, under the checkout's `runs/`.
+  Its `MANIFEST` names every top-level entry: what it is, the tool that writes it, how long an entry lives, what
+  breaks if it goes. The tools write it (`tools/compute sweep`); a new kind of entry is added to `tools/workspace.py`'s
+  `ENTRIES`, never put there by hand. Ended jobs and closed runs go after 6 hours (`tools/compute sweep`, hourly).
+- `tools/compute empty` says what the workspace holds and what still uses it; `--yes` deletes all of it once no job
+  of ours has its folder there and no open run there moved in the last hour. `tools/compute old-tree [--yes]` does
+  the same for the folders' old home, `/vol/bitbucket/user/bc26`.
 - Never work around a limit. If a backend refuses, report its exact error.
 
 ## Changing the tools

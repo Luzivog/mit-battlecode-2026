@@ -12,6 +12,7 @@ public final class Tune {
     public static int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
     public static int PM_SIEGE = 0; // tune: 1 [0, 2] E2b's siege spawns: no rat cap with an enemy in the king's vision (1), or more enemies than our rats there (2)
     public static final int PM_HUNT_COOP = 0; // tune: 1 [0, 1] 1: PT 2d's cat hunt also runs in cooperation (where the last cat's death ends the game)
+    public static final int FORM_TIMEOUT = 120; // tune: 60 [60, 600] rounds after which the coordinator aborts a formation
     public static final int DIRT_ROUND = 100; // tune: 50 [0, 400] rats path through dirt (and dig it) from this round once global >= DIRT_CHEESE
     public static final int SPAWN_POOR_CUT = 10; // tune: 10 [0, 30] rat-cap cut on maps <= 1600 tiles with < 5 mines (E2: 4 rats)
 

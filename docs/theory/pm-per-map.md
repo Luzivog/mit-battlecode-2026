@@ -213,6 +213,36 @@ Entries (ours − main on the same (map, seed, seat), 95%):
 - Matrices: `pmh3` (24033), `pme1` (24034), `pmm1` (24035), `pmd1` (24036), `pmh4` (24037), `pmsk` (24038), `pmk1s`
   (24039), `pmkc` (24040), `pmkh` (24041); the king-site candidates on branch `t3/pm3-trial` (never merged).
 
+## 12. PM4: twelve map-seats lost to king kills, no entry, no owner
+
+Main on seed base 24042, 60 cells a map, every replay kept (`1120-114652-ab-105c`); `scratch/pm/deep.sh RUN TAG` runs
+the replay readers, `pm3sum.py RUN TAG` and `tlsum2.py TAG` summarise them. Every loss is a king kill, most before
+r450. What our first king loses its HP to in the worse seats' losses (KingLedger, HP a loss):
+
+| map-seat (win) | cat scratches | bites | starvation | throws | the rest of the picture |
+|---|---|---|---|---|---|
+| directconfrontation B (0.717) | 322 | 112 | 49 | 69 | four corner cats round a central box; scratches in wins too (A 151, B 260) |
+| closeup A (0.617) | 370 | 50 | 164 | 9 | closeup B wins 60 of 60 with CM's lane memory and flee |
+| externalsustenance A / B (0.633 / 0.750) | 343 / 264 | 109 / 139 | 105 / 93 | 16 / 54 | 24 mines in a ring, cats |
+| hellofromtheotherside A (0.767) | 143 | 76 | 295 | 32 | |
+| DefaultSmall A / B (0.867 / 0.783) | 2 / 0 | 121 / 112 | 194 / 205 | 158 / 204 | 7–8 rats against 11–12 (small-map cap and mine-poor cut) |
+| cheesefarm, constrictinglattice, streetsofnewyork, trapped, DefaultMedium, pocketsofcheese (0.72–0.88) | ≤ 45 | 147–361 | 69–383 | 48–183 | even armies; the fight reaches our king first |
+| Meow A / B (0.900 / 0.750) | 0 | 169–177 | 387–520 | 13–71 | the bank runs dry late |
+
+Levers tried (choosing screens, then confirmations against today's main on fresh seeds):
+
+| arm | maps | choose (seed base, cells) | confirm (seed base, cells) |
+|---|---|---|---|
+| `CAT_DEF_DSQ` 100 / 200, `CM_LANE_MEMORY` + `CM_LANE_FLEE` | directconfrontation, closeup, externalsustenance, hellofromtheotherside | `pmdc` 24043, `pmcl` 24044, `pmcx` 24046 (100): best directconfrontation A +0.06 (p 0.18); defence −0.05 to −0.34 on the other three | none qualified |
+| closeup A: seat B's `CAT_LANE` tiles + lane memory and flee | closeup | — (`pmt4b`, 24048, 100) | A −0.050 ± 0.140 |
+| `PM_SIEGE` 1, `KING_DEF_DSQ` 100 | the ten others | `pmx5` 24045 (60): constrictinglattice A siege +0.133 (p 0.038); siege +0.03 on both seats of DefaultMedium, trapped, externalsustenance; DefaultSmall defence +0.02 / +0.05 | `pmc5` 24047 (100): constrictinglattice A 0.000, DefaultMedium −0.02 / 0.00, trapped +0.05 / −0.01, externalsustenance A +0.02, DefaultSmall defence +0.02 / +0.04 (all across 0); externalsustenance B on top of CM's site (`pmt4a`, 24049) 0.000 |
+
+The first king's site was screened on all twelve maps by CM (cm4, cm5: four site types; only externalsustenance B
+passed, CM's line), the army caps on trapped (WS2), the hands and orders on Meow and knifefight (SG3), the spawn and
+lock-in constants on the top-50 maps (WS3, WS4). What is left on these map-seats is the rat exchange at our king (bites
+and throws first, starvation after) and, on the cat maps, a king caught between cats and rats that neither the cat
+defence nor the lane memory frees: no switch reaches either. Closed rows in docs/closed.md.
+
 ## Tools
 
 `~/battlecode26-data/scratch/pm/`: `seat.py RUN` (loss classes per map-seat from results.jsonl), `pair.py REF RUN...`

@@ -145,6 +145,13 @@ public final class Book {
                         && d0 == 0x10020040001e020L && d1 == 0x8L) return 53;
                 return 0;
             }
+            case 24764676 -> {
+                scan();
+                // squaresaremodernart seat B
+                if (id == 1 && w0 == 0x0L && w1 == 0x8000000000000L
+                        && d0 == 0x821042087f000000L && d1 == 0x1fc208410L) return 83;
+                return 0;
+            }
             case 24765831 -> {
                 scan();
                 // toomuchcheese seat B
@@ -185,6 +192,13 @@ public final class Book {
                 // gelcatinouscube seat B
                 if (id == 6 && w0 == 0x0L && w1 == 0x0L
                         && d0 == 0x0L && d1 == 0x0L) return 63;
+                return 0;
+            }
+            case 27427141 -> {
+                scan();
+                // thehallway seat B
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x80000L && d1 == 0x2002000000L) return 89;
                 return 0;
             }
             case 30023943 -> {
@@ -443,6 +457,10 @@ public final class Book {
                 symmetry = 2;
                 Tune.SPAWN_CAP = 60;
             }
+            case 167 -> { // squaresaremodernart seat B
+                symmetry = 1;
+                Tune.KING_HAND = 0;
+            }
             case 172 -> { // sunandmoon seat A
                 symmetry = 3;
                 Tune.CM_KING2_ROUND = 30;
@@ -544,6 +562,10 @@ public final class Book {
                 symmetry = 3;
                 Tune.SPAWN_RICH = 1500;
                 Tune.CAT_DEF_DSQ = 100;
+            }
+            case 179 -> { // thehallway seat B
+                symmetry = 1;
+                Tune.KING_HAND = 0;
             }
             case 184 -> { // tminusten seat A
                 symmetry = 3;

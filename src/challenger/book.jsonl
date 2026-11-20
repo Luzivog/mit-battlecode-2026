@@ -38,3 +38,5 @@
 {"map": "closeup", "seat": "B", "set": "CM_LANE_MEMORY", "value": 1, "evidence": ["1120-031842-ab-5e24", "1120-034147-ab-d247"], "by": "CM"}
 {"map": "closeup", "seat": "B", "set": "CM_LANE_FLEE", "value": 1, "evidence": ["1120-031842-ab-5e24", "1120-034147-ab-d247"], "by": "CM"}
 {"map": "gelcatinouscube", "seat": "B", "set": "CM_KING2_ROUND", "value": 30, "evidence": ["1120-025135-ab-38a2", "1120-024109-ab-14a9", "1120-030836-ab-c799"], "by": "CM"}
+{"map": "squaresaremodernart", "seat": "B", "set": "KING_HAND", "value": 0, "evidence": ["1120-035525-ab-3732", "1120-040920-ab-f67d"], "by": "SG"}
+{"map": "thehallway", "seat": "B", "set": "KING_HAND", "value": 0, "evidence": ["1120-032019-ab-9b98", "1120-035525-ab-3732", "1120-040920-ab-7945"], "by": "SG"}

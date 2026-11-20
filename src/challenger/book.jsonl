@@ -100,3 +100,5 @@
 {"map": "TheHeist", "seat": "B", "set": "SPAWN_RICH", "value": 1000, "evidence": ["1120-081404-ab-3a0f", "1120-114149-ab-4242", "1120-115343-ab-114a"], "by": "SG"}
 {"map": "gelcatinouscube", "seat": "A", "data": "KING1_SITE", "value": [[26, 34]], "evidence": ["1120-114707-ab-2ce3", "1120-114526-ab-e64e", "1120-115154-ab-0140"], "by": "CM"}
 {"map": "gelcatinouscube", "seat": "A", "set": "CM_KING1_SITE", "value": 1, "evidence": ["1120-114707-ab-2ce3", "1120-114526-ab-e64e", "1120-115154-ab-0140"], "by": "CM"}
+{"map": "jail", "seat": "A", "set": "KING_PATH", "value": 1, "evidence": ["1120-121410-ab-cda7", "1120-122216-ab-5ed6"], "by": "AT (AT5)", "note": "chosen from 1 candidate on 26021, isolating the king's planner from MS's ms_okb v2 oracle, whose jail gain was screened on 26020"}
+{"map": "kingofthehill", "seat": "both", "set": "DIRT_ROUND", "value": 0, "evidence": ["1120-082056-ab-983f", "1120-114246-ab-4473", "1120-115328-ab-47a7"], "by": "AT (WS4/AT5)", "note": "chosen from 17 on 26017; on book 7: A +0.067 [-0.013, +0.147], B +0.133 [+0.058, +0.209], both +0.100 [+0.045, +0.155]"}

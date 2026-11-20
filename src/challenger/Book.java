@@ -181,6 +181,13 @@ public final class Book {
                         && d0 == 0x8038038078078020L && d1 == 0x400801L) return 86;
                 return 0;
             }
+            case 15894181 -> {
+                scan();
+                // jail seat A
+                if (id == 3 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x80000000000000L && d1 == 0x0L) return 31;
+                return 0;
+            }
             case 15933953 -> {
                 scan();
                 // tminusten seat A
@@ -661,6 +668,10 @@ public final class Book {
                 symmetry = 3;
                 Tune.SPAWN_CAP = 60;
             }
+            case 62 -> { // jail seat A
+                symmetry = 3;
+                Tune.KING_PATH = 1;
+            }
             case 70 -> { // peaceinourtime seat A
                 symmetry = 2;
                 Tune.CM_KING2_ROUND = 30;
@@ -787,11 +798,13 @@ public final class Book {
                 symmetry = 2;
                 KING1_SITE = new MapLocation[] {new MapLocation(25, 17)};
                 Tune.CM_KING1_SITE = 1;
+                Tune.DIRT_ROUND = 0;
             }
             case 143 -> { // kingofthehill seat B
                 symmetry = 2;
                 KING1_SITE = new MapLocation[] {new MapLocation(34, 17)};
                 Tune.CM_KING1_SITE = 1;
+                Tune.DIRT_ROUND = 0;
             }
             case 146 -> { // longwayaround seat A
                 symmetry = 2;

@@ -360,11 +360,54 @@ def cmd_matrix(a) -> int:
         return 1
     c = tune.load(a.name)
     c["book"] = {"maps": maps, "cells_per_map": a.cells_per_map, "seed_base": a.seed_base}
+    for v in c["variants"]:
+        dropped = point_over_book(v, maps)
+        if dropped:
+            print(f"{v['label']}: the point wins over the book's entries for {', '.join(dropped)} on the matrix's maps")
     tune.save(c)
     cmd = [str(TUNE), "play", a.name, "--seed-base", str(a.seed_base), "--pool", pool,
            "--cells", str(a.cells_per_map * len(maps))]
     print(" ".join(cmd), flush=True)
     return subprocess.call(cmd)
+
+
+def point_over_book(v: dict, maps: list[str]) -> list[str]:
+    """Make variant V's values win over the book on MAPS: rewrite its commit without the entries that set one of its
+    constants on those maps (Book.java and Tune.java's finality regenerated). The reference keeps main's book.
+    Returns the lines dropped ("MAP SEAT CONST")."""
+    book_text = tune.git("show", f"{v['commit']}:src/challenger/book.jsonl")
+    book = load_text(book_text)
+    hit = [e for e in book["entries"] if e.get("set") in v["values"] and e["map"] in maps]
+    if not hit:
+        return []
+    keep = {e["line"] for e in hit}
+    lines = [ln for i, ln in enumerate(book_text.splitlines(), 1) if i not in keep]
+    new_text = "\n".join(lines) + "\n"
+    book = load_text(new_text)
+    tune_text = render_tune(tune.git("show", f"{v['commit']}:src/challenger/Tune.java") + "\n", booked(book))
+    java = render_book(book, tune.parse(tune_text), views(sorted({m for m, _ in map_seats(book)})))
+    files = {"src/challenger/book.jsonl": new_text, "src/challenger/Book.java": java,
+             "src/challenger/Tune.java": tune_text}
+    import os
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix="book-") as tmp:
+        env = {"GIT_INDEX_FILE": os.path.join(tmp, "index")}
+        tune.git("read-tree", v["commit"], env=env)
+        for path, text in files.items():
+            blob = tune.git("hash-object", "-w", "--stdin", inp=text.encode())
+            tune.git("update-index", "--cacheinfo", f"100644,{blob},{path}", env=env)
+        tree = tune.git("write-tree", env=env)
+    parent = tune.git("rev-parse", f"{v['commit']}^")
+    msg = tune.git("log", "-1", "--format=%B", v["commit"]) + "\nthe point wins over the book on the matrix's maps"
+    sha = tune.git("commit-tree", tree, "-p", parent, "-m", msg,
+                   env={"GIT_AUTHOR_DATE": "2000-01-01T00:00:00Z", "GIT_COMMITTER_DATE": "2000-01-01T00:00:00Z"})
+    ref = next((r for r in tune.git("for-each-ref", "--format=%(refname)", "refs/tune").splitlines()
+                if tune.git("rev-parse", r) == v["commit"]), None)
+    if ref:
+        tune.git("update-ref", ref, sha)
+    v["commit"] = sha
+    v["book_dropped"] = [f"{e['map']} {e['seat']} {e['set']}" for e in hit]
+    return v["book_dropped"]
 
 
 def matrix_diffs(c: dict, seed_base: int | None = None) -> dict:

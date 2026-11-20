@@ -175,7 +175,10 @@ entries are chosen and confirmed map by map, then as a whole:
    (3,000 `goal` cells, item 5), the entries' map-seats on their own maps (seed base B3 + 1), and the goal maps
    without entries plus `teammade` (B3 + 2), where the book must change nothing systematic.
    `tools/book/book confirm-show FILE` reads all three. The book merges when, on these fresh seed bases, the entries'
-   map-seats together read a 95% lower bound above 0 with no entry's own map-seat below 0, the maps outside the book
+   map-seats together read a 95% lower bound above 0 with no entry's own map-seat below 0 (the entries are those
+   that differ from main's book: the ones carried over play as main and would only dilute the reading; an entry
+   that reads below 0 on both the entries' run and the `goal` run is taken out before the merge, as houseofcards A
+   was from book 4), the maps outside the book
    show no harm (their interval holds 0), and the `goal` run's interval is not below 0. The `goal` run cannot carry
    the verdict alone: a book of k map-seats moves `goal` by about k/190 of its own effect (5 map-seats at +0.23 are
    +0.6 pp), inside the ±1 pp of 3,000 cells; the entries' own maps see it directly (book 1: +0.231 [+0.108, +0.333],

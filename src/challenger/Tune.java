@@ -101,7 +101,7 @@ public final class Tune {
     // team B except a chirality-1 king on HORIZONTAL or ROTATIONAL maps. The king reads its chirality and, for
     // chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0 king of team B knows the
     // symmetry once the rats find it.
-    public static final int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
+    public static int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
 
     // CM (book switches, docs/theory/cm-cat-maps.md): each default leaves main's games unchanged; 1 turns a 0/1 switch on.
     // The last-cat hold is PM_COOP_HOLD (above): CM's CM_LAST_CAT_HOLD was the same code.
@@ -120,5 +120,5 @@ public final class Tune {
     // it advances it first on equal paths, takes only its arrival and breaks score ties to it; 1 mirrors each rule.
     public static int SG_LOOK_RIGHT = 0; // tune: 1 [0, 1] the rats' lookahead's preferred hand: 0 left, 1 right
     // 1: the king plans its walk to a mine or the centre over its own map (robot/king/KingPath, MS's KP3) instead of the bug.
-    public static final int KING_PATH = 0; // tune: 1 [0, 1] the king's route planner: 0 off (main), 1 on
+    public static int KING_PATH = 0; // tune: 1 [0, 1] the king's route planner: 0 off (main), 1 on
 }

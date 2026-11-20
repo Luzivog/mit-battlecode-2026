@@ -77,6 +77,9 @@ One JSON object a line (blank lines and `#` lines skipped):
   other constant stays compile-time, so a main without entries has main's instructions.
 - `tools/tune` reads and rewrites both forms; a tuned value of a booked constant is its default off the book.
 
+- `confirm` tests a book against main's own book: the entries' run plays only the maps whose map-seats differ from
+  main's (new, changed or removed entries), and `confirm-show`'s line (a) reads those map-seats; carried-over entries
+  are main's and read 0.
 - A matrix point wins over the book on the matrix's maps: a point setting a constant that an entry sets on one of those
   maps has that entry dropped from its variant (`matrix` prints which; the variant's Book.java and Tune.java are
   regenerated), so a booked value can be re-tuned there. The reference stays main, book included: the fit reads the

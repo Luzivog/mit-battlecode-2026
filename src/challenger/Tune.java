@@ -31,8 +31,6 @@ public final class Tune {
 
     // Pathing (Pathfinder): rats path through dirt (and dig it) once global reaches this from r100.
     public static final int DIRT_CHEESE = 1500; // tune: 500 [500, 3000] global from which rats path through dirt
-    // The kings' bug starts left-handed (0) or right-handed (1) at every retarget (docs/theory/ms-map-seats.md).
-    public static final int KING_HAND = 0; // tune: 1 [0, 1] the kings' bug hand: 0 left, 1 right
 
     // Combat (robot/rat/combat).
     // Move scores: a tile an enemy can grab us from loses THREAT_PENALTY (CombatStrategy.getCellScoreFor); TryRatNap scores
@@ -91,4 +89,13 @@ public final class Tune {
     // rule; 2 mirrors them for team B except a chirality-1 rat on a HORIZONTAL or ROTATIONAL map; 3 takes either bug's
     // arrival (the shorter path), breaks score ties to the preferred hand, and prefers right for team B.
     public static final int SG_LOOK_RIGHT = 0; // tune: 1 [0, 3] the rats' lookahead's hand: 0 left (main), 1 right, 2 team B (as KING_HAND 7), 3 fixed, by team
+
+    // KR: the king's bug hand (Pathfinder; docs/theory/kr-king-routes.md). Main's king always starts left-handed; a
+    // mirror reverses that, so on reflective maps the two seats' kings go round mirrored walls on opposite sides.
+    // 0: left (main); 1: right; 2: right for chirality 1; 3: right for chirality 1 on VERTICAL and HORIZONTAL maps;
+    // 4: right for chirality 1 on VERTICAL maps; 5: right for team B on VERTICAL maps; 6: right for team B; 7: right for
+    // team B except a chirality-1 king on HORIZONTAL or ROTATIONAL maps. The king reads its chirality and, for
+    // chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0 king of team B knows the
+    // symmetry once the rats find it.
+    public static final int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
 }

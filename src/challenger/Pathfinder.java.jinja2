@@ -531,6 +531,23 @@ public class Pathfinder {
         return xDesc && !yDesc;
     }
     static BugnavInstance bug;
+    // The king's bug hand at a new target (Tune.KING_HAND). On VERTICAL maps the right hand loses for team A and wins for
+    // team B, whatever the king's chirality (docs/theory/kr-king-routes.md).
+    static boolean kingLeft() {
+        int o = CellTracker.kingScanOrder;
+        switch (Tune.KING_HAND) {
+            case 1: return false;
+            case 2: return o == 0;
+            case 3: return o == 0 || o == 3;
+            case 4: return o != 2;
+            case 5:
+                if (team == Team.A) return true;
+                if (o != 0) return o != 2;
+                return CellTracker.getSymmetry() != CellTracker.Symmetry.Vertical;
+            case 6: return team == Team.A;
+            default: return team == Team.A || o == 1 || o == 3;
+        }
+    }
     static int lastDist = 0;
 
     public static  MapLocation getBugPos() {
@@ -559,7 +576,7 @@ public class Pathfinder {
                 // indicate("RETARGET");
                 lastBugPos = lastLoc = secondLastBugPos = secondLastLoc = new MapLocation(-1, -1);
                 lastDist = 0;
-                bug = new BugnavInstance(Tune.KING_HAND == 0 || !isRatKing, target);
+                bug = new BugnavInstance(Tune.KING_HAND == 0 || !isRatKing || kingLeft(), target);
             }
         }
         // int shade = 255;

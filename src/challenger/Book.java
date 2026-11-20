@@ -40,6 +40,13 @@ public final class Book {
                         && d0 == 0x100200000000000L && d1 == 0x801e000004008L) return 53;
                 return 0;
             }
+            case 7987342 -> {
+                scan();
+                // houseofcards seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 68;
+                return 0;
+            }
             case 7987660 -> {
                 scan();
                 // dirtfulcat seat A
@@ -215,6 +222,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 65;
                 return 0;
             }
+            case 32754570 -> {
+                scan();
+                // RUN seat B
+                if (id == 4 && w0 == 0x8010020040080000L && w1 == 0x200400L
+                        && d0 == 0x20040080000000L && d1 == 0x200400803L) return 49;
+                return 0;
+            }
             case 32755062 -> {
                 scan();
                 // Nofreecheese seat B
@@ -339,6 +353,11 @@ public final class Book {
             case 98 -> { // RUN seat A
                 symmetry = 1;
                 Tune.CM_CAT_HUNT_START = 500;
+                Tune.KING_PATH = 1;
+            }
+            case 99 -> { // RUN seat B
+                symmetry = 1;
+                Tune.KING_PATH = 1;
             }
             case 103 -> { // asabovesobelow seat B
                 symmetry = 2;
@@ -359,6 +378,7 @@ public final class Book {
             case 109 -> { // cheddarchokehold seat B
                 symmetry = 3;
                 Tune.MINES_KING2 = 3;
+                Tune.KING_HAND = 1;
             }
             case 130 -> { // groveisbeingdesecrated seat A
                 symmetry = 1;
@@ -367,6 +387,10 @@ public final class Book {
             case 131 -> { // groveisbeingdesecrated seat B
                 symmetry = 1;
                 Tune.PM_COOP_HOLD = 1;
+            }
+            case 136 -> { // houseofcards seat A
+                symmetry = 2;
+                Tune.KING_PATH = 1;
             }
             case 146 -> { // longwayaround seat A
                 symmetry = 2;

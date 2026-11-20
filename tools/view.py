@@ -1,8 +1,8 @@
 """The remote state the tools on this machine share, read by one remote command at a time and at most every MAX_AGE_S
 however many tools run: the pool's pieces, the open runs, our jobs in each scheduler's queue, and the progress and job
 folders of every run and job a process here follows. No daemon: a process that needs the state reads the local
-snapshot (CLIENT/view.json) and, when it is older than MAX_AGE_S or lacks what it follows, refreshes it under a lock
-(CLIENT/view.lock), so the logins a minute don't grow with the number of runs followed.
+snapshot (CLIENT/view2.json) and, when it is older than MAX_AGE_S or lacks what it follows, refreshes it under a lock
+(CLIENT/view2.lock), so the logins a minute don't grow with the number of runs followed.
 
 What a process follows is its interest file (CLIENT/interest/PID-TOKEN.json, rewritten by each `get`, removed at its
 exit; one silent for INTEREST_S is a dead process's): a refresh reads every live one's runs and jobs.

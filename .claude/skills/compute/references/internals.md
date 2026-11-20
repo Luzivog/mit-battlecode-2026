@@ -43,19 +43,25 @@ agent's.
   time, under a lock; `ControlPersist=10m`). `gpucluster3` is tried when `gpucluster2` can't be reached; a name whose
   connection was already tried is skipped.
 - **Shared scheduler reads.** `remote.cached` keeps a read of `sinfo`/`condor_status`/our queues for `CACHE_S` (5 s)
-  for every process here (`backends.read_*(max_age)`); a submit or a removal makes them stale (`forget`).
+  for every process here (`backends.read_*(max_age)`), and the sbatch probes too. A submit or a removal starts a new
+  generation of reads (`forget`): a read begun before it is filed where no reader looks, so a placement always sees
+  the pieces the last one queued.
 
 ## The shared view (`tools/view.py`)
 
 Followers, `wait`, `status` and placement read the remote state from one local snapshot
-(`~/battlecode26-data/compute/view.json`): the pool's piece states, the open runs, the names and states of our jobs in
+(`~/battlecode26-data/compute/view2.json`): the pool's piece states, the open runs, the names and states of our jobs in
 the GPU cluster's and Condor's queues, and, for every run and job a process here follows, the run's progress (done,
 claims, pieces, closed, rounds, placed) and the jobs' folders and queue states. What a process follows is its interest
 file (`interest/PID-TOKEN.json`, rewritten by each read, removed at exit, ignored after 120 s). A process whose snapshot
-is older than `MAX_AGE_S` (5 s), or lacks what it follows, refreshes it under `view.lock`: one login on the GPU cluster
-(and one on cpucluster1 when a cpucluster1 job is followed), at most every `MIN_GAP_S` (2 s), whatever the number of
-runs. A refresh that failed is the snapshot too: every reader is `Unreachable` until the next. A follower's fetch of
-results (`login_into`) is the one remote call a run still makes of its own, in a bulk session slot.
+is older than `MAX_AGE_S` (5 s), or lacks what it follows, refreshes it under `view2.lock`: one login on the GPU
+cluster (and one on cpucluster1 when a cpucluster1 job is followed), at most every `MIN_GAP_S` (2 s), whatever the
+number of runs. The pieces' states are one listing of `pool/pieces` (their names), and a run's folder is read again
+only once its last read is `RUN_REREAD_S` (8 s) old (a reader takes it up to `RUN_AGE_S`, 15 s): at 314 pieces and 26
+open runs a refresh takes 0.3 to 0.5 s. A refresh that failed is the snapshot too: every reader is `Unreachable` until
+the next. `tools/compute status` never waits for another process's refresh: it shows the snapshot when it is under 30
+s old or another process is refreshing it, with its age. A follower's fetch of results (`login_into`) is the one
+remote call a run still makes of its own, in a bulk session slot.
 
 ## A job
 
@@ -107,7 +113,9 @@ pieces are anonymous (requirements and a rank by the workers a machine holds), s
 and a second piece end at once; a piece says its kind (`+BC26Kind`: task CPUs, memory, runtime and `POOL_V` for a
 pooled run, the run's id otherwise). GPU-cluster slots go one at a time, each from a read after the last submit. When
 nothing is free, Condor pieces wait in its queue: `QUEUED_PIECES` (4) of a kind at most, counted over every run's
-idle pieces; a run whose kind has them gets none (its tasks wait for the pool) and isn't refused. A placement that
+idle pieces; a run whose kind has them gets none (its tasks wait for the pool) and isn't refused. However many lab
+machines look free, a placement adds Condor pieces only while fewer than `IDLE_CAP` (32) of its kind wait in the
+queue: a read of free machines is a moment's, and a piece waits until Condor matches it. A placement that
 can't take the lock in `PLACE_WAIT_S`, or whose pool read failed, adds nothing: the follower places later. A piece
 counts once its backend took it (appended to `pieces`). Condor requirements leave out machines that don't mount the
 workspace (`CONDOR_EXCLUDE`) and machines with under 4 GiB free to execute in (`CONDOR_DISK_KB`): a piece there
@@ -166,12 +174,14 @@ pieces serve every pooled run, and every pooled piece serves it.
 - **The exit rule.** A piece ends as soon as it runs nothing and a last look at every run (skips ignored) finds
   nothing it may claim: no idle grace. A run's `closed` stops that run's tasks on every piece (checked every
   `CLOSED_S`, 5 s), and the piece goes on with other runs' tasks.
-- **Live capacity.** `pool/pieces/JOB` is a pooled piece's state (slots, running, task size, runtime, backend,
-  deadline, limit, its time `at`), written through a rename when it starts, when its free slots reach or leave 0, on
-  any other change at most every `STATE_S` (30 s), and unchanged every `STATE_BEAT_S` (10 min); removed at its end. A
-  piece is live while its scheduler lists it running (the view reads both queues); where that queue wasn't read
-  (cpucluster1), while its `at` is under 21 minutes old. The view removes a dead piece's file at its next refresh: on
-  CephFS a file another machine just wrote costs a read up to 30 ms.
+- **Live capacity.** A pooled piece's state is the name of an empty file in `pool/pieces`
+  (`JOB,POOL_V,slots,running,task CPUs,task MB,runtime,deadline,limit,at`: `piece.state_name`), renamed (and
+  touched) when it starts, when its free slots reach or leave 0, on any other change at most every `STATE_S` (30 s),
+  and unchanged every `STATE_BEAT_S` (10 min); removed at its end. One listing reads every state: a state in a file's
+  content cost 16 ms a file on CephFS (236 pieces: 3.9 s). A file named by a job id alone is an older piece's, its
+  state inside, read while such pieces live. A piece is live while its scheduler lists it running (the view reads both
+  queues); where that queue wasn't read (cpucluster1), while its `at` is under 21 minutes old. The view removes a dead
+  piece's file at its next refresh.
 - **Placement.** A new pooled run asks for pieces for its tasks less the free slots of the live pieces that would
   serve it (`runs.place`); `tools/run` says so (`2 live pieces have 9 free slots: no new piece`).
 - **Placement beside the follower.** `tools/run` prints the run's id before it places pieces and touches `placed`
@@ -282,7 +292,8 @@ three rounds at most. These are yours:
   gpucluster2: CephFS, mounted on the GPU cluster's nodes, cpucluster1 and the lab machines but melchett; a 55 GB
   quota, read without a walk by `getfattr -n ceph.dir.rbytes`). Nothing on /vol/bitbucket (full, and a small file
   operation there takes 250 ms and more). A job's log stops at 64 MB, a task's log at 1 MB and its OUT at 1 GB; ended
-  jobs and closed runs are deleted after 6 hours, a run nothing touched for 2 days too, and a closed run's code
+  jobs and closed runs are deleted after 6 hours (never a job still in one of our queues: the sweep reads them
+  first, and keeps every job folder when one can't be read), a run nothing touched for 2 days too, and a closed run's code
   bundle at once (`tools/compute sweep`, run by `tools/run` and `tools/compute run` at most once an hour). A stored
   bundle or shipped file in `cas/` that no run or job links any more goes 6 hours after its last use; `pool/pieces`
   files silent for an hour go. Never `chmod` anything open.

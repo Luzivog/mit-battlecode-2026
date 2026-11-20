@@ -60,3 +60,27 @@ own side (and the middle). QueenOfHearts B starves at even income.
   (+0.225 [+0.08, +0.37], adj +0.16, p_max 0.023) and fails its confirmation (23057 `1120-125412-ab-295c`: +0.05 [−0.06, +0.16]); `SPAWN_CAP` 60 loses
   −0.40 to −0.525 on Excavation A and moonlitriverpark, `PM_SIEGE` −0.20 on gridlock B; nothing passes on gridlock,
   Excavation, moonlitriverpark, cheeseysquare, shell, holeinthewall.
+
+## 3. CM7: every reachable mine on the rest of the top 60
+
+`cm6a`'s asabovesobelow A seat is its fifth-nearest mine, a seat the four site types of CM4/CM5 do not name. CM7 plays
+every mine within the first king's reach (`D:king1all.py`, nearest first, 7 candidates: with main's run that is the
+8-run cap; only TheHeist A had an eighth) on the top 60 map-seats of `rank-book6.json` that `cm6a` did not play, have
+no first-king site in main's book and were not read as out of a seat's reach. `book matrix cm7a`, against main
+`bbafb1f0` (book 8), the map-seats' other entries on, 40 cells a map, seed base 23058 (ref `1120-130409-ab-eb72`,
+k1 `-a714`, k2 `-89d1`, k3 `-0a04`, k4 `-7246`, k5 `-ba66`, k6 `-7d9f`, k7 `-6b4d`):
+
+| map-seat | candidates | best | p_max |
+|---|---|---|---|
+| squaresaremodernart B | 6 | (6,13), second-nearest: +0.250 [+0.044, +0.456] | 0.073 |
+| thehallway B | 4 | (5,33), nearest: +0.100 | 0.163 |
+| where_are_you B | 1 | +0.075 | 0.196 |
+| Nofreecheese A | 6 | (42,15): +0.150 | 0.260 |
+| popthecork B, uneruesansfin B, dirtfulcat A, averyfineline B | 2–6 | ≤ +0.050 | ≥ 0.62 |
+| diamond A, TheHeist A, shell A, closeup B | 1–7 | ≤ 0 | ≥ 0.86 |
+
+No map-seat passes p_max < 0.05; nothing to confirm. Far seats lose heavily where they exist (Nofreecheese A −0.675,
+uneruesansfin B −0.475 at its fourth to seventh). Left out before the screen: the `cm6a` maps; the map-seats with a
+site; PM4's twelve (the rat exchange at our king); cheddarchokehold, cheeseysquare, moonlitriverpark, mincemeat A (no
+mine within the king's reach); mushroom, EscapeTheNight B, houseofcards A, knifefight A, longwayaround (closed).
+

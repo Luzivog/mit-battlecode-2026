@@ -88,7 +88,7 @@ public final class Tune {
     public static final int TRAP_STRONG_HP = 80; // tune: 10 [0, 100] an enemy at this HP and a bite above ours is trapped
     // shouldFight: a rat fights any enemy within KING_DEF_DSQ of our king, and a cat within CAT_DEF_DSQ of it.
     public static final int KING_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight any enemy
-    public static final int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
+    public static int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
     // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
 

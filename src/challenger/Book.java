@@ -159,6 +159,13 @@ public final class Book {
                         && d0 == 0x8010000000000000L && d1 == 0x8010222000000L) return 8;
                 return 0;
             }
+            case 24766236 -> {
+                scan();
+                // closeup seat B
+                if (id == 2 && w0 == 0x100200400800000L && w1 == 0x8L
+                        && d0 == 0x600c0f81f000000L && d1 == 0x30L) return 27;
+                return 0;
+            }
             case 24806880 -> {
                 scan();
                 // popthecork seat B
@@ -171,6 +178,13 @@ public final class Book {
                 // cheddarchokehold seat B
                 if (id == 2 && w0 == 0x0L && w1 == 0x80403c0400801L
                         && d0 == 0x0L && d1 == 0x0L) return 54;
+                return 0;
+            }
+            case 26652996 -> {
+                scan();
+                // gelcatinouscube seat B
+                if (id == 6 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 63;
                 return 0;
             }
             case 30023943 -> {
@@ -319,6 +333,42 @@ public final class Book {
                 symmetry = 1;
                 Tune.MINES_KING2 = 7;
             }
+            case 55 -> { // closeup seat B
+                symmetry = 1;
+                CAT_LANE = new long[Game.mapHeight];
+                CAT_LANE[0] = 0x1800000L;
+                CAT_LANE[1] = 0x3c00600L;
+                CAT_LANE[2] = 0x7e00e00L;
+                CAT_LANE[3] = 0xe601e00L;
+                CAT_LANE[4] = 0x1f603f00L;
+                CAT_LANE[5] = 0x1fe03f80L;
+                CAT_LANE[6] = 0x1f83ff0L;
+                CAT_LANE[7] = 0xf83ef8L;
+                CAT_LANE[8] = 0x703e78L;
+                CAT_LANE[9] = 0xfe03cf8L;
+                CAT_LANE[10] = 0x1ff83ddcL;
+                CAT_LANE[11] = 0x1878398eL;
+                CAT_LANE[12] = 0x18787386L;
+                CAT_LANE[13] = 0x18f8f706L;
+                CAT_LANE[14] = 0x18f9f6c6L;
+                CAT_LANE[15] = 0x18dbe7c6L;
+                CAT_LANE[16] = 0x183bc7c6L;
+                CAT_LANE[17] = 0x18738786L;
+                CAT_LANE[18] = 0x1c670786L;
+                CAT_LANE[19] = 0xeef07feL;
+                CAT_LANE[20] = 0x7cf01fcL;
+                CAT_LANE[21] = 0x79f0380L;
+                CAT_LANE[22] = 0x7df07c0L;
+                CAT_LANE[23] = 0x3ff07e0L;
+                CAT_LANE[24] = 0x7f01feL;
+                CAT_LANE[25] = 0x3f01beL;
+                CAT_LANE[26] = 0x1e019cL;
+                CAT_LANE[27] = 0x1c01f8L;
+                CAT_LANE[28] = 0x1800f0L;
+                CAT_LANE[29] = 0x60L;
+                Tune.CM_LANE_MEMORY = 1;
+                Tune.CM_LANE_FLEE = 1;
+            }
             case 70 -> { // peaceinourtime seat A
                 symmetry = 2;
                 Tune.CM_KING2_ROUND = 30;
@@ -372,6 +422,10 @@ public final class Book {
                 symmetry = 3;
                 Tune.MINES_KING2 = 3;
                 Tune.KING_HAND = 1;
+            }
+            case 127 -> { // gelcatinouscube seat B
+                symmetry = 1;
+                Tune.CM_KING2_ROUND = 30;
             }
             case 130 -> { // groveisbeingdesecrated seat A
                 symmetry = 1;
@@ -484,10 +538,12 @@ public final class Book {
             case 176 -> { // t_minus_five_minutes seat A
                 symmetry = 3;
                 Tune.SPAWN_RICH = 1500;
+                Tune.CAT_DEF_DSQ = 100;
             }
             case 177 -> { // t_minus_five_minutes seat B
                 symmetry = 3;
                 Tune.SPAWN_RICH = 1500;
+                Tune.CAT_DEF_DSQ = 100;
             }
             case 184 -> { // tminusten seat A
                 symmetry = 3;

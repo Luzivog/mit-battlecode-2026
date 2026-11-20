@@ -11,7 +11,10 @@ public final class Book {
     public static int map; // the map's id (tools/book/book ids) on a map-seat with entries, else 0
     public static int seat; // 0 team A, 1 team B (set where map != 0)
     public static int symmetry; // the map's CellTracker.Symmetry ordinal (1 R, 2 H: x -> W-1-x, 3 V), 0 where map is 0
+    public static long[] AT_DIRT; // the map's round-1 dirt (Tune.AT_MAP): tile (x, y) in it iff AT_DIRT != null && (AT_DIRT[y] >>> x & 1) != 0 (null off the book)
+    public static long[] AT_WALL; // the map's walls (Tune.AT_MAP): tile (x, y) in it iff AT_WALL != null && (AT_WALL[y] >>> x & 1) != 0 (null off the book)
     public static long[] CAT_LANE; // tiles some cat's 2x2 covers on its EXPLORE loop (docs/theory/cm-cat-maps.md §3): tile (x, y) in it iff CAT_LANE != null && (CAT_LANE[y] >>> x & 1) != 0 (null off the book)
+    public static MapLocation[] CM_MINES; // every cheese mine of the map (Tune.CM_MINE_BOOK) (null off the book)
     public static MapLocation[] KING1_SITE; // the first king sites, in order (Tune.CM_KING1_SITE picks one) (null off the book)
     public static MapLocation[] KING2_SITE; // second-king sites off every cat loop, in order of preference (Tune.CM_KING2_ROUND) (null off the book)
 
@@ -60,6 +63,13 @@ public final class Book {
                 // warhammer seat A
                 if (id == 2 && w0 == 0x8010020078010020L && w1 == 0x3L
                         && d0 == 0x400801e004008000L && d1 == 0xe00L) return 93;
+                return 0;
+            }
+            case 8028893 -> {
+                scan();
+                // externalsustenance seat A
+                if (id == 1 && w0 == 0x8000000L && w1 == 0x20000000002L
+                        && d0 == 0x80080000L && d1 == 0x0L) return 60;
                 return 0;
             }
             case 8253533 -> {
@@ -146,6 +156,20 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 9;
                 return 0;
             }
+            case 13312238 -> {
+                scan();
+                // trapped seat A
+                if (id == 1 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x180200400800000L && d1 == 0x2004008L) return 19;
+                return 0;
+            }
+            case 13313643 -> {
+                scan();
+                // shell seat A
+                if (id == 5 && w0 == 0x80000000000000L && w1 == 0x2L
+                        && d0 == 0x0L && d1 == 0x0L) return 81;
+                return 0;
+            }
             case 14646492 -> {
                 scan();
                 // therearenowalls seat A
@@ -160,11 +184,25 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 26;
                 return 0;
             }
+            case 15633858 -> {
+                scan();
+                // asabovesobelow seat A
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x803802a0bc0f8020L && d1 == 0x1f03a0601L) return 51;
+                return 0;
+            }
             case 15851801 -> {
                 scan();
                 // rift seat A
                 if (id == 1 && w0 == 0x0L && w1 == 0x2000000000L
                         && d0 == 0x0L && d1 == 0x0L) return 15;
+                return 0;
+            }
+            case 15888799 -> {
+                scan();
+                // moonlitriverpark seat A
+                if (id == 3 && w0 == 0x2204408ff000000L && w1 == 0xce204408811L
+                        && d0 == 0x0L && d1 == 0x0L) return 75;
                 return 0;
             }
             case 15892740 -> {
@@ -179,6 +217,20 @@ public final class Book {
                 // sunandmoon seat A
                 if (id == 27 && w0 == 0x40080080000L && w1 == 0x6006004002L
                         && d0 == 0x8038038078078020L && d1 == 0x400801L) return 86;
+                return 0;
+            }
+            case 15893506 -> {
+                scan();
+                // mushroom seat A
+                if (id == 1 && w0 == 0x20000000000000L && w1 == 0x2L
+                        && d0 == 0xc41887f0fe0fc020L && d1 == 0x80fc3f87f0e21L) return 76;
+                return 0;
+            }
+            case 15894181 -> {
+                scan();
+                // jail seat A
+                if (id == 3 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x80000000000000L && d1 == 0x0L) return 31;
                 return 0;
             }
             case 15933953 -> {
@@ -384,6 +436,13 @@ public final class Book {
                         && d0 == 0x80300600c0080000L && d1 == 0x80fe300600c03L) return 13;
                 return 0;
             }
+            case 30089411 -> {
+                scan();
+                // trapped seat B
+                if (id == 2 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x20040080000000L && d1 == 0x200400803L) return 19;
+                return 0;
+            }
             case 30090758 -> {
                 scan();
                 // shell seat B
@@ -426,6 +485,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 15;
                 return 0;
             }
+            case 32668999 -> {
+                scan();
+                // moonlitriverpark seat B
+                if (id == 4 && w0 == 0x81102204408e6000L && w1 == 0x1fe204408L
+                        && d0 == 0x0L && d1 == 0x0L) return 75;
+                return 0;
+            }
             case 32669987 -> {
                 scan();
                 // TheHeist seat B
@@ -438,6 +504,13 @@ public final class Book {
                 // sunandmoon seat B
                 if (id == 28 && w0 == 0x80000400802000L && w1 == 0xc0300400000L
                         && d0 == 0x300e0380f03c020L && d1 == 0x4008L) return 86;
+                return 0;
+            }
+            case 32671362 -> {
+                scan();
+                // jail seat B
+                if (id == 4 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x2L) return 31;
                 return 0;
             }
             case 32711216 -> {
@@ -605,6 +678,16 @@ public final class Book {
                 KING1_SITE = new MapLocation[] {new MapLocation(32, 13)};
                 Tune.CM_KING1_SITE = 1;
             }
+            case 38 -> { // trapped seat A
+                symmetry = 3;
+                Tune.CM_KING2_ROUND = 80;
+                KING2_SITE = new MapLocation[] {new MapLocation(6, 19)};
+            }
+            case 39 -> { // trapped seat B
+                symmetry = 3;
+                Tune.CM_KING2_ROUND = 80;
+                KING2_SITE = new MapLocation[] {new MapLocation(6, 30)};
+            }
             case 40 -> { // wallsofparadis seat A
                 symmetry = 1;
                 Tune.MINES_KING2 = 7;
@@ -661,6 +744,19 @@ public final class Book {
                 symmetry = 3;
                 Tune.SPAWN_CAP = 60;
             }
+            case 62 -> { // jail seat A
+                symmetry = 3;
+                Tune.KING_PATH = 1;
+                CM_MINES = new MapLocation[] {new MapLocation(8, 3), new MapLocation(52, 4), new MapLocation(52, 35), new MapLocation(8, 36)};
+                Tune.CM_MINE_BOOK = 1;
+                Tune.EXPLORE_P = 0.2;
+            }
+            case 63 -> { // jail seat B
+                symmetry = 3;
+                CM_MINES = new MapLocation[] {new MapLocation(8, 3), new MapLocation(52, 4), new MapLocation(52, 35), new MapLocation(8, 36)};
+                Tune.CM_MINE_BOOK = 1;
+                Tune.EXPLORE_P = 0.2;
+            }
             case 70 -> { // peaceinourtime seat A
                 symmetry = 2;
                 Tune.CM_KING2_ROUND = 30;
@@ -716,9 +812,16 @@ public final class Book {
                 symmetry = 1;
                 Tune.KING_PATH = 1;
             }
+            case 102 -> { // asabovesobelow seat A
+                symmetry = 2;
+                KING1_SITE = new MapLocation[] {new MapLocation(40, 36)};
+                Tune.CM_KING1_SITE = 1;
+            }
             case 103 -> { // asabovesobelow seat B
                 symmetry = 2;
                 Tune.SG_LOOK_RIGHT = 1;
+                Tune.CM_KING2_ROUND = 80;
+                KING2_SITE = new MapLocation[] {new MapLocation(29, 21)};
             }
             case 106 -> { // bed seat A
                 symmetry = 2;
@@ -743,10 +846,91 @@ public final class Book {
                 KING1_SITE = new MapLocation[] {new MapLocation(28, 12)};
                 Tune.CM_KING1_SITE = 1;
             }
+            case 120 -> { // externalsustenance seat A
+                symmetry = 1;
+                AT_WALL = new long[Game.mapHeight];
+                AT_WALL[5] = 0x1ffffe0L;
+                AT_WALL[6] = 0x1000020L;
+                AT_WALL[7] = 0x1000120L;
+                AT_WALL[8] = 0x1000020L;
+                AT_WALL[9] = 0x1004020L;
+                AT_WALL[10] = 0x1200020L;
+                AT_WALL[11] = 0x1000020L;
+                AT_WALL[12] = 0x1000020L;
+                AT_WALL[13] = 0x1000020L;
+                AT_WALL[14] = 0x1004020L;
+                AT_WALL[15] = 0x1400020L;
+                AT_WALL[16] = 0x1000120L;
+                AT_WALL[17] = 0x1000020L;
+                AT_WALL[18] = 0x1000020L;
+                AT_WALL[19] = 0x1001020L;
+                AT_WALL[20] = 0x1020020L;
+                AT_WALL[21] = 0x1000020L;
+                AT_WALL[22] = 0x1000020L;
+                AT_WALL[23] = 0x1200020L;
+                AT_WALL[24] = 0x10000a0L;
+                AT_WALL[25] = 0x1008020L;
+                AT_WALL[26] = 0x1000020L;
+                AT_WALL[27] = 0x1000020L;
+                AT_WALL[28] = 0x1000020L;
+                AT_WALL[29] = 0x1000120L;
+                AT_WALL[30] = 0x1008020L;
+                AT_WALL[31] = 0x1000020L;
+                AT_WALL[32] = 0x1200020L;
+                AT_WALL[33] = 0x1000020L;
+                AT_WALL[34] = 0x1ffffe0L;
+                AT_DIRT = new long[Game.mapHeight];
+                AT_DIRT[6] = 0xe001c0L;
+                AT_DIRT[7] = 0xc000c0L;
+                AT_DIRT[8] = 0x800040L;
+                AT_DIRT[31] = 0x800040L;
+                AT_DIRT[32] = 0xc000c0L;
+                AT_DIRT[33] = 0xe001c0L;
+                Tune.AT_MAP = 1;
+            }
             case 121 -> { // externalsustenance seat B
                 symmetry = 1;
                 KING1_SITE = new MapLocation[] {new MapLocation(15, 7)};
                 Tune.CM_KING1_SITE = 1;
+                AT_WALL = new long[Game.mapHeight];
+                AT_WALL[5] = 0x1ffffe0L;
+                AT_WALL[6] = 0x1000020L;
+                AT_WALL[7] = 0x1000120L;
+                AT_WALL[8] = 0x1000020L;
+                AT_WALL[9] = 0x1004020L;
+                AT_WALL[10] = 0x1200020L;
+                AT_WALL[11] = 0x1000020L;
+                AT_WALL[12] = 0x1000020L;
+                AT_WALL[13] = 0x1000020L;
+                AT_WALL[14] = 0x1004020L;
+                AT_WALL[15] = 0x1400020L;
+                AT_WALL[16] = 0x1000120L;
+                AT_WALL[17] = 0x1000020L;
+                AT_WALL[18] = 0x1000020L;
+                AT_WALL[19] = 0x1001020L;
+                AT_WALL[20] = 0x1020020L;
+                AT_WALL[21] = 0x1000020L;
+                AT_WALL[22] = 0x1000020L;
+                AT_WALL[23] = 0x1200020L;
+                AT_WALL[24] = 0x10000a0L;
+                AT_WALL[25] = 0x1008020L;
+                AT_WALL[26] = 0x1000020L;
+                AT_WALL[27] = 0x1000020L;
+                AT_WALL[28] = 0x1000020L;
+                AT_WALL[29] = 0x1000120L;
+                AT_WALL[30] = 0x1008020L;
+                AT_WALL[31] = 0x1000020L;
+                AT_WALL[32] = 0x1200020L;
+                AT_WALL[33] = 0x1000020L;
+                AT_WALL[34] = 0x1ffffe0L;
+                AT_DIRT = new long[Game.mapHeight];
+                AT_DIRT[6] = 0xe001c0L;
+                AT_DIRT[7] = 0xc000c0L;
+                AT_DIRT[8] = 0x800040L;
+                AT_DIRT[31] = 0x800040L;
+                AT_DIRT[32] = 0xc000c0L;
+                AT_DIRT[33] = 0xe001c0L;
+                Tune.AT_MAP = 1;
             }
             case 126 -> { // gelcatinouscube seat A
                 symmetry = 1;
@@ -763,6 +947,8 @@ public final class Book {
                 symmetry = 1;
                 Tune.PM_COOP_HOLD = 1;
                 Tune.SPAWN_CAP = 60;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(48, 40)};
             }
             case 131 -> { // groveisbeingdesecrated seat B
                 symmetry = 1;
@@ -772,8 +958,8 @@ public final class Book {
             case 137 -> { // houseofcards seat B
                 symmetry = 2;
                 Tune.SPAWN_CAP_SMALL = 40;
-                KING1_SITE = new MapLocation[] {new MapLocation(11, 4)};
-                Tune.CM_KING1_SITE = 1;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(16, 4)};
             }
             case 140 -> { // isnotgold seat A
                 symmetry = 1;
@@ -787,25 +973,51 @@ public final class Book {
                 symmetry = 2;
                 KING1_SITE = new MapLocation[] {new MapLocation(25, 17)};
                 Tune.CM_KING1_SITE = 1;
+                Tune.DIRT_ROUND = 0;
             }
             case 143 -> { // kingofthehill seat B
                 symmetry = 2;
                 KING1_SITE = new MapLocation[] {new MapLocation(34, 17)};
                 Tune.CM_KING1_SITE = 1;
+                Tune.DIRT_ROUND = 0;
             }
             case 146 -> { // longwayaround seat A
                 symmetry = 2;
                 Tune.SPAWN_CAP = 60;
                 Tune.MINES_KING2 = 7;
+                Tune.PM_SIEGE = 1;
             }
             case 147 -> { // longwayaround seat B
                 symmetry = 2;
                 Tune.SPAWN_CAP = 60;
             }
+            case 150 -> { // moonlitriverpark seat A
+                symmetry = 1;
+                CM_MINES = new MapLocation[] {new MapLocation(5, 3), new MapLocation(44, 13), new MapLocation(15, 25), new MapLocation(54, 35)};
+                Tune.CM_MINE_BOOK = 1;
+            }
+            case 151 -> { // moonlitriverpark seat B
+                symmetry = 1;
+                CM_MINES = new MapLocation[] {new MapLocation(5, 3), new MapLocation(44, 13), new MapLocation(15, 25), new MapLocation(54, 35)};
+                Tune.CM_MINE_BOOK = 1;
+            }
+            case 152 -> { // mushroom seat A
+                symmetry = 2;
+                Tune.CM_KING2_ROUND = 30;
+                KING2_SITE = new MapLocation[] {new MapLocation(20, 16)};
+            }
+            case 162 -> { // shell seat A
+                symmetry = 1;
+                CM_MINES = new MapLocation[] {new MapLocation(47, 11), new MapLocation(47, 21), new MapLocation(32, 23), new MapLocation(17, 26), new MapLocation(2, 28), new MapLocation(2, 38)};
+                Tune.CM_MINE_BOOK = 1;
+            }
             case 163 -> { // shell seat B
                 symmetry = 1;
                 KING1_SITE = new MapLocation[] {new MapLocation(42, 17)};
                 Tune.CM_KING1_SITE = 1;
+                CM_MINES = new MapLocation[] {new MapLocation(47, 11), new MapLocation(47, 21), new MapLocation(32, 23), new MapLocation(17, 26), new MapLocation(2, 28), new MapLocation(2, 38)};
+                Tune.CM_MINE_BOOK = 1;
+                Tune.EXPLORE_P = 0.2;
             }
             case 167 -> { // squaresaremodernart seat B
                 symmetry = 1;

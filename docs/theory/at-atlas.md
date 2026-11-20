@@ -33,10 +33,37 @@ rate on that map-seat; on `goal` one map-seat weighs 1/190, so +0.19 there is +0
 
 ## 2. Confirmed entries
 
-| arm (branch) | map | seat | effect [95%] fresh seeds | main there | run |
-|---|---|---|---|---|---|
-| KP3, the king plans its route (`t3/ms-arm-kp3`, `2dbed577` vs main `419fa32`) | EscapeTheNight | B | +0.727 [+0.655, +0.798] (150 cells) | 0.007 | `1119-222443-ab-30b0` |
-| KP3 | EscapeTheNight | A | +0.007 [−0.006, +0.020] | 0.993 | same |
+Book form (map, seat, switch or constant, value). Effects are paired against the base on the one map, fresh seeds,
+95% intervals; "both" = both seats pooled. Seed bases: 26001 (arms, round 1), 26002 (constants, round 1), 26003
+(round 2), 26004 (round 3). KP3 runs: `2dbed577` (`t3/ms-arm-kp3`) against main `419fa32`; constants: one-constant
+variants of main `de6e5b8` (`tools/tune points at1`: mk7 `92e8328`, mk3 `a89d404`, sr15 `effdd2e`, sr25 `e44a3d2`).
+
+**Confirmed on two fresh seed bases (lower bound > 0 in both):**
+
+| map | seat | switch or constant | value | round 1 | round 2 | runs |
+|---|---|---|---|---|---|---|
+| EscapeTheNight | B | KP3 king route planner | on | +0.727 [+0.655, +0.798] | +0.720 [+0.632, +0.808] | `1119-222443-ab-30b0`, `1119-225348-ab-7ccf` |
+| pocketsofcheese | B | KP3 king route planner | on | +0.300 [+0.220, +0.380] | +0.327 [+0.235, +0.418] | `1119-222444-ab-963d`, `1119-225715-ab-746c` |
+| toomuchcheese | both | `MINES_KING2` | 7 | +0.205 [+0.161, +0.249] | +0.147 [+0.104, +0.191] | `1119-222609-ab-f5d6`, `1119-231244-ab-111b` |
+| wallsofparadis | both | `MINES_KING2` | 7 | +0.075 [+0.046, +0.104] | +0.075 [+0.047, +0.103] | same |
+| cheddarchokehold | both | `MINES_KING2` | 3 | +0.165 [+0.124, +0.206] | +0.102 [+0.066, +0.139] | `1119-222628-ab-3827`, `1119-231244-ab-ca9c` |
+| t_minus_five_minutes | both | `SPAWN_RICH` | 1500 | +0.068 [+0.027, +0.108] | +0.078 [+0.042, +0.115] | `1119-222650-ab-9629`, `1119-225539-ab-8994` |
+
+By seat: toomuchcheese A +0.240/+0.190, B +0.170/+0.105; cheddarchokehold A +0.110/+0.055, B +0.220/+0.150;
+wallsofparadis and t_minus_five_minutes level. KP3 leaves seat A of EscapeTheNight and pocketsofcheese unchanged
+(+0.007, +0.000/+0.013).
+
+**Round 1 passed, round 2 running:** KP3 RUN both +0.190 [+0.137, +0.243] (A +0.267, B +0.113; `1119-231244-ab-b1f2`);
+`MINES_KING2` 7 pipes +0.047 [+0.023, +0.071] (`1119-231245-ab-1aa0`); `SPAWN_RICH` 1500 warhammer +0.063 [+0.019,
++0.108], peaceinourtime A +0.120 [+0.020, +0.220], safelycontained +0.023 [+0.002, +0.045], TheHeist +0.050 [+0.001,
++0.099] (`1119-231245-ab-66da`). KP3 houseofcards: round 1 both +0.133 [+0.073, +0.192] (`1119-222443-ab-c11a`), round 2
++0.052 [+0.000, +0.104] (`1119-225701-ab-f186`): a third base runs.
+
+**Failed on fresh seeds:** PC1's cooperation last-cat hold on TheHeist against its post-MC base, −0.390 [−0.449,
+−0.331] (`1119-222444-ab-1b90`; +0.31 in the atlas, from older bases); `SPAWN_RICH` 2500 on uneruesansfin −0.018 and
+rift +0.022 (`1119-222641-ab-d100`; +0.12 and +0.08 in the screens, which ran on older mains); `MINES_KING2` 7 on RUN
+and constrictinglattice (no game changed), diamond, neitheroptionisgood, where_are_you; KP3 on diamond, gelcatinouscube,
+closeup (+0.04 to +0.06, intervals across 0).
 
 ## 3. Main's map-seat table now
 

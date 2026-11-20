@@ -53,6 +53,7 @@ STUCK_S = 90.0 if not LOCAL else 1.0  # a pooled run none of whose tasks moved f
 QUEUED_S = 120.0  # a piece queued this long no longer holds back pieces added for its run's waiting tasks
 PLACE_S = 600.0  # a follower adds pieces before tools/run's placement says it ended (`placed`) only this long after
 PLACE_WAIT_S = 300.0  # how long a placement waits for another one of this machine's to end (place_pieces)
+READY_S = 3600.0  # the root's mode and the runtime on the volume, checked at most this often by this machine's runs
 
 
 @dataclass(frozen=True)
@@ -248,11 +249,14 @@ def create(tasks: list[Task], task_cpus: int, task_mem_mb: int, wheres: tuple[st
                  str(here.relative_to(repo)) if here.is_relative_to(repo) else ".", tree.commit, gather, pooled,
                  POOL_V if pooled else 0, env_hash(), time.time(), tree.key, wkey)
     hosts = SLURM_HOSTS
-    if not LOCAL:
+    kit_key = hashlib.sha256(provision.kit_file(repo)).hexdigest()[:12] if with_kit else "none"
+    ready = f"ready-{env_hash()}-{kit_key}-{'cpu' if 'cpucluster1' in wheres else 'gpu'}"
+    if not LOCAL and not remote.fresh(ready, READY_S):  # the root's mode and the runtime: checked once an hour here
         J.private_root(hosts)
         if "cpucluster1" in wheres:
             J.private_root((CPU_HOST,))
         provision.ensure(hosts, repo, with_kit)
+        remote.mark(ready)
     W.check_room()
     # main once (base, 35 MB, shared by every run while main stays), then only what the commit adds to it (KB)
     base_blob = f"base-{tree.main}.bundle" if tree.main else ""

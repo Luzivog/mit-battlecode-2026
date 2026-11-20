@@ -14,7 +14,7 @@ import re
 import shlex
 
 from tools.remote import (CONDOR, CPU_HOST, LOCAL, REMOTE_ROOT, SLURM_HOSTS, SUBMIT, Refused, Unreachable, forget,
-                          login)
+                          login, unmark_all)
 
 # where the folders were until 19 Nov, deleted by `tools/compute old-tree` (tests: a folder beside the stand-in)
 OLD_ROOT = f"{LOCAL}.old" if LOCAL else "/vol/bitbucket/user/bc26"
@@ -156,6 +156,7 @@ def empty(yes: bool) -> str:
         return f"would delete everything under {REMOTE_ROOT} (`tools/compute empty --yes`):\n{listing}"
     steps = delete_tree(REMOTE_ROOT, keep=("MANIFEST",))
     forget()
+    unmark_all()  # the runtime went with it: the next run puts it back
     return f"{REMOTE_ROOT} emptied in {steps} steps"
 
 

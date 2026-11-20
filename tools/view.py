@@ -30,6 +30,7 @@ MIN_GAP_S = 0.2 if remote.LOCAL else 2.0  # two refreshes are at least this far 
 INTEREST_S = 120.0  # an interest file not rewritten for this long is a dead process's
 REWRITE_S = 30.0  # an unchanged interest file is rewritten this often
 VIEW_S = 30.0  # a refresh's bound
+LOCK_WAIT_S = 3 * VIEW_S  # how long a reader waits for another process's refresh (tools/compute status: less)
 
 SNAP = "view.json"
 _me = f"{os.getpid()}-{secrets.token_hex(3)}"
@@ -227,7 +228,7 @@ def get(runs: list[str] | None = None, jobs: list[str] | None = None) -> Snapsho
     _want(runs, jobs)
     s = _load()
     if s is None or time.time() - s.at > MAX_AGE_S or not s.covers(runs, jobs):
-        with remote.locked(remote.CLIENT / "view.lock", 3 * VIEW_S):
+        with remote.locked(remote.CLIENT / "view.lock", LOCK_WAIT_S):
             s = _load()
             if s is None or time.time() - s.at > MAX_AGE_S or not s.covers(runs, jobs):
                 if s is not None and time.time() - s.at < MIN_GAP_S:

@@ -102,13 +102,21 @@ mkfifo "$scratch/fifo" || setup_ "mkfifo"
 	n=$(wc -c)
 	[ "$n" = 0 ] || printf '\n== log cut at %s bytes: %s more dropped\n' "$LOG_CAP" "$n"
 } <"$scratch/fifo" & cap=$!
-sig= pid=
-trap 'sig=USR1; kill -USR1 $pid 2>/dev/null' USR1
-trap 'sig=TERM; kill -TERM $pid 2>/dev/null' TERM
+sig= pid= intr=
+trap 'sig=USR1 intr=1; kill -USR1 $pid 2>/dev/null' USR1
+trap 'sig=TERM intr=1; kill -TERM $pid 2>/dev/null' TERM
 (cd "$code" && exec "${argv[@]}") >"$scratch/fifo" 2>&1 </dev/null & pid=$!
-# A trapped signal ends a wait early, so wait again until the command is gone; the last wait returns its status.
-while :; do wait $pid; rc=$?; kill -0 $pid 2>/dev/null || break; done
-wait $pid; rc=$?
+# A trapped signal ends a wait early (its status is the signal's, not the command's), so only then wait again, until
+# a wait returns the command's own status. A pid already waited for answers 127 (a trap that came just after the
+# command's own status): the status kept is that one.
+rc=
+while :; do
+	intr=
+	wait $pid; r=$?
+	[ "$r" = 127 ] && [ -n "$rc" ] && break
+	rc=$r
+	[ -n "$intr" ] || break
+done
 wait $cap
 echo "== $(date -u +%FT%TZ) exit $rc${sig:+ after SIG$sig}"
 # HOME is scratch, deleted with the job: a job that would end 0 having left a file there ends 253, naming it.

@@ -130,6 +130,47 @@ choice hangs on it (TheHeist's cooperation king), and costs where it changes rou
 - Not tried: KF's site arms and E3's miner arms per map (both read zero where they were measured, on rich maps), PT's
   delivery deadline on the r2000 maps (harmful on `goal`).
 
+## 10. PM2: the maps lost on points
+
+From main's 3,000-cell `goal` run of 20 Nov (`1120-022339-ab-124d`, 86.9%), per map-seat: which points term awubot
+leads in our points losses (docs/rules.md §1: backstab 30 cat damage, 50 kings, 20 cheese transferred; cooperation 50,
+30, 20). `scratch/pm/pts.py RUN MAP...` prints it.
+
+| map | the term awubot leads in our points losses |
+|---|---|
+| uneruesansfin, cheesebottles, isnotgold, rift, FreeTheCheese | cat damage (uneruesansfin B 9 of 10, isnotgold 8 of 8) |
+| t_minus_five_minutes | cat damage in cooperation (12,000 to our 4,000), kings 2 to 1 ours |
+| where_are_you | kings (2 to 3 in 14 of 17) |
+| longwayaround, insertmeowname, cheeseguardians, grove, TheHeist A | cheese transferred |
+
+Entries (both runs against the main of their day; ours − main, 95%):
+
+| map | seat | entry | chosen on (seed base, cells, candidates) | confirmed on (seed base, cells) |
+|---|---|---|---|---|
+| t_minus_five_minutes | both | `CAT_DEF_DSQ` 100 | 24017, 200, 2: A +0.030, B +0.055 | 24019, 300: A +0.060 ± 0.047, B +0.047 ± 0.053 |
+| uneruesansfin | both | `CM_CAT_HUNT_START` 500 | 24015, 150, 3: A +0.053, B +0.120 | 24024, 200: A +0.045 ± 0.045, B +0.160 ± 0.064 |
+| cheesebottles | both | `CM_CAT_HUNT_START` 500 | 24015, 150, 3: A +0.093, B +0.087 | 24024, 200: A +0.135 ± 0.055, B +0.095 ± 0.047 |
+| isnotgold | both | `CAT_DEF_DSQ` 100 | 24015, 150, 3: A +0.040, B +0.093 | 24024, 200: A +0.070 ± 0.045, B +0.095 ± 0.053 |
+| rift | both | `CAT_DEF_DSQ` 100 | 24015, 150, 3: A +0.093, B +0.093 | 24024, 200: A +0.105 ± 0.053, B +0.105 ± 0.051 |
+| where_are_you | A | `PM_SKIP_FAILED` 2 | 24022, 200, 5: A +0.060 ± 0.048 | 24026, 300: A +0.093 ± 0.048 (B +0.027 ± 0.038) |
+
+- Cat maps: the hunt (PT 2d, from r1300 on main) or the cat defence round our king (d² 36 on main) gives our rats more
+  of the cat damage. On t_minus_five_minutes every game ends in cooperation near r350 with us ahead on kings; the hunt
+  never runs there (it needs global > 1,000 and 50 quiet rounds), so the defence is the lever.
+- where_are_you: the lock-in's gates do not bind. The third king's formation restarts at the site that just timed out,
+  up to six times in a row, at contested mid-map or far sites (probe of 8 lost seeds, all reproduced). `PM_SKIP_FAILED`
+  (KF's arm T, closed as a general rule): the coordinator skips the mines whose formation timed out, 1 the last one, 2
+  every one (`robot/king/FailedSites.java`). Games ending at 3 kings: A 143 → 165 of 200, B 126 → 153. The pattern
+  (kings ≤ 2 from r800 with the army at its cap, awubot ahead on kings) is 11 of the 21 such losses in the 3,000 cells;
+  no other map-seat has more than 2.
+- RUN: on main with `KING_PATH` 1 it wins 0.970 / 0.975 (24023); no candidate moved it.
+- Closed (docs/closed.md): the lock-in constants, the hunt in cooperation (`PM_HUNT_COOP`, never fires; removed),
+  the formation timeout and join distance on where_are_you, longwayaround B cap 80, the cat levers on cheeseguardians
+  and insertmeowname in both directions, RUN.
+- Runs: matrices `pmc1` (24015), `pmk1` (24016), `pmt1` (24017), `pml1` (24018), `pmt2` (24019), `pmc2` (24020),
+  `pml2` (24021), `pmk2` / `pmk3` (24022), `pmr1` (24023), `pmc3` (24024), `pmcg` (24025), `pmk4` (24026);
+  `tools/tune show NAME`, `tools/book/book fit NAME`. Every run an entry cites is kept.
+
 ## Tools
 
 `~/battlecode26-data/scratch/pm/`: `seat.py RUN` (loss classes per map-seat from results.jsonl), `pair.py REF RUN...`

@@ -184,7 +184,7 @@ pieces serve every pooled run, and every pooled piece serves it.
   only once none of its tasks moved for 90 s. The summary adds `pieces_requested` and `served_by_others`.
 - **Cancel.** `tools/compute cancel RUN` closes a pooled run and cancels its pieces that are queued or held; its
   running pieces stop its tasks and go on with other runs' tasks, or end at once.
-- **Protocol.** A piece serves only runs of its own `POOL_V` (3), and a follower counts only pieces of it: a change to
+- **Protocol.** A piece serves only runs of its own `POOL_V` (4), and a follower counts only pieces of it: a change to
   the protocol bumps it. A run with no `pool` in `run.json` (`--whole`, `--max-cpus`) is served by its own pieces
   alone.
 

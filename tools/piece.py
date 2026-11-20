@@ -56,10 +56,9 @@ MAX_STARTS = 3  # a task's starts, the first included
 LOG_BYTES = 1 << 20  # the end of a task's output kept
 OUT_CAP = 1 << 30  # the most a task's OUT may hold: a run's writes on the shared volume are bounded
 LOST = -1  # the code of a task whose every start was lost
-# The pool's protocol: a piece serves only runs that speak its version. 3: its state file is written seldom (STATE_S,
-# STATE_BEAT_S) and says its time (`at`); a piece is live while its scheduler lists it running (tools/view.py), so a
-# version-2 follower would take version-3 pieces for dead.
-POOL_V = 3
+# The pool's protocol: a piece serves only runs that speak its version. 4: a run's code is base.bundle (main) and a
+# thin code.bundle, which a version-3 piece can't check out. 3: the state file is written seldom and says its time.
+POOL_V = 4
 SCAN_S = 2.0  # between two looks for work while a slot is free and the last look found none
 FULL_S = 60.0  # a run found with nothing claimable is looked at again after this long (its claims come back only
 # from a dead piece's, after STALE_S, or a stopped task's)
@@ -249,6 +248,16 @@ class Piece:
         except OSError:
             pass
 
+    def release(self, r: Run, n: int, why: str) -> None:
+        """Task N's claim removed unrun, not counted as a start: this piece can't run it (its checkout failed here), any
+        other piece may. Counted as a start, three pieces of an older protocol that can't read a run's bundles ended
+        its tasks LOST."""
+        try:
+            shutil.rmtree(r.dir / "claims" / str(n))
+            self.say(f"{self.name(r, n)}: claim released ({why})")
+        except OSError:
+            pass
+
     def starts(self, r: Run, n: int) -> int:
         """Task N's starts lost so far (its claims taken over or given back), plus the one it holds."""
         return sum(1 for x in os.listdir(r.dir / "lost") if x.split(".")[0] == str(n))
@@ -339,7 +348,7 @@ class Piece:
                 self.lost(r, n)
                 continue
             if not self.ready(r):
-                self.give_back(r, n, "its checkout failed here")
+                self.release(r, n, "its checkout failed here")
                 cand.pop(rid, None)
                 continue
             self.start(r, n)

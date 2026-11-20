@@ -475,14 +475,39 @@ def start(bot: str, ref: str, pool: str, cells: int, seed_base: int, extra: list
     return p.stdout.strip().splitlines()[0]
 
 
+def seat_values(book: dict) -> dict:
+    """(map, seat) -> the set of what the book gives it: (name, value) a switch or datum."""
+    out: dict = {}
+    for e in book["entries"]:
+        item = (e.get("set") or e.get("data"), json.dumps(e.get("value"), sort_keys=True))
+        for t in SEATS[e["seat"]]:
+            out.setdefault((e["map"], t), set()).add(item)
+    return out
+
+
+def book_at(rev: str) -> dict:
+    try:
+        return load_text(tune.git("show", f"{rev}:src/challenger/book.jsonl"))
+    except tune.TuneError:
+        return {"declare": {}, "entries": []}
+
+
+def changed_seats(book: dict, ref_book: dict) -> set:
+    """The map-seats where BOOK and the reference's book differ: the ones a confirm against that reference tests."""
+    a, b = seat_values(book), seat_values(ref_book)
+    return {k for k in set(a) | set(b) if a.get(k) != b.get(k)}
+
+
 def cmd_confirm(a) -> int:
     rev = tune.git("rev-parse", "--short=12", f"{a.rev}^{{commit}}")
     book = load_text(tune.git("show", f"{rev}:src/challenger/book.jsonl"))
-    maps = sorted({m for m, _ in map_seats(book)}, key=map_id)
-    if not maps:
-        raise BookError(f"{rev}: the book is empty")
     ref = tune.pin_ref(a.ref)
-    outside = [m for m in pools.GOAL if m not in maps] + pools.TEAM_MADE
+    changed = changed_seats(book, book_at(ref.partition("@")[2]))
+    maps = sorted({m for m, _ in changed}, key=map_id)
+    if not maps:
+        raise BookError(f"{rev}: its book equals the reference's")
+    seats = {m for m, _ in map_seats(book)}
+    outside = [m for m in pools.GOAL if m not in seats and m not in maps] + pools.TEAM_MADE
     runs = {
         "goal": start(f"challenger@{rev}", ref, "goal", a.cells, a.seed_base, []),
         "entries": start(f"challenger@{rev}", ref, "map:" + ",".join(maps), a.map_cells * len(maps), a.seed_base + 1,
@@ -492,7 +517,8 @@ def cmd_confirm(a) -> int:
     }
     CONFIRM_DIR.mkdir(parents=True, exist_ok=True)
     out = CONFIRM_DIR / f"confirm-{rev}-{a.seed_base}.json"
-    out.write_text(json.dumps({"rev": rev, "ref": ref, "seed_base": a.seed_base, "maps": maps, "runs": runs,
+    out.write_text(json.dumps({"rev": rev, "ref": ref, "seed_base": a.seed_base, "maps": maps,
+                               "changed": sorted(changed), "runs": runs,
                                "started": time.time()}, indent=1))
     print(f"confirm {rev} against {ref}: {out}")
     for k, v in runs.items():
@@ -560,20 +586,27 @@ def cmd_confirm_show(a) -> int:
     """The book's merge criterion (docs/evaluation.md "The book", item 3) on a confirm's three runs."""
     conf = json.loads(Path(a.file).read_text())
     book = load_text(tune.git("show", f"{conf['rev']}:src/challenger/book.jsonl"))
-    seats = set(map_seats(book))
-    print(f"book {conf['rev']} ({len(seats)} map-seats) against {conf['ref']}, seed bases {conf['seed_base']} "
-          f"(goal), +1 (entries), +2 (outside); game differences book - main, 95% intervals clustered by cell")
+    if "changed" in conf:
+        seats = {tuple(k) for k in conf["changed"]}
+    else:  # a confirm started before the reference had a book of its own
+        seats = changed_seats(book, book_at(conf["ref"].partition("@")[2]))
+    carried = set(map_seats(book)) - seats
+    print(f"book {conf['rev']} against {conf['ref']}: {len(seats)} map-seats differ from the reference's book, "
+          f"{len(carried)} carried over; seed bases {conf['seed_base']} (goal), +1 (entries), +2 (outside); game "
+          f"differences book - main, 95% intervals clustered by cell")
     for k, rid in conf["runs"].items():
         print(f"  {k:8s} {rid} [{tune.run_status(rid)}]")
     e = paired_run(conf["runs"]["entries"])
-    ent, _ = split(e, seats)
+    ent, rest = split(e, seats)
     a_all = summary(ent)
-    print("\n" + line("entries' map-seats together", a_all))
+    print("\n" + line("the changed map-seats together", a_all))
     below = []
     for mp, t in sorted(seats, key=lambda p: (map_id(p[0]), p[1])):
         s = summary({(mp, t): e.get((mp, t), {})})
         below += [(mp, t)] if s[2] < 0 else []
         print("  " + line(f"{mp:24s} {t}", s))
+    if rest:
+        print("  " + line("other map-seats on those maps (carried over or no entry)", summary(rest)))
     o = summary(paired_run(conf["runs"]["outside"]))
     print(line("maps outside the book", o))
     g_in, g_out = split(paired_run(conf["runs"]["goal"]), seats)
@@ -585,7 +618,7 @@ def cmd_confirm_show(a) -> int:
     va = a_all[1] > 0 and not below
     vb = o[2] >= 0
     vc = g[2] >= 0
-    print(f"\n(a) entries together lower bound > 0 and no map-seat below 0: {'PASS' if va else 'FAIL'}"
+    print(f"\n(a) changed map-seats together lower bound > 0 and none below 0: {'PASS' if va else 'FAIL'}"
           + (f" (below 0: {below})" if below else ""))
     print(f"(b) maps outside the book show no harm (upper bound >= 0): {'PASS' if vb else 'FAIL'}")
     print(f"(c) goal not below 0 (upper bound >= 0): {'PASS' if vc else 'FAIL'}")

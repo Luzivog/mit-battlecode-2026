@@ -277,6 +277,24 @@ maps of at most 900 tiles. Table of 20 Nov (115 campaigns), gaps among the 43 ma
 | `SPAWN_RICH` | 55 | WS5, WS6, at2m1, clong, clong2, cm2b … | none |
 | `MINES_KING2` | 55 | WS5, WS6, at2m1, cm2a, cm2b, cm6b … | none |
 
+**The gap screens** (reference `origin/t3/book-8` at `667b0472`, 40 cells a map; `scratch/pm/matrix_ref.py` runs
+`tools/book/book matrix` with that reference): `pm5a` (24050: `KING_HAND` 0 / 1, `SG_LOOK_RIGHT` 1, `PM_SKIP_FAILED` 2,
+`CM_CAT_HUNT_START` 500, `CAT_DEF_DSQ` 100, `PM_COOP_HOLD` 1 on the 10 maps of those gaps), `pm5b` (24051: `PM_SIEGE` 1,
+`CM_LANE_MEMORY` + `CM_LANE_FLEE` on the 22 lane gaps), `pm5s` (24052: `PM_SYM` 1 entries on the 35 symmetry gaps, branch
+`t3/pm5-sym`). Each pick read only on its switch's gap maps; 12 qualified (p_max < 0.05 or positive on both seats), one
+confirmed (`pm5c` 24053, `pm5t` 24054, 100 cells a map):
+
+| map | seat | entry | chosen on (seed base, cells, candidates) | confirmed on (seed base, cells) |
+|---|---|---|---|---|
+| longwayaround | A | `PM_SIEGE` 1 | 24051, 40, 2: A +0.175 ± 0.119, p_max 0.008 (B +0.050) | 24053, 100: A +0.260 ± 0.086 (0.92 vs 0.66; B +0.020 ± 0.028) |
+
+Against `book-8` (longwayaround's `SPAWN_CAP` 60 and seat A's `MINES_KING2` 7 in the reference). `PM_SIEGE` is already
+settable (Nofreecheese): no new code, no king bytecode change. Failed confirmations: averyfineline `SG_LOOK_RIGHT` 1
+(+0.010 / −0.040), popthecork `CAT_DEF_DSQ` 100 (+0.020 / 0.000) and `PM_SIEGE` 1 (0.000 / +0.060 ± 0.092),
+pocketsofcheese and where_are_you lane memory (+0.010 / +0.030, −0.020 / −0.030), squaresaremodernart `PM_SIEGE` 1
+(0.000 / 0.000), `PM_SYM` on QueenOfHearts, constrictinglattice, gridlock, mincemeat, squaresaremodernart (−0.030 to
++0.040, all across 0).
+
 ## Tools
 
 `~/battlecode26-data/scratch/pm/`: `seat.py RUN` (loss classes per map-seat from results.jsonl), `pair.py REF RUN...`

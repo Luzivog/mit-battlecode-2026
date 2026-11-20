@@ -108,7 +108,7 @@ def master_up(host: str) -> bool:
 def start_master(host: str) -> None:
     """HOST's kept connection, made by one process at a time (a lock), unless one is up; it lasts 10 minutes past its
     last session. Unreachable when it can't be made."""
-    with _locked(CLIENT / "ssh" / f"{Path(control_path(host)).name}.master", MASTER_S):
+    with locked(CLIENT / "ssh" / f"{Path(control_path(host)).name}.master", MASTER_S):
         if master_up(host):
             return
         with tempfile.TemporaryFile() as err:
@@ -125,7 +125,7 @@ def start_master(host: str) -> None:
 
 
 @contextmanager
-def _locked(path: Path, wait_s: float) -> Iterator[None]:
+def locked(path: Path, wait_s: float) -> Iterator[None]:
     """An exclusive lock on PATH for the block, waited for WAIT_S at most (then Unreachable)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o600)
@@ -332,7 +332,7 @@ def cached(cmd: str, hosts: tuple[str, ...] = SLURM_HOSTS, max_age: float = CACH
         return None
     if max_age > 0 and (got := fresh()) is not None:
         return got
-    with _locked(f.with_name(f"{key}.lock"), 2 * (timeout or READ_S) + SLACK_S):
+    with locked(f.with_name(f"{key}.lock"), min(2 * (timeout or READ_S) + SLACK_S, SLOT_WAIT_S)):
         if max_age > 0 and (got := fresh()) is not None:
             return got
         out = login(cmd, hosts=hosts, timeout=timeout)
@@ -347,6 +347,26 @@ def forget() -> None:
     for f in (CLIENT / "cache").glob("*"):
         if not f.name.endswith(".lock"):
             f.unlink(missing_ok=True)
+
+
+def fresh(stamp: str, every_s: float) -> bool:
+    """Whether something every process here does at most every EVERY_S (a sweep, the runtime's check) was done within
+    it: CLIENT/stamp-STAMP's age. The caller marks it done (mark) once it succeeded."""
+    try:
+        return time.time() - (CLIENT / f"stamp-{stamp}").stat().st_mtime < every_s
+    except OSError:
+        return False
+
+
+def mark(stamp: str) -> None:
+    CLIENT.mkdir(parents=True, exist_ok=True)
+    (CLIENT / f"stamp-{stamp}").touch()
+
+
+def unmark_all() -> None:
+    """Every stamp gone: what they vouched for (the runtime on the volume) may be gone too."""
+    for f in CLIENT.glob("stamp-*"):
+        f.unlink(missing_ok=True)
 
 
 # ---- the Condor submit host: Condor authenticates a submit or a removal by a Kerberos ticket there ----

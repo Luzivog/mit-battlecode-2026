@@ -90,6 +90,13 @@ public final class Book {
                         && d0 == 0x0L && d1 == 0x0L) return 70;
                 return 0;
             }
+            case 9877478 -> {
+                scan();
+                // gelcatinouscube seat A
+                if (id == 5 && w0 == 0x0L && w1 == 0x0L
+                        && d0 == 0x0L && d1 == 0x0L) return 63;
+                return 0;
+            }
             case 10649857 -> {
                 scan();
                 // therainbow seat A
@@ -739,6 +746,11 @@ public final class Book {
             case 121 -> { // externalsustenance seat B
                 symmetry = 1;
                 KING1_SITE = new MapLocation[] {new MapLocation(15, 7)};
+                Tune.CM_KING1_SITE = 1;
+            }
+            case 126 -> { // gelcatinouscube seat A
+                symmetry = 1;
+                KING1_SITE = new MapLocation[] {new MapLocation(26, 34)};
                 Tune.CM_KING1_SITE = 1;
             }
             case 127 -> { // gelcatinouscube seat B

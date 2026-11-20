@@ -46,7 +46,7 @@ Every screen: `tools/book/book matrix` against main, the maps' `map:` pool, both
 | at2m1 | 26005 | 17, 80 | `SG_LOOK_RIGHT` 1, `PM_COOP_HOLD` 1, `PM_SIEGE` 1 and 2, `SPAWN_CAP` 30 and 60, `CM_CAT_HUNT_START` 500 and 800, `MINES_KING2` 3 and 7, `SPAWN_RICH` 1500 (11) | the entries above; the rest failed on 26007 (§3); the cat hunt, the cooperation hold and `MINES_KING2` change nothing here |
 | at2m2 | 26006 | 17, 80 | `CAT_DEF_DSQ` 100 and 200, `SPAWN_FLOOR` 250, `SPAWN_CHEESE_DIV` 20, `SPAWN_CAP_SMALL` 20 (5) | nothing (every p_max ≥ 0.18); `CAT_DEF_DSQ` does nothing on these maps; `SPAWN_FLOOR` 250 and `SPAWN_CHEESE_DIV` 20 lose 0.1–0.2 on the starving maps; `SPAWN_CAP_SMALL` 20 loses 0.4–0.8 on the three 900-tile maps |
 | at2m3 | 26008 | DefaultSmall, warhammer, directconfrontation, Excavation, 120 | `SPAWN_CAP_SMALL` 40 and 50, `SPAWN_POOR_CUT` 0 and 20 (4) | warhammer's entries; DefaultSmall loses with every change (−0.19 to −0.78): main's cap is its optimum |
-| at2m4 | 26009 | the 8 starving maps, 100 | `EXPLORE_P` 0.2, 0.4, 0.8 (3) | no map structure (τ 0.019); constrictinglattice A 0.8 +0.09 (p_max 0.034) under confirmation |
+| at2m4 | 26009 | the 8 starving maps, 100 | `EXPLORE_P` 0.2, 0.4, 0.8 (3) | no map structure (τ 0.019); its one lead failed (§3) |
 | at2m5 | 26012 | 17, 80 | `CM_LANE_MEMORY` 1; with `CM_LANE_FLEE` 1 (2) | playing |
 
 ## 3. Failed on fresh seeds
@@ -56,6 +56,7 @@ Every screen: `tools/book/book matrix` against main, the maps' `map:` pool, both
 | cheeseysquare | A | `SG_LOOK_RIGHT` 1 | +0.225, p_max 0.002 | −0.060 [−0.147, +0.027], `1120-040903-ab-a0e3` |
 | DefaultSmall | A | `SG_LOOK_RIGHT` 1 | +0.100, p_max 0.12 | −0.040 [−0.127, +0.047], `1120-040914-ab-ba76` |
 | shell | B | `SPAWN_CAP` 30 | +0.163, p_max 0.055 | +0.067 [−0.029, +0.162], `1120-040906-ab-9aa6` |
+| constrictinglattice | A | `EXPLORE_P` 0.8 | 26009: +0.090, p_max 0.034 | 26011, `9f2de07`: −0.060 [−0.127, +0.007], `1120-052434-ab-1bd0` |
 
 `p_max` is the test of one map-seat's best of K; over 34 map-seats a p_max of 0.002 arises by chance about once in
 15 screens, so the confirmation decides (cheeseysquare A).

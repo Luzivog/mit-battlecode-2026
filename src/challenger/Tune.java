@@ -6,6 +6,14 @@ package challenger;
 // STEP is the design's half-swing (a variant plays VALUE - STEP or VALUE + STEP), MIN and MAX the values that still
 // make sense. tools/tune rewrites VALUE and nothing else. Evidence for each value: docs/strategy.md §9, docs/combat.md §10.
 public final class Tune {
+    // PM (per-map tuning, docs/theory/pm-per-map.md): switches and constants for the book. Each default is main's.
+    public static final int PM_SYM = 0; // tune: 1 [0, 1] 1: on a book map-seat the robots know Book.symmetry from round 1 (0: they learn it)
+    public static final int PM_SYM_B = 0; // tune: 1 [0, 1] 1: seat B's king reads the symmetry from its first scan's order (a general rule)
+    public static final int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
+    public static final int PM_SIEGE = 0; // tune: 1 [0, 2] E2b's siege spawns: no rat cap with an enemy in the king's vision (1), or more enemies than our rats there (2)
+    public static final int DIRT_ROUND = 100; // tune: 50 [0, 400] rats path through dirt (and dig it) from this round once global >= DIRT_CHEESE
+    public static final int SPAWN_POOR_CUT = 10; // tune: 10 [0, 30] rat-cap cut on maps <= 1600 tiles with < 5 mines (E2: 4 rats)
+
     // Spawning (robot/king/KingSpawningStrategy): a rat is built while its cost is at most the threshold.
     public static final int SPAWN_CAP = 40; // tune: 10 [20, 80] threshold on a normal map: 16 rats
     public static final int SPAWN_CAP_SMALL = 30; // tune: 10 [10, 60] threshold on maps of <= 900 tiles before r400

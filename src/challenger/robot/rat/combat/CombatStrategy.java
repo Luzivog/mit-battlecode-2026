@@ -316,7 +316,7 @@ public class CombatStrategy extends Strategy {
       so from CAT_HUNT_START every rat without raw cheese takes on the cats it sees, unless it saw or heard of an enemy in
       the last CAT_HUNT_QUIET rounds. In cooperation the last cat's death ends the game, so the hunt waits for the backstab.
     */
-    private static final int CAT_HUNT_START = 1300;
+    private static final int CAT_HUNT_START = challenger.Tune.CM_CAT_HUNT_START;
     private static final int CAT_HUNT_QUIET = 50;
     private static int lastEnemySeen = -CAT_HUNT_QUIET;
     // A cat walks a tile per 2 rounds (move cooldown 20), so after this many rounds it may have left the rat's vision
@@ -354,6 +354,7 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
+            if (challenger.Tune.PM_COOP_HOLD != 0 && !challenger.robot.LastCat.mayDamage(enemy, GameConstants.RAT_BITE_DAMAGE)) return false;
             if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= challenger.Tune.CAT_DEF_DSQ) return true;
             if (isCatHuntOn()) return true;
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);

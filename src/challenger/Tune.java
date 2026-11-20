@@ -116,7 +116,7 @@ public final class Tune {
     public static int CM_CAT_HUNT_START = 1300; // tune: 300 [300, 2000] round from which idle rats hunt cats
     // The first king's site: k > 0 makes the k-th tile of Book.KING1_SITE its mine target from round 1 (robot/king/
     // KingMiningStrategy); 0 main.
-    public static int CM_KING1_SITE = 0; // tune: 1 [0, 4] the first king's book site (0 off, k: the k-th tile)
+    public static int CM_KING1_SITE = 0; // tune: 1 [0, 12] the first king's book site (0 off, k: the k-th tile)
 
     // SG (docs/theory/sg-seat-gaps.md). The rats' bug lookahead (Pathfinder.doLookahead) prefers its left-hand bug:
     // it advances it first on equal paths, takes only its arrival and breaks score ties to it; 1 mirrors each rule.

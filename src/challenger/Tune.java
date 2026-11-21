@@ -7,27 +7,27 @@ package challenger;
 // make sense. tools/tune rewrites VALUE and nothing else. Evidence for each value: docs/strategy.md §9, docs/combat.md §10.
 public final class Tune {
     // PM (per-map tuning, docs/theory/pm-per-map.md): switches and constants for the book. Each default is main's.
-    public static int PM_SYM = 0; // tune: 1 [0, 1] 1: on a book map-seat the robots know Book.symmetry from round 1 (0: they learn it)
+    public static final int PM_SYM = 0; // tune: 1 [0, 1] 1: on a book map-seat the robots know Book.symmetry from round 1 (0: they learn it)
     public static final int PM_SYM_B = 0; // tune: 1 [0, 1] 1: seat B's king reads the symmetry from its first scan's order (a general rule)
-    public static int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
-    public static int PM_SIEGE = 0; // tune: 1 [0, 2] E2b's siege spawns: no rat cap with an enemy in the king's vision (1), or more enemies than our rats there (2)
-    public static int PM_SKIP_FAILED = 0; // tune: 1 [0, 2] the coordinator skips mines whose formation timed out: 1 the last one (KF's T), 2 every one
-    public static int DIRT_ROUND = 100; // tune: 50 [0, 400] rats path through dirt (and dig it) from this round once global >= DIRT_CHEESE
+    public static final int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
+    public static final int PM_SIEGE = 0; // tune: 1 [0, 2] E2b's siege spawns: no rat cap with an enemy in the king's vision (1), or more enemies than our rats there (2)
+    public static final int PM_SKIP_FAILED = 0; // tune: 1 [0, 2] the coordinator skips mines whose formation timed out: 1 the last one (KF's T), 2 every one
+    public static final int DIRT_ROUND = 100; // tune: 50 [0, 400] rats path through dirt (and dig it) from this round once global >= DIRT_CHEESE
     public static final int SPAWN_POOR_CUT = 10; // tune: 10 [0, 30] rat-cap cut on maps <= 1600 tiles with < 5 mines (E2: 4 rats)
 
     // Spawning (robot/king/KingSpawningStrategy): a rat is built while its cost is at most the threshold.
-    public static int SPAWN_CAP = 40; // tune: 10 [20, 80] threshold on a normal map: 16 rats
-    public static int SPAWN_CAP_SMALL = 30; // tune: 10 [10, 60] threshold on maps of <= 900 tiles before r400
+    public static final int SPAWN_CAP = 40; // tune: 10 [20, 80] threshold on a normal map: 16 rats
+    public static final int SPAWN_CAP_SMALL = 30; // tune: 10 [10, 60] threshold on maps of <= 900 tiles before r400
     public static final int SPAWN_CHEESE_DIV = 10; // tune: 3 [4, 30] threshold at most global / DIV + 10
-    public static int SPAWN_RICH = 2000; // tune: 500 [500, 5000] 32 rats from global >= RICH - t/2 (t >= 100)
+    public static final int SPAWN_RICH = 2000; // tune: 500 [500, 5000] 32 rats from global >= RICH - t/2 (t >= 100)
     public static final int SPAWN_VRICH = 3000; // tune: 750 [1000, 6000] no cap from global >= VRICH - 3t/4
     public static final int SPAWN_FLOOR = 100; // tune: 50 [0, 400] a rat above cost 10 needs global >= FLOOR
 
     // Miners (robot/rat/MinerStrategy).
-    public static double EXPLORE_P = 0.6; // tune: 0.1 [0.0, 1.0] share of trips that explore once mines are known
+    public static final double EXPLORE_P = 0.6; // tune: 0.1 [0.0, 1.0] share of trips that explore once mines are known
     public static final int GOHOME_PCT = 100; // tune: 30 [40, 200] go-home loads (10, 25, 40, 60, 80, 105 by distance) in percent
     public static final int EXPLORE_KING_DSQ = 36; // tune: 20 [0, 200] exploration targets lie farther than this d² from our kings
-    public static int IDLE_GOHOME = 50; // tune: 25 [0, 150] with nothing to do, go home above this raw cheese
+    public static final int IDLE_GOHOME = 50; // tune: 25 [0, 150] with nothing to do, go home above this raw cheese
 
     // New kings (robot/king/KingFormationCoordinatorStrategy, robot/rat/FormationStrategy).
     public static final int LOCK_IN_ROUND = 800; // tune: 200 [300, 1150] from it, form kings up to 3 without the rat gate
@@ -35,7 +35,7 @@ public final class Tune {
     public static final int KING_TARGET = 3; // tune: 1 [2, 5] the lock-in forms kings up to this many
     public static final int LOCK_IN_MIN_RATS = 12; // tune: 4 [4, 24] rats a lock-in or cooperation formation needs (numRats, a multiple of 4)
     public static final int COOP_ROUND = 100; // tune: 50 [20, 400] from it, one king in cooperation forms a second
-    public static int MINES_KING2 = 5; // tune: 2 [1, 12] known mines a second king needs before r1200
+    public static final int MINES_KING2 = 5; // tune: 2 [1, 12] known mines a second king needs before r1200
     public static final int JOIN_DIST = 25; // tune: 5 [8, 60] rats within this distance (tiles) join a formation
 
     // Pathing (Pathfinder): rats path through dirt (and dig it) once global reaches this from r100.
@@ -89,7 +89,7 @@ public final class Tune {
     public static final int TRAP_STRONG_HP = 80; // tune: 10 [0, 100] an enemy at this HP and a bite above ours is trapped
     // shouldFight: a rat fights any enemy within KING_DEF_DSQ of our king, and a cat within CAT_DEF_DSQ of it.
     public static final int KING_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight any enemy
-    public static int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
+    public static final int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
     // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
 
@@ -100,32 +100,32 @@ public final class Tune {
     // team B except a chirality-1 king on HORIZONTAL or ROTATIONAL maps. The king reads its chirality and, for
     // chirality 1, the symmetry from its first scan's order (CellTracker); a chirality-0 king of team B knows the
     // symmetry once the rats find it.
-    public static int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
+    public static final int KING_HAND = 7; // tune: 1 [0, 7] the kings' bug hand (above): 0 left, 1 right
 
     // CM (book switches, docs/theory/cm-cat-maps.md): each default leaves main's games unchanged; 1 turns a 0/1 switch on.
     // The last-cat hold is PM_COOP_HOLD (above): CM's CM_LAST_CAT_HOLD was the same code.
     // From this round, with one king, a second king at the book's site Book.KING2_SITE, else main's mine choice, whatever
     // the cooperation (robot/king/KingFormationCoordinatorStrategy); 2000 or more: never.
-    public static int CM_KING2_ROUND = 2000; // tune: 30 [15, 2000] round of the early second king (2000 never)
+    public static final int CM_KING2_ROUND = 2000; // tune: 30 [15, 2000] round of the early second king (2000 never)
     // K2 D': kings remember cat footprints (CatLanes, from round 1 the book's Book.CAT_LANE where it has one), park and
     // chase cheese off them, take no mining step into a known lane (robot/king/KingMiningStrategy).
-    public static int CM_LANE_MEMORY = 0; // tune: 1 [0, 1] kings' cat-lane memory for mining (0 off)
+    public static final int CM_LANE_MEMORY = 0; // tune: 1 [0, 1] kings' cat-lane memory for mining (0 off)
     // With a cat in view and lanes known, the king's flee loses 4 a lane tile its step adds (robot/king/KingCombatStrategy).
-    public static int CM_LANE_FLEE = 0; // tune: 1 [0, 1] the king's flee off known cat lanes (0 off)
+    public static final int CM_LANE_FLEE = 0; // tune: 1 [0, 1] the king's flee off known cat lanes (0 off)
     // PT 2d's late cat hunt starts at this round (robot/rat/combat/CombatStrategy).
-    public static int CM_CAT_HUNT_START = 1300; // tune: 300 [300, 2000] round from which idle rats hunt cats
+    public static final int CM_CAT_HUNT_START = 1300; // tune: 300 [300, 2000] round from which idle rats hunt cats
     // The first king's site: k > 0 makes the k-th tile of Book.KING1_SITE its mine target from round 1 (robot/king/
     // KingMiningStrategy); 0 main.
-    public static int CM_KING1_SITE = 0; // tune: 1 [0, 12] the first king's book site (0 off, k: the k-th tile)
+    public static final int CM_KING1_SITE = 0; // tune: 1 [0, 12] the first king's book site (0 off, k: the k-th tile)
     // Every baby rat starts with the map's mines from the book (Book.CM_MINES) among its known mines (MineBook); 0 main.
-    public static int CM_MINE_BOOK = 0; // tune: 1 [0, 1] baby rats know the map's mines from the book (0 off)
+    public static final int CM_MINE_BOOK = 0; // tune: 1 [0, 1] baby rats know the map's mines from the book (0 off)
 
     // SG (docs/theory/sg-seat-gaps.md). The rats' bug lookahead (Pathfinder.doLookahead) prefers its left-hand bug:
     // it advances it first on equal paths, takes only its arrival and breaks score ties to it; 1 mirrors each rule.
-    public static int SG_LOOK_RIGHT = 0; // tune: 1 [0, 1] the rats' lookahead's preferred hand: 0 left, 1 right
+    public static final int SG_LOOK_RIGHT = 0; // tune: 1 [0, 1] the rats' lookahead's preferred hand: 0 left, 1 right
     // 1: the king plans its walk to a mine or the centre over its own map (robot/king/KingPath, MS's KP3) instead of the bug.
-    public static int KING_PATH = 0; // tune: 1 [0, 1] the king's route planner: 0 off (main), 1 on
+    public static final int KING_PATH = 0; // tune: 1 [0, 1] the king's route planner: 0 off (main), 1 on
     // AT (docs/theory/at5-shelf.md). 1: every robot starts with the book's walls and round-1 dirt of the map (Book.AT_WALL,
     // Book.AT_DIRT) in CellTracker, every cell seen (MS's ms_okb v2 oracle as book data).
-    public static int AT_MAP = 0; // tune: 1 [0, 1] the map's walls and dirt from the book: 0 off (main), 1 on
+    public static final int AT_MAP = 0; // tune: 1 [0, 1] the map's walls and dirt from the book: 0 off (main), 1 on
 }

@@ -194,3 +194,39 @@ Oracles (awubot copies on `t3/rx-probes` @ `93041aa9`/`02342944`, plain against 
   candidates; local Java only, `gradlew run`).
 - Baseline: main against awubot, `goal`, seed base 35001, 1,000 cells, 0.843 [0.818, 0.868] (`1121-040625-ab-5fe9`; its
   first 567 replays under `1121-030327-ab-e173`).
+
+## 9. Wave 2: the throw itself (main 615a0bf9)
+
+W4 priced an awubot that never throws our rats at +12.3 pp on clean main (docs/theory/w4-clean-step-back.md §3): the
+throw, not the grab, carries the exchange. Its line score (A:`robot/rat/combat/moves/TryThrow.java.jinja2`): our king
+anywhere in the flight +300; one of our rats at the line's first collision, step 2, 2 × (10 + 36) + 10 = 102 (later
+steps a fraction, and the scan goes on); a wall or dirt 10 + 4 × remaining (46 at step 2, then 42, 38, 34); off the map
+10. With a wall in reach the victim takes 42 whatever our other rats do; dodging only spares bystanders. Rescue (taking
+the carrier before it throws) spares the victim.
+
+**The two rescue windows** (replica, 300 replays, r1–300, a game): awubot grabs at its turn t; at t + 1 its action is
+not ready (cooldown 20), so it only moves (TryPosition, lining up its best line); at t + 2 it throws (29.4 of its 34.8
+grabs are thrown on that turn). Every rat of ours has two turns before the throw.
+
+| | window 0 (t → t+1) | window 1 (t+1 → t+2) | either |
+|---|---|---|---|
+| a rat of ours within 2 of the carrier | 8.8 | 9.5 | – |
+| ... with a legal grab of it (HP above its, or off its cone) | 3.1 (seen 1.3) | 4.1 (seen 2.5) | 6.3 (seen 3.7) |
+| ... with a bite of it | 6.4 | 7.0 | 10.5 |
+| rescued | 1.2 | 2.1 | 3.3 |
+
+We already rescue on ~90% of the seen legal chances; 2.6 a game are legal but unseen.
+
+**The throw-line set** for a carrier that can throw next turn: every tile at steps 2–5 of any (step, direction) line
+its TryThrow considers (step to a free tile or none; facing or ±45°, any direction when it stays or steps forward;
+first tile empty; path clear) holds 5.2 of the 7.4 hits a game on our rats, and our rats end 34 turns a game on such a
+tile: 15% precision (the step-2-only set of §7: 4.5%).
+
+| arm | change | run | cells | better / worse | diff [95% CI] | branch @ head |
+|---|---|---|---|---|---|---|
+| lines | a tile on any throw line of an enemy carrier seen carrying on our last turn too loses 30 in every move score (`RX_LINES`) | `1121-111441-ab-cfd7` (35006) | 1,000 | 151 / 170 | −0.013 [−0.031, +0.005] | `t3/rx2-lines` @ `8e10a251` |
+| rescue | a rat carried by an enemy squeaks its carrier every turn; a combat rat with action and turn ready and no visible enemy rat within 2 first turns toward a squeaked enemy within 2 (`RX_RESCUE`) | `1121-111557-ab-1d9b` (35007) | 1,000 | 141 / 105 | **+0.021 [+0.004, +0.039]** | `t3/rx2-rescue` @ `d2a01b2f` |
+
+- Lines: the prediction is three times sharper than dodge v2's and still loses; standing off a ready carrier's lines
+  costs more than its hits. The king's avoidance was not built (the king moves once in 4 turns; its 3×3 lies on many
+  lines).

@@ -29,6 +29,8 @@ Overfitting is fine (tuning to awubot, to the official maps, to their seats); ha
 | GM | knowledge and routes: symmetry early, mines and walls mirrored by symmetry, map sharing; king hand, route planner, lookahead side | docs/theory/cm8-mine-book.md, at5-shelf.md, ms-map-seats.md, sg-seat-gaps.md, kr-king-routes.md |
 | RX | the rat exchange with a model of awubot: its own decision code as the opponent model in our micro, counters to its grabs and ratnaps | docs/theory/ex-exchange.md, w3-step-back.md, ox-awubot-failures.md |
 
+Status (21 Nov, after waves 1 and 2): main 84a40ad9 = clean + RX's rescue, 85.0% [82.8, 87.4] on 3,000 fresh `goal` cells (docs/progress.md). Wave 1 (W4, GK, GE, GC, GM, RX) merged nothing; wave 2 merged RX's rescue (+0.7 to +1.0 pp) and closed GK's in-game seats and GC's seat mirror. What is left, by oracle price (docs/theory/w4-clean-step-back.md): awubot's throws of our grabbed rats +12.3 pp, its centre-mine take +7.5, its king's reactions to our robots +7.4, choosing the king's site per map-seat +4.4 (no observable rule found); every general lever tried is in docs/closed.md. The pool (track TP) plays ~4,300 new games a minute since protocol 5.
+
 ## Tracks
 
 | id | track | output | starts when | agents |

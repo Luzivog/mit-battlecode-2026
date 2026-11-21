@@ -230,3 +230,13 @@ tile: 15% precision (the step-2-only set of §7: 4.5%).
 - Lines: the prediction is three times sharper than dodge v2's and still loses; standing off a ready carrier's lines
   costs more than its hits. The king's avoidance was not built (the king moves once in 4 turns; its 3×3 lies on many
   lines).
+- **Rescue passes the precision route**: confirmation on 3,000 fresh `goal` cells, seed base 35008
+  (`1121-112411-ab-69f9`): **+0.010 [+0.0003, +0.020]** (415 better / 361 worse; the tool prints [+0.000, +0.020],
+  bootstrap over maps, P(≤ 0) 0.023); `teammade` 580 cells (`1121-112412-ab-b79d`) **+0.022 [+0.004, +0.041]**; smoke
+  clean (`1121-111606-ab-fd78`: no robot of ours killed by its own exception); gauntlet (`1121-112412-gauntlet-4a72`)
+  no harm: `opp_obg` +0.008 [−0.033, +0.048] (178 cells), `opp_gst` −0.007 [−0.035, +0.021] (138), eight more pass,
+  `opp_food`, `awubot_quals`, `awubot_us` inconclusive at the cell cap (−0.016 on 32 cells each).
+- Mechanism (100 cells, every replay, `1121-112425-ab-9ca1`, r1–300 a game): our rats rescued from awubot's carriers
+  4.36 against main's 3.82; our grabs 41.3 against 40.3.
+- The rule holds on every map with fights (no map condition). Merge branch `t3/rx2-rescue-merge` (main + this switch
+  on); `t3/rx2-rescue` @ `d2a01b2f` is the measured commit (with the closed `RX_LINES` code, off).

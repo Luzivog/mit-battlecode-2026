@@ -8,9 +8,11 @@ docs/theory/w4-map-features.md (branch `t3/w4-clean-step-back`), `~/battlecode26
 
 ## 0. Summary
 
-1. **Full mine knowledge is worth +2.4 pp** (oracle: every baby rat knows every mine from round 1 on all 95 `goal`
-   maps, CM8's book on every map): +0.024 [+0.005, +0.044] on 1,000 cells. It sits on large maps (+0.040 over 41 maps),
-   most on large mine-sparse ones (≤ 6 mines: +0.078 over 13), and is ~0 on small maps (+0.005).
+1. **Full mine knowledge is worth +2.4 pp, half of it in r1–150** (§1). Oracle: every baby rat knows every mine
+   from round 1 on all 95 `goal` maps (CM8's book on every map): +0.024 [+0.005, +0.044] and +0.024 [+0.003, +0.046]
+   on two seed bases of 1,000 cells; the same mines from round 150 only: +0.011 [−0.006, +0.029]. The class splits
+   move between the bases (small maps +0.005 on one, +0.042 on the other); large maps with ≤ 6 mines gain on both
+   (+0.078, +0.045).
 2. **The general version: mirror the mines by the symmetry** (`Tune.GM_MINE_MIRROR`, `MineMirror`). The engine pairs
    every cheese mine with its image under the map's symmetry (docs/rules.md §5: each mine spawns cheese together with
    its pair), so once a rat knows the symmetry (main's wall check, CellTracker), each known mine's image is a mine. The
@@ -45,6 +47,15 @@ therearenowalls +0.18, shell +0.14. The mirror recovers the oracle's gain on the
 quarter of it on the large sparse ones: there both sides' mines lie far from where the rats look, so the mines nobody
 has seen are what the oracle adds.
 
+**Replicated and decomposed** (seed base 34102, 1,000 cells each, same cells): the oracle from round 1 +0.024
+[+0.003, +0.046] (`1121-103755-ab-78f3`); the same mines handed over only at round 150 (`gm-oracle-mb150` eb45dec8,
+`MineBook.load` at the first turn from r150) +0.011 [−0.006, +0.029] (`1121-104604-ab-fe0b`). By class, r1 / r150:
+large ≤ 6 mines +0.045 / +0.012, small ≤ 6 mines +0.062 / +0.017, medium > 6 mines +0.032 / +0.026, large > 6
+mines +0.014 / +0.006. About half of what mine knowledge is worth is in the first 150 rounds, and on the mine-poor
+maps nearly all of it: the rounds before the rats have seen the far mines, or the symmetry that would mirror them
+(on jail the first rat knows the symmetry at r53, both own mines' images at r89). Observation cannot supply mines
+nobody has seen by then; the mirror supplies images of seen mines only, after the symmetry.
+
 ## 2. The candidate
 
 Branch `t3/gm-mirror-cand` 5bf9342f: `GM_MINE_MIRROR` 1, `GM_MIRROR_AREA` 900 on `t3/clean-gm-map-knowledge` 1958f2b1.
@@ -62,6 +73,7 @@ Branch `t3/gm-mirror-cand` 5bf9342f: `GM_MINE_MIRROR` 1, `GM_MIRROR_AREA` 900 on
 | screen m1L (arm 75ffd05a) | 34001 | 1,000 | +0.018 [+0.005, +0.030] (`1121-095127-ab-75e6`) |
 | confirmation (5bf9342f) | 34101 | 3,000 | **+0.005 [−0.003, +0.013]** (`1121-101938-ab-fff6`, 261 better, 235 worse): not confirmed |
 | smoke (5bf9342f) | – | 8 | no robot killed by its own exception (`1121-103015-ab-d965`) |
+| `teammade` (5bf9342f) | 34201 | 600 | −0.018 [−0.042, +0.003] (`1121-102944-ab-7e47`; 49 better, 66 worse) |
 
 ## 3. Closed
 
@@ -70,6 +82,7 @@ All on the same 1,000 `goal` cells (seed base 34001), each arm against main.
 | arm | change | run | ours − main |
 |---|---|---|---|
 | m1 | mirror for rats, every map | `1121-034622-ab-1c15` | +0.015 [+0.001, +0.029] |
+| oracle150 | the oracle's mines only from round 150 | `1121-104604-ab-fe0b` (34102) | +0.011 [−0.006, +0.029] |
 | m2L | m1L for kings too (`GM_MINE_MIRROR` 2) | `1121-102101-ab-e1ed` | +0.006 [−0.010, +0.022] |
 | m1Ls | m1L + `PM_SYM_B` 1 (the chirality-1 king's symmetry from its first scan) | `1121-102105-ab-f0ce` | +0.013 [−0.002, +0.029] |
 | m1sm | m1 + symmetry from mines (`checkByMines`, arm only) | `1121-034622-ab-b25d` | +0.006 [−0.010, +0.023] |

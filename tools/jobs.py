@@ -535,7 +535,7 @@ def states_cmd(js: list[Job], queues: bool = False) -> str:
     local = [j for j in js if j.where == "local"]
     # every job of ours in one listing each (a list of ids would fail whole on one Slurm has forgotten)
     if slurm:
-        cmd += "echo ==slurm; squeue -u \"$USER\" -h -o '%i|%T|%r|%N'; echo ==slurm_rc; echo $?; "
+        cmd += "echo ==slurm; timeout 8 squeue -u \"$USER\" -h -o '%i|%T|%r|%N'; echo ==slurm_rc; echo $?; "
     if condor:
         cmd += (f"echo ==condor; {CONDOR}; condor_q -name {SUBMIT} \"$USER\" -af ClusterId JobStatus RemoteHost "
                 f"{B.CONDOR_HELD}; echo ==condor_rc; echo $?; ")

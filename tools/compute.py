@@ -237,7 +237,7 @@ def sweep(force: bool = True) -> str:
         cpu_q = login("squeue -u \"$USER\" -h -o %j", hosts=(CPU_HOST,)).split()
     except Refused:
         cpu_q = None
-    queued = (f"ok=1; q=$({{ squeue -u \"$USER\" -h -o %j && {CONDOR} && condor_q -name {SUBMIT} \"$USER\" -af "
+    queued = (f"ok=1; q=$({{ timeout 8 squeue -u \"$USER\" -h -o %j && {CONDOR} && condor_q -name {SUBMIT} \"$USER\" -af "
               f"JobBatchName; }} 2>/dev/null) || ok=; qs=\" $(printf '%s ' $q {' '.join(cpu_q or [])}) \"; "
               + ("cok=; " if cpu_q is None else "cok=1; "))
     cmd = (f"{once}touch {REMOTE_ROOT}/.swept; {queued}n=0; for d in {REMOTE_JOBS}/*/; do d=${{d%/}}; "

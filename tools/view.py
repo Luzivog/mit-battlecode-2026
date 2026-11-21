@@ -47,7 +47,7 @@ _said: tuple[str, float] = ("", 0.0)
 # Condor's queues, which say which pieces live, then the open runs.
 POOL_SH = (f"mkdir -p {REMOTE_POOL}/pieces {REMOTE_POOL}/open; cd {REMOTE_POOL}/pieces && {{ echo ==pieces; ls; "
            "echo ==old; ls | grep -v , | xargs -r grep -s -H ''; }; cd /; "
-           "echo ==sq; timeout 8 squeue -u \"$USER\" -h -o '%j %T'; echo ==sq_rc; echo $?; "
+           "echo ==sq; timeout 3 squeue -u \"$USER\" -h -o '%j %T'; echo ==sq_rc; echo $?; "
            f"echo ==cq; {CONDOR}; condor_q -name {SUBMIT} \"$USER\" -af JobBatchName JobStatus; echo ==cq_rc; echo $?; "
            f"echo ==open; ls {REMOTE_POOL}/open; ")
 LIVE_S = 2 * STATE_BEAT_S + 60  # a piece whose scheduler wasn't read is live while its state is this young

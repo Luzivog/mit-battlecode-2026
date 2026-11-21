@@ -98,3 +98,35 @@ by its rats, and a second king there drains the bank for both (constrictinglatti
 −0.73 / −0.55); it gains only where the mines are far (Hike B, warhammer B, cheddarchokehold A about +0.2; nearest mine
 ≥ 18 steps: 14 map-seats, +0.03). The ~30 kings that starve at a mine they lose to awubot's rats are the rat exchange
 (RX's track).
+
+## 5. The seat gap (mirror probe, closed)
+
+Clean main's seat gap, pooled over every clean-main game against awubot on 21 Nov (unique map, seed, seat;
+`D:seatgap.py`): VERTICAL A 0.840, B 0.778 (6,450 games a seat); HORIZONTAL 0.841 / 0.815; ROTATIONAL 0.861 / 0.852.
+Single seed bases scatter (33001: 0.864 / 0.747; 33002: 0.781 / 0.774). The VERTICAL gap sits on popthecork (−0.60),
+EscapeTheNight (−0.41), asabovesobelow (−0.37), houseofcards (−0.35), diamond (−0.33); peaceinourtime (+0.47),
+knifefight (+0.20) and mushroom (+0.16) lean the other way.
+
+**Mirror probe** (branch `t3/gc-seat-probe`, never merge; SG's wrapper, `docs/theory/sg-seat-gaps.md` §7): `gm_mir`
+is clean main whose team B plays through a `RobotController` handing it the image of the world (x flipped on
+VERTICAL maps, `gm_mirh` y flipped on HORIZONTAL), so our seat-B bot plays what our seat-A bot plays on A's side;
+`gm_mir0` its twin (same calls, untransformed). Java engine with the bytecode limits raised tenfold (SG's patched
+`UnitType` on the boot class path), on Imperial through `tools/run --kit --with bigbc/cls` (`D:wt3/mirtask.sh`),
+40 cells a map, `D:mirread.py`:
+
+| | maps | seed base | twin A | twin B | mirror B | mirror B − twin B | run |
+|---|---|---|---|---|---|---|---|
+| VERTICAL | 27 | 33004 | 0.824 | 0.794 | 0.814 | +0.020 ± 0.049 | `run-1121-113349-ee03c7` |
+| HORIZONTAL | 20 | 33005 | 0.854 | 0.812 | 0.830 | +0.018 ± 0.042 | `run-1121-113411-6d1566` |
+
+Our handedness carries about half of each gap, inside noise; per map it gains popthecork +0.27, asabovesobelow
++0.25, longwayaround +0.35, houseofcards +0.15, EscapeTheNight +0.12, Meow +0.15, cheeseguardians +0.18 and loses
+peaceinourtime −0.20, AceOfSpades −0.18, diamond −0.17, mushroom −0.12, TheHeist −0.18. A production mirror mode for
+seat B (a team-B king of chirality 1 reads VERTICAL or HORIZONTAL from its first scan, on 20 of the 27 VERTICAL maps;
+a mirror bit in the shared array for its babies) is worth at most +0.019 on 47 of 190 map-seats, about +0.5 pp of
+`goal`, below what 3,000 cells confirm, and the wrapper needs the raised limits. Not built.
+- Bytecode is not the gap: in clean main's losses our robots overrun ≤ 0.1% of baby turns and ≤ 0.01% of king turns
+  on either seat (CTStats); VERTICAL seat B costs about 3-5% more bytecode a turn.
+- Traps of the probe (fixed before the valid runs): `*.class` is git-ignored, so `bigbc/cls` ships only with
+  `--with bigbc/cls` (without it the mirrored bot overran and read −23 to −30 pp); tasks of one piece share a checkout,
+  so a task's temporary files go in its `$OUT`.

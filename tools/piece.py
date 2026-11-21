@@ -11,11 +11,14 @@ most MAX_STARTS times; the last loss ends it with code LOST.
 The pool. A pooled run (run.json's `pool`; tools/runs.py) is listed in POOL/open/ while it is open. A piece of a
 pooled run serves every open pooled run it can: the same task CPUs and memory, the same runtime (`env`), its backend
 among the run's `wheres`, and, when the piece has a deadline (Slurm's --time, Condor's), at least MIN_LEFT_S (or half
-its limit, when shorter) left and 1.5 times the longest task of that run it has run. Each free slot goes to the run with the fewest running tasks, the
-oldest first among equals: a small run submitted behind a big one gets the next free slots, and no run waits forever,
-since a run's running count only rises when it is served and an older run wins every tie. Another run's tasks run in
-that run's own checkout, made once a content (its commit and its shipped files) in the piece's scratch, with that
-run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
+its limit, when shorter) left and 1.5 times the longest task of that run it has run. Each free slot goes to a run
+within FAIR_SLACK (or FAIR_SHARE) of the fewest running tasks, one whose checkout is here first, then the fewest
+running, the oldest among equals: a small run submitted behind big ones gets the next free slots, and no run waits
+forever, since a run falls no further behind than that slack before it is the only one taken. A run's running tasks
+are counted from its folders' sizes (entries), not their listings, which took tens of seconds over the lab machines'
+NFS mount; claims are tried from a cursor near its count of claims. Another run's tasks run in that run's own
+checkout, made once a content (its commit and its shipped files) in the piece's scratch from the piece's object
+store, with that run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
 state (slots, running, task size, runtime, deadline, its time) is the name of an empty file in POOL/pieces
 (state_name), renamed when it changes (at most every STATE_S, at once when its free slots reach or leave 0) and every
 STATE_BEAT_S, removed at its end:
@@ -64,6 +67,18 @@ SCAN_S = 2.0  # between two looks for work while a slot is free and the last loo
 FULL_S = 60.0  # a run found with nothing claimable is looked at again after this long (its claims come back only
 # from a dead piece's, after STALE_S, or a stopped task's)
 STALE_CHECK_S = 120.0  # a run's claims are read for dead pieces' at most this often
+# A run's counts of claims and results, its running tasks' measure, are read at most this often, each a folder's size
+# (`entries`). Listing them on every look at every open run kept pieces in one fill() for up to 9 minutes with every
+# slot idle (21 Nov): over the lab machines' NFS mount, one listing of a run's claims/ (2,000 to 3,000 folders) took
+# 13 to 42 s, a look at 57 runs 30 to 160 s.
+COUNT_S = 30.0
+CURSOR_BACK = 16  # a run's next task is looked for from this many below its count of claims (claims come in order)
+# A free slot goes to a run whose checkout this piece has (or makes none: its own content) among the runs within
+# FAIR_SLACK, or FAIR_SHARE of the fewest, of the fewest running tasks: spread over every run, a piece's slots made a
+# checkout for most tasks (1,164 checkouts of 2.2-5.7 s for 1,901 tasks on one piece, 21 Nov).
+FAIR_SLACK = 8
+FAIR_SHARE = 0.25
+TICK_S = 0.25  # the main loop's sleep: a task's end is seen, and its slot filled, within it
 CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
 # The piece's state, the name of an empty file (state_name): a change is renamed in at most every STATE_S (at once when
 # it starts, or when its free slots reach or leave 0), an unchanged state every STATE_BEAT_S. A state in a file's
@@ -71,7 +86,7 @@ CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
 STATE_S = 30.0
 STATE_BEAT_S = 600.0
 MIN_LEFT_S = 1200.0  # a piece with a deadline takes another run's task only with this long left (or half its limit)
-CHECKOUTS = 4  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
+CHECKOUTS = 8  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
 # a piece claims a task only with this much free where its tasks write (a checkout is ~350 MB, a binary 100 MB)
 DISK_MIN_MB = int(os.environ.get("BC26_DISK_MIN_MB", "2048"))
 GIVE_BACK = 75  # a task's code saying its host can't run it (EX_TEMPFAIL): its claim goes back, the piece stops
@@ -107,6 +122,18 @@ def ids(folder: Path, suffix: str = "") -> set[int]:
     return out
 
 
+def sizes_count(folder: Path) -> bool:
+    """Whether a folder's st_size on FOLDER's filesystem is its number of entries, as on CephFS (and the lab machines'
+    NFS export of it): FOLDER's size against its listing, three tries (it may change between the two)."""
+    for _ in range(3):
+        try:
+            if os.stat(folder).st_size == len(os.listdir(folder)):
+                return True
+        except OSError:
+            pass
+    return False
+
+
 class Run:
     """A run this piece has looked at: its settings, read once, and what the piece knows of it."""
 
@@ -127,6 +154,16 @@ class Run:
         self.home: Path | None = None  # its checkout here
         self.env: dict[str, str] | None = None  # its kit's names (None: the job's own)
         self.first_stale = True
+        self.counted_at = -1e18  # monotonic: when its counts were last read
+        self.claimed = 0  # its claims (done ones included) and results, as last read, plus this piece's since
+        self.done = 0
+        self.cursor = 0  # the next task number to try a claim of
+        self.holes: list[int] = []  # claimable tasks below the cursor, from a listing (given back, a dead piece's)
+        self.misses = 0  # claims tried in a row that another piece had made
+
+    @property
+    def running(self) -> int:
+        return max(0, self.claimed - self.done)
 
     @property
     def tasks(self) -> list[dict[str, object]]:
@@ -174,6 +211,7 @@ class Piece:
         self.stopping = ""
         self.refusing = ""  # why this piece takes no more tasks (its host can't run them), once a task said so
         self.low_disk = False
+        self.sized: bool | None = None  # whether a folder's size counts its entries here (sizes_count)
         self.cache = self.scratch / "cache"  # JOB_CACHE: shared by its tasks
         self.cache.mkdir()
         for d in ("claims", "done", "lost"):
@@ -257,6 +295,7 @@ class Piece:
         try:
             os.rename(r.dir / "claims" / str(n), r.dir / "lost" / f"{n}.{secrets.token_hex(4)}")
             self.say(f"{self.name(r, n)}: claim given up ({why})")
+            r.claimed -= 1
         except OSError:
             pass
 
@@ -299,72 +338,117 @@ class Piece:
         r.first_stale = False
         return out
 
-    def look(self, r: Run, now: float) -> tuple[int, list[int]] | None:
-        """R's running tasks and its claimable ones (dead pieces' claims given back first, when due); None when it
-        has none."""
+    def look(self, r: Run, now: float) -> bool:
+        """Whether R may have a claimable task, its counts read again when COUNT_S old. With none ahead of its
+        cursor, its claims and results are listed (at most every STALE_CHECK_S) for those below it: given back, or
+        dead pieces' (given back first). Every task done: R leaves POOL/open."""
         try:
-            claims, done = ids(r.dir / "claims"), ids(r.dir / "done", ".tar")
-        except OSError:
-            return None
-        if len(done) >= r.n:
-            if self.pooled:
-                try:  # every task done: no piece needs to look at it again
-                    os.unlink(self.pool / "open" / r.id)
-                except OSError:
-                    pass
-            r.skip_until = now + FULL_S
-            return None
-        free = [n for n in range(r.n) if n not in claims and n not in done]
-        if not free and now >= r.stale_at:
+            if now >= r.counted_at + COUNT_S:
+                r.claimed, r.done, r.counted_at = self.entries(r.dir / "claims"), self.entries(r.dir / "done"), now
+                r.cursor = max(r.cursor, r.claimed - CURSOR_BACK)
+            if r.done >= r.n:
+                done = ids(r.dir / "done", ".tar")  # a count holds results being written: the names say
+                r.done = len(done)
+                if len(done) >= r.n:
+                    if self.pooled:
+                        try:  # every task done: no piece needs to look at it again
+                            os.unlink(self.pool / "open" / r.id)
+                        except OSError:
+                            pass
+                    r.skip_until = now + FULL_S
+                    return False
+            if r.cursor < r.n or r.holes:
+                return True
+            if now < r.stale_at:
+                r.skip_until = now + FULL_S
+                return False
             r.stale_at = now + STALE_CHECK_S
-            try:
-                free = self.take_stale(r, claims, done)
-            except OSError:
-                free = []
-            claims -= set(free)
-        if not free:
+            claims, done = ids(r.dir / "claims"), ids(r.dir / "done", ".tar")
+            r.holes = [n for n in range(r.n) if n not in claims and n not in done]
+            if not r.holes:
+                r.holes = self.take_stale(r, claims, done)
+                claims -= set(r.holes)
+            r.claimed, r.done, r.counted_at = len(claims), len(done), now
+        except OSError:  # its folder went (swept), or isn't visible here
+            return False
+        if not r.holes:
             r.skip_until = now + FULL_S
-            return None
-        return len(claims - done), free
+            return False
+        return True
+
+    def entries(self, folder: Path) -> int:
+        """FOLDER's number of entries: its size where sizes count entries (one attribute read, whatever its size),
+        else a listing (a local folder: the tests, the local backend)."""
+        if self.sized is None:
+            self.sized = sizes_count(self.run)
+        return os.stat(folder).st_size if self.sized else len(os.listdir(folder))
+
+    def next_task(self, r: Run) -> int | None:
+        """R's next task to try a claim of: a hole first, else the cursor's (moved on); None when none is left."""
+        if r.holes:
+            return r.holes.pop(0)
+        if r.cursor < r.n:
+            r.cursor += 1
+            return r.cursor - 1
+        return None
+
+    def local(self, r: Run) -> bool:
+        """R's tasks run here without a checkout made: its checkout is here, or it is of this job's own content."""
+        if r.home is not None or r.own:
+            return True
+        if self.content(r) == self.content(self.own) and self.own.meta.get("kit") == r.meta.get("kit") \
+                and r.meta.get("code_key"):
+            return True
+        return self.checkout_key(r) in self.checkouts
 
     def fill(self, fresh: bool = False) -> int:
-        """Free slots filled from every run served, the run with the fewest running tasks first (the oldest among
-        equals); FRESH looks at runs recently found full too. The tasks started."""
+        """Free slots filled from every run served: among the runs within FAIR_SLACK (or FAIR_SHARE) of the fewest
+        running tasks, one with its checkout here first, then the fewest running, the oldest among equals; FRESH looks
+        at runs recently found full too. The tasks started."""
         free = self.slots - len(self.running)
         now = time.monotonic()
         if free <= 0 or self.refusing or not self.room():
             self.next_scan = now + SCAN_S
             return 0
-        cand: dict[str, tuple[Run, list[int], list[int]]] = {}  # id -> (run, [running], claimable)
+        cand: dict[str, Run] = {}
         for r in self.open_runs():
             if (r.skip_until > now and not fresh) or not self.fits(r):
                 continue
-            got = self.look(r, now)
-            if got is not None:
-                cand[r.id] = (r, [got[0]], got[1])
+            if self.look(r, now):
+                cand[r.id] = r
         started = 0
         while free > 0 and cand:
-            rid = min(cand, key=lambda k: (cand[k][1][0], cand[k][0].created, k))
-            r, count, todo = cand[rid]
-            n = todo.pop(0)
-            if not todo:
-                del cand[rid]
+            least = min(r.running for r in cand.values())
+            near = [r for r in cand.values() if r.running <= least + max(FAIR_SLACK, FAIR_SHARE * least)]
+            r = min(near, key=lambda x: (not self.local(x), x.running, x.created, x.id))
+            n = self.next_task(r)
+            if n is None:  # none left ahead of its cursor: its listing, when due, finds those below
+                if not self.look(r, now):
+                    del cand[r.id]
+                continue
             # room first (it may prune unused checkouts), then the claim, then the checkout: one made before a claim
             # that failed, or pruned by the room check before its task started, was made again for every claim
             # (a piece remade one run's checkout every 5 s for 4 minutes on 19 Nov)
             if not self.room():
                 break
             if not self.claim(r, n):
+                r.misses += 1
+                if r.misses >= CURSOR_BACK:  # its count is behind: read again, the cursor moved to it
+                    r.misses, r.counted_at = 0, -1e18
+                    if not self.look(r, now):
+                        del cand[r.id]
                 continue
+            r.misses = 0
+            r.claimed += 1
             if self.starts(r, n) >= MAX_STARTS:
                 self.lost(r, n)
                 continue
             if not self.ready(r):
                 self.release(r, n, "its checkout failed here")
-                cand.pop(rid, None)
+                r.claimed -= 1
+                cand.pop(r.id, None)
                 continue
             self.start(r, n)
-            count[0] += 1
             free -= 1
             started += 1
         self.next_scan = now + (0.0 if started else SCAN_S)
@@ -373,6 +457,9 @@ class Piece:
     # ---- another run's checkout ----
     def content(self, r: Run) -> str:
         return f"{r.meta.get('code_key') or r.meta.get('commit')}-{r.meta.get('with_key', '')}"
+
+    def checkout_key(self, r: Run) -> str:
+        return hashlib.sha256(self.content(r).encode()).hexdigest()[:16]
 
     def ready(self, r: Run) -> bool:
         """R's checkout and kit here: the job's own for its run and any run of the same content, else one made in
@@ -386,7 +473,7 @@ class Piece:
                      and r.meta.get("code_key")):
             r.home, r.env = Path.cwd(), None
             return True
-        key = hashlib.sha256(self.content(r).encode()).hexdigest()[:16]
+        key = self.checkout_key(r)
         try:
             env = self.kit_env(r)
             if key in self.checkouts:
@@ -413,30 +500,43 @@ class Piece:
         return {"BC_ENGINE_JARS": ":".join(jars), "BC_CLASSPATH": ":".join(["{home}/build/classes", *jars])}
 
     def make_checkout(self, r: Run, key: str) -> Path:
-        """R's commit checked out from its base.bundle and code.bundle into scratch (job.sh's way), its with.tgz
-        unpacked into it."""
+        """R's commit checked out into scratch (job.sh's tree: main's ref, the commit detached), its with.tgz unpacked
+        into it. Its objects come from the piece's own store (scratch/git, every checkout's alternate), into which a
+        bundle is fetched only when its heads aren't there: each checkout fetched main's 35 MB bundle from the volume
+        anew (2.2 to 5.7 s a checkout, 21 Nov)."""
         final = self.scratch / "co" / key
         tmp = self.scratch / "co" / f".{key}.{secrets.token_hex(3)}"
         tmp.parent.mkdir(exist_ok=True)
+        store = self.scratch / "git"
         t0 = time.monotonic()
 
-        def git(*args: str) -> str:
-            p = subprocess.run(["git", *args], capture_output=True, timeout=900, stdin=subprocess.DEVNULL)
-            if p.returncode:
-                raise ValueError(f"git {args[0]}: exit {p.returncode}: {p.stderr.decode(errors='replace')[-300:]}")
-            return p.stdout.decode(errors="replace")
+        def git(*args: str, check: bool = True) -> str:
+            p = subprocess.run(["git", "-c", "gc.auto=0", *args], capture_output=True, timeout=900,
+                               stdin=subprocess.DEVNULL)
+            if p.returncode and check:
+                raise ValueError(f"git {args[2] if args[0] in ('-C', '--git-dir') else args[0]}: exit {p.returncode}: "
+                                 f"{p.stderr.decode(errors='replace')[-300:]}")
+            return p.stdout.decode(errors="replace") if not p.returncode else ""
+        if not (store / "objects").is_dir():
+            git("init", "-q", "--bare", str(store))
+        fetched = []
         try:
             git("-c", "init.defaultBranch=job", "init", "-q", str(tmp))
+            main = ""
             for name in ("base.bundle", "code.bundle"):  # main first: code.bundle holds only what the commit adds
                 b = r.dir / name
                 if not (b.exists() and b.stat().st_size):
                     continue
-                heads = [x.split() for x in git("-C", str(tmp), "bundle", "list-heads", str(b)).splitlines()
+                heads = [x.split() for x in git("--git-dir", str(store), "bundle", "list-heads", str(b)).splitlines()
                          if x.strip()]
-                git("-C", str(tmp), "fetch", "-q", str(b), *sorted({h[0] for h in heads}))
-                main = [h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"]
-                if main:
-                    git("-C", str(tmp), "update-ref", "refs/heads/main", main[0])
+                tips = sorted({h[0] for h in heads})
+                if any(not git("--git-dir", str(store), "cat-file", "-t", t, check=False).strip() for t in tips):
+                    git("--git-dir", str(store), "fetch", "-q", str(b), *tips)
+                    fetched.append(name)
+                main = next((h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"), main)
+            (tmp / ".git" / "objects" / "info" / "alternates").write_text(f"{store / 'objects'}\n")
+            if main:
+                git("-C", str(tmp), "update-ref", "refs/heads/main", main)
             git("-C", str(tmp), "-c", "advice.detachedHead=false", "checkout", "-q", "--detach", str(r.meta["commit"]))
             w = r.dir / "with.tgz"
             if w.exists() and w.stat().st_size:
@@ -447,7 +547,8 @@ class Piece:
             os.rename(tmp, final)
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
-        self.say(f"run {r.id}: its checkout made in {time.monotonic() - t0:.1f} s")
+        self.say(f"run {r.id}: its checkout made in {time.monotonic() - t0:.1f} s"
+                 + (f" ({' and '.join(fetched)} fetched)" if fetched else ""))
         return final
 
     def prune_checkouts(self, keep: Path | None = None, idle_kept: int = CHECKOUTS) -> None:
@@ -553,6 +654,7 @@ class Piece:
         tmp.unlink()
         shutil.rmtree(here, ignore_errors=True)
         r.longest = max(r.longest, secs)
+        r.done += 1
         self.say(f"{self.name(r, n)}: ended {code} in {secs:.1f} s")
 
     def lost(self, r: Run, n: int) -> None:
@@ -673,7 +775,7 @@ class Piece:
                 if self.fill(fresh=True) == 0:  # one last look everywhere, then the piece ends: no idle allocation
                     break
             self.write_state()
-            time.sleep(1)
+            time.sleep(TICK_S)
             if self.reap():
                 self.next_scan = 0.0
             if time.monotonic() - last_beat >= BEAT_S:

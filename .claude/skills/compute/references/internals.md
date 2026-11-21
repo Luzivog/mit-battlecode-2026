@@ -160,16 +160,30 @@ pieces serve every pooled run, and every pooled piece serves it.
   for `FULL_S` (60 s); its claims are read for dead pieces' at most every `STALE_CHECK_S` (120 s). Claims, beats,
   takeover, `MAX_STARTS` and results are a run's own, as above, whoever runs its tasks; a result run by another run's
   piece names that run (`piece_run`).
-- **Fairness.** Each free slot goes to the run with the fewest running tasks (claims not done), the older run first
-  among equals. A run with nothing running is beaten only by older runs with nothing running, which are finitely many
-  and finite, so no run waits forever; a newcomer beats every run that has a task running, so a small batch behind a
-  big one starts at the next free slots.
+- **Counts, not listings.** A lab machine reaches the volume over NFS (`fs-vol-gpudata:/export/vol/gpudata`), where
+  listing a run's `claims/` (2,000 to 3,000 folders) took 13 to 42 s and a look at 57 open runs 30 to 160 s; pieces
+  that listed every run's `claims/` and `done/` at each fill sat up to 9 minutes in one with every slot idle (21 Nov).
+  A folder's size counts its entries there and on CephFS (`sizes_count`, checked once a piece on its run's folder;
+  a listing elsewhere), so a run's running tasks are its `claims/` size less its `done/` size, read at most every
+  `COUNT_S` (30 s; 112 folders in 0.1 s), plus the piece's own claims and results since. Claims are tried by `mkdir`
+  from a cursor, from `CURSOR_BACK` (16) below the count of claims, onwards (16 refused in a row read the count
+  again); only once none is left ahead does the piece list the run (at most every `STALE_CHECK_S`) for the claims
+  below it: given back, released, or dead pieces' (taken over then).
+- **Fairness.** Each free slot goes to one of the runs within `FAIR_SLACK` (8) or `FAIR_SHARE` (a quarter) of the
+  fewest running tasks: one whose checkout the piece has (or of its own content) first, then the fewest running, the
+  older first among equals. A run with nothing running is beaten only by runs within 8 of nothing, which take its
+  place only until they pass it; a newcomer beats every run with more than 8 running, so a small batch behind big
+  ones starts at the next free slots. Counts up to `COUNT_S` old (and NFS's attribute cache) bound how far a run
+  can fall behind, not whether it is served.
 - **Another run's checkout.** A piece makes a checkout only for a task it has claimed (the room check, the claim,
   then the checkout), so a failed claim or the room check's prune never costs a checkout. A task runs in its run's
   checkout: the piece's own (job.sh's) for its run and runs of the same content and kit; else one the piece makes in
-  its scratch from that run's `code.bundle` and `with.tgz`, job.sh's way (2 s on a lab machine), kept for later runs
-  of that content (`CHECKOUTS` unused ones at most, besides those tasks run in, which are never pruned; one is
-  ~350 MB). A kit run's `kit` file names its jars; the task gets that run's `BC_CLASSPATH` and `BC_ENGINE_JARS`.
+  its scratch, job.sh's way (main's ref, the commit detached, `with.tgz` unpacked in), whose objects are the piece's
+  store (`scratch/git`, each checkout's git alternate): a bundle is fetched into it only when its heads aren't there,
+  so a run of a known commit checks out in 0.2 s (here; 1.3 s with main's bundle fetched). Checkouts are kept for
+  later runs of that content (`CHECKOUTS` (8) unused ones at most, besides those tasks run in, which are never
+  pruned; one is ~200 MB). A kit run's `kit` file names its jars; the task gets that run's `BC_CLASSPATH` and
+  `BC_ENGINE_JARS`.
 - **Room to write.** A piece claims a task only while its scratch's filesystem has `DISK_MIN_MB` (2 GB) free, after
   pruning its unused checkouts when short (a lab machine's execute folder is on its root disk). A task that ends `GIVE_BACK` (75: `tools/play --give-back`, a game that found no room to write) has its claim
   given back at once, unrun, for another piece, and its piece takes no more tasks. The tasks of a piece share

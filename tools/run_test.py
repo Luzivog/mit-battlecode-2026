@@ -120,7 +120,7 @@ def test_compute_run_then_wait(world: tuple[Path, dict[str, str]]) -> None:
 def test_cancel_ends_a_run(world: tuple[Path, dict[str, str]]) -> None:
     repo, env = world
     (repo / "lines.txt").write_text("a\nb\n")
-    p = tool(repo, env, "run", "--where", "local", "--detach", "--each", "lines.txt", "--", "sleep", "60")
+    p = tool(repo, env, "run", "--where", "local", "--detach", "--each", "lines.txt", "--", "bash", "-c", "sleep 60")
     assert p.returncode == 0, p.stderr
     rid = p.stdout.strip()
     remote = Path(env["BC26_LOCAL_REMOTE"])
@@ -245,7 +245,7 @@ def test_a_new_run_takes_live_pieces_free_slots(world: tuple[Path, dict[str, str
     remote = Path(env["BC26_LOCAL_REMOTE"])
     (repo / "one.txt").write_text("x\n")
     first = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
-                 "sleep", "6")
+                 "bash", "-c", "sleep 6")  # the line goes as $0: `sleep 6 x` failed at once
     assert first.returncode == 0, first.stderr
     wait_for(lambda: any(p["running"] == 1 for p in piece_states(remote)), "the first run's piece runs its task")
     seen()
@@ -282,7 +282,7 @@ def test_cancelling_a_pooled_run_spares_the_tasks_its_pieces_serve(world: tuple[
     remote = Path(env["BC26_LOCAL_REMOTE"])
     (repo / "one.txt").write_text("x\n")
     first = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
-                 "sleep", "30")
+                 "bash", "-c", "sleep 30")
     rid1 = first.stdout.strip()
     wait_for(lambda: any(p["running"] == 1 for p in piece_states(remote)), "the first run's piece runs its task")
     seen()

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -389,10 +390,14 @@ def test_a_checkout_is_made_only_for_a_claimed_task(tmp_path: Path, monkeypatch)
     p = piece.Piece(run)
     calls: list[str] = []
     monkeypatch.setattr(p, "room", lambda: calls.append("room") or True)
-    monkeypatch.setattr(p, "claim", lambda r, n: calls.append(f"claim {n}") or n == 2)  # only task 2 is free
+    for n in (0, 1, 3):  # live pieces' claims: only task 2 is free
+        (run / "claims" / str(n)).mkdir()
+    real = p.claim
+    monkeypatch.setattr(p, "claim", lambda r, n: calls.append(f"claim {n}") or real(r, n))
     monkeypatch.setattr(p, "ready", lambda r: calls.append("ready") or True)
     monkeypatch.setattr(p, "starts", lambda r, n: 0)
-    monkeypatch.setattr(p, "start", lambda r, n: calls.append(f"start {n}"))
+    monkeypatch.setattr(p, "start", lambda r, n: calls.append(f"start {n}") or p.running.update(
+        {(r.id, n): (r, None, 0.0, tmp_path, 0.0)}))
     assert p.fill() == 1
     assert calls == ["room", "room", "claim 0", "room", "claim 1", "room", "claim 2", "ready", "start 2", "room",
                      "claim 3"]
@@ -440,3 +445,96 @@ def test_a_failed_checkout_costs_no_start(tmp_path: Path, monkeypatch) -> None: 
     monkeypatch.setattr(p, "ready", lambda r: False)
     assert p.fill() == 0
     assert not (run / "claims" / "0").exists() and not list((run / "lost").iterdir())
+
+
+def test_a_hole_behind_the_cursor_is_found_at_the_end(tmp_path: Path) -> None:
+    """Claims are looked for from CURSOR_BACK below a run's count of claims; one given back far below (here task 2 of
+    20, the others done) is found by the listing once nothing is left ahead."""
+    n = piece.CURSOR_BACK + 4
+    run = make_run(tmp_path, [{"argv": [*SH, "echo ran > $OUT/x"], "lines": []} for _ in range(n)])
+    for k in range(n):
+        if k != 2:
+            (run / "claims" / str(k)).mkdir()
+            (run / "done" / f"{k}.tar").touch()
+    (run / "lost" / "2.0000abcd").mkdir()  # given back once
+    out = run_piece(tmp_path, run, cpus=1)
+    assert result(run, 2)[0]["code"] == 0 and result(run, 2)[0]["start"] == 2, out
+    assert out.count(": started") == 1
+
+
+def test_no_listing_while_tasks_lie_ahead(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A fill reads each run's counts (a folder's size where sizes count entries) and lists no claims or results while
+    tasks lie ahead of its cursor: over the lab machines' NFS mount a listing of claims/ took 13 to 42 s."""
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    runs = [pooled_run(root, f"run-1118-12000{i}-000{i}", [stamp("x") for _ in range(40)], 2.0 + i) for i in range(1, 6)]
+    for r in runs:
+        for k in range(20):
+            (r / "claims" / str(k)).mkdir()
+            (r / "done" / f"{k}.tar").touch()
+    (a / "claims" / "0").mkdir()
+    (a / "done" / "0.tar").touch()
+    for k, v in env(tmp_path, cpus=4).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(a)
+    p.sized = True
+    monkeypatch.setattr(piece.os, "stat", lambda f, _s=os.stat: type("S", (), {"st_size": len(os.listdir(f))})()
+                        if Path(f).name in ("claims", "done") else _s(f))
+    real_ids = piece.ids  # its own run, every task done, is listed once to make sure
+    monkeypatch.setattr(piece, "ids", lambda f, *x: real_ids(f, *x) if a.name in str(f) else (
+        _ for _ in ()).throw(AssertionError(f"listed {f}")))
+    monkeypatch.setattr(p, "ready", lambda r: True)
+    monkeypatch.setattr(p, "start", lambda r, n: p.running.update({(r.id, n): (r, None, 0.0, tmp_path, 0.0)}))
+    assert p.fill() == 4
+    started = sorted(k for k in p.running)
+    assert all(n >= 20 for _, n in started) and len({rid for rid, _ in started}) == 4, started  # one each, ahead
+
+
+def test_a_run_with_its_checkout_here_goes_first_within_the_slack(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """Of runs within FAIR_SLACK of the fewest running, one with its checkout here goes first; a run further behind
+    goes first whatever it costs."""
+    root = tmp_path / "root"
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    here = pooled_run(root, "run-1118-120001-bbbb", [stamp("b") for _ in range(50)], 2.0)  # a's content: local
+    other = pooled_run(root, "run-1118-120002-cccc", [stamp("c") for _ in range(50)], 3.0, code_key="k2")
+    for k, v in env(tmp_path, cpus=1).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(a)
+    (a / "claims" / "0").mkdir()
+    (a / "done" / "0.tar").touch()
+    monkeypatch.setattr(p, "ready", lambda r: True)
+    monkeypatch.setattr(p, "start", lambda r, n: p.running.update({(r.id, n): (r, None, 0.0, tmp_path, 0.0)}))
+
+    def first(lead: int) -> str:
+        for r in (here, other):
+            for d in ("claims", "done"):
+                shutil.rmtree(r / d)
+                (r / d).mkdir()
+        for k in range(lead):  # HERE's running tasks, OTHER's none
+            (here / "claims" / str(k)).mkdir()
+        p.running.clear()
+        p.runs = {p.own.id: p.own}
+        p.fill(fresh=True)
+        return next(iter(p.running))[0]
+    assert first(piece.FAIR_SLACK) == here.name
+    assert first(piece.FAIR_SLACK + 1) == other.name
+
+
+def test_a_commit_already_here_checks_out_without_a_fetch(tmp_path: Path) -> None:
+    """Two runs of one commit and other shipped files: two checkouts, the bundle fetched into the piece's store once;
+    each checkout is the commit, detached, with main's ref."""
+    root = tmp_path / "root"
+    bundle, commit = bundle_repo(tmp_path)
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    task = {"argv": [*SH, 'cat f > $OUT/f; git rev-parse HEAD main > $OUT/g; git status --short > $OUT/s'],
+            "lines": []}
+    runs = [pooled_run(root, f"run-1118-12000{i}-000{i}", [task], 2.0 + i, commit=commit, code_key="kb",
+                       with_key=f"w{i}", cwd="sub") for i in (1, 2)]
+    for r in runs:
+        os.link(bundle, r / "code.bundle")
+    out = run_piece_at(tmp_path, a)
+    made = [x for x in out.splitlines() if "its checkout made" in x]
+    assert len(made) == 2 and sum("fetched" in x for x in made) == 1, out
+    for r in runs:
+        _, log, o = result(r, 0)
+        assert o["out/f"] == b"code\n" and o["out/g"].decode().split() == [commit, commit] and not o["out/s"], log

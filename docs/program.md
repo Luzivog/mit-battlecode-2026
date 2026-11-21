@@ -31,6 +31,8 @@ Overfitting is fine (tuning to awubot, to the official maps, to their seats); ha
 
 Status (21 Nov, after waves 1 and 2): main 84a40ad9 = clean + RX's rescue, 85.0% [82.8, 87.4] on 3,000 fresh `goal` cells (docs/progress.md). Wave 1 (W4, GK, GE, GC, GM, RX) merged nothing; wave 2 merged RX's rescue (+0.7 to +1.0 pp) and closed GK's in-game seats and GC's seat mirror. What is left, by oracle price (docs/theory/w4-clean-step-back.md): awubot's throws of our grabbed rats +12.3 pp, its centre-mine take +7.5, its king's reactions to our robots +7.4, choosing the king's site per map-seat +4.4 (no observable rule found); every general lever tried is in docs/closed.md. The pool (track TP) plays ~4,300 new games a minute since protocol 5.
 
+Stopped (21 Nov, Thomas's call): the clean program ends at main 84a40ad9, with no wave 3. On the official platform (team claudus maximus, submission 18529 = 84a40ad9), unranked 3-map scrims against awu's live submission on the public maps went 222–30 = 88.1% (84 scrims: 57 3-0, 24 2-1, 3 1-2, none 0-3); the clean main before the rescue (submission 18528, 501bde1d) went 154–35 = 81.5% (63 scrims). The platform fails every scrim that includes DefaultSmall, DefaultMedium, DefaultLarge or evileye, so those maps were left out.
+
 ## Tracks
 
 | id | track | output | starts when | agents |

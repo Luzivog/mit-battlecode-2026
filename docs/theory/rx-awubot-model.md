@@ -194,3 +194,55 @@ Oracles (awubot copies on `t3/rx-probes` @ `93041aa9`/`02342944`, plain against 
   candidates; local Java only, `gradlew run`).
 - Baseline: main against awubot, `goal`, seed base 35001, 1,000 cells, 0.843 [0.818, 0.868] (`1121-040625-ab-5fe9`; its
   first 567 replays under `1121-030327-ab-e173`).
+
+## 9. Wave 2: the throw itself (main 615a0bf9)
+
+W4 priced an awubot that never throws our rats at +12.3 pp on clean main (docs/theory/w4-clean-step-back.md §3): the
+throw, not the grab, carries the exchange. Its line score (A:`robot/rat/combat/moves/TryThrow.java.jinja2`): our king
+anywhere in the flight +300; one of our rats at the line's first collision, step 2, 2 × (10 + 36) + 10 = 102 (later
+steps a fraction, and the scan goes on); a wall or dirt 10 + 4 × remaining (46 at step 2, then 42, 38, 34); off the map
+10. With a wall in reach the victim takes 42 whatever our other rats do; dodging only spares bystanders. Rescue (taking
+the carrier before it throws) spares the victim.
+
+**The two rescue windows** (replica, 300 replays, r1–300, a game): awubot grabs at its turn t; at t + 1 its action is
+not ready (cooldown 20), so it only moves (TryPosition, lining up its best line); at t + 2 it throws (29.4 of its 34.8
+grabs are thrown on that turn). Every rat of ours has two turns before the throw.
+
+| | window 0 (t → t+1) | window 1 (t+1 → t+2) | either |
+|---|---|---|---|
+| a rat of ours within 2 of the carrier | 8.8 | 9.5 | – |
+| ... with a legal grab of it (HP above its, or off its cone) | 3.1 (seen 1.3) | 4.1 (seen 2.5) | 6.3 (seen 3.7) |
+| ... with a bite of it | 6.4 | 7.0 | 10.5 |
+| rescued | 1.2 | 2.1 | 3.3 |
+
+We already rescue on ~90% of the seen legal chances; 2.6 a game are legal but unseen.
+
+**The throw-line set** for a carrier that can throw next turn: every tile at steps 2–5 of any (step, direction) line
+its TryThrow considers (step to a free tile or none; facing or ±45°, any direction when it stays or steps forward;
+first tile empty; path clear) holds 5.2 of the 7.4 hits a game on our rats, and our rats end 34 turns a game on such a
+tile: 15% precision (the step-2-only set of §7: 4.5%).
+
+| arm | change | run | cells | better / worse | diff [95% CI] | branch @ head |
+|---|---|---|---|---|---|---|
+| lines | a tile on any throw line of an enemy carrier seen carrying on our last turn too loses 30 in every move score (`RX_LINES`) | `1121-111441-ab-cfd7` (35006) | 1,000 | 151 / 170 | −0.013 [−0.031, +0.005] | `t3/rx2-lines` @ `8e10a251` |
+| rescue | a rat carried by an enemy squeaks its carrier every turn; a combat rat with action and turn ready and no visible enemy rat within 2 first turns toward a squeaked enemy within 2 (`RX_RESCUE`) | `1121-111557-ab-1d9b` (35007) | 1,000 | 141 / 105 | **+0.021 [+0.004, +0.039]** | `t3/rx2-rescue` @ `d2a01b2f` |
+
+- Lines: the prediction is three times sharper than dodge v2's and still loses; standing off a ready carrier's lines
+  costs more than its hits. The king's avoidance was not built (the king moves once in 4 turns; its 3×3 lies on many
+  lines).
+- **Rescue passes the precision route**: confirmation on 3,000 fresh `goal` cells, seed base 35008
+  (`1121-112411-ab-69f9`): **+0.010 [+0.0003, +0.020]** (415 better / 361 worse; the tool prints [+0.000, +0.020],
+  bootstrap over maps, P(≤ 0) 0.023); `teammade` 580 cells (`1121-112412-ab-b79d`) **+0.022 [+0.004, +0.041]**; smoke
+  clean (`1121-111606-ab-fd78`: no robot of ours killed by its own exception); gauntlet (`1121-112412-gauntlet-4a72`)
+  no harm: `opp_obg` +0.008 [−0.033, +0.048] (178 cells), `opp_gst` −0.007 [−0.035, +0.021] (138), eight more pass,
+  `opp_food`, `awubot_quals`, `awubot_us` inconclusive at the cell cap (−0.016 on 32 cells each).
+- Mechanism (100 cells, every replay, `1121-112425-ab-9ca1`, r1–300 a game): our rats rescued from awubot's carriers
+  4.36 against main's 3.82; our grabs 41.3 against 40.3.
+- Rescue 2 (`RX_RESCUE` 2, `t3/rx2-rescue2` @ `f5fcc0f3`): the carried rat flags its carrier (sent twice in one squeak;
+  enemy squeaks otherwise name two different rats), and a carrier within 2 known by squeak or from my last turn is looked
+  at first, even with a visible enemy rat within 2: −0.001 [−0.019, +0.017] on 1,000 cells, seed base 35011
+  (`1121-113248-ab-f889`). Turning away from a visible enemy to look at the carrier gives back what it gains.
+- The rule holds on every map with fights (no map condition). Merge branch `t3/rx2-rescue-merge` (main + this switch
+  on); `t3/rx2-rescue` @ `d2a01b2f` is the measured commit (with the closed `RX_LINES` code, off). The two are not
+  game-identical: on 100 cells (`1121-113604-ab-cd03`) 3 differ (2 better, 1 worse), from the bytecode the dead code's
+  static fields cost; the same change in expectation.

@@ -90,6 +90,12 @@ public final class Tune {
     // shouldFight: a rat fights any enemy within KING_DEF_DSQ of our king, and a cat within CAT_DEF_DSQ of it.
     public static final int KING_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight any enemy
     public static final int CAT_DEF_DSQ = 36; // tune: 20 [0, 200] d² from our king within which rats fight a cat
+    // RX (docs/theory/rx-awubot-model.md §9): awubot's carrier cannot act on the turn after its grab and throws on the next.
+    // RX_RESCUE: a rat carried by an enemy squeaks its carrier every turn; a combat rat with action and turn ready and no
+    // visible enemy rat within Chebyshev 2 first turns toward a squeaked enemy within 2, so TryRatNap can grab it
+    // (+0.010 [+0.0003, +0.020] on 3,000 fresh goal cells).
+    public static final int RX_RESCUE = 1; // tune: 1 [0, 1] carried rats squeak their carrier, rats look toward squeaked enemies within 2 (0 off)
+
     // A carried rat at less than this HP disintegrates (BabyRat), denying the enemy a projectile.
     public static final int DISINTEGRATE_HP = 15; // tune: 10 [0, 60] HP below which a rat carried by an enemy disintegrates
 

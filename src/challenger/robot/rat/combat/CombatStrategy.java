@@ -141,6 +141,7 @@ public class CombatStrategy extends Strategy {
                 // indicate("funny pos: " + funnyTarget.location);
                 turn(myLoc.directionTo(funnyTarget.location));
             }
+            if (challenger.Tune.RX_RESCUE != 0) lookBehind();
         }
 
         try {
@@ -249,6 +250,26 @@ public class CombatStrategy extends Strategy {
         // // Profiler.pop("mini trap");
         if (tryTrapRes) return true;
         return false;
+    }
+
+    // RX_RESCUE: an enemy rat within Chebyshev 2 that I know of only by squeak (a carried ally squeaks its carrier) may be
+    // grabbable once I face it. Turn toward the nearest such rat when no visible one is that close; the turn refreshes
+    // RobotTracker, so the combat pipeline then sees it.
+    private static void lookBehind() throws GameActionException {
+        if (funnyTarget != null || rc.getCarrying() != null || !rc.isActionReady() || !rc.canTurn()) return;
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo e = RobotTracker.sortedEnemies[i];
+            if (e.type == UnitType.BABY_RAT && chebyshevDistance(myLoc, e.location) <= 2) return;
+        }
+        MapLocation best = null;
+        int bestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < EnemyManager.numKnownEnemies; i++) {
+            Enemy e = EnemyManager.knownEnemies[i];
+            if (e.health > 100 || chebyshevDistance(myLoc, e.location) > 2) continue;
+            int d = myLoc.distanceSquaredTo(e.location);
+            if (d < bestDist) { bestDist = d; best = e.location; }
+        }
+        if (best != null) turn(myLoc.directionTo(best));
     }
 
     public static boolean performMoves(Direction moveDir, Direction facing) throws GameActionException {

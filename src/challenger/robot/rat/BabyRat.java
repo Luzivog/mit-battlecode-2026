@@ -15,6 +15,8 @@ import static challenger.Game.*;
 import static challenger.util.Util.*;
 import challenger.util.Profiler;
 import challenger.comms.EnemyManager;
+import challenger.comms.Enemy;
+import challenger.comms.Squeaker;
 import challenger.Tune;
 import challenger.robot.LastCat;
 
@@ -99,6 +101,12 @@ public class BabyRat {
             if (rc.getHealth() < challenger.Tune.DISINTEGRATE_HP && rc.senseRobotAtLocation(myLoc).getTeam() != team) {
                 rc.disintegrate();
                 Clock.yield();
+            }
+            if (challenger.Tune.RX_RESCUE != 0) {
+                RobotInfo carrier = rc.senseRobotAtLocation(myLoc);
+                if (carrier != null && carrier.getTeam() != team) {
+                    Squeaker.squeakEnemy(EnemyManager.encodeEnemy(new Enemy(carrier)) | (EnemyManager.NULL << EnemyManager.ENC_WIDTH));
+                }
             }
             return;
         }

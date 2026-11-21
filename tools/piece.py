@@ -11,11 +11,14 @@ most MAX_STARTS times; the last loss ends it with code LOST.
 The pool. A pooled run (run.json's `pool`; tools/runs.py) is listed in POOL/open/ while it is open. A piece of a
 pooled run serves every open pooled run it can: the same task CPUs and memory, the same runtime (`env`), its backend
 among the run's `wheres`, and, when the piece has a deadline (Slurm's --time, Condor's), at least MIN_LEFT_S (or half
-its limit, when shorter) left and 1.5 times the longest task of that run it has run. Each free slot goes to the run with the fewest running tasks, the
-oldest first among equals: a small run submitted behind a big one gets the next free slots, and no run waits forever,
-since a run's running count only rises when it is served and an older run wins every tie. Another run's tasks run in
-that run's own checkout, made once a content (its commit and its shipped files) in the piece's scratch, with that
-run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
+its limit, when shorter) left and 1.5 times the longest task of that run it has run. Each free slot goes to a run
+within FAIR_SLACK (or FAIR_SHARE) of the fewest running tasks, one whose checkout is here first, then the fewest
+running, the oldest among equals: a small run submitted behind big ones gets the next free slots, and no run waits
+forever, since a run falls no further behind than that slack before it is the only one taken. A run's running tasks
+are counted from its folders' sizes (entries), not their listings, which took tens of seconds over the lab machines'
+NFS mount; claims are tried from a cursor near its count of claims. Another run's tasks run in that run's own
+checkout, made once a content (its commit and its shipped files) in the piece's scratch from the piece's object
+store, with that run's kit. A piece ends as soon as it runs nothing and no task it can serve is claimable anywhere: no idle grace. Its
 state (slots, running, task size, runtime, deadline, its time) is the name of an empty file in POOL/pieces
 (state_name), renamed when it changes (at most every STATE_S, at once when its free slots reach or leave 0) and every
 STATE_BEAT_S, removed at its end:

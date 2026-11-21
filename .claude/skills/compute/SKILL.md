@@ -32,8 +32,8 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
   run it: it goes to another machine and that one takes no more. A machine's tasks share `JOB_CACHE`, a folder
   for what each would otherwise copy (references/internals.md, "Room to write").
 - Runs share one pool (not `--whole`, not `--max-cpus`): a live piece of any run takes tasks of every open run of the
-  same `--task-cpus`, `--task-mem` and backends, the run with the fewest running tasks first, and ends as soon as
-  nothing is left. A new run asks for pieces only beyond the live pieces' free slots, so its tasks often start within
+  same `--task-cpus`, `--task-mem` and backends, the runs with the fewest running tasks first (within a slack of 8
+  or a quarter, a run whose checkout the piece has), and ends as soon as nothing is left. A new run asks for pieces only beyond the live pieces' free slots, so its tasks often start within
   seconds. Code goes up as main once (shared by every run while main stays) and each run's own commits (a few KB);
   `--with` files once a content. A closed run's results are deleted from the workspace once they are here.
 - A new run is refused while the workspace holds over 40 of its 55 GB after a sweep: the message says so.

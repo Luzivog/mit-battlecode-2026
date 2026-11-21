@@ -4,6 +4,31 @@
 under official conditions (engine 1.2.6 rules, the official and tournament maps, both seats), without regressing
 against the other top public bots (`src/opp_*`, `docs/opponents.md`). Progress: `docs/progress.md`.
 
+## Clean program (from 21 Nov): 90% without hardcoding
+
+The book (tag `book-final`, 90.8% on 3,000 `goal` cells) identified each official map at round 1 and switched
+constants or loaded map data per map: hardcoding. Main is now the book emptied (501bde1d). **The goal: 90% on 3,000
+fresh `goal` cells with no hardcoding**, and the held-out pools (`holdout`, `teammade`) at or above clean main.
+Overfitting is fine (tuning to awubot, to the official maps, to their seats); hardcoding is not.
+
+- **Hardcoding, never:** a map's name or id; any key or fingerprint of a map (exact sizes, tile or view hashes,
+  spawn coordinates); data of particular maps (walls, dirt, mines, sites, lanes, coordinates); a rule whose
+  condition holds on fewer than 5 `goal` maps. The book (`book.jsonl`, `Book.java`'s entries) stays empty.
+- **Fine:** constants and rules tuned on `goal`, conditioned on what a robot can observe on any map: map width,
+  height or area in coarse classes, symmetry (inferred or read from tiles), counts and densities of mines, walls,
+  dirt and cats seen, distances between kings, the team (seat), the round, cheese; counters to awubot's behaviour.
+- **Every rule is stated in game terms with its mechanism**, holds on at least 5 `goal` maps, and its effect on
+  `holdout` and `teammade` is reported. The integrator reads every merged diff for hardcoding.
+
+| id | track | from |
+|---|---|---|
+| W4 | step back on clean main: where its losses are (map-seat, phase, cause), oracle prices of what is left; plans wave 2 | docs/theory/w3-step-back.md, w2-classes.md |
+| GK | king sites in general: the first king's site and an early second king at a site (the book's largest family: 46 entries) | docs/theory/cm4-king-site.md, cm-cat-maps.md, pm-per-map.md |
+| GE | economy by observed features: spawn caps, rich spawning, siege spawns, second-king mines, exploration, dirt, cooperation hold | docs/theory/pm-per-map.md, at4-cap-rule.md, at-atlas.md |
+| GC | cats in general: lanes learned in game, lane memory and flee, cat hunt and defence | docs/theory/cm-cat-maps.md, cl-catlane.md |
+| GM | knowledge and routes: symmetry early, mines and walls mirrored by symmetry, map sharing; king hand, route planner, lookahead side | docs/theory/cm8-mine-book.md, at5-shelf.md, ms-map-seats.md, sg-seat-gaps.md, kr-king-routes.md |
+| RX | the rat exchange with a model of awubot: its own decision code as the opponent model in our micro, counters to its grabs and ratnaps | docs/theory/ex-exchange.md, w3-step-back.md, ox-awubot-failures.md |
+
 ## Tracks
 
 | id | track | output | starts when | agents |

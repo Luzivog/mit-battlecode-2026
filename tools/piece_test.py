@@ -518,3 +518,23 @@ def test_a_run_with_its_checkout_here_goes_first_within_the_slack(tmp_path: Path
         return next(iter(p.running))[0]
     assert first(piece.FAIR_SLACK) == here.name
     assert first(piece.FAIR_SLACK + 1) == other.name
+
+
+def test_a_commit_already_here_checks_out_without_a_fetch(tmp_path: Path) -> None:
+    """Two runs of one commit and other shipped files: two checkouts, the bundle fetched into the piece's store once;
+    each checkout is the commit, detached, with main's ref."""
+    root = tmp_path / "root"
+    bundle, commit = bundle_repo(tmp_path)
+    a = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0)
+    task = {"argv": [*SH, 'cat f > $OUT/f; git rev-parse HEAD main > $OUT/g; git status --short > $OUT/s'],
+            "lines": []}
+    runs = [pooled_run(root, f"run-1118-12000{i}-000{i}", [task], 2.0 + i, commit=commit, code_key="kb",
+                       with_key=f"w{i}", cwd="sub") for i in (1, 2)]
+    for r in runs:
+        os.link(bundle, r / "code.bundle")
+    out = run_piece_at(tmp_path, a)
+    made = [x for x in out.splitlines() if "its checkout made" in x]
+    assert len(made) == 2 and sum("fetched" in x for x in made) == 1, out
+    for r in runs:
+        _, log, o = result(r, 0)
+        assert o["out/f"] == b"code\n" and o["out/g"].decode().split() == [commit, commit] and not o["out/s"], log

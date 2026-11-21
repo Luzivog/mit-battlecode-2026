@@ -83,7 +83,7 @@ CLOSED_S = 5.0  # a run whose task runs here is checked for `closed` this often
 STATE_S = 30.0
 STATE_BEAT_S = 600.0
 MIN_LEFT_S = 1200.0  # a piece with a deadline takes another run's task only with this long left (or half its limit)
-CHECKOUTS = 4  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
+CHECKOUTS = 8  # other runs' checkouts kept unused in scratch (beyond those tasks run in)
 # a piece claims a task only with this much free where its tasks write (a checkout is ~350 MB, a binary 100 MB)
 DISK_MIN_MB = int(os.environ.get("BC26_DISK_MIN_MB", "2048"))
 GIVE_BACK = 75  # a task's code saying its host can't run it (EX_TEMPFAIL): its claim goes back, the piece stops
@@ -497,30 +497,43 @@ class Piece:
         return {"BC_ENGINE_JARS": ":".join(jars), "BC_CLASSPATH": ":".join(["{home}/build/classes", *jars])}
 
     def make_checkout(self, r: Run, key: str) -> Path:
-        """R's commit checked out from its base.bundle and code.bundle into scratch (job.sh's way), its with.tgz
-        unpacked into it."""
+        """R's commit checked out into scratch (job.sh's tree: main's ref, the commit detached), its with.tgz unpacked
+        into it. Its objects come from the piece's own store (scratch/git, every checkout's alternate), into which a
+        bundle is fetched only when its heads aren't there: each checkout fetched main's 35 MB bundle from the volume
+        anew (2.2 to 5.7 s a checkout, 21 Nov)."""
         final = self.scratch / "co" / key
         tmp = self.scratch / "co" / f".{key}.{secrets.token_hex(3)}"
         tmp.parent.mkdir(exist_ok=True)
+        store = self.scratch / "git"
         t0 = time.monotonic()
 
-        def git(*args: str) -> str:
-            p = subprocess.run(["git", *args], capture_output=True, timeout=900, stdin=subprocess.DEVNULL)
-            if p.returncode:
-                raise ValueError(f"git {args[0]}: exit {p.returncode}: {p.stderr.decode(errors='replace')[-300:]}")
-            return p.stdout.decode(errors="replace")
+        def git(*args: str, check: bool = True) -> str:
+            p = subprocess.run(["git", "-c", "gc.auto=0", *args], capture_output=True, timeout=900,
+                               stdin=subprocess.DEVNULL)
+            if p.returncode and check:
+                raise ValueError(f"git {args[2] if args[0] in ('-C', '--git-dir') else args[0]}: exit {p.returncode}: "
+                                 f"{p.stderr.decode(errors='replace')[-300:]}")
+            return p.stdout.decode(errors="replace") if not p.returncode else ""
+        if not (store / "objects").is_dir():
+            git("init", "-q", "--bare", str(store))
+        fetched = []
         try:
             git("-c", "init.defaultBranch=job", "init", "-q", str(tmp))
+            main = ""
             for name in ("base.bundle", "code.bundle"):  # main first: code.bundle holds only what the commit adds
                 b = r.dir / name
                 if not (b.exists() and b.stat().st_size):
                     continue
-                heads = [x.split() for x in git("-C", str(tmp), "bundle", "list-heads", str(b)).splitlines()
+                heads = [x.split() for x in git("--git-dir", str(store), "bundle", "list-heads", str(b)).splitlines()
                          if x.strip()]
-                git("-C", str(tmp), "fetch", "-q", str(b), *sorted({h[0] for h in heads}))
-                main = [h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"]
-                if main:
-                    git("-C", str(tmp), "update-ref", "refs/heads/main", main[0])
+                tips = sorted({h[0] for h in heads})
+                if any(not git("--git-dir", str(store), "cat-file", "-t", t, check=False).strip() for t in tips):
+                    git("--git-dir", str(store), "fetch", "-q", str(b), *tips)
+                    fetched.append(name)
+                main = next((h[0] for h in heads if len(h) > 1 and h[1] == "refs/heads/main"), main)
+            (tmp / ".git" / "objects" / "info" / "alternates").write_text(f"{store / 'objects'}\n")
+            if main:
+                git("-C", str(tmp), "update-ref", "refs/heads/main", main)
             git("-C", str(tmp), "-c", "advice.detachedHead=false", "checkout", "-q", "--detach", str(r.meta["commit"]))
             w = r.dir / "with.tgz"
             if w.exists() and w.stat().st_size:
@@ -531,7 +544,8 @@ class Piece:
             os.rename(tmp, final)
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
-        self.say(f"run {r.id}: its checkout made in {time.monotonic() - t0:.1f} s")
+        self.say(f"run {r.id}: its checkout made in {time.monotonic() - t0:.1f} s"
+                 + (f" ({' and '.join(fetched)} fetched)" if fetched else ""))
         return final
 
     def prune_checkouts(self, keep: Path | None = None, idle_kept: int = CHECKOUTS) -> None:

@@ -238,5 +238,11 @@ tile: 15% precision (the step-2-only set of §7: 4.5%).
   `opp_food`, `awubot_quals`, `awubot_us` inconclusive at the cell cap (−0.016 on 32 cells each).
 - Mechanism (100 cells, every replay, `1121-112425-ab-9ca1`, r1–300 a game): our rats rescued from awubot's carriers
   4.36 against main's 3.82; our grabs 41.3 against 40.3.
+- Rescue 2 (`RX_RESCUE` 2, `t3/rx2-rescue2` @ `f5fcc0f3`): the carried rat flags its carrier (sent twice in one squeak;
+  enemy squeaks otherwise name two different rats), and a carrier within 2 known by squeak or from my last turn is looked
+  at first, even with a visible enemy rat within 2: −0.001 [−0.019, +0.017] on 1,000 cells, seed base 35011
+  (`1121-113248-ab-f889`). Turning away from a visible enemy to look at the carrier gives back what it gains.
 - The rule holds on every map with fights (no map condition). Merge branch `t3/rx2-rescue-merge` (main + this switch
-  on); `t3/rx2-rescue` @ `d2a01b2f` is the measured commit (with the closed `RX_LINES` code, off).
+  on); `t3/rx2-rescue` @ `d2a01b2f` is the measured commit (with the closed `RX_LINES` code, off). The two are not
+  game-identical: on 100 cells (`1121-113604-ab-cd03`) 3 differ (2 better, 1 worse), from the bytecode the dead code's
+  static fields cost; the same change in expectation.

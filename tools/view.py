@@ -29,7 +29,7 @@ MAX_AGE_S = 0.5 if remote.LOCAL else 5.0  # a snapshot this young is used as it 
 MIN_GAP_S = 0.2 if remote.LOCAL else 2.0  # two refreshes are at least this far apart, even for a newcomer's run
 INTEREST_S = 120.0  # an interest file not rewritten for this long is a dead process's
 REWRITE_S = 30.0  # an unchanged interest file is rewritten this often
-VIEW_S = 30.0  # a refresh's bound
+VIEW_S = 60.0  # a refresh's bound (250 followed jobs and a dead Slurm took 24-34 s)
 # A run's folder is read again by a refresh once its last read is this old, and a reader takes it up to RUN_AGE_S old:
 # followers poll every 30 s, and 30 open runs' folders read at every refresh took 2 s
 RUN_REREAD_S = 0.3 if remote.LOCAL else 8.0

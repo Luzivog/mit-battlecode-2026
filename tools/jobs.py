@@ -507,10 +507,13 @@ class State:
     peak: int | None = None  # the job's memory peak (bytes), where its cgroup was its own
 
 
+# Builtins read the small files: one process a job (the log's grep), not six (250 jobs took 17 s on the login node).
 FOLDER_SH = r"""for j in "$@"; do d=JOBS/$j
-if [ -d "$d" ]; then e=$(head -c 20 "$d/exit" 2>/dev/null | tr -d '\n'); b=$(cat "$d/backend-id" 2>/dev/null)
-f=; [ -e "$d/cancelled" ] && f=${f}c; grep -q '^== .* start on ' "$d/log" 2>/dev/null && f=${f}s
-p=$(sed -n 's/^peak //p' "$d/memory" 2>/dev/null)
+if [ -d "$d" ]; then e=; b=; p=; f=
+{ IFS= read -r e; } 2>/dev/null < "$d/exit"; e=${e:0:20}
+{ IFS= read -r b; } 2>/dev/null < "$d/backend-id"
+[ -e "$d/cancelled" ] && f=${f}c; grep -q '^== .* start on ' "$d/log" 2>/dev/null && f=${f}s
+while read -r k v; do [ "$k" = peak ] && p=$v; done 2>/dev/null < "$d/memory"
 printf 'J\t%s\t1\t%s\t%s\t%s\t%s\n' "$j" "$e" "$b" "$f" "$p"; else printf 'J\t%s\t0\t\t\t\t\n' "$j"; fi; done"""
 
 

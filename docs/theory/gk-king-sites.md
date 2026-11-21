@@ -125,3 +125,49 @@ maps; on `goal` the robots' own knowledge does not name them: the site score tha
 screened map-seats confirms at −0.011 on 3,000 cells, and the one observable that tracks the cat maps (a cat in view
 early on a large map) holds on three maps. The switches stay in the code, off (`GK_SITE`, `GK_WAIT`, `GK_K2CAT` with
 `gkK2Site`, which GC's pocket trigger reuses).
+
+## 7. Wave 2: the seat the game reveals (`GK_DELIV`)
+
+W4's hindsight oracle prices a per-map-seat choice of the first king's seat at +4.4 pp, which no feature rule reaches
+(docs/theory/w4-clean-step-back.md §3.2). The arm reads the choice from the game instead (branch `t3/gk2-delivery-seat`,
+`src/challenger/Deliveries.java`): a rat names its trip's source (the known mine within Chebyshev 5 of its first
+pickup) and squeaks (source, cheese) as it hands the cheese to a king (Squeaker header 3); the king tallies what it hears
+to `GK_D_END`. Bit 1: every `GK_D_AT` rounds the first king moves, at most `GK_D_MOVES` times, beside the mine that
+delivered the most since its last decision (at least `GK_D_MIN`, not its own, within `GK_D_MAXD`). Bit 2: a new king
+forms beside the mine heard to deliver the most beyond `GK_D_K2DIST` of every king. Off: main's executed instructions.
+
+GK7 and GK8, 1,000 fresh `goal` cells, seed base 31020, against clean main `615a0bf9` (refs `1121-111457-ab-d051`,
+`1121-113003-ab-60b0`, 0.842); "early cat" = W4's seven maps whose cats reach a king by r200, "worst 42" = clean
+main's 42 worst map-seats (W4's `losstab_main.json`); `D:py/report.py`:
+
+| arm | decides | moves | max distance | all | early cat | worst 42 | run |
+|---|---|---|---|---|---|---|---|
+| d100 | every 100 rounds, ≥ 100 cheese | 1 | – | −0.021 [−0.049, +0.003] | +0.000 | −0.024 | `1121-111714-ab-b487` |
+| d2x | every 100, ≥ 100 | 2 | – | −0.018 [−0.041, +0.004] | +0.000 | −0.033 | `1121-112156-ab-ec69` |
+| d150 | every 150, ≥ 150 | 1 | – | −0.021 [−0.045, +0.002] | −0.027 | −0.040 | `1121-112253-ab-9a98` |
+| m10 | every 100, ≥ 100 | 1 | 10 | −0.007 [−0.023, +0.011] | +0.007 | −0.016 | `1121-113046-ab-e0f8` |
+| m15 | every 100, ≥ 100 | 1 | 15 | −0.012 [−0.031, +0.008] | +0.000 | −0.024 | `1121-113115-ab-2abf` |
+| m15x | every 100, ≥ 200 | 1 | 15 | −0.013 [−0.031, +0.004] | +0.000 | −0.031 | `1121-113145-ab-acf0` |
+
+- It finds seats: diamond B +0.49 (the book's site), dirtpassageway A, safelycontained B, moonlitriverpark A,
+  hatefullattice B +0.27 to +0.30; and moves kings into ruin: FreeTheCheese A and B −0.61 / −0.76 (the move crosses a
+  chokepoint), AceOfSpades B, cheesebottles A, shell B, toomuchcheese A −0.30 to −0.37 (per map-seat over ~10 games;
+  the arms share their decisions, so this is no replication).
+- The mine the miners deliver most from is rarely the king's own (the king picks its own mine's cheese), so the rule
+  nearly always moves the king; a king's walk (one step in 4 rounds, digging) costs its own picking and exposes it,
+  and the mine it leaves becomes a far one. Capping the move at 10 steps halves the loss without making it a gain.
+
+GK9, the second king the same way (bit 2: main's gates and timing, the site the mine heard to deliver most, tallied all
+game), 1,000 fresh `goal` cells, seed base 31021, against main `84a40ad9` (ref `1121-114240-ab-c33e`):
+
+| arm | site beyond | all | early cat | worst 42 | rest | run |
+|---|---|---|---|---|---|---|
+| k2a | Chebyshev 8 of every king | −0.027 [−0.048, −0.005] | +0.028 | −0.079 [−0.139, −0.020] | −0.012 | `1121-114344-ab-7d8d` |
+| k2b | 12 | −0.018 [−0.039, +0.002] | +0.028 | −0.070 [−0.125, −0.016] | −0.003 | `1121-114416-ab-fabd` |
+
+The mine our miners deliver most from is one our side already works: a king there shares its income (KL's and KF's
+finding, docs/closed.md) instead of adding a mine, and on the worst map-seats, which lose the income race or the king,
+it costs most.
+
+**Wave 2 closed:** the game's own delivery record does not name the seat W4's oracle prices; acting on it moves the
+king (first king) or splits the income (second king), and both cost more than the better seat brings.

@@ -608,12 +608,14 @@ def read_condor(max_age: float = 0.0) -> Condor:
 
 
 def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int | None, remove_s: int | None,
-               kind: str = "") -> str:
+               kind: str = "", priority: int = 0) -> str:
     """The submit description: request_cpus = 1 (a lab machine is one static slot, so this claims all of it, DoC's
     rule) on a machine of our releases with CPUS cores and MEM_MB MiB, read and written in place on the shared volume.
     Ranked by the workers it runs (SLOT_MB a worker: the CPUs its memory holds; None: its CPUs), the machine of its
     last start last. REMOVE_S: removed once it has run that long (a bound, for a first job). KIND: the runs a piece
-    serves (BC26Kind: placement counts the queued pieces of each kind)."""
+    serves (BC26Kind: placement counts the queued pieces of each kind). PRIORITY: its order among our own jobs (Condor's
+    job priority, higher first): a pooled piece's is its protocol, so a machine that frees goes to a piece of the
+    newest protocol before an older one queued earlier."""
     release = " || ".join(f'OpSysAndVer == "{o}"' for o in CONDOR_OSES)
     workers = ("TARGET.TotalCpus" if slot_mb is None else
                f"ifThenElse(TARGET.TotalCpus * {slot_mb} <= TARGET.Memory, TARGET.TotalCpus, "
@@ -626,7 +628,7 @@ def condor_sub(job_dir: str, job_id: str, cpus: int, mem_mb: int, slot_mb: int |
         "job_machine_attrs = Machine", f"rank = ifThenElse(TARGET.Machine =?= MY.MachineAttrMachine0, 0, {workers})",
         f"output = {job_dir}/condor.out", f"error = {job_dir}/condor.err", f"log = {job_dir}/condor.log",
         f'JobBatchName = "bc26-{job_id}"', "notification = never", f"periodic_release = {CONDOR_RELEASE}",
-        *([f'+BC26Kind = "{kind}"'] if kind else []),
+        *([f'+BC26Kind = "{kind}"'] if kind else []), *([f"priority = {priority}"] if priority else []),
         *([f"periodic_remove = (JobStatus == 2) && (time() - EnteredCurrentStatus > {remove_s})"] if remove_s else []),
         "queue", ""])
 

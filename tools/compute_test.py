@@ -544,3 +544,22 @@ def test_cpucluster1_full_today_is_a_wait_not_never(monkeypatch: pytest.MonkeyPa
     assert "our CPUs 288/288" in p.note and "our memory 510000/512000 MB" in p.note and "waits in" in p.note
     with pytest.raises(remote.Refused, match="can ever"):
         J.place("cpucluster1", 64, 2700, None)  # 32 CPUs a job a node at most
+
+
+def test_placement_for_a_new_protocol_run_counts_only_its_pieces() -> None:
+    """A version-5 run's placement counts version-5 pieces' free slots, never a version-4 piece's (which would not
+    take its tasks); a version-4 run's counts both. Condor pieces of a pooled run carry the protocol as their kind
+    and their priority among our jobs."""
+    from tools import runs as R
+    s5 = R.Settings("run-1121-000000-abcd", 10, 1, 1700, ("condor",), 3600, None, None, False, ".", "c", (),
+                    True, R.POOL_V, "e", 0.0, "k", "")
+    s4 = R.Settings(**{**s5.__dict__, "pool_v": 4})
+    piece = {"live": True, "slots": 8, "running": 2, "task_cpus": 1, "task_mem_mb": 1700, "env": "e",
+             "backend": "condor", "deadline": None}
+    old, new = dict(piece, job="condor-old", v=4), dict(piece, job="condor-new", v=R.POOL_V)
+    assert [p["job"] for p in R.serving(s5, [old, new], 0.0)] == ["condor-new"]
+    assert [p["job"] for p in R.serving(s4, [old, new], 0.0)] == ["condor-old", "condor-new"]
+    assert R.kind_of(s5).endswith("-v5") and R.kind_of(s4).endswith("-v4") and R.POOL_V == 5
+    sub = B.condor_sub("/vol/x/jobs/condor-1", "condor-1", 1, 1700, 1700, None, R.kind_of(s5), s5.pool_v)
+    assert "priority = 5" in sub.splitlines()
+    assert not any(x.startswith("priority") for x in B.condor_sub("/vol/x/jobs/c", "c", 1, 1700, None, None).split("\n"))

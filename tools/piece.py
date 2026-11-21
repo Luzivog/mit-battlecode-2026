@@ -60,9 +60,14 @@ MAX_STARTS = 3  # a task's starts, the first included
 LOG_BYTES = 1 << 20  # the end of a task's output kept
 OUT_CAP = 1 << 30  # the most a task's OUT may hold: a run's writes on the shared volume are bounded
 LOST = -1  # the code of a task whose every start was lost
-# The pool's protocol: a piece serves only runs that speak its version. 4: a run's code is base.bundle (main) and a
-# thin code.bundle, which a version-3 piece can't check out. 3: the state file is written seldom and says its time.
-POOL_V = 4
+# The pool's protocol: a piece serves only runs of the versions it speaks (SERVES_V), and its state says its own. 5: the
+# fill counts folders instead of listing them (version-4 pieces sat minutes in each fill); runs and placements of
+# version 5 count only version-5 pieces, so version-4 pieces, which serve only version-4 runs, end once those are done
+# (a Condor piece evicted and run again keeps its run's code: without a new version they never left). 4: a run's code
+# is base.bundle (main) and a thin code.bundle, which a version-3 piece can't check out. 3: the state file is written
+# seldom and says its time.
+POOL_V = 5
+SERVES_V = (4, 5)
 SCAN_S = 2.0  # between two looks for work while a slot is free and the last look found none
 FULL_S = 60.0  # a run found with nothing claimable is looked at again after this long (its claims come back only
 # from a dead piece's, after STALE_S, or a stopped task's)
@@ -238,12 +243,12 @@ class Piece:
 
     # ---- which runs ----
     def serves(self, r: Run) -> bool:
-        """R's tasks fit this piece: its own run's always; another run's when both are pooled, of one protocol, task
-        size and runtime, and this piece's backend is one R allows."""
+        """R's tasks fit this piece: its own run's always; another run's when both are pooled, R of a protocol this
+        piece speaks, of its task size and runtime, and this piece's backend is one R allows."""
         if r.own:
             return True
         m = r.meta
-        return (self.pooled and not r.bad and bool(m.get("pool")) and m.get("pool_v") == POOL_V
+        return (self.pooled and not r.bad and bool(m.get("pool")) and m.get("pool_v") in SERVES_V
                 and m.get("task_cpus") == self.meta["task_cpus"] and m.get("task_mem_mb") == self.meta["task_mem_mb"]
                 and m.get("env") == self.meta.get("env") and self.backend in m.get("wheres", ()))
 

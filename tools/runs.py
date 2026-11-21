@@ -37,7 +37,7 @@ from tools import backends as B
 from tools import jobs as J
 from tools import kit, provision, remote, view
 from tools import workspace as W
-from tools.piece import MIN_LEFT_S, POOL_V, STALE_S
+from tools.piece import MIN_LEFT_S, POOL_V, SERVES_V, STALE_S
 from tools.remote import (CPU_HOST, LOCAL, REMOTE_CAS, REMOTE_POOL, REMOTE_RUNS, SLURM_HOSTS, Refused, Unreachable,
                           login, login_into)
 
@@ -332,7 +332,8 @@ def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> lis
             if j.id not in {x.id for x in js}:
                 js.append(j)
         subs = [(j, files, B.condor_sub(j.dir, j.id, max(s.task_cpus, 1), min(mem, s.task_mem_mb),
-                                        s.task_mem_mb if s.task_cpus else None, s.condor_time_s, kind_of(s)))
+                                        s.task_mem_mb if s.task_cpus else None, s.condor_time_s, kind_of(s),
+                                        s.pool_v if s.pool else 0))
                 for j in js]
         clusters = J.submit_condor(subs, shared)
         slots = [o.slots for o in condor] + [1] * queued_condor
@@ -369,8 +370,8 @@ def submit_pieces(s: Settings, took: list[Offer], queued_condor: int = 0) -> lis
 
 def kind_of(s: Settings) -> str:
     """The runs a piece of S serves, as a Condor attribute (BC26Kind): a pooled run's task size, runtime and protocol;
-    an unpooled run's own id."""
-    return f"{s.task_cpus}-{s.task_mem_mb}-{s.env}-v{POOL_V}" if s.pool else s.id
+    an unpooled run's own id. The run's protocol, not this code's: its pieces run its piece.py."""
+    return f"{s.task_cpus}-{s.task_mem_mb}-{s.env}-v{s.pool_v}" if s.pool else s.id
 
 
 def place_pieces(s: Settings, need: int) -> list[str]:
@@ -455,10 +456,13 @@ def read_pool() -> tuple[list[dict[str, object]], float]:
 
 
 def serving(s: Settings, pieces: list[dict[str, object]], clock: float) -> list[dict[str, object]]:
-    """The live pieces of PIECES that would take S's tasks (tools/piece.py's `serves` and `fits`)."""
+    """The live pieces of PIECES that would take S's tasks (tools/piece.py's `serves` and `fits`): of S's protocol, or
+    of this one when it serves S's (a version-4 piece never takes a version-5 run's task)."""
     out = []
     for p in pieces:
-        if not p.get("live") or p.get("v") != POOL_V or not isinstance(p.get("slots"), int) \
+        v = p.get("v")
+        if not p.get("live") or not (v == s.pool_v or (v == POOL_V and s.pool_v in SERVES_V)) \
+                or not isinstance(p.get("slots"), int) \
                 or not isinstance(p.get("running"), int):
             continue
         if (p.get("task_cpus"), p.get("task_mem_mb"), p.get("env")) != (s.task_cpus, s.task_mem_mb, s.env):

@@ -111,7 +111,7 @@ left can use, and our pending jobs count against our caps; a lab machine is take
 as many of the best free machines as we have Condor jobs idle in its queue (they take free machines first). Condor
 pieces are anonymous (requirements and a rank by the workers a machine holds), so a big machine can take every task
 and a second piece end at once; a piece says its kind (`+BC26Kind`: task CPUs, memory, runtime and `POOL_V` for a
-pooled run, the run's id otherwise). GPU-cluster slots go one at a time, each from a read after the last submit. When
+pooled run, the run's id otherwise) and, pooled, its priority (`POOL_V`). GPU-cluster slots go one at a time, each from a read after the last submit. When
 nothing is free, Condor pieces wait in its queue: `QUEUED_PIECES` (4) of a kind at most, counted over every run's
 idle pieces; a run whose kind has them gets none (its tasks wait for the pool) and isn't refused. However many lab
 machines look free, a placement adds Condor pieces only while fewer than `IDLE_CAP` (32) of its kind wait in the
@@ -211,9 +211,14 @@ pieces serve every pooled run, and every pooled piece serves it.
   only once none of its tasks moved for 90 s. The summary adds `pieces_requested` and `served_by_others`.
 - **Cancel.** `tools/compute cancel RUN` closes a pooled run and cancels its pieces that are queued or held; its
   running pieces stop its tasks and go on with other runs' tasks, or end at once.
-- **Protocol.** A piece serves only runs of its own `POOL_V` (4), and a follower counts only pieces of it: a change to
-  the protocol bumps it. A run with no `pool` in `run.json` (`--whole`, `--max-cpus`) is served by its own pieces
-  alone.
+- **Protocol.** A run says its `POOL_V` (5); a piece serves runs of the versions in its `SERVES_V` (4 and 5) and its
+  state says its own; a follower counts a piece as serving its run when the piece is of the run's version, or of 5
+  serving it: a version-4 piece never takes a version-5 run's task. A change to the protocol bumps it. The Condor
+  kind carries the version, so each version has its own queue places, and a pooled piece's Condor priority (its order
+  among our own jobs) is its version: a machine that frees goes to the newest protocol first. Why 5: a Condor piece
+  evicted and run again keeps its run's code, so version-4 pieces, which served every run, never left; now they serve
+  only version-4 runs and end by the exit rule once those are done. A run with no `pool` in `run.json` (`--whole`,
+  `--max-cpus`) is served by its own pieces alone.
 
 ## The games interface
 

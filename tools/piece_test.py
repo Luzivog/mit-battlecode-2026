@@ -313,8 +313,8 @@ def test_its_state_says_its_free_slots(tmp_path: Path) -> None:
         assert time.monotonic() < end
         time.sleep(0.05)
     st = view.parse_state(names[0])  # its state is its file's name: read by a listing, no file opened
-    assert (st["job"], st["slots"], st["running"], st["task_mem_mb"], st["env"]) == (
-        "local-1118-120000-0001", 3, 1, 100, "e1")
+    assert (st["job"], st["v"], st["slots"], st["running"], st["task_mem_mb"], st["env"]) == (
+        "local-1118-120000-0001", 5, 3, 1, 100, "e1")  # it says its own protocol
     assert abs(int(str(st["at"])) - time.time()) < 10 and (d / names[0]).stat().st_size == 0
     p.communicate(timeout=BOUND_S)
     assert not list(d.iterdir())
@@ -538,3 +538,36 @@ def test_a_commit_already_here_checks_out_without_a_fetch(tmp_path: Path) -> Non
     for r in runs:
         _, log, o = result(r, 0)
         assert o["out/f"] == b"code\n" and o["out/g"].decode().split() == [commit, commit] and not o["out/s"], log
+
+
+def v4_piece(tmp: Path) -> Path:
+    """This piece.py speaking protocol 4 alone, as the pieces placed before version 5 do (serves() and fill() are
+    otherwise the same)."""
+    src = PIECE.read_text()
+    assert "POOL_V = 5\nSERVES_V = (4, 5)\n" in src
+    f = tmp / "piece_v4.py"
+    f.write_text(src.replace("POOL_V = 5\nSERVES_V = (4, 5)\n", "POOL_V = 4\nSERVES_V = (4,)\n"))
+    return f
+
+
+def test_a_v4_piece_never_takes_a_v5_task_and_ends_without_v4_work(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    own = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0, pool_v=4)
+    v5 = pooled_run(root, "run-1118-120001-bbbb", [stamp("b") for _ in range(3)], 2.0, pool_v=5)
+    (tmp_path / "code").mkdir()
+    (tmp_path / "tmp").mkdir()
+    t0 = time.monotonic()
+    p = subprocess.run([sys.executable, str(v4_piece(tmp_path)), str(own)], cwd=tmp_path / "code", env=env(tmp_path),
+                       capture_output=True, text=True, timeout=BOUND_S)
+    assert p.returncode == 0 and "piece done" in p.stdout, p.stdout + p.stderr
+    assert len(spans(own)) == 1 and not list((v5 / "claims").iterdir())  # its own task, none of the v5 run's
+    assert time.monotonic() - t0 < 10  # no v4 work left: it ends
+
+
+def test_a_v5_piece_takes_v4_and_v5_runs(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    own = pooled_run(root, "run-1118-120000-aaaa", [stamp("a")], 1.0, pool_v=5)
+    v4 = pooled_run(root, "run-1118-120001-bbbb", [stamp("b") for _ in range(2)], 2.0, pool_v=4)
+    v5 = pooled_run(root, "run-1118-120002-cccc", [stamp("c") for _ in range(2)], 3.0, pool_v=5)
+    out = run_piece_at(tmp_path, own)
+    assert len(spans(v4)) == 2 and len(spans(v5)) == 2, out

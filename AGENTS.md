@@ -19,7 +19,7 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 - `maps/`: the official, tournament and team-made maps (all valid). `test_maps/`: scenario maps.
 - `jinja.py`: the code generator. `tools/`, `autoscrims/`, `scripts/`: tooling, each tool with `--help`.
 - `references/postmortems/`: every public Battlecode postmortem, as text (`INDEX.md`).
-- Remote: `origin` only (ours, private). The champion's ~30 experiment branches are archived in it under
+- Remote: `origin` only (ours, public). The champion's ~30 experiment branches are archived in it under
   `refs/champion/*`: `git fetch origin '+refs/champion/*:refs/remotes/champion/*'` makes them `champion/<branch>`.
 - `~/battlecode26-data/`: data, caches and scratch. Never `/tmp` for anything worth keeping. The tools prune it
   ("Disk" in `tools/bcgames/AGENTS.md`): a run's replays go after 24 h unless you `tools/games keep ID` it (do so for

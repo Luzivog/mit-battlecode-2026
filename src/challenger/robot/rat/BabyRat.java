@@ -17,8 +17,6 @@ import challenger.util.Profiler;
 import challenger.comms.EnemyManager;
 import challenger.comms.Enemy;
 import challenger.comms.Squeaker;
-import challenger.Tune;
-import challenger.robot.LastCat;
 
 public class BabyRat {
     private static Direction lastGlance;
@@ -37,12 +35,117 @@ public class BabyRat {
         AntColony.init();
     }
 
+    private static boolean hasOwnCatTrapNear(MapLocation targ) throws GameActionException {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                MapLocation check = targ.translate(dx, dy);
+                if (rc.canSenseLocation(check) && rc.senseMapInfo(check).getTrap() == TrapType.CAT_TRAP) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static int chebTo2x2(MapLocation loc, int bx, int by) {
+        int dx = loc.x < bx ? bx - loc.x : (loc.x > bx + 1 ? loc.x - (bx + 1) : 0);
+        int dy = loc.y < by ? by - loc.y : (loc.y > by + 1 ? loc.y - (by + 1) : 0);
+        return Math.max(dx, dy);
+    }
+
+    private static boolean tryPlaceBestCatTrap(RobotInfo cat) throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        int cx = cat.location.x, cy = cat.location.y;
+        int fx = cat.direction.dx, fy = cat.direction.dy;
+        int nx = cx + fx, ny = cy + fy;
+        int nx2 = cx + 2 * fx, ny2 = cy + 2 * fy;
+        int nextCenterX2 = 2 * nx + 1, nextCenterY2 = 2 * ny + 1;
+
+        MapLocation bestTarg = null;
+        int bestScore = Integer.MIN_VALUE;
+        for (Direction off : relatedDirections(myDir)) {
+            MapLocation targ = myLoc.add(off);
+            if (!rc.canPlaceCatTrap(targ)) continue;
+            int c1 = chebTo2x2(targ, nx, ny);
+            int c2 = chebTo2x2(targ, nx2, ny2);
+            if (c1 > 1 && c2 > 1) continue;
+            if (hasOwnCatTrapNear(targ)) continue;
+            int dx2 = 2 * targ.x - nextCenterX2;
+            int dy2 = 2 * targ.y - nextCenterY2;
+            int score = (c1 == 0 ? 300 : c1 == 1 ? 200 : c2 == 0 ? 120 : 80) - (dx2 * dx2 + dy2 * dy2);
+            if (score > bestScore) {
+                bestScore = score;
+                bestTarg = targ;
+            }
+        }
+        if (bestTarg != null && rc.canPlaceCatTrap(bestTarg)) {
+            rc.placeCatTrap(bestTarg);
+            return true;
+        }
+        return false;
+    }
+
     public static void considerPlacingCatTrap() throws GameActionException {
-        if (Tune.PM_COOP_HOLD != 0 && RobotTracker.numCats > 0) LastCat.defuseTraps();
+        if (LastCat.isHoldEnabled() && RobotTracker.numCats > 0) LastCat.defuseTraps();
         if (!rc.isActionReady()) return;
         if (RobotTracker.numCats > 0 && rc.isCooperation() && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0) {
+            if ((Tune.COOP_CTRL & 1) != 0) {
+                if (rc.getAllCheese() < 100 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount) return;
+                RobotInfo cat = null;
+                for (int i = 0; i < RobotTracker.numCats; i++) {
+                    RobotInfo cand = RobotTracker.sortedCats[i];
+                    if (cand == null) continue;
+                    if (dist(myLoc, cand) > 13) break;
+                    if (LastCat.isHoldEnabled() && !LastCat.mayDamage(cand, TrapType.CAT_TRAP.damage)) continue;
+                    cat = cand;
+                    break;
+                }
+                if (cat == null) return;
+
+                boolean placed = tryPlaceBestCatTrap(cat);
+                int cx = cat.location.x, cy = cat.location.y;
+                int fx = cat.direction.dx, fy = cat.direction.dy;
+                if (!placed && rc.canTurn()) {
+                    MapLocation aim = cat.location.translate(fx, fy);
+                    Direction turnDir = myLoc.directionTo(aim);
+                    if (turnDir == Direction.CENTER) turnDir = myLoc.directionTo(cat.location);
+                    if (turnDir != Direction.CENTER && turnDir != myDir) {
+                        turn(turnDir);
+                        if (rc.isActionReady() && (!LastCat.isHoldEnabled() || LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage))) {
+                            placed = tryPlaceBestCatTrap(cat);
+                        }
+                    }
+                }
+                // If standing in the cat's sight cone or next-step crush footprint, step to safety.
+                boolean inDanger = canCatSense(myLocX - cx, myLocY - cy, cat.direction)
+                    || chebTo2x2(myLoc, cx + fx, cy + fy) == 0;
+                if (inDanger && rc.isMovementReady()) {
+                    Direction bestMove = null;
+                    int bestMoveScore = Integer.MIN_VALUE;
+                    for (Direction moveDir : directions) {
+                        if (!rc.canMove(moveDir)) continue;
+                        MapLocation nxt = myLoc.add(moveDir);
+                        boolean nxtSeen = canCatSense(nxt.x - cx, nxt.y - cy, cat.direction);
+                        boolean nxtCrush = chebTo2x2(nxt, cx + fx, cy + fy) == 0;
+                        int score = (nxtSeen ? 0 : 200) + (nxtCrush ? -300 : 0) + dist(nxt, cat) * 4;
+                        if (moveDir == myDir) score += 5;
+                        if (score > bestMoveScore) {
+                            bestMoveScore = score;
+                            bestMove = moveDir;
+                        }
+                    }
+                    if (bestMove != null) {
+                        rawMove(bestMove);
+                        if (!placed && rc.isActionReady() && (!LastCat.isHoldEnabled() || LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage))) {
+                            tryPlaceBestCatTrap(cat);
+                        }
+                    }
+                }
+                return;
+            }
+
             RobotInfo cat = RobotTracker.sortedCats[0];
-            if (Tune.PM_COOP_HOLD != 0 && !LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return;
+            if (LastCat.isHoldEnabled() && !LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return;
             if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
                 for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
                     MapLocation targ = myLoc.add(off);

@@ -558,6 +558,14 @@ public class GlobalArray {
         return decodeExact(slot1, slot2);
     }
 
+    public static boolean hasActiveFormation() {
+        try {
+            return rc.readSharedArray(FORMATION_TARGET) != 0 || rc.readSharedArray(FORMATION_TARGET + 1) != 0;
+        } catch (GameActionException e) {
+            return false;
+        }
+    }
+
     public static MapLocation getFormationMine() throws GameActionException {
         int slot1 = rc.readSharedArray(FORMATION_MINE);
         int slot2 = rc.readSharedArray(FORMATION_MINE + 1);

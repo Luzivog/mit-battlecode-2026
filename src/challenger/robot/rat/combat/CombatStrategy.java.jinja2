@@ -377,9 +377,24 @@ public class CombatStrategy extends Strategy {
     */
     public static boolean shouldFight(RobotInfo enemy) {
         if (enemy.getType() == UnitType.CAT) {
-            if (challenger.Tune.PM_COOP_HOLD != 0 && !challenger.robot.LastCat.mayDamage(enemy, GameConstants.RAT_BITE_DAMAGE)) return false;
+            if (challenger.robot.LastCat.isHoldEnabled() && !challenger.robot.LastCat.mayDamage(enemy, GameConstants.RAT_BITE_DAMAGE)) return false;
             if (enemy.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= challenger.Tune.CAT_DEF_DSQ) return true;
             if (isCatHuntOn()) return true;
+            if ((challenger.Tune.COOP_CTRL & 2) != 0
+                && rc.isCooperation() && time >= 60
+                && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0
+                && rc.getRawCheese() < 20
+                && !GlobalArray.hasActiveFormation()
+                && (rc.getID() % 2 == 0 || GlobalArray.numberOfRatsAlive >= 10)) {
+                return true;
+            }
+            if ((challenger.Tune.COOP_CTRL & 16) != 0
+                && !rc.isCooperation() && time >= 1400
+                && GlobalArray.countRatKings() >= 2 && rc.getAllCheese() >= 600
+                && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0
+                && rc.getID() % 2 == 0) {
+                return true;
+            }
             return time > 500 && rc.getAllCheese() > 1000 && RobotTracker.numEnemies == 0 && rc.getRawCheese() == 0 && GlobalArray.numberOfRatsAlive >= 16 && (rc.getID() % 3 == 0 || time >= 1800);
         }
         if (enemy.getType() == UnitType.RAT_KING) return true;

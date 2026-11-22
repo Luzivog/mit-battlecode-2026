@@ -4,7 +4,9 @@ import battlecode.common.*;
 import challenger.CellTracker;
 import challenger.Game;
 import challenger.Pathfinder;
+import challenger.RobotTracker;
 import challenger.Tune;
+import challenger.robot.LastCat;
 import challenger.robot.rat.combat.CombatStrategy;
 import challenger.robot.Strategy;
 import challenger.comms.GlobalArray;
@@ -185,6 +187,19 @@ public class MinerStrategy extends Strategy {
         if (shouldReturnForHealth()) return true;
 
         int cheese = rc.getRawCheese();
+        if ((Tune.COOP_CTRL & 8) != 0 && cheese > 0) {
+            if (time >= 1950) return true;
+            if (rc.isCooperation()) {
+                for (int i = RobotTracker.numCats - 1; i >= 0; i--) {
+                    RobotInfo cat = RobotTracker.sortedCats[i];
+                    if (cat != null && cat.health <= 600) {
+                        LastCat.noteLowCat();
+                        return true;
+                    }
+                }
+                if (LastCat.isRecentlyThreatened()) return true;
+            }
+        }
         int distSq = myLoc.distanceSquaredTo(GlobalArray.nearestRatKing);
         int thresh;
         if(distSq <= 25) thresh = 10 * Tune.GOHOME_PCT / 100;

@@ -4,6 +4,7 @@ import battlecode.common.*;
 import challenger.comms.GlobalArray;
 import challenger.robot.Strategy;
 import challenger.Book;
+import challenger.CatLanes;
 import challenger.CellTracker;
 import challenger.RobotTracker;
 import challenger.Tune;
@@ -61,6 +62,12 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private boolean lockIn = false;
     private boolean coop = false;
     private boolean coopFormation = false;
+    private boolean fallbackFormation = false;
+    private MapLocation lastFailedFallback = null;
+    private int nextFallbackSearchRound = 0;
+    private static final long[] tmpSeen = new long[60];
+    private static final long[] tmpPass = new long[60];
+    private static final long[] tmpDirt = new long[60];
     private MapLocation home = null;
     private int coopSearchKey = -1;
     private RobotInfo nearestCat = null;
@@ -168,6 +175,9 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
+        if ((Tune.COOP_CTRL & 4) != 0 && RobotTracker.numCats > 0) {
+            CatLanes.markVisibleCats();
+        }
         int myKingCount = GlobalArray.countRatKings();
         kings = myKingCount;
         int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
@@ -221,6 +231,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     boolean danger;
     private void tryStartFormation() throws GameActionException {
         danger = false;
+        int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
         if(rc.getHealth() < 100 && kings == 1) {
             danger = true;
         } else {
@@ -232,7 +243,6 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             int myKingCount = kings;
             if (myKingCount == 5) return;
             // indicate("C");
-            int numRats = (rc.getCurrentRatCost() - 10) * 2 / 5;
             // A king formed before the cutoff pays upkeep to the end, so it needs the mines to carry it: a side earns
             // ~1.13 per mine per round against 2 per king (T1 §2.7). Measured without this gate, paired against main:
             // lock-in won 15 fewer of 62 games on maps with <= 4 mines, and 15 more of 246 on maps with >= 16.
@@ -254,24 +264,157 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
         if (GlobalArray.getFormationTarget() != null) return;
 
+        boolean mineFreeReady = (Tune.COOP_CTRL & 4) != 0
+            && rc.isCooperation() && time >= 130 && time < 800
+            && kings == 1 && rc.getGlobalCheese() >= 400 && numRats >= 12;
+
         // A cooperation search that found no site is repeated only when its inputs grow: more known mines, fewer
         // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).
-        int mySearchKey = coop ? Game.knownCheeseMines.size() | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8 : -1;
+        int mySearchKey = coop && !mineFreeReady
+            ? Game.knownCheeseMines.size() | (CellTracker.rsym | CellTracker.hsym << 1 | CellTracker.vsym << 2) << 8
+            : -1;
         if (mySearchKey >= 0 && mySearchKey == coopSearchKey) return;
         MapLocation formationTarget = KING2_ON && king2 && king2Site() != null ? king2Site() : selectBestMineForFormation();
+        boolean isFallback = false;
         if (formationTarget == null) {
-            coopSearchKey = mySearchKey;
-            return;
+            if (mineFreeReady && time >= nextFallbackSearchRound) {
+                formationTarget = selectCoopFallbackSpot();
+                if (formationTarget != null) {
+                    isFallback = true;
+                } else {
+                    nextFallbackSearchRound = time + 10;
+                    return;
+                }
+            } else {
+                if (mySearchKey >= 0) coopSearchKey = mySearchKey;
+                return;
+            }
         }
 
         targetMine = formationTarget;
         coordinationStartTurn = time;
         coopFormation = coop;
+        fallbackFormation = isFallback;
         state = FormationState.COORDINATING;
 
         GlobalArray.writeFormationTarget(formationTarget, targetMine, kingId);
 
         // indicate("FORMATION: coordinating at " + formationTarget);
+    }
+
+    // Mine-free cooperation 2nd king fallback: find a known passable, dirt-free 3x3 explored by the king
+    // outside cat lanes where 7 baby rats can assemble and form king #2.
+    private MapLocation selectCoopFallbackSpot() {
+        CellTracker.copyRows(tmpSeen, tmpPass, tmpDirt);
+        long validXMask = ((1L << (mapWidth - 2)) - 1L) << 1;
+
+        int yMin = Math.max(1, myLocY - 18);
+        int yMax = Math.min(mapHeight - 2, myLocY + 18);
+        if (home != null) {
+            yMin = Math.max(1, Math.min(yMin, home.y - 6));
+            yMax = Math.min(mapHeight - 2, Math.max(yMax, home.y + 6));
+        }
+
+        int hx = home.x, hy = home.y;
+        int rx = mapWidth - 1 - hx, ry = mapHeight - 1 - hy;
+        boolean checkR = CellTracker.rsym != 0;
+        boolean checkH = CellTracker.hsym != 0;
+        boolean checkV = CellTracker.vsym != 0;
+
+        int bestX = -1, bestY = -1;
+        int bestScore = Integer.MIN_VALUE;
+
+        for (int y = yMin; y <= yMax; y++) {
+            if (Clock.getBytecodesLeft() < 4000) break;
+            long clearM1 = tmpPass[y - 1] & ~tmpDirt[y - 1];
+            long clear0 = tmpPass[y] & ~tmpDirt[y];
+            long clearP1 = tmpPass[y + 1] & ~tmpDirt[y + 1];
+            long col3 = clearM1 & clear0 & clearP1;
+            long row = (col3 >>> 1) & col3 & (col3 << 1) & validXMask;
+            if (row == 0L) continue;
+
+            boolean can5y = y >= 2 && y <= mapHeight - 3;
+            long col5 = 0L;
+            if (can5y) {
+                col5 = col3 & (tmpPass[y - 2] & ~tmpDirt[y - 2]) & (tmpPass[y + 2] & ~tmpDirt[y + 2]);
+            }
+
+            while (row != 0L) {
+                int x = Long.numberOfTrailingZeros(row);
+                row &= row - 1L;
+
+                int dx = x - myLocX;
+                int dy = y - myLocY;
+                int cheb = Math.max(Math.abs(dx), Math.abs(dy));
+                if (cheb < 3) continue;
+                int dSq = dx * dx + dy * dy;
+                if (dSq > 400) continue;
+
+                if (lastFailedFallback != null && lastFailedFallback.x == x && lastFailedFallback.y == y) continue;
+
+                boolean catTooClose = false;
+                for (int c = RobotTracker.numCats - 1; c >= 0; c--) {
+                    RobotInfo cat = RobotTracker.sortedCats[c];
+                    if (cat == null) continue;
+                    int cdx = x - cat.location.x;
+                    int cdy = y - cat.location.y;
+                    if (cdx * cdx + cdy * cdy <= 20) {
+                        catTooClose = true;
+                        break;
+                    }
+                }
+                if (catTooClose) continue;
+
+                int score = (dSq >= 64 && dSq <= 144) ? 200 : (200 - Math.abs(dSq - 100));
+                if (cheb == 3) score -= 50;
+
+                // Prefer our side of the map
+                int dh = (x - hx) * (x - hx) + (y - hy) * (y - hy);
+                boolean ourSide = (!checkR || dh < (x - rx) * (x - rx) + (y - ry) * (y - ry))
+                    && (!checkH || dh < (x - hx) * (x - hx) + (y - ry) * (y - ry))
+                    && (!checkV || dh < (x - rx) * (x - rx) + (y - hy) * (y - hy));
+                if (ourSide) score += 100;
+
+                // Prefer outside taboo zone
+                if (x < tabooMinX || x > tabooMaxX || y < tabooMinY || y > tabooMaxY) {
+                    score += 80;
+                }
+
+                // Prefer 5x5 open room so 7 rats can easily assemble
+                if (can5y && x >= 2 && x <= mapWidth - 3) {
+                    long m5 = 0x1FL << (x - 2);
+                    if ((col5 & m5) == m5) score += 60;
+                }
+
+                // Avoid known cat lanes
+                if (CatLanes.version != 0) {
+                    int ov = CatLanes.kingOverlap(x, y);
+                    if (ov > 0) {
+                        score -= 150 * ov;
+                    } else {
+                        int lx = x - 2;
+                        long lm = lx >= 0 ? 31L << lx : 31L >>> -lx;
+                        int ly1 = Math.min(mapHeight - 1, y + 2);
+                        for (int ly = Math.max(0, y - 2); ly <= ly1; ly++) {
+                            if ((CatLanes.lane[ly] & lm) != 0L) {
+                                score -= 45;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestX = x;
+                    bestY = y;
+                }
+            }
+        }
+
+        if (bestX < 0) return null;
+        MapLocation best = new MapLocation(bestX, bestY);
+        return CellTracker.isPassable3x3(best) ? best : null;
     }
 
     // The first of the book's second-king sites with none of our kings within d² 8 (a formation completes within d² 8
@@ -388,7 +531,11 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     private void monitorFormation() throws GameActionException {
         if (time - coordinationStartTurn > COORDINATION_TIMEOUT) {
-            if (Tune.PM_SKIP_FAILED != 0) FailedSites.add(targetMine);
+            if (fallbackFormation) {
+                lastFailedFallback = targetMine;
+            } else if (Tune.PM_SKIP_FAILED != 0) {
+                FailedSites.add(targetMine);
+            }
             // indicate("FORMATION: coordination timed out");
             abortFormation();
             return;
@@ -425,6 +572,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         state = FormationState.IDLE;
         formationTarget = null;
         targetMine = null;
+        fallbackFormation = false;
         // indicate("FORMATION: aborted");
     }
 }

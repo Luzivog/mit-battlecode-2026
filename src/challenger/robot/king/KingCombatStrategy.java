@@ -608,7 +608,7 @@ public class KingCombatStrategy extends Strategy {
 
     // A bite on a cat costs no cheese and is no backstab (rules §2, §7); it adds cat damage.
     private static void biteCat(RobotInfo cat) throws GameActionException {
-        if (challenger.Tune.PM_COOP_HOLD != 0 && !challenger.robot.LastCat.mayDamage(cat, GameConstants.RAT_BITE_DAMAGE)) return;
+        if (challenger.robot.LastCat.isHoldEnabled() && !challenger.robot.LastCat.mayDamage(cat, GameConstants.RAT_BITE_DAMAGE)) return;
         {
             var loc = cat.location.translate(0, 0);
             if(rc.canAttack(loc)) {

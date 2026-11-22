@@ -40,8 +40,10 @@ agent's.
   hashes the jump host), and `ProxyCommand=/bin/false`: a session the master refuses ends 255 instead of opening a
   connection of its own. A refused session ("Session open refused by peer") never ran, so it is asked again with a
   backoff while the slot wait lasts. A connection that is gone is made again once (`start_master`, one process at a
-  time, under a lock; `ControlPersist=10m`). `gpucluster3` is tried when `gpucluster2` can't be reached; a name whose
-  connection was already tried is skipped.
+  time, under a lock; `ControlPersist=10m`); a local ssh timeout tears down a wedged master (`stop_master`).
+  `gpucluster3` is tried when `gpucluster2` can't be reached (pre-execution failures always, and `RemoteTimeout` inside
+  `retry_timeout()`, used by `cached`, `view.refresh` and `login_into`); a name whose connection was already tried is
+  skipped.
 - **Shared scheduler reads.** `remote.cached` keeps a read of `sinfo`/`condor_status`/our queues for `CACHE_S` (5 s)
   for every process here (`backends.read_*(max_age)`), and the sbatch probes too. A submit or a removal starts a new
   generation of reads (`forget`): a read begun before it is filed where no reader looks, so a placement always sees

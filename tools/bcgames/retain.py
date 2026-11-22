@@ -138,8 +138,8 @@ def sweep(force: bool = False, dry: bool = False, say=None) -> dict[str, list[tu
     if not dry:
         STAMP.parent.mkdir(parents=True, exist_ok=True)
         STAMP.touch()
-    out = {"replays": replays(now, dry), "binaries": native.gc(dry), "engine build trees": gen_trees(now, dry),
-           "ship folders": ship(now, dry)}
+    out = {"replays": replays(now, dry), "binaries": native.gc(dry), "object cache": native.gc_objcache(dry),
+           "engine build trees": gen_trees(now, dry), "ship folders": ship(now, dry)}
     if say:
         for what, gone in out.items():
             if gone:

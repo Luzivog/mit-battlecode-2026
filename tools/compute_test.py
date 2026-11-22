@@ -563,3 +563,92 @@ def test_placement_for_a_new_protocol_run_counts_only_its_pieces() -> None:
     sub = B.condor_sub("/vol/x/jobs/condor-1", "condor-1", 1, 1700, 1700, None, R.kind_of(s5), s5.pool_v)
     assert "priority = 5" in sub.splitlines()
     assert not any(x.startswith("priority") for x in B.condor_sub("/vol/x/jobs/c", "c", 1, 1700, None, None).split("\n"))
+
+
+def test_status_reuses_reads_and_restores_globals(monkeypatch: pytest.MonkeyPatch,
+                                                  capsys: pytest.CaptureFixture[str]) -> None:
+    """status() must not re-query a backend that already failed or succeeded, and must restore module globals."""
+    from tools import compute, view
+    calls: dict[str, int] = {"condor": 0, "slurm": 0, "cpu": 0}
+
+    def fail_slurm(max_age: float = 0.0) -> B.Slurm:
+        calls["slurm"] += 1
+        raise remote.Unreachable("on gpucluster2: timeout")
+
+    def ok_condor(max_age: float = 0.0) -> B.Condor:
+        calls["condor"] += 1
+        return B.parse_condor((FIX / "condor_read.txt").read_text())
+
+    def fail_cpu(max_age: float = 0.0) -> B.CpuCluster:
+        calls["cpu"] += 1
+        raise remote.Unreachable("on cpucluster1: timeout")
+
+    monkeypatch.setattr(B, "read_slurm", fail_slurm)
+    monkeypatch.setattr(B, "read_condor", ok_condor)
+    monkeypatch.setattr(B, "read_cpucluster", fail_cpu)
+    monkeypatch.setattr(view, "get", lambda **kw: view.Snapshot(0.0, [], [], {"pieces": [], "open": []}, None))
+    orig_slot, orig_lock, orig_stale = remote.SLOT_WAIT_S, view.LOCK_WAIT_S, remote.STALE_OK
+    compute.status(True)
+    got = json.loads(capsys.readouterr().out)
+    assert calls == {"condor": 1, "slurm": 1, "cpu": 1}
+    assert "error" in got["slurm"] and "cpucluster1" not in got
+    assert (remote.SLOT_WAIT_S, view.LOCK_WAIT_S, remote.STALE_OK) == (orig_slot, orig_lock, orig_stale)
+
+
+def test_status_all_reports_unavailable_cpucluster1_and_free_gpus(monkeypatch: pytest.MonkeyPatch,
+                                                                  capsys: pytest.CaptureFixture[str]) -> None:
+    from tools import compute
+    fake_doc(monkeypatch, FULL)
+    compute.status(True, show_all=True)
+    got = json.loads(capsys.readouterr().out)
+    assert got["cpucluster1"]["available"] is False and got["cpucluster1"]["statesave_free_kb"] == 0
+    assert "gpus_free_by_card" in got["slurm"] and got["slurm"]["gpus_free_by_card"]
+    compute.status(False, show_all=True)
+    text = capsys.readouterr().out
+    assert "cpucluster1: unavailable" in text and "free GPUs:" in text
+
+
+def test_gpu_spec_and_slurm_gpu_slots() -> None:
+    assert B.parse_gpu_spec("a100") == ("a100", 1)
+    assert B.parse_gpu_spec("2") == (None, 2)
+    assert B.parse_gpu_spec("A40:2") == ("a40", 2)
+    assert B.parse_gpu_spec("gpu:t4:1") == ("t4", 1)
+    for bad in ("", "0", "gtx999", "a100:0", "a100:abc"):
+        with pytest.raises(remote.Refused):
+            B.parse_gpu_spec(bad)
+    s = B.parse_slurm((FIX / "slurm_read.txt").read_text())
+    free_gpus = B.free_gpus_by_card(s)
+    assert free_gpus and "t4" in free_gpus
+    t4_slots = B.slurm_cpu_slots(s, 1, 4, 600, card="t4", gpus=2)
+    assert t4_slots and all(x.card == "t4" and x.gpus == 2 for x in t4_slots)
+    assert "--gres=gpu:2" in B.cpu_slot_args(t4_slots[0], 600)
+
+
+def test_parse_env_vars_and_job_files() -> None:
+    pairs = J.parse_env_vars(["FOO=bar", "NUM_THREADS=4", "EMPTY="])
+    assert pairs == [("FOO", "bar"), ("NUM_THREADS", "4"), ("EMPTY", "")]
+    for bad in ("NOEQUALS", "123=x", "PATH=/tmp", "A=1\n2"):
+        with pytest.raises(remote.Refused):
+            J.parse_env_vars([bad])
+    code = J.Code("a" * 40, "subj", b"bundle")
+    files = J.job_files(code, ["true"], b"", False, extra_env=pairs)
+    env_txt = files["env"].decode()
+    assert "FOO bar\n" in env_txt and "NUM_THREADS 4\n" in env_txt
+
+
+def test_doctor_offline_json_and_text(capsys: pytest.CaptureFixture[str]) -> None:
+    from tools import compute
+    rc = compute.doctor(as_json=True, offline=True)
+    got = json.loads(capsys.readouterr().out)
+    assert rc in (0, 1)
+    assert isinstance(got["checks"], list) and any(c["name"] == "workspace_config" for c in got["checks"])
+    assert not any(c["name"].startswith("reach:") for c in got["checks"])
+    compute.doctor(as_json=False, offline=True)
+    assert "doctor:" in capsys.readouterr().out
+
+
+def test_view_deduplicates_condor_q() -> None:
+    from tools import view
+    assert "condor_q" in view.POOL_SH and "==condor" in view.POOL_SH and "==cq" in view.POOL_SH
+    cmd = J.states_cmd([J.job("condor-1119-000000-abcd")], queues=True, include_condor=False)
+    assert "condor_q" not in cmd

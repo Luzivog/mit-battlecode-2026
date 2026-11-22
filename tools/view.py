@@ -14,6 +14,7 @@ import json
 import os
 import re
 import secrets
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
@@ -40,15 +41,20 @@ LOCK_WAIT_S = 3 * VIEW_S  # how long a reader waits for another process's refres
 SNAP, LOCK = "view2.json", "view2.lock"
 _me = f"{os.getpid()}-{secrets.token_hex(3)}"
 _said: tuple[str, float] = ("", 0.0)
+_want_lock = threading.Lock()
+_thread_wants: dict[int, tuple[set[str], set[str]]] = {}
 
 # Every piece's state is the name of an empty file (piece.state_name): one listing reads them all, no file opened (a
 # file's content cost 16 ms a file on CephFS: 236 pieces, 3.9 s). A file named by its job id alone is an older piece's,
 # its state inside (read while such pieces live). Then the names and states of our jobs in the GPU cluster's and
-# Condor's queues, which say which pieces live, then the open runs.
+# Condor's queues (one condor_q serves both the pool's liveness and jobs' states), then the open runs.
 POOL_SH = (f"mkdir -p {REMOTE_POOL}/pieces {REMOTE_POOL}/open; cd {REMOTE_POOL}/pieces && {{ echo ==pieces; ls; "
            "echo ==old; ls | grep -v , | xargs -r grep -s -H ''; }; cd /; "
            "echo ==sq; timeout 3 squeue -u \"$USER\" -h -o '%j %T'; echo ==sq_rc; echo $?; "
-           f"echo ==cq; {CONDOR}; condor_q -name {SUBMIT} \"$USER\" -af JobBatchName JobStatus; echo ==cq_rc; echo $?; "
+           f"cq_out=$({CONDOR}; condor_q -name {SUBMIT} \"$USER\" -af JobBatchName ClusterId JobStatus RemoteHost "
+           f"{B.CONDOR_HELD}); cq_rc=$?; "
+           "echo ==cq; [ -n \"$cq_out\" ] && printf '%s\\n' \"$cq_out\" | awk '{print $1, $3}'; echo ==cq_rc; echo $cq_rc; "
+           "echo ==condor; [ -n \"$cq_out\" ] && printf '%s\\n' \"$cq_out\" | sed 's/^[^ ]* //'; echo ==condor_rc; echo $cq_rc; "
            f"echo ==open; ls {REMOTE_POOL}/open; ")
 LIVE_S = 2 * STATE_BEAT_S + 60  # a piece whose scheduler wasn't read is live while its state is this young
 DEAD_S = 3 * STATE_BEAT_S  # ... and dead, its file removed, once it is this old
@@ -99,17 +105,27 @@ atexit.register(_drop)
 
 
 def _want(runs: list[str], jobs: list[str]) -> None:
-    """This process's interest file says RUNS and JOBS (rewritten when it changes, and every REWRITE_S)."""
+    """This process's interest file says the union of every live thread's RUNS and JOBS (rewritten when it changes,
+    and every REWRITE_S)."""
     global _said
-    said = json.dumps({"runs": sorted(set(runs)), "jobs": sorted(set(jobs))})
-    if said == _said[0] and time.time() - _said[1] < REWRITE_S:
-        return
-    d = _interest_dir()
-    d.mkdir(parents=True, exist_ok=True)
-    tmp = d / f".{_me}.tmp"
-    tmp.write_text(said)
-    os.replace(tmp, d / f"{_me}.json")
-    _said = (said, time.time())
+    tid = threading.get_ident()
+    with _want_lock:
+        _thread_wants[tid] = (set(runs), set(jobs))
+        live_tids = {t.ident for t in threading.enumerate()}
+        for stale in [k for k in _thread_wants if k not in live_tids]:
+            _thread_wants.pop(stale, None)
+        all_runs = sorted({r for rs, _ in _thread_wants.values() for r in rs})
+        all_jobs = sorted({j for _, js in _thread_wants.values() for j in js})
+        d = _interest_dir()
+        said = json.dumps({"runs": all_runs, "jobs": all_jobs})
+        key = f"{d}\0{said}"
+        if key == _said[0] and time.time() - _said[1] < REWRITE_S:
+            return
+        d.mkdir(parents=True, exist_ok=True)
+        tmp = d / f".{_me}.{tid}.tmp"
+        tmp.write_text(said)
+        os.replace(tmp, d / f"{_me}.json")
+        _said = (key, time.time())
 
 
 def _interests() -> tuple[set[str], set[str]]:
@@ -218,7 +234,7 @@ def _load() -> Snapshot | None:
 
 
 def _store(s: Snapshot) -> None:
-    tmp = remote.CLIENT / f".{SNAP}.{_me}"
+    tmp = remote.CLIENT / f".{SNAP}.{_me}.{threading.get_ident()}"
     tmp.write_text(json.dumps(s.__dict__))
     os.replace(tmp, remote.CLIENT / SNAP)
 
@@ -236,11 +252,15 @@ def refresh() -> Snapshot:
     now = time.time()
     keep = {r for r in runs if ok and last is not None and now - last.run_at.get(r, 0.0) < RUN_REREAD_S}
     due = sorted(runs - keep)
-    gpu_cmd = (dead_sh(dead) + POOL_SH + "".join(run_sh(r) for r in due) + J.states_cmd(gpu_js, queues=True)
-               + "true")
+    gpu_cmd = (dead_sh(dead) + POOL_SH + "".join(run_sh(r) for r in due)
+               + J.states_cmd(gpu_js, queues=True, include_condor=False) + "true")
+    def _read(cmd: str, hosts: tuple[str, ...]) -> str:
+        with remote.retry_timeout():
+            return remote.login(cmd, None, hosts, 0, VIEW_S)
+
     with ThreadPoolExecutor(2) as ex:
-        fg = ex.submit(remote.login, gpu_cmd, None, SLURM_HOSTS, 0, VIEW_S)
-        fc = ex.submit(remote.login, J.states_cmd(cpu_js) + "true", None, (CPU_HOST,), 0, VIEW_S) if cpu_js else None
+        fg = ex.submit(_read, gpu_cmd, SLURM_HOSTS)
+        fc = ex.submit(_read, J.states_cmd(cpu_js) + "true", (CPU_HOST,)) if cpu_js else None
         snap = Snapshot(time.time(), sorted(runs), sorted(jobs), {}, None)
         try:
             snap.gpu = B.sections(fg.result())

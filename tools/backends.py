@@ -227,16 +227,52 @@ def read_slurm(max_age: float = 0.0) -> Slurm:
     return parse_slurm(cached(SLURM_READ, max_age=max_age))
 
 
-# ---- GPU-cluster CPU slots ----
+# ---- GPU-cluster CPU & GPU slots ----
 @dataclass(frozen=True)
 class CpuSlot:
-    """Where a CPU job of ours could start on the GPU cluster now: one node of one partition, one of its free cards,
+    """Where a job of ours could start on the GPU cluster now: one node of one partition, its free card(s),
     the CPUs it gets and their memory."""
     partition: str
     node: str
     card: str
     cpus: int
     mem_mb: int
+    gpus: int = 1
+
+
+def free_gpus_by_card(s: Slurm) -> dict[str, int]:
+    """Free unheld GPUs on usable, non-planned nodes of S, grouped by short card name (a100, a40, a30, t4, a16)."""
+    counts: dict[str, int] = {}
+    for n in s.nodes.values():
+        if not n.usable or n.planned:
+            continue
+        free = max(0, n.cards - n.held)
+        if free:
+            short = SLURM_CARDS.get(n.card, n.card)
+            counts[short] = counts.get(short, 0) + free
+    return dict(sorted(counts.items(), key=lambda kv: (SPEED.index(kv[0]) if kv[0] in SPEED else 99, kv[0])))
+
+
+def parse_gpu_spec(spec: str) -> tuple[str | None, int]:
+    """Parse --gpu SPEC: 'a100' -> ('a100', 1), '2' -> (None, 2), 'a100:2' -> ('a100', 2)."""
+    s = spec.strip().lower()
+    if s.startswith("gpu:"):
+        s = s[4:]
+    if not s:
+        raise Refused("--gpu: give e.g. a100, a40, 2, or a100:2")
+    if s.isdigit():
+        n = int(s)
+        if n < 1:
+            raise Refused(f"--gpu {spec!r}: count must be at least 1")
+        return None, n
+    card, sep, rest = s.partition(":")
+    if card not in SPEED and card not in SLURM_CARDS.values():
+        raise Refused(f"--gpu {spec!r}: unknown card {card!r} (known: {', '.join(SPEED)})")
+    if not sep:
+        return card, 1
+    if not rest.isdigit() or int(rest) < 1:
+        raise Refused(f"--gpu {spec!r}: count after ':' must be a positive integer")
+    return card, int(rest)
 
 
 def whole_ask(cpus: int) -> bool:
@@ -254,12 +290,12 @@ def whole_cores(cpus: int, threads: int) -> int:
     return max(1, -(-cpus // threads)) * threads
 
 
-def slurm_cpu_slots(s: Slurm, cpus: int, units: int | None, est: int | None, mb_per_cpu: int = CPU_JOB_MIN_MEM_MB
-                    ) -> list[CpuSlot]:
-    """Every (partition, node) the read shows a job needing CPUS CPUs, and able to use UNITS (None: any), could start
-    on now, in a partition whose MaxTime holds EST: one free card, the node's idle CPUs in whole cores within its free
-    memory at MB_PER_CPU a CPU and our QoS's caps (what our pending jobs ask held against them). A proposal: Slurm
-    answers it (slurm_sizes)."""
+def slurm_cpu_slots(s: Slurm, cpus: int, units: int | None, est: int | None, mb_per_cpu: int = CPU_JOB_MIN_MEM_MB,
+                    card: str | None = None, gpus: int = 1) -> list[CpuSlot]:
+    """Every (partition, node) the read shows a job needing CPUS CPUs and GPUS cards (of model CARD when given), and
+    able to use UNITS (None: any), could start on now, in a partition whose MaxTime holds EST: free card(s), the node's
+    idle CPUs in whole cores within its free memory at MB_PER_CPU a CPU and our QoS's caps (what our pending jobs ask
+    held against them). A proposal: Slurm answers it (slurm_sizes)."""
     most = max((n.threads for n in s.nodes.values()), default=1)
 
     def threads_of(j: SlurmJob) -> int:
@@ -277,8 +313,12 @@ def slurm_cpu_slots(s: Slurm, cpus: int, units: int | None, est: int | None, mb_
                 h[k] += v
     out: list[CpuSlot] = []
     for n in s.nodes.values():
+        short_card = SLURM_CARDS.get(n.card, n.card)
+        if card is not None and short_card != card:
+            continue
         mine = [j for j in waiting if j.req_nodes == n.name]
-        if not n.usable or n.planned or n.cards - n.held - len(mine) < 1:
+        mine_gpus = sum(1 if j.gpus is None else j.gpus for j in mine)
+        if not n.usable or n.planned or n.cards - n.held - mine_gpus < gpus:
             continue
         idle = n.idle_cpus - sum(whole_cores(j.cpus, n.threads) for j in mine)
         free_mb = n.mem_mb - n.alloc_mem_mb - sum(j.mem_mb for j in mine)
@@ -293,14 +333,18 @@ def slurm_cpu_slots(s: Slurm, cpus: int, units: int | None, est: int | None, mb_
             room = min(idle, left.get("cpu", idle), left.get("node_cpu", idle), room_mb // mb_per_cpu)
             room -= room % n.threads
             c = granted(max(cpus, 1), room if units is None else min(units, room), room)
-            if c is None or any(left.get(k, 1) < 1 for k in ("jobs", "submit", "gpu")):
+            if c is None or left.get("jobs", 1) < 1 or left.get("submit", 1) < 1 or left.get("gpu", gpus) < gpus:
                 continue
-            out.append(CpuSlot(name, n.name, SLURM_CARDS.get(n.card, n.card), c, room_mb * c // room))
+            out.append(CpuSlot(name, n.name, short_card, c, room_mb * c // room, gpus))
     return out
 
 
 def weakest(card: str) -> int:
     return -SPEED.index(card) if card in SPEED else 1
+
+
+def strongest(card: str) -> int:
+    return SPEED.index(card) if card in SPEED else len(SPEED)
 
 
 def checkpointed(time_s: int) -> list[str]:
@@ -311,8 +355,8 @@ def checkpointed(time_s: int) -> list[str]:
 
 
 def cpu_slot_args(slot: CpuSlot, est: int | None) -> list[str]:
-    """sbatch's options for CPU work in SLOT: one partition, one card, the slot's CPUs and memory on its node."""
-    return ["-p", slot.partition, "--gres=gpu:1", f"--nodelist={slot.node}", f"--cpus-per-task={slot.cpus}",
+    """sbatch's options for work in SLOT: one partition, its card(s), the slot's CPUs and memory on its node."""
+    return ["-p", slot.partition, f"--gres=gpu:{slot.gpus}", f"--nodelist={slot.node}", f"--cpus-per-task={slot.cpus}",
             f"--mem={slot.mem_mb}M", *(checkpointed(est) if est is not None else [])]
 
 
@@ -372,10 +416,16 @@ def slurm_sizes(slots: list[CpuSlot], least: int, est: int | None) -> list[CpuSl
 
 
 def slurm_starts_now(s: Slurm, cpus: int, units: int | None, est: int | None,
-                     mb_per_cpu: int = CPU_JOB_MIN_MEM_MB) -> list[CpuSlot]:
-    """The GPU-cluster slots Slurm starts now for a job of at least CPUS CPUs, best first: the most CPUs, then the
-    weakest card, then the higher PriorityTier."""
-    slots = [x for x in slurm_sizes(slurm_cpu_slots(s, cpus, units, est, mb_per_cpu), cpus, est) if x is not None]
+                     mb_per_cpu: int = CPU_JOB_MIN_MEM_MB, card: str | None = None, gpus: int = 1,
+                     prefer_strong: bool = False) -> list[CpuSlot]:
+    """The GPU-cluster slots Slurm starts now for a job of at least CPUS CPUs (and GPUS cards, of model CARD when
+    given), best first: for CPU work, most CPUs then weakest card; for GPU work (PREFER_STRONG), strongest card then
+    most CPUs, then higher PriorityTier."""
+    slots = [x for x in slurm_sizes(slurm_cpu_slots(s, cpus, units, est, mb_per_cpu, card, gpus), cpus, est)
+             if x is not None]
+    if prefer_strong:
+        return sorted(slots, key=lambda x: (strongest(x.card), -x.cpus, -s.partitions[x.partition].tier, x.partition,
+                                            x.node))
     return sorted(slots, key=lambda x: (-x.cpus, weakest(x.card), -s.partitions[x.partition].tier, x.partition, x.node))
 
 
@@ -409,6 +459,8 @@ class CpuCluster:
     submit: Limit
     jobs: list[SlurmJob]
     takes_jobs: bool = True  # its controller can save a batch job's script (takes_jobs)
+    statesave_path: str = ""
+    statesave_free_kb: int | None = None
 
 
 # cpucluster1's login node is its Slurm controller, which saves every batch job's script and environment into its
@@ -427,12 +479,19 @@ printf '%s %s %s %s
 CPU_READ = SLURM_READ.replace("echo ==end", STATESAVE_READ + "echo ==end")
 
 
-def takes_jobs(lines: list[str]) -> bool:
-    """Whether cpucluster1 can take a batch job, from CPU_READ's statesave line: not when its controller is this
-    login node and the StateSaveLocation there has less than STATE_FREE_MIN_KB free. Where that can't be read (another
-    controller host, no df), sbatch decides."""
+def parse_statesave(lines: list[str]) -> tuple[bool, str, int | None]:
+    """(takes_jobs, path, free_kb) from CPU_READ's statesave line: not when its controller is this login node and the
+    StateSaveLocation there has less than STATE_FREE_MIN_KB free. Where that can't be read, sbatch decides."""
     f = " ".join(lines).split()
-    return not (len(f) == 4 and f[0] == f[1] and f[3].isdigit() and int(f[3]) < STATE_FREE_MIN_KB)
+    if len(f) == 4 and f[0] == f[1] and f[3].isdigit():
+        kb = int(f[3])
+        return kb >= STATE_FREE_MIN_KB, f[2], kb
+    return True, (f[2] if len(f) >= 3 and f[2] != "-" else ""), (int(f[3]) if len(f) == 4 and f[3].isdigit() else None)
+
+
+def takes_jobs(lines: list[str]) -> bool:
+    """Whether cpucluster1 can take a batch job, from CPU_READ's statesave line."""
+    return parse_statesave(lines)[0]
 
 
 def parse_cpucluster(text: str) -> CpuCluster:
@@ -464,10 +523,11 @@ def parse_cpucluster(text: str) -> CpuCluster:
         if ns:
             partitions[name] = CpuPartition(name, seconds(kv.get("MaxTime", "UNLIMITED")), max(n.cpus for n in ns),
                                             sum(n.idle for n in ns), int(kv.get("DefMemPerCPU", "0")) or 1)
+    can_take, ss_path, ss_kb = parse_statesave(s.get("statesave", []))
     return CpuCluster(partitions, nodes, ours.get("cpu", Limit(None, 0)), ours.get("mem", Limit(None, 0)),
                       {k: v for k, v in ours.items() if k in ("node_cpu", "node_mem")},
                       ours.get("submit", Limit(None, 0)), parse_jobs(s.get("jobs", [])),
-                      takes_jobs(s.get("statesave", [])))
+                      can_take, ss_path, ss_kb)
 
 
 def read_cpucluster(max_age: float = 0.0) -> CpuCluster:

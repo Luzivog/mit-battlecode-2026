@@ -571,3 +571,40 @@ def test_a_v5_piece_takes_v4_and_v5_runs(tmp_path: Path) -> None:
     v5 = pooled_run(root, "run-1118-120002-cccc", [stamp("c") for _ in range(2)], 3.0, pool_v=5)
     out = run_piece_at(tmp_path, own)
     assert len(spans(v4)) == 2 and len(spans(v5)) == 2, out
+
+
+def test_finish_enospc_gives_back_and_refuses_further_tasks(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """ENOSPC while tarring a finished task on local scratch gives the claim back instead of crashing the piece."""
+    import errno
+    run = make_run(tmp_path, [stamp("0")])
+    for k, v in env(tmp_path, cpus=1).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(run)
+    assert p.claim(p.own, 0)
+    here = p.scratch / "t" / f"{p.own.id}.0"
+    (here / "out").mkdir(parents=True)
+    (here / "log").write_text("ok\n")
+
+    def full(*a, **kw):  # type: ignore[no-untyped-def]
+        raise OSError(errno.ENOSPC, "No space left on device")
+    monkeypatch.setattr(piece.tarfile, "open", full)
+    p.finish(p.own, 0, 0, 1024, 1.0, here, time.time())
+    assert p.refusing and "no space left" in p.refusing
+    assert not (run / "claims" / "0").exists()
+    assert [x.name.split(".")[0] for x in (run / "lost").iterdir()] == ["0"]
+
+
+def test_claim_oserror_on_by_returns_false(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    run = make_run(tmp_path, [stamp("0")])
+    for k, v in env(tmp_path, cpus=1).items():
+        monkeypatch.setenv(k, v)
+    p = piece.Piece(run)
+    orig = Path.write_text
+
+    def fail_by(self: Path, *a, **kw):  # type: ignore[no-untyped-def]
+        if self.name == "by":
+            raise OSError("transient NFS error")
+        return orig(self, *a, **kw)
+    monkeypatch.setattr(Path, "write_text", fail_by)
+    assert p.claim(p.own, 0) is False
+    assert not (run / "claims" / "0").exists()

@@ -429,3 +429,47 @@ def test_an_unread_queue_keeps_every_job_folder(world: tuple[Path, dict[str, str
     p = tool(repo, e, "compute", "sweep")
     assert p.returncode == 0 and p.stdout.startswith("0 jobs"), p.stdout + p.stderr
     assert (root / "jobs" / "old").exists()
+
+
+def test_detach_json_env_and_compute_run_json(world: tuple[Path, dict[str, str]]) -> None:
+    repo, env = world
+    (repo / "one.txt").write_text("hi\n")
+    p = tool(repo, env, "run", "--where", "local", "--detach", "--json", "--env", "MY_TAG=hello_env",
+             "--each", "one.txt", "--", "bash", "-c", 'echo "$MY_TAG" > $OUT/v')
+    assert p.returncode == 0, p.stderr
+    info = json.loads(p.stdout)
+    rid = info["id"]
+    assert rid.startswith("run-") and info["tasks"] == 1
+    w = tool(repo, env, "compute", "wait", rid, "--poll", "0.2")
+    assert w.returncode == 0, w.stderr
+    assert (repo / "runs" / rid / "0" / "out" / "v").read_text() == "hello_env\n"
+    assert (repo / "runs" / rid / "progress.json").exists()
+    prog = json.loads((repo / "runs" / rid / "progress.json").read_text())
+    assert prog["done"] == 1 and prog["tasks"] == 1 and prog["pct"] == 100.0
+    # tools/compute run --json --env
+    (repo / "one.txt").unlink()
+    jr = tool(repo, env, "compute", "run", "--where", "local", "--json", "--env", "JOB_TAG=world42", "--",
+              "bash", "-c", 'echo "$JOB_TAG" > $OUT/j')
+    assert jr.returncode == 0, jr.stderr
+    jinfo = json.loads(jr.stdout)
+    jid = jinfo["id"]
+    assert jid.startswith("local-") and jinfo["where"] == "local"
+    jw = tool(repo, env, "compute", "wait", jid, "--poll", "0.2")
+    assert jw.returncode == 0, jw.stderr
+    assert (repo / "runs" / jid / "out" / "j").read_text() == "world42\n"
+
+
+def test_compute_wait_any_returns_on_first_run(world: tuple[Path, dict[str, str]]) -> None:
+    repo, env = world
+    (repo / "one.txt").write_text("x\n")
+    slow = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
+                "bash", "-c", "sleep 20").stdout.strip()
+    fast = tool(repo, env, "run", "--where", "local", "--detach", "--task-mem", "100M", "--each", "one.txt", "--",
+                "bash", "-c", "echo fast").stdout.strip()
+    t0 = time.monotonic()
+    w = tool(repo, env, "compute", "wait", "--any", "--json", "--poll", "0.2", slow, fast)
+    dt = time.monotonic() - t0
+    assert w.returncode == 0 and dt < 15, w.stderr + w.stdout
+    got = json.loads(w.stdout)
+    assert fast in got["stopped"] and slow in got["still_running"]
+    tool(repo, env, "compute", "cancel", slow)

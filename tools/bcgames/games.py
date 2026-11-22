@@ -700,7 +700,17 @@ def default_ref(a: str, ref: str) -> str | None:
     return ref
 
 
-def start(kind: str, params: dict, fg: bool) -> int:
+def _state_payload(d: Path) -> dict:
+    st = json.loads((d / "state.json").read_text()) if (d / "state.json").exists() else {}
+    meta = json.loads((d / "run.json").read_text())
+    st["verdict"] = verdict_of(st, meta.get("kind", "ab")) if "tests" in st else (
+        "running" if st.get("status", "running") == "running" else "pass" if st.get("status") == "done" else "error")
+    st["exit"] = EXIT[st["verdict"]]
+    st["run"] = meta
+    return st
+
+
+def start(kind: str, params: dict, fg: bool, as_json: bool = False, quiet: bool = False, wait: bool = False) -> int:
     for k in ("a", "b", "ref"):
         if params.get(k):
             params[k] = pin(params[k])
@@ -731,6 +741,10 @@ def start(kind: str, params: dict, fg: bool) -> int:
     write_json(d / "run.json", meta)
     if fg:
         drive(d)
+        if as_json:
+            payload = _state_payload(d)
+            print(json.dumps(payload, indent=1))
+            return EXIT[payload["verdict"]]
         text, verdict = report(d)
         print(text)
         return EXIT[verdict]
@@ -739,9 +753,18 @@ def start(kind: str, params: dict, fg: bool) -> int:
                             stdout=log, stderr=log, stdin=subprocess.DEVNULL, start_new_session=True)
     meta["pid"] = proc.pid
     write_json(d / "run.json", meta)
+    if wait:
+        if not quiet and not as_json:
+            print(f"started {run_id}", file=sys.stderr, flush=True)
+        return cmd_wait(argparse.Namespace(ids=[run_id], any=False, games=False, timeout=0, json=as_json))
+    if as_json:
+        print(json.dumps({"id": run_id, "kind": kind, "status": "running", "dir": str(d),
+                          "params": params, "bots": meta["bots"]}, indent=1))
+        return 0
     print(run_id)
-    print(f"  wait (in the background; exits when the test stops): tools/games wait {run_id}", file=sys.stderr)
-    print(f"  progress: tools/games show {run_id}", file=sys.stderr)
+    if not quiet:
+        print(f"  wait (in the background; exits when the test stops): tools/games wait {run_id}", file=sys.stderr)
+        print(f"  progress: tools/games show {run_id}", file=sys.stderr)
     return 0
 
 
@@ -759,6 +782,7 @@ def stopped(d: Path) -> str | None:
 def cmd_wait(args) -> int:
     """One run: its report when it stops, exit its verdict. Several: --any returns when the first of them stops (at
     once if one has), with its report; else when all have, a line each, exit 0 only if every one passed."""
+    as_json = bool(getattr(args, "json", False))
     dirs = {i: run_dir(i) for i in args.ids}
     deadline = time.time() + args.timeout if args.timeout else None
     while True:
@@ -769,20 +793,51 @@ def cmd_wait(args) -> int:
         time.sleep(5)
     if args.any or len(dirs) == 1:
         if not done:  # --timeout
+            if as_json:
+                print(json.dumps({"stopped": None, "still_running": list(args.ids),
+                                  "runs": {i: _state_payload(dirs[i]) for i in args.ids}}, indent=1))
+                return EXIT["running"]
             text, verdict = report(dirs[args.ids[0]], args.games)
             print(text)
             return EXIT["running"]
         i = done[0]
+        left = [x for x in args.ids if x != i and not why[x]]
         if why[i] == "died":
+            if as_json:
+                print(json.dumps({"stopped": i, "verdict": "error", "exit": EXIT["error"], "died": True,
+                                  "driver_log": str(dirs[i] / "driver.log"), "still_running": left,
+                                  "stopped_before": [x for x in done if x != i]}, indent=1))
+                return EXIT["error"]
             print(f"driver of {i} died; see {dirs[i] / 'driver.log'}", file=sys.stderr)
             return EXIT["error"]
+        if as_json:
+            payload = _state_payload(dirs[i])
+            if len(dirs) > 1:
+                payload = {"stopped": i, "verdict": payload["verdict"], "exit": payload["exit"],
+                           "still_running": left, "stopped_before": [x for x in done if x != i],
+                           "result": payload}
+            print(json.dumps(payload, indent=1))
+            return EXIT[payload["verdict"]]
         text, verdict = report(dirs[i], args.games)
         print(text)
-        left = [x for x in args.ids if x != i and not why[x]]
         if len(dirs) > 1:
             print(f"stopped: {i}; " + (f"still running: {' '.join(left)}" if left else "none still running")
                   + (f"; stopped before: {' '.join(x for x in done if x != i)}" if len(done) > 1 else ""))
         return EXIT[verdict]
+    if as_json:
+        results: dict[str, dict] = {}
+        code = 0
+        for i in args.ids:
+            if why[i] == "died":
+                results[i] = {"verdict": "error", "exit": EXIT["error"], "died": True,
+                              "driver_log": str(dirs[i] / "driver.log")}
+                code = code or EXIT["error"]
+            else:
+                payload = _state_payload(dirs[i])
+                results[i] = payload
+                code = code or EXIT[payload["verdict"]]
+        print(json.dumps({"runs": results, "exit": code}, indent=1))
+        return code
     code = 0
     for i in args.ids:
         if why[i] == "died":
@@ -859,20 +914,29 @@ def cmd_show(args) -> int:
 
 
 def cmd_list(args) -> int:
-    if not RUNS.exists():
-        return 0
-    for d in sorted(RUNS.iterdir(), key=lambda p: p.stat().st_mtime)[-args.n:]:
-        try:
-            meta = json.loads((d / "run.json").read_text())
-            st = json.loads((d / "state.json").read_text()) if (d / "state.json").exists() else {"status": "starting"}
-            v = verdict_of(st, meta["kind"]) if "tests" in st else st["status"]
-            p = meta["params"]
-            what = f"{p['a']} vs {p['b']}" if meta["kind"] == "ab" else f"{p['a']} gauntlet"
-            cells = sum(t["cells"] for t in st.get("tests", []))
-            print(f"{meta['id']}  {st['status']:8s} {v:12s} {what}  pool {p.get('pool', p.get('main_pool'))}  "
-                  f"{cells} cells")
-        except (OSError, ValueError, KeyError):
-            continue
+    as_json = bool(getattr(args, "json", False))
+    rows: list[dict] = []
+    if RUNS.exists():
+        for d in sorted(RUNS.iterdir(), key=lambda p: p.stat().st_mtime)[-args.n:]:
+            try:
+                meta = json.loads((d / "run.json").read_text())
+                st = json.loads((d / "state.json").read_text()) if (d / "state.json").exists() else {"status": "starting"}
+                v = verdict_of(st, meta["kind"]) if "tests" in st else st["status"]
+                p = meta["params"]
+                what = f"{p['a']} vs {p['b']}" if meta["kind"] == "ab" else f"{p['a']} gauntlet"
+                cells = sum(t["cells"] for t in st.get("tests", []))
+                if as_json:
+                    rows.append({"id": meta["id"], "kind": meta["kind"], "status": st["status"], "verdict": v,
+                                 "a": p["a"], "b": p.get("b"), "pool": p.get("pool", p.get("main_pool")),
+                                 "cells": cells, "played": st.get("played", 0), "wall_s": st.get("wall_s", 0),
+                                 "games_per_min": st.get("games_per_min", 0)})
+                else:
+                    print(f"{meta['id']}  {st['status']:8s} {v:12s} {what}  pool {p.get('pool', p.get('main_pool'))}  "
+                          f"{cells} cells")
+            except (OSError, ValueError, KeyError):
+                continue
+    if as_json:
+        print(json.dumps(rows, indent=1))
     return 0
 
 
@@ -1157,6 +1221,12 @@ def main(argv=None) -> int:
                         help="play on DoC's machines through tools/run (the compute skill); the cache is shared")
         sp.add_argument("--where", help="--remote backends, e.g. condor,slurm (default: tools/run's)")
         sp.add_argument("--fg", action="store_true", help="run in the foreground and print the report")
+        sp.add_argument("--wait", action="store_true",
+                        help="start the detached driver and block until it stops (survives Ctrl-C), printing the report")
+        sp.add_argument("--json", action="store_true",
+                        help="machine-readable JSON on stdout (launch metadata, or final state with --fg/--wait)")
+        sp.add_argument("-q", "--quiet", action="store_true",
+                        help="print only the run id on stdout (no stderr hints)")
         backend(sp)
         sp.add_argument("--guard", type=float, default=None,
                         help=f"exactness guard: share of native games also played on Java and compared (default "
@@ -1201,6 +1271,7 @@ def main(argv=None) -> int:
                          "code, naming the ones still running: wait again on those")
     sp.add_argument("--games", action="store_true")
     sp.add_argument("--timeout", type=float, default=0, help="give up after this many seconds (exit 5)")
+    sp.add_argument("--json", action="store_true", help="print result as JSON")
     sp = sub.add_parser("show", help="print a run's report")
     sp.add_argument("id")
     sp.add_argument("--games", action="store_true", help="list every game")
@@ -1208,6 +1279,7 @@ def main(argv=None) -> int:
     sp.add_argument("--json", action="store_true")
     sp = sub.add_parser("list", help="recent runs")
     sp.add_argument("-n", type=int, default=20)
+    sp.add_argument("--json", action="store_true")
     sp = sub.add_parser("stop", help="stop a run")
     sp.add_argument("id")
     sp = sub.add_parser("replay", help="replay one game of a run with a replay file")
@@ -1268,7 +1340,7 @@ def main(argv=None) -> int:
                                                       "remote", "where", "mode", "backend", "guard", "cache")}
             params["ref"] = default_ref(args.a, args.ref)
             params["max_cells"] = args.max_cells or (0 if args.pool == "smoke" else round(4 / args.delta ** 2))
-            return start("ab", params, args.fg)
+            return start("ab", params, args.fg, as_json=args.json, quiet=args.quiet, wait=args.wait)
         if args.cmd == "gauntlet":
             opps = [o for o in args.opponents.split(",") if o]
             ref = default_ref(args.a, args.ref) or ("awubot" if args.ref == "auto" else None)
@@ -1280,7 +1352,7 @@ def main(argv=None) -> int:
                       "max_cells": args.max_cells or round(4 / args.delta ** 2), "seed_base": args.seed_base, "workers": args.workers,
                       "timeout": args.timeout, "replays": args.replays, "remote": args.remote, "where": args.where,
                       "backend": args.backend, "guard": args.guard, "cache": args.cache}
-            return start("gauntlet", params, args.fg)
+            return start("gauntlet", params, args.fg, as_json=args.json, quiet=args.quiet, wait=args.wait)
         if args.cmd == "_drive":
             return drive(run_dir(args.id))
         if args.cmd not in ("sweep", "keep"):

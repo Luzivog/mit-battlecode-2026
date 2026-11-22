@@ -153,3 +153,67 @@ def test_names_of_one_connection_are_tried_once(monkeypatch: pytest.MonkeyPatch,
     with pytest.raises(remote.Unreachable):
         remote.login("true")
     assert len(calls) == 1
+
+
+def test_login_fails_over_on_start_master_failure(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """When gpucluster2's master can't connect, login() fails over to gpucluster3."""
+    monkeypatch.setattr(remote, "LOCAL", "")
+    monkeypatch.setattr(remote, "CLIENT", tmp_path / "client")
+    monkeypatch.setattr(remote, "control_path", lambda h: f"/run/x/bc26-ssh-{h}")
+    monkeypatch.setattr(remote, "master_up", lambda host: host == "gpucluster3")
+
+    def start(host: str) -> None:
+        if host == "gpucluster2":
+            raise remote.Unreachable("on gpucluster2: no connection within 60 s")
+    monkeypatch.setattr(remote, "start_master", start)
+    seen: list[str] = []
+
+    def run(argv: list[str], **kw: object) -> subprocess.CompletedProcess[bytes]:
+        host = argv[-2]
+        seen.append(host)
+        if host == "gpucluster2":
+            return subprocess.CompletedProcess(argv, 255, b"", b"Control socket connect: No such file")
+        return subprocess.CompletedProcess(argv, 0, b"from3\n", b"")
+    monkeypatch.setattr(remote.subprocess, "run", run)
+    assert remote.login("echo hi") == "from3\n"
+    assert seen == ["gpucluster2", "gpucluster3"]
+
+
+def test_login_fails_over_on_remote_timeout_only_inside_retry_timeout(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """A remote bound timeout fails over to gpucluster3 inside retry_timeout() (cached reads), not on plain login()."""
+    monkeypatch.setattr(remote, "LOCAL", "")
+    monkeypatch.setattr(remote, "CLIENT", tmp_path / "client")
+    monkeypatch.setattr(remote, "control_path", lambda h: f"/run/x/bc26-ssh-{h}")
+    monkeypatch.setattr(remote, "master_up", lambda host: True)
+    seen: list[str] = []
+
+    def run(argv: list[str], **kw: object) -> subprocess.CompletedProcess[bytes]:
+        host = argv[-2]
+        seen.append(host)
+        if host == "gpucluster2":
+            return subprocess.CompletedProcess(argv, 137, b"", f"{remote.TIMED_OUT} 20 s\n".encode())
+        return subprocess.CompletedProcess(argv, 0, b"ok3\n", b"")
+    monkeypatch.setattr(remote.subprocess, "run", run)
+    with pytest.raises(remote.RemoteTimeout, match="on gpucluster2"):
+        remote.login("write-cmd")
+    assert seen == ["gpucluster2"]
+    seen.clear()
+    with remote.retry_timeout():
+        assert remote.login("read-cmd") == "ok3\n"
+    assert seen == ["gpucluster2", "gpucluster3"]
+
+
+def test_local_ssh_timeout_stops_wedged_master(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(remote, "LOCAL", "")
+    monkeypatch.setattr(remote, "CLIENT", tmp_path / "client")
+    monkeypatch.setattr(remote, "control_path", lambda h: f"/run/x/bc26-ssh-{h}")
+    stopped: list[str] = []
+    monkeypatch.setattr(remote, "stop_master", stopped.append)
+
+    def boom(argv: list[str], **kw: object) -> subprocess.CompletedProcess[bytes]:
+        raise subprocess.TimeoutExpired(argv, 30)
+    monkeypatch.setattr(remote.subprocess, "run", boom)
+    with pytest.raises(remote.RemoteTimeout, match="on gpucluster2"):
+        remote.login("true", hosts=("gpucluster2",))
+    assert stopped == ["gpucluster2"]

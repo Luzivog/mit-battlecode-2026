@@ -41,6 +41,7 @@ piece).
 """
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
 import os
@@ -207,6 +208,7 @@ class Piece:
         self.runs: dict[str, Run] = {self.own.id: self.own}
         # (run id, task) -> (its run, the process, monotonic start, its folder, wall start)
         self.running: dict[tuple[str, int], tuple[Run, subprocess.Popen[bytes], float, Path, float]] = {}
+        self.task_starts: dict[tuple[str, int], int] = {}  # cached starts count from fill(), avoids extra NFS listdir
         self.checkouts: dict[str, tuple[Path, float]] = {}  # content -> (folder, last used)
         self.next_scan = 0.0
         self.state_at = 0.0
@@ -292,7 +294,11 @@ class Piece:
             return False
         except OSError:  # the run's folder went (swept): not claimable
             return False
-        (r.dir / "claims" / str(n) / "by").write_text(f"{self.me} {self.host} {os.getpid()}\n")
+        try:
+            (r.dir / "claims" / str(n) / "by").write_text(f"{self.me} {self.host} {os.getpid()}\n")
+        except OSError:
+            shutil.rmtree(r.dir / "claims" / str(n), ignore_errors=True)
+            return False
         return True
 
     def give_back(self, r: Run, n: int, why: str) -> None:
@@ -445,7 +451,8 @@ class Piece:
                 continue
             r.misses = 0
             r.claimed += 1
-            if self.starts(r, n) >= MAX_STARTS:
+            n_starts = self.starts(r, n)
+            if n_starts >= MAX_STARTS:
                 self.lost(r, n)
                 continue
             if not self.ready(r):
@@ -453,6 +460,7 @@ class Piece:
                 r.claimed -= 1
                 cand.pop(r.id, None)
                 continue
+            self.task_starts[(r.id, n)] = n_starts
             self.start(r, n)
             free -= 1
             started += 1
@@ -626,9 +634,16 @@ class Piece:
             return
         log.close()
         self.running[(r.id, n)] = (r, p, time.monotonic(), here, time.time())
-        self.say(f"{self.name(r, n)}: started (start {self.starts(r, n) + 1})")
+        prior = self.task_starts.get((r.id, n))
+        if prior is None:
+            prior = self.starts(r, n)
+            self.task_starts[(r.id, n)] = prior
+        self.say(f"{self.name(r, n)}: started (start {prior + 1})")
 
     def finish(self, r: Run, n: int, code: int, peak: int, secs: float, here: Path, began: float) -> None:
+        prior = self.task_starts.pop((r.id, n), None)
+        if prior is None:
+            prior = self.starts(r, n)
         log = here / "log"
         data = log.read_bytes() if log.exists() else b""
         if len(data) > LOG_BYTES:
@@ -641,22 +656,32 @@ class Piece:
                 f.write(b"\npiece: its OUT held %d bytes, over the %d a task may send back: dropped\n" % (size, OUT_CAP))
             code = code or 254
         result = {"task": n, "code": code, "peak": peak, "host": self.host, "s": round(secs, 3), "piece": self.me,
-                  "start": self.starts(r, n) + 1, "began": round(began, 3), "ended": round(time.time(), 3),
+                  "start": prior + 1, "began": round(began, 3), "ended": round(time.time(), 3),
                   "slots": self.slots}
         if not r.own:
             result["piece_run"] = self.own.id  # a piece of another run served it
-        (here / "result.json").write_text(json.dumps(result) + "\n")
         tmp = self.scratch / f"{r.id}.{n}.tar"
-        with tarfile.open(tmp, "w") as tar:
-            for name in ("result.json", "log", "out"):
-                tar.add(here / name, name)
+        try:
+            (here / "result.json").write_text(json.dumps(result) + "\n")
+            with tarfile.open(tmp, "w") as tar:
+                for name in ("result.json", "log", "out"):
+                    tar.add(here / name, name)
+        except OSError as e:
+            tmp.unlink(missing_ok=True)
+            shutil.rmtree(here, ignore_errors=True)
+            if e.errno == errno.ENOSPC:
+                self.refusing = f"no space left on scratch ({self.scratch})"
+                self.say(f"{self.name(r, n)}: {self.refusing}: giving task back and taking no more tasks")
+                self.give_back(r, n, "no space left on scratch")
+                return
+            raise
         try:
             dest = r.dir / "done" / f".{n}.tar.{secrets.token_hex(4)}"
             shutil.copyfile(tmp, dest)
             os.rename(dest, r.dir / "done" / f"{n}.tar")
         except OSError as e:  # its run's folder went (swept): nothing to give it
             self.say(f"{self.name(r, n)}: its result has nowhere to go ({e})")
-        tmp.unlink()
+        tmp.unlink(missing_ok=True)
         shutil.rmtree(here, ignore_errors=True)
         r.longest = max(r.longest, secs)
         r.done += 1
@@ -679,6 +704,7 @@ class Piece:
             p.returncode = os.waitstatus_to_exitcode(got[1])
             ended += 1
             if p.returncode == GIVE_BACK:
+                self.task_starts.pop(key, None)
                 tail = (here / "log").read_bytes()[-300:].decode(errors="replace").strip().splitlines()
                 self.refusing = tail[-1] if tail else "its task ended GIVE_BACK"
                 self.say(f"{self.name(r, key[1])}: its host can't run it ({self.refusing}): taking no more tasks")
@@ -693,16 +719,17 @@ class Piece:
         for key in keys:
             try:
                 os.killpg(self.running[key][1].pid, signal.SIGTERM)
-            except ProcessLookupError:
+            except OSError:
                 pass
         end = time.monotonic() + 10
         while any(self.running[k][1].poll() is None for k in keys) and time.monotonic() < end:
             time.sleep(0.2)
         for key in keys:
             r, p, _, here, _ = self.running.pop(key)
+            self.task_starts.pop(key, None)
             try:
                 os.killpg(p.pid, signal.SIGKILL)
-            except ProcessLookupError:
+            except OSError:
                 pass
             p.wait()
             shutil.rmtree(here, ignore_errors=True)

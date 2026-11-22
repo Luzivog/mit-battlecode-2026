@@ -240,13 +240,31 @@ def hosts_of(where: str) -> tuple[str, ...]:
     return (CPU_HOST,) if where == "cpucluster1" else SLURM_HOSTS
 
 
+def parse_env_vars(specs: list[str] | None) -> list[tuple[str, str]]:
+    """Parse repeatable --env KEY=VAL strings into (key, value) pairs; rejects bad names or newlines."""
+    out: list[tuple[str, str]] = []
+    for spec in specs or ():
+        key, sep, val = spec.partition("=")
+        if not sep or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", key):
+            raise Refused(f"--env {spec!r}: give KEY=VALUE with a valid variable name")
+        if "\n" in val or "\r" in val:
+            raise Refused(f"--env {key}: value cannot contain newlines")
+        if key == "PATH":
+            raise Refused("--env PATH: not allowed (the runtime's PATH is set by job.sh)")
+        out.append((key, val))
+    return out
+
+
 def job_files(code: Code, argv: list[str], with_tgz: bytes, with_kit: bool, extra: dict[str, bytes] | None = None,
-              repo: Path = REPO) -> dict[str, bytes]:
+              repo: Path = REPO, extra_env: list[tuple[str, str]] | None = None) -> dict[str, bytes]:
     """A job folder's files at submission. `exit` and `log` exist from the start, empty: a name first made on a node
     can stay unseen on a login node for a minute (NFS caches its absence)."""
+    env_bytes = provision.env_file()
+    if extra_env:
+        env_bytes += "".join(f"{k} {v}\n" for k, v in extra_env).encode()
     files = {"job.sh": (Path(__file__).parent / "job.sh").read_bytes(), "commit": f"{code.commit}\n".encode(),
              "code.bundle": code.bundle, "argv": b"".join(a.encode() + b"\0" for a in argv),
-             "env": provision.env_file(), "exit": b"", "log": b""}
+             "env": env_bytes, "exit": b"", "log": b""}
     if with_tgz:
         files["with.tgz"] = with_tgz
     if with_kit:
@@ -310,8 +328,9 @@ def sbatch(j: Job, files: dict[str, bytes], args: list[str], hosts: tuple[str, .
 
 def submit_slurm(j: Job, files: dict[str, bytes], slot: B.CpuSlot, time_s: int) -> str:
     sid = sbatch(j, files, B.cpu_slot_args(slot, checked_time(time_s, "Slurm")), SLURM_HOSTS)
+    cards = f"{slot.gpus} {slot.card} card{'s' * (slot.gpus != 1)}" if slot.gpus != 1 else f"one {slot.card} card"
     say(f"compute: {j.id}: Slurm job {sid} on {slot.partition}: {slot.node}, {slot.cpus} CPUs, {slot.mem_mb} MB, "
-        f"one {slot.card} card")
+        f"{cards}")
     return sid
 
 
@@ -409,14 +428,19 @@ class Place:
     note: str = ""
 
 
-def place(where: str, cpus: int, time_s: int | None, mem_mb: int | None) -> Place:
-    """Where a job of at least CPUS CPUs and MEM_MB MB can go on WHERE, or Refused."""
+def place(where: str, cpus: int, time_s: int | None, mem_mb: int | None, gpu: str | None = None) -> Place:
+    """Where a job of at least CPUS CPUs and MEM_MB MB (and GPU spec on Slurm) can go on WHERE, or Refused."""
+    if gpu is not None and where != "slurm":
+        raise Refused(f"--gpu is only valid with --where slurm (not {where})")
     if where == "slurm":
         est = checked_time(time_s, "Slurm")
         per = max(B.CPU_JOB_MIN_MEM_MB, -(-(mem_mb or 0) // cpus))
-        slots = B.slurm_starts_now(B.read_slurm(), cpus, cpus, est, per)
+        card, gpus = B.parse_gpu_spec(gpu) if gpu is not None else (None, 1)
+        slots = B.slurm_starts_now(B.read_slurm(), cpus, cpus, est, per, card=card, gpus=gpus,
+                                   prefer_strong=gpu is not None)
         if not slots:
-            raise Refused(f"--cpu {cpus}: no GPU-cluster node has a free card and {cpus} CPUs with their memory free "
+            want = f"{gpus} {card or 'GPU'} card{'s' * (gpus != 1)}" if gpu else "a free card"
+            raise Refused(f"--cpu {cpus}: no GPU-cluster node has {want} and {cpus} CPUs with their memory free "
                           "within our caps now (`tools/compute status`)")
         return Place(where, slots[0].cpus, slots[0].mem_mb, est, slot=slots[0])
     if where == "cpucluster1":
@@ -468,16 +492,19 @@ def submit(j: Job, files: dict[str, bytes], p: Place) -> str:
 
 
 def run(where: str, cpus: int, time_s: int | None, argv: list[str], ships: list[str], with_kit: bool,
-        mem_mb: int | None, build: bool = True, repo: Path = REPO) -> str:
-    """ARGV on WHERE; its job id printed first on stdout. CPUS: what it needs (Condor: a whole machine of at least that
-    many; Slurm and cpucluster1: that many on one node, or, on Slurm, the next count DoC's lua gives whole).
-    MEM_MB: the least memory it needs. WITH_KIT: build/classes compiled and shipped, the engine's jars named."""
+        mem_mb: int | None, build: bool = True, repo: Path = REPO, gpu: str | None = None,
+        extra_env: list[str] | None = None, as_json: bool = False) -> str:
+    """ARGV on WHERE; its job id printed first on stdout (or a JSON object when AS_JSON). CPUS: what it needs
+    (Condor: a whole machine of at least that many; Slurm and cpucluster1: that many on one node, or, on Slurm, the
+    next count DoC's lua gives whole). MEM_MB: the least memory it needs. WITH_KIT: build/classes compiled and shipped,
+    the engine's jars named. GPU: optional card spec on Slurm (e.g. a100, 2, a100:2)."""
     if not argv:
         raise Refused("no command after --")
     if where not in WHERES:
         raise Refused(f"--where: one of {', '.join(WHERES)}")
     if argv[0].removeprefix("./") == "gradlew":
         raise Refused("a job runs no Gradle: ship build/classes with --kit and run java (tools/kit.py)")
+    env_pairs = parse_env_vars(extra_env)
     if with_kit and build:
         kit.compile_classes(repo)
     code = head(repo)
@@ -487,13 +514,23 @@ def run(where: str, cpus: int, time_s: int | None, argv: list[str], ships: list[
     if where != "local":
         private_root(hosts)
         provision.ensure(hosts, repo, with_kit)
-    p = place(where, cpus, time_s, mem_mb)
+    p = place(where, cpus, time_s, mem_mb, gpu=gpu)
     j = job(new_id(where))
-    files = job_files(code, argv, with_tgz, with_kit, repo=repo)
-    print(j.id, flush=True)  # first, so the id is known even if the connection drops during the submit
+    files = job_files(code, argv, with_tgz, with_kit, repo=repo, extra_env=env_pairs)
+    if not as_json:
+        print(j.id, flush=True)  # first, so the id is known even if the connection drops during the submit
     say(f"compute: {j.id} runs commit {code.commit[:12]} ({code.subject})"
         + (f" with {len(with_tgz) / 1e6:.1f} MB of --with files" if with_tgz else ""))
-    submit(j, files, p)
+    bid = submit(j, files, p)
+    if as_json:
+        import json
+        info = {"id": j.id, "where": where, "backend_id": bid, "commit": code.commit, "cpus": p.cpus,
+                "mem_mb": p.mem_mb, "time_s": p.time_s,
+                "partition": p.partition or (p.slot.partition if p.slot else None),
+                "node": p.slot.node if p.slot else None,
+                "card": p.slot.card if p.slot else None,
+                "gpus": p.slot.gpus if p.slot else 0}
+        print(json.dumps(info, indent=1), flush=True)
     return j.id
 
 
@@ -528,13 +565,14 @@ def read_states(ids: list[str]) -> dict[str, State]:
     return out
 
 
-def states_cmd(js: list[Job], queues: bool = False) -> str:
+def states_cmd(js: list[Job], queues: bool = False, include_condor: bool = True) -> str:
     """The command reading JS's folders and our queue of each of their schedulers (QUEUES: of every scheduler the
-    login node reaches, whatever JS holds), in parse_states's sections."""
+    login node reaches, whatever JS holds), in parse_states's sections. INCLUDE_CONDOR=False skips condor_q when the
+    caller (tools/view.py) already emitted ==condor and ==condor_rc from a shared condor_q call."""
     script = FOLDER_SH.replace("JOBS", REMOTE_JOBS)
     cmd = f"echo ==folders; set -- {' '.join(j.id for j in js)}; {script}; "
     slurm = queues or any(j.where in B.SLURMS for j in js)
-    condor = queues or any(j.where == "condor" for j in js)
+    condor = include_condor and (queues or any(j.where == "condor" for j in js))
     local = [j for j in js if j.where == "local"]
     # every job of ours in one listing each (a list of ids would fail whole on one Slurm has forgotten)
     if slurm:

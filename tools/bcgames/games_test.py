@@ -177,8 +177,10 @@ class WaitTest(unittest.TestCase):
             try:
                 for rid, status in (("r1", "running"), ("r2", "done"), ("r3", "running")):
                     (Path(tmp) / rid).mkdir()
-                    (Path(tmp) / rid / "run.json").write_text(json.dumps({"id": rid}))  # no pid: alive
-                    (Path(tmp) / rid / "state.json").write_text(json.dumps({"status": status}))
+                    (Path(tmp) / rid / "run.json").write_text(json.dumps(
+                        {"id": rid, "kind": "ab", "params": {"a": "challenger", "b": "awubot", "pool": "quick"}}))
+                    (Path(tmp) / rid / "state.json").write_text(json.dumps(
+                        {"status": status, "tests": [], "played": 10, "wall_s": 30, "games_per_min": 20.0}))
                 out = io.StringIO()
                 with contextlib.redirect_stdout(out):
                     code = games.cmd_wait(types.SimpleNamespace(ids=["r1", "r2", "r3"], any=True, games=False,
@@ -190,6 +192,21 @@ class WaitTest(unittest.TestCase):
                 with contextlib.redirect_stdout(out):
                     code = games.cmd_wait(types.SimpleNamespace(ids=["r1", "r3"], any=True, games=False, timeout=1))
                 self.assertEqual(code, games.EXIT["running"])  # neither stopped within --timeout
+                # JSON mode for wait --any and list
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    code = games.cmd_wait(types.SimpleNamespace(ids=["r1", "r2", "r3"], any=True, games=False,
+                                                                timeout=0, json=True))
+                self.assertEqual(code, 0)
+                payload = json.loads(out.getvalue())
+                self.assertEqual(payload["stopped"], "r2")
+                self.assertEqual(payload["still_running"], ["r1", "r3"])
+                # list --json
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    games.cmd_list(types.SimpleNamespace(n=10, json=True))
+                rows = json.loads(out.getvalue())
+                self.assertEqual({r["id"] for r in rows}, {"r1", "r2", "r3"})
             finally:
                 games.RUNS, games.report = old
 

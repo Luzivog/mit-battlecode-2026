@@ -67,6 +67,10 @@ class Unreachable(Refused):
     """No login node answered (ssh's 255 from each), so the command may not have run at all."""
 
 
+class RemoteTimeout(Unreachable):
+    """A remote call started and ran out of its bound (remote kill or local ssh timeout)."""
+
+
 # Every call is bounded on both sides: ssh is killed here after its bound and the command runs under `timeout -s KILL`
 # there (19 Nov: unbounded reads of a folder that stopped answering hung for 28 minutes, and every tool behind them).
 READ_S = 20.0  # a read or a small write; an upload gets 1 s more a MB (UPLOAD_MB_S)
@@ -121,6 +125,31 @@ def master_up(host: str) -> bool:
     p = subprocess.run(["ssh", "-O", "check", "-o", f"ControlPath={control_path(host)}", host], capture_output=True,
                        timeout=10, stdin=subprocess.DEVNULL)
     return p.returncode == 0
+
+
+def stop_master(host: str) -> None:
+    """Ask HOST's kept connection to exit (best effort: clears a wedged TCP master after a local ssh timeout)."""
+    if LOCAL or host == SUBMIT:
+        return
+    try:
+        subprocess.run(["ssh", "-O", "exit", "-o", f"ControlPath={control_path(host)}", host], capture_output=True,
+                       timeout=3, stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.SubprocessError):
+        pass
+
+
+def ssh_config(host: str) -> dict[str, str]:
+    """Selected resolved ssh -G fields for HOST (hostname, user, proxyjump, controlpath) for diagnostics."""
+    p = subprocess.run(["ssh", "-G", "-o", f"ControlPath={RUN_DIR}/{SSH_TAG}-%C", host], capture_output=True,
+                       text=True, timeout=10, stdin=subprocess.DEVNULL)
+    if p.returncode:
+        raise Unreachable(f"ssh -G {host}: exit {p.returncode}: {p.stderr.strip()[-200:]}")
+    out: dict[str, str] = {}
+    for line in p.stdout.splitlines():
+        k, _, v = line.partition(" ")
+        if k in ("hostname", "user", "proxyjump", "controlpath"):
+            out[k] = v.strip()
+    return out
 
 
 def start_master(host: str) -> None:
@@ -264,41 +293,81 @@ def _run(host: str, script: str, stdin: bytes | None, t: float, bulk: bool = Fal
             p = subprocess.run(argv, input=stdin, capture_output=True, timeout=t + SLACK_S,
                                stdin=None if stdin is not None else subprocess.DEVNULL)
         except subprocess.TimeoutExpired:
-            raise Unreachable(f"on {host}: no answer within {t + SLACK_S:.0f} s") from None
+            stop_master(host)
+            raise RemoteTimeout(f"on {host}: no answer within {t + SLACK_S:.0f} s") from None
         got.append(p)
         return p.returncode, p.stderr
     with session(host, bulk, SLOT_WAIT_S):
         code, err = _attempts(host, launch, SLOT_WAIT_S)
     if killed(code, err):
-        raise Unreachable(f"on {host}: the remote bound ended it after {t:.0f} s")
+        raise RemoteTimeout(f"on {host}: the remote bound ended it after {t:.0f} s")
     return got[-1]
+
+
+_RETRY_TIMEOUT = threading.local()
+
+
+@contextmanager
+def retry_timeout() -> Iterator[None]:
+    """Inside this block, login() also fails over to the next host in HOSTS after a RemoteTimeout (for read-only or
+    idempotent calls like scheduler reads and view refreshes)."""
+    prev = getattr(_RETRY_TIMEOUT, "on", False)
+    _RETRY_TIMEOUT.on = True
+    try:
+        yield
+    finally:
+        _RETRY_TIMEOUT.on = prev
 
 
 def login(cmd: str, stdin: bytes | None = None, hosts: tuple[str, ...] = SLURM_HOSTS, stream: int = 0,
           timeout: float | None = None) -> str:
-    """CMD on the first login node of HOSTS that answers; its stdout. ssh's 255 tries the next node (one with another
-    kept connection), which runs CMD again, so a CMD that changes anything must refuse to run twice (a `mkdir` of its
-    folder). Refused when CMD fails, Unreachable when no node answers or it ran out of time (TIMEOUT: READ_S, plus
-    UPLOAD_MB_S a MB of STDIN). A CMD too long for one argument goes as a script on ssh's stdin."""
+    """CMD on the first login node of HOSTS that answers; its stdout. A pre-execution failure (ssh's 255, unreachable
+    master, full sessions) tries the next node with another kept connection (and a RemoteTimeout does too inside
+    `retry_timeout()`, for read-only/idempotent calls). A CMD that changes anything must refuse to run twice (a `mkdir`
+    of its folder). Refused when CMD fails, Unreachable when no node answers or it ran out of time (TIMEOUT: READ_S,
+    plus UPLOAD_MB_S a MB of STDIN). A CMD too long for one argument goes as a script on ssh's stdin."""
     script = UMASK + cmd
     if stdin is None and len(script.encode()) >= MAX_ARG // 2:  # quoted once more by `bounded`
         script, stdin = "bash -s", script.encode()
     t = timeout or READ_S + UPLOAD_MB_S * len(stdin or b"") / 1e6
     bulk = len(stdin or b"") > 1 << 20
+    allow_timeout_retry = bool(getattr(_RETRY_TIMEOUT, "on", False))
     p: subprocess.CompletedProcess[bytes] | None = None
+    last_host = hosts[0]
+    errors: list[str] = []
     tried: set[str] = set()
     for host in hosts:
-        key = host if LOCAL else control_path(host)
-        if key in tried:  # another name of a connection already tried (gpucluster2 and 3 are one host)
+        try:
+            key = "local" if LOCAL else control_path(host)
+        except Unreachable as e:
+            errors.append(str(e))
+            continue
+        if key in tried:  # another name of a connection already tried (or local stand-in)
             continue
         tried.add(key)
-        p = _run(host, script, stdin, t, bulk)
+        last_host = host
+        try:
+            p = _run(host, script, stdin, t, bulk)
+        except RemoteTimeout as e:
+            if not allow_timeout_retry:
+                raise
+            errors.append(str(e))
+            p = None
+            continue
+        except Unreachable as e:
+            errors.append(str(e))
+            p = None
+            continue
         if p.returncode != 255:
             break
-    assert p is not None
+        errors.append(f"on {host}: exit 255: {p.stderr.decode(errors=ESC).strip()[-300:]}")
+    if p is None:
+        raise Unreachable("; ".join(errors) if errors else f"on {hosts[0]}: unreachable")
     if p.returncode:
-        kind = Unreachable if p.returncode == 255 else Refused
-        raise kind(f"on {hosts[0]}: exit {p.returncode}: {p.stderr.decode(errors=ESC).strip()[-500:]}")
+        if p.returncode == 255:
+            raise Unreachable("; ".join(errors) if len(errors) > 1 else
+                              f"on {last_host}: exit 255: {p.stderr.decode(errors=ESC).strip()[-500:]}")
+        raise Refused(f"on {last_host}: exit {p.returncode}: {p.stderr.decode(errors=ESC).strip()[-500:]}")
     return p.stdout.decode(errors=ESC)
 
 
@@ -308,8 +377,13 @@ def login_into(cmd: str, into: Path, hosts: tuple[str, ...] = SLURM_HOSTS, strea
     bytes never in Python), in a bulk session slot, within TIMEOUT."""
     into.mkdir(parents=True, exist_ok=True)
     tried: set[str] = set()
+    errors: list[str] = []
     for host in hosts:
-        key = host if LOCAL else control_path(host)
+        try:
+            key = "local" if LOCAL else control_path(host)
+        except Unreachable as e:
+            errors.append(str(e))
+            continue
         if key in tried:
             continue
         tried.add(key)
@@ -332,17 +406,25 @@ def login_into(cmd: str, into: Path, hosts: tuple[str, ...] = SLURM_HOSTS, strea
                     timer.cancel()
                 err.seek(0)
                 return code, err.read()
-        with session(host, True, SLOT_WAIT_S):
-            code, err = _attempts(host, launch, SLOT_WAIT_S)
+        try:
+            with session(host, True, SLOT_WAIT_S):
+                code, err = _attempts(host, launch, SLOT_WAIT_S)
+        except Unreachable as e:
+            errors.append(str(e))
+            continue
         if code == 255 and not LOCAL:
+            errors.append(f"on {host}: exit 255: {err.decode(errors=ESC).strip()[-300:]}")
             continue
         if killed(code, err) or code == -9:
-            raise Unreachable(f"on {host}: the transfer ran out of its {timeout:.0f} s")
+            if code == -9:
+                stop_master(host)
+            errors.append(f"on {host}: the transfer ran out of its {timeout:.0f} s")
+            continue
         if code or tars[-1].returncode:
             raise Refused(f"on {host}: exit {code}, tar {tars[-1].returncode}: "
                           f"{(err + tars[-1].stderr).decode(errors=ESC).strip()[-500:]}")
         return
-    raise Unreachable(f"on {hosts[0]}: exit 255")
+    raise Unreachable("; ".join(errors) if errors else f"on {hosts[0]}: exit 255")
 
 
 # Reads of the schedulers (sinfo, condor_status, our queues), shared by every process here for CACHE_S: 66 placements at
@@ -385,7 +467,8 @@ def cached(cmd: str, hosts: tuple[str, ...] = SLURM_HOSTS, max_age: float = CACH
         if max_age > 0 and (got := fresh()) is not None:
             return got
         f = current()
-        out = login(cmd, hosts=hosts, timeout=timeout)
+        with retry_timeout():
+            out = login(cmd, hosts=hosts, timeout=timeout)
         tmp = d / f".{key}.{os.getpid()}"
         tmp.write_bytes(out.encode(errors=ESC))
         os.replace(tmp, f)

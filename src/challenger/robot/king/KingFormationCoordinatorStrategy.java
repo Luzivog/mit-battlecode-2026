@@ -61,10 +61,14 @@ public class KingFormationCoordinatorStrategy extends Strategy {
     private int kings = 1;
     private boolean lockIn = false;
     private boolean coop = false;
+    private boolean catRace = false;
     private boolean coopFormation = false;
     private boolean fallbackFormation = false;
     private MapLocation lastFailedFallback = null;
     private int nextFallbackSearchRound = 0;
+    private int prevCatTraps = 0;
+    private int catTrapsTriggered = 0;
+    private boolean sawDamagedCat = false;
     private static final long[] tmpSeen = new long[60];
     private static final long[] tmpPass = new long[60];
     private static final long[] tmpDirt = new long[60];
@@ -175,8 +179,24 @@ public class KingFormationCoordinatorStrategy extends Strategy {
 
     @Override
     public boolean runTick() throws GameActionException {
-        if ((Tune.COOP_CTRL & 4) != 0 && RobotTracker.numCats > 0) {
-            CatLanes.markVisibleCats();
+        if ((Tune.COOP_CTRL & 4) != 0 && rc.isCooperation()) {
+            if (RobotTracker.numCats > 0) {
+                CatLanes.markVisibleCats();
+                if (!sawDamagedCat) {
+                    for (int i = RobotTracker.numCats - 1; i >= 0; i--) {
+                        RobotInfo c = RobotTracker.sortedCats[i];
+                        if (c != null && c.health <= UnitType.CAT.health - 1500) {
+                            sawDamagedCat = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            int traps = rc.getNumberCatTraps();
+            if (traps < prevCatTraps) {
+                catTrapsTriggered += prevCatTraps - traps;
+            }
+            prevCatTraps = traps;
         }
         int myKingCount = GlobalArray.countRatKings();
         kings = myKingCount;
@@ -187,6 +207,7 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             req = 8;
         }
         if (home == null) home = myLoc;
+        catRace = (Tune.COOP_CTRL & 4) != 0 && (catTrapsTriggered >= 14 || sawDamagedCat);
         lockIn = time >= LOCK_IN_ROUND && myKingCount < KING_TARGET;
         coop = myKingCount == 1 && time >= COOP_ROUND && time < LOCK_IN_ROUND && rc.isCooperation();
         if (KING2_ON) king2 = myKingCount == 1 && time >= Tune.CM_KING2_ROUND && time < LOCK_IN_ROUND;
@@ -265,10 +286,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (GlobalArray.getFormationTarget() != null) return;
 
         boolean mineFreeReady = (Tune.COOP_CTRL & 4) != 0
-            && rc.isCooperation() && time >= 130 && time < 800
+            && rc.isCooperation() && time >= 100 && time < LOCK_IN_ROUND
             && kings == 1 && numRats >= 12
-            && RatKing.totalCheeseInflow >= 100
-            && (rc.getGlobalCheese() >= 1200 || Game.knownCheeseMines.size() >= 1);
+            && Game.knownCheeseMines.size() == 0
+            && catRace && rc.getGlobalCheese() >= 1000;
 
         // A cooperation search that found no site is repeated only when its inputs grow: more known mines, fewer
         // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).
@@ -554,6 +575,22 @@ public class KingFormationCoordinatorStrategy extends Strategy {
             state = FormationState.IDLE;
             // indicate("FORMATION: completed or cleared");
             return;
+        }
+
+        if (fallbackFormation && targetMine != null) {
+            if (chebyshevDistance(myLoc, targetMine) <= 2) {
+                lastFailedFallback = targetMine;
+                abortFormation();
+                return;
+            }
+            for (int c = RobotTracker.numCats - 1; c >= 0; c--) {
+                RobotInfo cat = RobotTracker.sortedCats[c];
+                if (cat != null && dist(targetMine, cat) <= 9) {
+                    lastFailedFallback = targetMine;
+                    abortFormation();
+                    return;
+                }
+            }
         }
 
         if (nearestCat != null &&

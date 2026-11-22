@@ -10,7 +10,7 @@ public final class Tune {
     public static final int PM_SYM = 0; // tune: 1 [0, 1] 1: on a book map-seat the robots know Book.symmetry from round 1 (0: they learn it)
     public static final int PM_SYM_B = 0; // tune: 1 [0, 1] 1: seat B's king reads the symmetry from its first scan's order (a general rule)
     public static final int PM_COOP_HOLD = 0; // tune: 1 [0, 1] 1: in cooperation with one king, never deal a cat its last HP (PC1 A2)
-    public static final int COOP_CTRL = 31; // tune: 1 [0, 31] coop & points controller bitmask (1:traps, 2:early-cat, 4:mine-free-k2, 8:dyn-hold+dump, 16:late-backstab-cat)
+    public static final int COOP_CTRL = 15; // tune: 1 [0, 31] coop & points controller bitmask (1:traps, 2:early-cat, 4:mine-free-k2, 8:dyn-hold+dump, 16:late-backstab-cat)
     public static final int PM_SIEGE = 0; // tune: 1 [0, 2] E2b's siege spawns: no rat cap with an enemy in the king's vision (1), or more enemies than our rats there (2)
     public static final int PM_SKIP_FAILED = 0; // tune: 1 [0, 2] the coordinator skips mines whose formation timed out: 1 the last one (KF's T), 2 every one
     public static final int DIRT_ROUND = 100; // tune: 50 [0, 400] rats path through dirt (and dig it) from this round once global >= DIRT_CHEESE

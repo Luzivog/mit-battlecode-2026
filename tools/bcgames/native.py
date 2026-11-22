@@ -41,12 +41,14 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import store
+from . import objcache, store
 
 ENGINE = store.ROOT / "engine"
 NDATA = Path(os.environ.get("BCGAMES_NATIVE_DATA") or store.DATA / "native").expanduser()
 BUILDS = int(os.environ.get("BCGAMES_NATIVE_BUILDS", "2"))  # builds at once on this host
 JOBS = int(os.environ.get("BCGAMES_NATIVE_JOBS", "8"))      # compile jobs a build
+OBJCACHE = os.environ.get("BCGAMES_NATIVE_OBJCACHE", "1") != "0"
+OBJCACHE_KEEP_BYTES = int(os.environ.get("BCGAMES_NATIVE_OBJCACHE_BYTES", str(2 << 30)))
 # klasses.cpp (class tables, class-init wrappers, dispatch chains: no game logic) changes with any bot and is one
 # file: about 240 s at -O2, 8 s at -O1, the rest of a challenger rebuild about 90 s
 GLUE_OPT = "-O1"
@@ -402,6 +404,37 @@ def _build(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> 
             time.sleep(60)
 
 
+def _objcache_env(cache_dir: Path) -> tuple[dict[str, str], Path | None]:
+    """Prepares the `clang++` cache shim on PATH and returns (env_overrides, stats_file). Returns ({}, None) when
+    OBJCACHE is disabled or clang++ is unavailable."""
+    if not OBJCACHE:
+        return {}, None
+    real_cxx = shutil.which("clang++")
+    if not real_cxx:
+        return {}, None
+    real_path = Path(real_cxx).resolve()
+    try:
+        st = real_path.stat()
+        cid = f"{toolchain()}|{real_path}|{st.st_size}|{st.st_mtime_ns}"
+    except OSError:
+        cid = toolchain()
+    shim_dir = cache_dir / "bin"
+    shim_dir.mkdir(parents=True, exist_ok=True)
+    shim = shim_dir / "clang++"
+    script = f"#!{sys.executable} -S\nimport sys\nsys.path.insert(0, {str(Path(__file__).resolve().parent)!r})\nimport objcache\nsys.exit(objcache.main())\n"
+    if not shim.exists() or shim.read_text() != script:
+        tmp = shim.with_name(f".clang++.{os.getpid()}")
+        tmp.write_text(script)
+        tmp.chmod(0o755)
+        os.replace(tmp, shim)
+    fd, stats_name = tempfile.mkstemp(prefix=".stats.", dir=cache_dir)
+    os.close(fd)
+    stats_file = Path(stats_name)
+    path_env = f"{shim_dir}{os.pathsep}{os.environ.get('PATH', '')}"
+    return {"PATH": path_env, "BCX_REAL_CXX": str(real_path), "BCX_OBJCACHE_DIR": str(cache_dir),
+            "BCX_OBJCACHE_ID": cid, "BCX_OBJCACHE_STATS": str(stats_file)}, stats_file
+
+
 def _build_once(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str) -> None:
     bins = NDATA / "bin"
     teams = [(b.pkg, classes_dir(b)) for b in plan.bots]
@@ -417,11 +450,22 @@ def _build_once(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str
              f"in {gen.name}; log {log}")
         t0 = time.time()
         # the translator: serial GC (3.7 GB peak instead of 4.9), one at a time on the host (BCX_TRANSLATE_LOCK)
-        env = dict(os.environ, BCX_TRANSLATE_LOCK=str(NDATA / "translate.lock"), JAVA_TOOL_OPTIONS="-XX:+UseSerialGC")
-        with open(log, "w") as lf:
-            lf.write(" ".join(cmd) + "\n")
-            lf.flush()
-            code, cpu = run_measured(cmd, stdout=lf, stderr=subprocess.STDOUT, cwd=src, env=env)
+        oc_env, stats_file = _objcache_env(NDATA / "objcache")
+        env = dict(os.environ, BCX_TRANSLATE_LOCK=str(NDATA / "translate.lock"), JAVA_TOOL_OPTIONS="-XX:+UseSerialGC",
+                   **oc_env)
+        try:
+            with open(log, "w") as lf:
+                lf.write(" ".join(cmd) + "\n")
+                lf.flush()
+                code, cpu = run_measured(cmd, stdout=lf, stderr=subprocess.STDOUT, cwd=src, env=env)
+            oc_hits = oc_misses = 0
+            if stats_file is not None and stats_file.exists():
+                lines = stats_file.read_text().splitlines()
+                oc_hits = lines.count("H")
+                oc_misses = lines.count("M")
+        finally:
+            if stats_file is not None:
+                stats_file.unlink(missing_ok=True)
         wall = time.time() - t0
         if code != 0:
             out = log.read_text()
@@ -431,14 +475,16 @@ def _build_once(plan: Plan, eid: str, snap: Path, ids: list[list[str]], key: str
         try:
             subprocess.run(["strip", "-o", str(tmp / "bcx"), str(gen / "bcx")], check=True, capture_output=True)
             info = {"key": key, "version": plan.version, "engine": eid, "bots": ids, "built": time.time(),
-                    "wall_s": round(wall, 1), "cpu_s": round(cpu, 1), "gen": gen.name, "host": os.uname().nodename}
+                    "wall_s": round(wall, 1), "cpu_s": round(cpu, 1), "gen": gen.name, "host": os.uname().nodename,
+                    "objcache_hits": oc_hits, "objcache_misses": oc_misses}
             (tmp / "build.json").write_text(json.dumps(info))
             os.rename(tmp, binary_dir(key))
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
         (gen / "last.json").write_text(json.dumps({"engine": eid, "bots": ids}))
         (bins / f"{key}.failed").unlink(missing_ok=True)
-        _say(f"built {key} in {wall:.0f} s ({cpu:.0f} CPU s)")
+        oc_note = f", objcache {oc_hits}/{oc_hits + oc_misses} hits" if (oc_hits + oc_misses) else ""
+        _say(f"built {key} in {wall:.0f} s ({cpu:.0f} CPU s{oc_note})")
 
 
 _held: dict[str, object] = {}
@@ -454,17 +500,25 @@ def hold(key: str) -> None:
     _held[key] = f
 
 
+def gc_objcache(dry: bool = False) -> list[tuple[str, int]]:
+    """Bound NDATA/objcache to OBJCACHE_KEEP_BYTES by LRU."""
+    return objcache.gc(NDATA / "objcache", OBJCACHE_KEEP_BYTES, GRACE_S, dry=dry)
+
+
 def gc(dry: bool = False) -> list[tuple[str, int]]:
     """bin/ bounded (the module's docstring): the binaries removed (or, DRY, to be), with their bytes. One process
     at a time (bin/.gc.lock; a second skips): a binary another gc removed while this one sized it raised
     FileNotFoundError out of build(), and the runs waiting on that build played Java (21:46:09 on 19 Nov: three
-    processes released by one build's lock all ran gc at once)."""
+    processes released by one build's lock all ran gc at once). Also bounds objcache/."""
     bins = NDATA / "bin"
     lock = _flock(bins / ".gc.lock", block=False)
     if lock is None:
         return []
     try:
-        return _gc(bins, dry)
+        gone = _gc(bins, dry)
+        if not dry:
+            gc_objcache(dry=False)
+        return gone
     finally:
         lock.close()
 

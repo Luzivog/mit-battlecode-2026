@@ -59,21 +59,29 @@ TWIN = "~2"
 
 def ship_binary(key: str, path: Path) -> str:
     """The binary's path on the volume, gzip'd (30 MB, not 100), uploaded when missing and touched when there, so it
-    stays. A node unpacks it to its own disk once (native.local_binary): run from the volume, every task paid about
-    70 s of page faults over NFS."""
+    stays. Serialized per binary key on this host (ship/bcx-<key>.gz lock) so parallel tests never upload the same
+    30 MB binary at once. A node unpacks it to its own disk once (native.local_binary): run from the volume, every
+    task paid about 70 s of page faults over NFS."""
     if str(store.ROOT) not in sys.path:
         sys.path.insert(0, str(store.ROOT))
     from tools import remote  # track C's login (ssh to a GPU-cluster login node; the volume is shared)
     d = f"{remote.RUNTIME}/bcx"
     dest = f"{d}/{key}.gz"
-    if remote.login(f"test -s {dest} && touch {dest} && echo yes; true").strip() == "yes":
+
+    def present() -> bool:
+        return remote.login(f"test -s {dest} && touch {dest} && echo yes; true").strip() == "yes"
+
+    if present():
         return dest
-    data = gzip.compress(path.read_bytes(), 1)
-    # the prune is best effort and leaves other uploads' temporary files alone: a find that saw one renamed away
-    # failed the whole upload, and every game of two tests went to Java (424 games, 19 Nov)
-    remote.login(f'mkdir -p {d} && t=$(mktemp {dest}.XXXXXX) && cat > "$t" && mv -f "$t" {dest} && '
-                 f'{{ find {d} -maxdepth 1 -type f ! -name "*.gz.*" -mtime +{REMOTE_KEEP_DAYS} -delete 2>/dev/null; '
-                 f'true; }}', data, stream=2)
+    with remote.locked(remote.CLIENT / "ship" / f"bcx-{key}.gz", remote.SLOT_WAIT_S):
+        if present():
+            return dest
+        data = gzip.compress(path.read_bytes(), 1)
+        # the prune is best effort and leaves other uploads' temporary files alone: a find that saw one renamed away
+        # failed the whole upload, and every game of two tests went to Java (424 games, 19 Nov)
+        remote.login(f'mkdir -p {d} && t=$(mktemp {dest}.XXXXXX) && cat > "$t" && mv -f "$t" {dest} && '
+                     f'{{ find {d} -maxdepth 1 -type f ! -name "*.gz.*" -mtime +{REMOTE_KEEP_DAYS} -delete 2>/dev/null; '
+                     f'true; }}', data, stream=2)
     return dest
 
 
@@ -411,10 +419,10 @@ class ImperialRunner:
                 except OSError:
                     lines = []
                 for line in lines:
-                    self._deliver(b, json.loads(line))
+                    self._deliver(b, json.loads(line), task_dir=t)
                 for gid in b["ids"][int(name) * CHUNK:(int(name) + 1) * CHUNK]:
                     if gid not in b["done"]:
-                        self._deliver(b, self._failure(b, gid, t))
+                        self._deliver(b, self._failure(b, gid, t), task_dir=t)
             if all(gid in b["done"] for gid in b["ids"]):
                 b["complete"] = True
                 break
@@ -462,7 +470,7 @@ class ImperialRunner:
         if self.on_guard:
             self.on_guard(job, g)
 
-    def _deliver(self, b: dict, r: dict) -> None:
+    def _deliver(self, b: dict, r: dict, task_dir: Path | None = None) -> None:
         gid = r.get("id")
         if gid in b["guards"] and gid not in b["done"]:
             b["done"].add(gid)
@@ -481,7 +489,10 @@ class ImperialRunner:
         res["remote"] = b["run"]
         res["replay"] = None
         if job.replay and r.get("error") is None:
-            found = sorted((store.ROOT / "runs" / b["run"]).glob(f"*/out/replays/{play.safe(gid)}.bc26"))
+            rname = f"{play.safe(gid)}.bc26"
+            direct = task_dir / "out" / "replays" / rname if task_dir is not None else None
+            found = [direct] if (direct is not None and direct.exists()) else sorted(
+                (store.ROOT / "runs" / b["run"]).glob(f"*/out/replays/{rname}"))
             if found:
                 Path(job.replay).parent.mkdir(parents=True, exist_ok=True)
                 shutil.move(str(found[0]), job.replay)

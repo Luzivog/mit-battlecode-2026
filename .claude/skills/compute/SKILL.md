@@ -25,7 +25,8 @@ tools/run --kit --each FILE --chunk K -- CMD {file} {out}   # a task a K lines, 
   `runs/RUN/tasks.jsonl`; the gathered files and `summary.json` stay.
 - A task gets `JOB_CPUS` CPUs (`--task-cpus`, default 1) and `JOB_MEM_MB` (`--task-mem`, default 1700M: a game's JVM
   peaks at 0.5-1.6 GB). A machine runs as many tasks at once as its CPUs and its memory both hold.
-- `--with PATH` ships another git-ignored file or folder. `--where condor,slurm,cpucluster1` limits the backends.
+- `--with PATH` ships another git-ignored file or folder. `--env KEY=VAL` passes environment variables (repeatable). `--where condor,slurm,cpucluster1` limits the backends.
+- `--detach --json` prints run metadata as JSON on stdout (`id`, `tasks`, `pieces`, `results`).
 - It prints the run's id first, then waits until every task has ended; the exit code is 0 when every task ended 0,
   else the first task's code. A task whose machine was taken back runs again elsewhere, three starts at most.
 - A machine with under 2 GB free where tasks write takes no task. A task that exits 75 says its machine can't
@@ -53,12 +54,10 @@ RUN=$(tools/run --kit --detach --each specs.jsonl --chunk 10 -- tools/play {file
 tools/compute wait "$RUN" --json          # run_in_background; exit = the run's status; results in runs/RUN/
 ```
 
-- `tools/compute wait ID...` takes runs and jobs, polls every 30 s, survives lost connections, fetches results as
-  they come, and ends with one line an id saying where they are. Run it again after a restart: it picks up.
+- `tools/compute wait ID... [--any] [--json]` follows runs and jobs concurrently, polls every 30 s, survives lost connections, fetches results as they come (writing `runs/RUN/progress.json`), and ends with one line an id saying where they are (`--any` returns at the first finished id and names the rest). Run it again after a restart: it picks up.
 - Or run `tools/run ...` itself in the background: same output, same exit code.
-- `tools/compute status [--json]`: what each backend can start now, in tasks at once, the pool, and our jobs. It
-  never waits for another process's read: the pool line says how old its snapshot is (under 30 s, or older while
-  another process reads it anew); a backend that can't be read is named as unreadable.
+- `tools/compute status [--json] [--all]`: what each backend can start now, in tasks at once, free GPUs, the pool, and our jobs (`--all` also shows unavailable backends such as cpucluster1 when its controller disk is full). It never waits for another process's read: the pool line says how old its snapshot is (under 30 s, or older while another process reads it anew); a backend that can't be read is named as unreadable.
+- `tools/compute doctor [--offline] [--json]`: checks `.env`, workspace config/quota, Bitwarden/Kerberos state, SSH ControlMasters, local toolchain, and per-host cluster health (`gpucluster2`, `gpucluster3`, `cpucluster1`).
 - `tools/compute logs ID [-f]`, `tools/compute cancel ID` (a job, or a run: its tasks stop, its queued pieces are
   cancelled; its running pieces go on with other runs' tasks, or end).
 - When a run's last task is done its follower writes `summary.json` first, then cancels the pieces that never
@@ -77,7 +76,7 @@ cut, what comes back, how a lost machine is handled): references/internals.md, "
 ## One job on a chosen backend
 
 ```sh
-tools/compute run --where condor|slurm|cpucluster1 [--cpu N] [--mem 8G] [--time 2h] [--kit] [--with PATH] -- CMD
+tools/compute run --where condor|slurm|cpucluster1 [--cpu N] [--mem 8G] [--gpu a100|2|a100:2] [--time 2h] [--kit] [--with PATH] [--env K=V] [--json] -- CMD
 ```
 
 It runs HEAD (commit first), prints the job id, and returns. `--time` is required on Slurm and cpucluster1 (SIGUSR1

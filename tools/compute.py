@@ -11,11 +11,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import shutil
+import subprocess
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
+from pathlib import Path
 
 from tools import backends as B
 from tools import jobs as J
@@ -56,24 +61,35 @@ STATUS_WAIT_S = 8.0  # status waits this long for a session or another process's
 STATUS_AGE_S = 30.0  # status shows the pool as the shared view last read it when that is this recent
 
 
-def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_MEM_MB) -> None:
+def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_MEM_MB,
+           show_all: bool = False) -> None:
     def safe(f):  # type: ignore[no-untyped-def]
         try:
             return f()
         except Refused as e:
             return e
 
+    old_slot_wait, old_lock_wait, old_stale_ok = remote.SLOT_WAIT_S, view.LOCK_WAIT_S, remote.STALE_OK
     remote.SLOT_WAIT_S = view.LOCK_WAIT_S = STATUS_WAIT_S  # a busy machine makes status say so, not wait
     remote.STALE_OK = True  # another process's read under way: the last one, not a wait
     age = remote.CACHE_S  # every read below shared with this machine's other tools: one login each at most
-    with ThreadPoolExecutor(4) as pool:
-        fc, fs, fk = (pool.submit(safe, lambda f=f: f(age)) for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
-        # the last snapshot when young enough or while another process refreshes it: its age is printed
-        fv = pool.submit(safe, lambda: view.get(wait=False, max_age=STATUS_AGE_S))
-        c, s, k, v = fc.result(), fs.result(), fk.result(), fv.result()
-    notes: list[str] = []
-    free = {o: [x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes, max_age=age)]
-            for o in B.WHERES}
+    try:
+        with ThreadPoolExecutor(4) as pool:
+            fc, fs, fk = (pool.submit(safe, lambda f=f: f(age))
+                          for f in (B.read_condor, B.read_slurm, B.read_cpucluster))
+            # the last snapshot when young enough or while another process refreshes it: its age is printed
+            fv = pool.submit(safe, lambda: view.get(wait=False, max_age=STATUS_AGE_S))
+            c, s, k, v = fc.result(), fs.result(), fk.result(), fv.result()
+        notes: list[str] = []
+        pre = {"condor": c, "slurm": s, "cpucluster1": k}
+        # Only compute offers for backends whose read succeeded (avoids re-reading failed backends and double timeouts).
+        free = {
+            o: ([x for x in R.offers((o,), task_cpus, task_mem_mb, R.DEFAULT_TIME_S, notes, max_age=age, reads=pre)]
+                if not isinstance(pre[o], Refused) else [])
+            for o in B.WHERES
+        }
+    finally:
+        remote.SLOT_WAIT_S, view.LOCK_WAIT_S, remote.STALE_OK = old_slot_wait, old_lock_wait, old_stale_ok
     out: dict[str, object] = {"task": {"cpus": task_cpus, "mem_mb": task_mem_mb}}
     if isinstance(c, Refused):
         out["condor"] = {"error": str(c)}
@@ -88,6 +104,7 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         best = free["slurm"][0] if free["slurm"] else None
         out["slurm"] = {"best_slot_now": asdict(best.slot) if best and best.slot else None,
                         "task_slots_now": best.slots if best else 0,
+                        "gpus_free_by_card": B.free_gpus_by_card(s),
                         "caps": {q: {k2: asdict(v) for k2, v in lim.items()} for q, lim in s.qos.items()
                                  if any(v.cap for v in lim.values())},
                         "jobs": [asdict(j) for j in s.jobs if j.name.startswith("bc26-")]}
@@ -97,6 +114,15 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
                               "per_node": {n: asdict(v) for n, v in k.node.items()},
                               "task_slots_now": sum(o.slots for o in free["cpucluster1"]),
                               "jobs": [asdict(j) for j in k.jobs if j.name.startswith("bc26-")]}
+    elif show_all:
+        if isinstance(k, Refused):
+            out["cpucluster1"] = {"available": False, "error": str(k)}
+        else:
+            free_mb = round(k.statesave_free_kb / 1024, 1) if k.statesave_free_kb is not None else None
+            out["cpucluster1"] = {"available": False, "takes_jobs": False,
+                                  "reason": f"controller StateSaveLocation ({k.statesave_path or 'unknown'}) full: "
+                                            f"{free_mb} MB free (< {B.STATE_FREE_MIN_KB // 1024} MB)",
+                                  "statesave_path": k.statesave_path, "statesave_free_kb": k.statesave_free_kb}
     out["task_slots_now"] = {w: sum(o.slots for o in free[w]) for w in B.WHERES}
     if isinstance(v, Refused):
         out["pool"] = {"error": str(v)}
@@ -135,16 +161,24 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
         print("Slurm (GPU cluster, CPU work holding one card): best slot now: " + (
             f"{best.cpus} CPUs and {best.mem_mb} MB on {best.slot.node} ({best.slot.partition}, a {best.slot.card} "
             f"card): {best.slots} tasks of {t}" if best and best.slot else "none"))
+        gpus = sd.get("gpus_free_by_card")
+        if isinstance(gpus, dict) and gpus:
+            print("  free GPUs: " + ", ".join(f"{card} {cnt}" for card, cnt in gpus.items()))
         for q, lim in s.qos.items():
             if lim.get("gpu") and lim["gpu"].cap:
                 print(f"  our {q} caps: " + ", ".join(f"{k2} {v.used}/{v.cap}" for k2, v in lim.items() if v.cap))
     kd = out.get("cpucluster1")
     if isinstance(kd, dict):
-        assert not isinstance(k, Refused)
-        print("cpucluster1: " + ", ".join(f"{p.name} {p.idle_cpus} idle CPUs" for p in k.partitions.values())
-              + f"; our cap {k.cap.used}/{k.cap.cap} CPUs, {k.mem.used}/{k.mem.cap} MB, "
-              + ", ".join(f"{n} {v.cap}" for n, v in k.node.items()) + f" a job a node; tasks of {t} at once: "
-              f"{kd['task_slots_now']}")
+        if "error" in kd:
+            print(f"cpucluster1: unreadable: {kd['error']}")
+        elif kd.get("available") is False:
+            print(f"cpucluster1: unavailable ({kd['reason']})")
+        else:
+            assert not isinstance(k, Refused)
+            print("cpucluster1: " + ", ".join(f"{p.name} {p.idle_cpus} idle CPUs" for p in k.partitions.values())
+                  + f"; our cap {k.cap.used}/{k.cap.cap} CPUs, {k.mem.used}/{k.mem.cap} MB, "
+                  + ", ".join(f"{n} {v.cap}" for n, v in k.node.items()) + f" a job a node; tasks of {t} at once: "
+                  f"{kd['task_slots_now']}")
     for n in notes:
         print(f"  {n}")
     rows: list[str] = []
@@ -165,58 +199,220 @@ def status(as_json: bool, task_cpus: int = 1, task_mem_mb: int = R.DEFAULT_TASK_
     print("Our jobs:" + ("\n" + "\n".join(rows) if rows else " none"))
 
 
+# ---- doctor ----
+def doctor(as_json: bool = False, offline: bool = False) -> int:
+    """Diagnose local configuration, SSH/Bitwarden/Kerberos readiness, toolchain, and (unless OFFLINE) remote
+    login-node reachability and workspace health. Never prints passwords or secrets."""
+    checks: list[dict[str, object]] = []
+
+    def add(name: str, ok: bool, detail: str, warn: bool = False, **extra: object) -> None:
+        status_word = "ok" if ok else ("warn" if warn else "error")
+        checks.append({"name": name, "status": status_word, "detail": detail, **extra})
+
+    env_files = [str(p) for p in (J.REPO / ".env", remote.DATA / ".env") if p.is_file()]
+    add("env_files", bool(env_files) or bool(LOCAL),
+        f"found {', '.join(env_files)}" if env_files else "no .env in repo or ~/battlecode26-data/.env (see .env.example)",
+        warn=bool(remote.REMOTE_ROOT), files=env_files)
+    ws_ok = bool(LOCAL) or remote.REMOTE_ROOT.startswith("/vol/gpudata/")
+    add("workspace_config", ws_ok,
+        remote.REMOTE_ROOT if ws_ok else "BC26_WORKSPACE unset or not under /vol/gpudata/",
+        workspace=remote.REMOTE_ROOT or None)
+    add("kerberos_config", bool(remote.PRINCIPAL and remote.BW_ITEM),
+        f"principal={remote.PRINCIPAL or '(unset)'}, bw_item={'set' if remote.BW_ITEM else 'unset'}",
+        warn=True, principal=remote.PRINCIPAL or None, bw_item_set=bool(remote.BW_ITEM))
+    bw_ok = remote.BW.is_file() and os.access(remote.BW, os.X_OK)
+    add("bitwarden_cli", bw_ok, str(remote.BW) if bw_ok else f"missing or not executable: {remote.BW}", warn=True)
+    refused_files = [str(p) for p in (remote.KINIT_REFUSED, remote.KINIT_REFUSED_OTHER) if p.exists()]
+    add("kinit_refused", not refused_files,
+        "none" if not refused_files else f"refused password recorded in {', '.join(refused_files)} (update Bitwarden + bw sync)",
+        warn=True)
+    down = remote.submit_down()
+    add("condor_submit_host", down is None,
+        f"{remote.SUBMIT} ok (not marked down)" if down is None else
+        f"{remote.SUBMIT} marked down {down:.0f} s ago ({max(0, remote.SUBMIT_DOWN_S - down):.0f} s left)",
+        warn=True)
+
+    for host in (*remote.SLURM_HOSTS, CPU_HOST, SUBMIT):
+        try:
+            cfg = remote.ssh_config(host)
+            up = None if host == SUBMIT else remote.master_up(host)
+            detail = (f"hostname={cfg.get('hostname', '?')} user={cfg.get('user', '?')} "
+                      f"proxy={cfg.get('proxyjump', 'none')}"
+                      + ("" if up is None else f" master={'up' if up else 'down'}"))
+            add(f"ssh:{host}", True, detail, config=cfg, master_up=up)
+        except Refused as e:
+            add(f"ssh:{host}", False, str(e), warn=host != remote.SLURM_HOSTS[0])
+
+    tools_found = {name: shutil.which(name) for name in ("java", "javac", "clang++", "ninja", "git", "uv", "ssh")}
+    missing_tools = [k for k, v in tools_found.items() if not v]
+    add("local_tools", not missing_tools,
+        "all present" if not missing_tools else f"missing: {', '.join(missing_tools)}",
+        warn=bool(missing_tools) and "ssh" not in missing_tools, tools=tools_found)
+
+    try:
+        st = os.statvfs(J.REPO)
+        free_gb = st.f_bavail * st.f_frsize / 1e9
+        add("local_disk", free_gb >= 5.0, f"{free_gb:.1f} GB free at {J.REPO}", warn=free_gb >= 1.0,
+            free_gb=round(free_gb, 2))
+    except OSError as e:
+        add("local_disk", False, str(e), warn=True)
+
+    if not offline and ws_ok:
+        def probe_host(h: str) -> None:
+            t0 = time.monotonic()
+            try:
+                out = login("echo ok", hosts=(h,), timeout=10.0).strip()
+                add(f"reach:{h}", out == "ok", f"ok in {time.monotonic() - t0:.2f} s", latency_s=round(time.monotonic() - t0, 3))
+            except Refused as e:
+                add(f"reach:{h}", False, str(e), warn=h != remote.SLURM_HOSTS[0])
+
+        with ThreadPoolExecutor(3) as ex:
+            list(ex.map(probe_host, (*remote.SLURM_HOSTS, CPU_HOST)))
+        try:
+            used = W.used_bytes()
+            used_gb = used / 1e9
+            add("workspace_quota", used_gb <= W.ROOM_GB,
+                f"{used_gb:.1f} / {W.QUOTA_GB} GB (new-run cap {W.ROOM_GB} GB)",
+                warn=used_gb <= W.QUOTA_GB - 2, used_gb=round(used_gb, 2))
+        except Refused as e:
+            add("workspace_quota", False, str(e), warn=True)
+        try:
+            kc = B.read_cpucluster(max_age=remote.CACHE_S)
+            if kc.takes_jobs:
+                free_mb = f"{kc.statesave_free_kb / 1024:.0f} MB" if kc.statesave_free_kb is not None else "unknown"
+                add("cpucluster1_controller", True, f"taking jobs (StateSave free: {free_mb})")
+            else:
+                free_mb = f"{kc.statesave_free_kb / 1024:.1f} MB" if kc.statesave_free_kb is not None else "0 MB"
+                add("cpucluster1_controller", False,
+                    f"StateSaveLocation {kc.statesave_path} full ({free_mb} free < {B.STATE_FREE_MIN_KB // 1024} MB)",
+                    warn=True)
+        except Refused as e:
+            add("cpucluster1_controller", False, str(e), warn=True)
+
+    has_error = any(c["status"] == "error" for c in checks)
+    has_warn = any(c["status"] == "warn" for c in checks)
+    summary = {"ok": not has_error, "errors": sum(c["status"] == "error" for c in checks),
+               "warnings": sum(c["status"] == "warn" for c in checks), "checks": checks}
+    if as_json:
+        print(json.dumps(summary, indent=1))
+    else:
+        for c in checks:
+            tag = {"ok": "OK  ", "warn": "WARN", "error": "FAIL"}[str(c["status"])]
+            print(f"[{tag}] {c['name']}: {c['detail']}")
+        print(f"doctor: {'healthy' if not has_error and not has_warn else 'warnings' if not has_error else 'errors'} "
+              f"({summary['errors']} errors, {summary['warnings']} warnings)")
+    return 1 if has_error else 0
+
+
 # ---- wait ----
-def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool) -> int:
-    """Every job and run of IDS followed until it has ended, a job's folder pulled to runs/ID; the first non-zero
-    exit of IDS in their order."""
+def wait(ids: list[str], as_json: bool, poll_s: float, pull: bool, any_mode: bool = False) -> int:
+    """Every job and run of IDS followed concurrently until it has ended (or with ANY_MODE, until the first of them
+    ends), a job's folder pulled to runs/ID; the first non-zero exit of the ended ids in their order."""
     codes: dict[str, int] = {}
     report: dict[str, dict[str, object]] = {}
+    runs = [i for i in ids if R.is_run(i)]
     jobs = [i for i in ids if not R.is_run(i)]
     for i in jobs:
         J.job(i)
-    for rid in (i for i in ids if R.is_run(i)):
-        summary = R.follow(rid, poll_s)
+    for i in runs:
+        R.run_dir(i)
+    stop = threading.Event() if any_mode else None
+    lock = threading.Lock()
+    done_order: list[str] = []
+    errors: dict[str, Refused] = {}
+
+    def follow_run(rid: str) -> None:
+        try:
+            summary = R.follow(rid, poll_s, stop=stop)
+        except Refused as e:
+            with lock:
+                errors[rid] = e
+                if stop is not None:
+                    stop.set()
+            return
+        if not summary:  # stopped early by --any because another id finished first
+            return
         R.report(summary, J.LOCAL_RUNS / rid)
-        print(f"{rid}: {summary['ok']} of {summary['tasks']} tasks ended 0, exit {summary['exit']}; results in "
-              f"{summary['results']}/ (N/out/, N/log, summary.json)", flush=True)
+        if not as_json or not any_mode:
+            print(f"{rid}: {summary['ok']} of {summary['tasks']} tasks ended 0, exit {summary['exit']}; results in "
+                  f"{summary['results']}/ (N/out/, N/log, summary.json)", flush=True)
         code = summary["exit"]
         assert isinstance(code, int)
-        codes[rid] = code
-        report[rid] = summary
-    w = J.Waiter()
-    left = list(jobs)
-    finals: dict[str, J.State] = {}
-    shown: dict[str, str] = {}
-    while left:
-        try:
-            states = view.get(jobs=left).states(left)
-        except Refused as e:  # a lost connection says nothing about the jobs: keep waiting
-            J.say(f"compute: {e}; trying again in {poll_s:.0f} s")
-            time.sleep(poll_s)
-            continue
-        now = time.time()
-        for i in list(left):
-            st = states[i]
-            if shown.get(i) != st.detail:
-                J.say(J.describe(i, st))
-                shown[i] = st.detail
-            if (f := w.settle(i, st, now)) is not None:
-                finals[i] = f
-                left.remove(i)
-        if left:
-            time.sleep(poll_s)
-    for i in jobs:
-        st = finals[i]
-        codes[i] = J.code_of(st)
-        where = ""
-        if pull and st.phase != "gone":
+        with lock:
+            codes[rid] = code
+            report[rid] = summary
+            done_order.append(rid)
+            if stop is not None:
+                stop.set()
+
+    def follow_jobs() -> None:
+        if not jobs:
+            return
+        w = J.Waiter()
+        left = list(jobs)
+        shown: dict[str, str] = {}
+        while left and (stop is None or not stop.is_set()):
             try:
-                where = str(J.pull(i))
-            except Refused as e:
-                J.say(f"compute: pulling {i}: {e}")
-        report[i] = {"id": i, "phase": st.phase, "detail": st.detail, "exit": st.exit, "code": codes[i],
-                     "peak": st.peak, "results": where}
-        print(J.describe(i, st) + (f"; results in {where}/ (log, exit, out/)" if where else ""))
+                states = view.get(jobs=left).states(left)
+            except Refused as e:  # a lost connection says nothing about the jobs: keep waiting
+                J.say(f"compute: {e}; trying again in {poll_s:.0f} s")
+                if stop is not None:
+                    stop.wait(poll_s)
+                else:
+                    time.sleep(poll_s)
+                continue
+            now = time.time()
+            for i in list(left):
+                st = states[i]
+                if shown.get(i) != st.detail:
+                    J.say(J.describe(i, st))
+                    shown[i] = st.detail
+                if (f := w.settle(i, st, now)) is not None:
+                    left.remove(i)
+                    code = J.code_of(f)
+                    where = ""
+                    if pull and f.phase != "gone":
+                        try:
+                            where = str(J.pull(i))
+                        except Refused as e:
+                            J.say(f"compute: pulling {i}: {e}")
+                    rec = {"id": i, "phase": f.phase, "detail": f.detail, "exit": f.exit, "code": code,
+                           "peak": f.peak, "results": where}
+                    if not as_json or not any_mode:
+                        print(J.describe(i, f) + (f"; results in {where}/ (log, exit, out/)" if where else ""),
+                              flush=True)
+                    with lock:
+                        codes[i] = code
+                        report[i] = rec
+                        done_order.append(i)
+                        if stop is not None:
+                            stop.set()
+                            return
+            if left and (stop is None or not stop.is_set()):
+                if stop is not None:
+                    stop.wait(poll_s)
+                else:
+                    time.sleep(poll_s)
+
+    threads: list[threading.Thread] = [threading.Thread(target=follow_run, args=(rid,), daemon=True) for rid in runs]
+    if jobs:
+        threads.append(threading.Thread(target=follow_jobs, daemon=True))
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    if errors and not done_order:
+        raise next(iter(errors.values()))
+    if any_mode:
+        finished = [i for i in ids if i in report]
+        still = [i for i in ids if i not in report]
+        if as_json:
+            print(json.dumps({"stopped": finished, "still_running": still,
+                              "results": {i: report[i] for i in finished}}, indent=1))
+        elif len(ids) > 1:
+            print(f"stopped: {' '.join(finished)}; "
+                  + (f"still running: {' '.join(still)}" if still else "none still running"))
+        return next((codes[i] for i in finished if codes[i] != 0), 0)
     if as_json:
         print(json.dumps([report[i] for i in ids], indent=1))
     return next((codes[i] for i in ids if codes[i] != 0), 0)
@@ -289,28 +485,38 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     st = sub.add_parser("status", help="what each backend can start now, and our jobs")
     st.add_argument("--json", action="store_true")
+    st.add_argument("-a", "--all", dest="show_all", action="store_true",
+                    help="also show unavailable backends (e.g. cpucluster1 when its controller disk is full)")
     st.add_argument("--task-cpus", type=int, default=1, help="size the 'tasks at once' counts for tasks of N CPUs")
     st.add_argument("--task-mem", default=f"{R.DEFAULT_TASK_MEM_MB}M", help="... and of this memory (default 1700M)")
-    r = sub.add_parser("run", help="ship HEAD and run CMD as one job on WHERE; prints the job id")
+    dc = sub.add_parser("doctor", help="check .env, SSH/ControlMaster, Kerberos/Bitwarden, toolchain, and cluster health")
+    dc.add_argument("--json", action="store_true")
+    dc.add_argument("--offline", action="store_true", help="skip remote SSH probes (local checks only)")
+    r = sub.add_parser("run", help="ship HEAD and run CMD as one job on WHERE; prints the job id (or JSON)")
     r.add_argument("--where", required=True, choices=J.WHERES)
     r.add_argument("--cpu", type=int, default=1, metavar="N", help="the CPUs it needs (Condor: a whole machine of "
                    "at least N, its JOB_CPUS all of them; Slurm and cpucluster1: N on one node)")
     r.add_argument("--mem", help="the memory it needs at least (8G, 500M)")
+    r.add_argument("--gpu", help="with --where slurm: GPU request, e.g. a100, a40, 2, or a100:2 (picks strongest card)")
     r.add_argument("--time", help="its own estimate (10m, 2h): required on Slurm and cpucluster1, where SIGUSR1 comes "
                    "120 s before it; on Condor, the job is removed after it")
     r.add_argument("--with", dest="ships", action="append", default=[], metavar="PATH",
                    help="a file or folder the commit doesn't hold (a build's output), shipped to its path; repeatable")
+    r.add_argument("--env", dest="envs", action="append", default=[], metavar="KEY=VAL",
+                   help="environment variable exported inside the job; repeatable")
     r.add_argument("--kit", action="store_true", help="compile build/classes, ship it, and give the job the engine's "
                    "jars: BC_CLASSPATH and BC_ENGINE_JARS")
     r.add_argument("--no-build", action="store_true", help="with --kit: ship build/classes as it is")
+    r.add_argument("--json", action="store_true", help="print submitted job metadata as JSON on stdout")
     r.add_argument("argv", nargs=argparse.REMAINDER, metavar="-- CMD")
     lg = sub.add_parser("logs", help="a job's state and the end of its log")
     lg.add_argument("id")
     lg.add_argument("-n", "--lines", type=int, default=100)
     lg.add_argument("-f", "--follow", action="store_true", help="stream it until the job ends; exit with its code")
-    wt = sub.add_parser("wait", help="block until every job or run named has ended, pull the results, exit with "
-                        "their status: start it as a background command, and its exit wakes you")
+    wt = sub.add_parser("wait", help="block until every job or run named has ended (or first with --any), pull the "
+                        "results, exit with their status: start it as a background command, and its exit wakes you")
     wt.add_argument("ids", nargs="+", metavar="ID")
+    wt.add_argument("--any", action="store_true", help="return as soon as the first named run or job finishes")
     wt.add_argument("--json", action="store_true")
     wt.add_argument("--poll", type=float, default=J.POLL_S, help=f"seconds between reads (default {J.POLL_S:.0f}, "
                     "at least 20)")
@@ -327,18 +533,20 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
     try:
         if a.cmd == "status":
-            status(a.json, a.task_cpus, size_mb(a.task_mem))
+            status(a.json, a.task_cpus, size_mb(a.task_mem), show_all=a.show_all)
+        elif a.cmd == "doctor":
+            return doctor(a.json, offline=a.offline)
         elif a.cmd == "run":
             cmd: list[str] = a.argv[1:] if a.argv[:1] == ["--"] else a.argv
             J.run(a.where, a.cpu, duration(a.time) if a.time else None, cmd, a.ships, a.kit,
-                  size_mb(a.mem) if a.mem else None, not a.no_build)
+                  size_mb(a.mem) if a.mem else None, not a.no_build, gpu=a.gpu, extra_env=a.envs, as_json=a.json)
             sweep_daily()
         elif a.cmd == "logs":
             return J.logs(a.id, a.lines, a.follow)
         elif a.cmd == "wait":
             if a.poll < 20 and not LOCAL:
                 raise Refused("--poll: at least 20 s, light on the login nodes")
-            return wait(a.ids, a.json, a.poll, not a.no_pull)
+            return wait(a.ids, a.json, a.poll, not a.no_pull, any_mode=a.any)
         elif a.cmd == "pull":
             print(J.pull(a.id))
         elif a.cmd == "cancel":

@@ -46,11 +46,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--no-build", action="store_true", help="with --kit: ship build/classes as it is")
     p.add_argument("--with", dest="ships", action="append", default=[], metavar="PATH",
                    help="a git-ignored file or folder the tasks read, shipped to its path; repeatable")
+    p.add_argument("--env", dest="envs", action="append", default=[], metavar="KEY=VAL",
+                   help="environment variable passed to every task; repeatable")
     p.add_argument("--gather", action="append", default=[], metavar="NAME",
                    help="concatenate every task's out/NAME, in task order, into runs/RUN/NAME; repeatable")
-    p.add_argument("--detach", action="store_true", help="submit, print the run's id and exit: follow it with "
-                   "`tools/compute wait RUN`")
-    p.add_argument("--json", action="store_true", help="the run's summary as JSON on stdout at its end")
+    p.add_argument("--detach", action="store_true", help="submit, print the run's id (or JSON with --json) and exit: "
+                   "follow it with `tools/compute wait RUN`")
+    p.add_argument("--json", action="store_true", help="print JSON on stdout (with --detach: run metadata; else: the "
+                   "run's summary at its end)")
+    p.add_argument("-q", "--quiet", action="store_true", help="suppress progress chatter on stderr when detaching")
     p.add_argument("cmd", nargs=argparse.REMAINDER, metavar="-- CMD")
     a = p.parse_args(argv)
     cmd: list[str] = a.cmd[1:] if a.cmd[:1] == ["--"] else a.cmd
@@ -60,22 +64,27 @@ def main(argv: list[str] | None = None) -> int:
         wheres = tuple(w for w in a.where.split(",") if w)
         if bad := [w for w in wheres if w not in J.WHERES]:
             raise Refused(f"--where: {bad[0]} isn't one of {', '.join(J.WHERES)}")
+        env_pairs = J.parse_env_vars(a.envs)
         if a.each is None:
-            tasks, task_cpus = R.tasks_of(cmd, None, 1), 0
+            tasks, task_cpus = R.tasks_of(cmd, None, 1, extra_env=env_pairs), 0
         else:
             lines = [x for x in a.each.read_text().splitlines() if x.strip()]
-            tasks, task_cpus = R.tasks_of(cmd, lines, a.chunk), 0 if a.whole else a.task_cpus
+            tasks, task_cpus = R.tasks_of(cmd, lines, a.chunk, extra_env=env_pairs), 0 if a.whole else a.task_cpus
         s = R.create(tasks, task_cpus, size_mb(a.task_mem), wheres, duration(a.time) if a.time else None,
                      a.max_cpus, a.kit, a.ships, tuple(a.gather), not a.no_build)
-        print(s.id, flush=True)
+        if not (a.detach and a.json):
+            print(s.id, flush=True)
         sweep_daily()
         try:
-            R.place(s, len(tasks))
+            pieces = R.place(s, len(tasks))
         except Refused:
             R.close(s.id, [])  # a run no piece serves is closed, so the sweep takes its folder
             raise
         R.mark_placed(s.id)
         if a.detach:
+            if a.json:
+                print(json.dumps({"id": s.id, "tasks": len(tasks), "pieces": pieces, "wheres": list(wheres),
+                                  "pool": s.pool, "results": str(J.LOCAL_RUNS / s.id)}, indent=1), flush=True)
             return 0
         summary = R.follow(s.id)
     except Refused as e:

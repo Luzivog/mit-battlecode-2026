@@ -594,5 +594,66 @@ class FinishTest(unittest.TestCase):
         self.assertEqual(play.finish(job, {"winner": "A", "backend": "native"}, True)["backend"], "native")
 
 
+class ObjCacheTest(unittest.TestCase):
+    """objcache: deterministic .o caching across gen slots, transitive header invalidation, flag sensitivity, and LRU gc."""
+
+    def test_cross_slot_hit_header_invalidation_and_gc(self):
+        import shutil
+        import subprocess
+        from bcgames import objcache
+        clang = shutil.which("clang++")
+        if not clang:
+            self.skipTest("clang++ not installed")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cache_dir = root / "objcache"
+            stats = root / "stats.txt"
+            for slot in ("g0", "g1"):
+                (root / slot / "rt").mkdir(parents=True)
+                (root / slot / "obj").mkdir(parents=True)
+                (root / slot / "rt" / "rt.h").write_text("#pragma once\ninline int rt_val() { return 40; }\n")
+                (root / slot / "types.h").write_text('#pragma once\n#include "rt.h"\ninline int t_val() { return rt_val() + 2; }\n')
+                (root / slot / "main.cpp").write_text('#include "types.h"\nint main() { return t_val() == 42 ? 0 : 1; }\n')
+
+            def compile_in(slot: str, opt: str = "-O2") -> int:
+                d = root / slot
+                argv = ["-std=c++20", opt, f"-I{d}", f"-I{d / 'rt'}", "-MMD", "-MF", str(d / "obj" / "main.o.d"),
+                        "-c", str(d / "main.cpp"), "-o", str(d / "obj" / "main.o")]
+                return objcache.run_cached(clang, cache_dir, "clang-test-v1", argv, str(stats))
+
+            # 1. Cold miss in g0
+            self.assertEqual(compile_in("g0"), 0)
+            self.assertEqual(stats.read_text().splitlines(), ["M"])
+            # 2. Cross-slot HIT in g1 (different -I paths, identical source + headers)
+            self.assertEqual(compile_in("g1"), 0)
+            self.assertEqual(stats.read_text().splitlines(), ["M", "H"])
+            dep = (root / "g1" / "obj" / "main.o.d").read_text()
+            self.assertIn(str(root / "g1" / "types.h"), dep)
+            self.assertIn(str(root / "g1" / "rt" / "rt.h"), dep)
+            self.assertNotIn("g0", dep)
+            # Link & run cached object from g1
+            exe = root / "g1" / "test_bin"
+            subprocess.run([clang, str(root / "g1" / "obj" / "main.o"), "-o", str(exe)], check=True)
+            self.assertEqual(subprocess.run([str(exe)]).returncode, 0)
+            # 3. Transitive header edit invalidates cache -> MISS, new behavior
+            (root / "g1" / "rt" / "rt.h").write_text("#pragma once\ninline int rt_val() { return 99; }\n")
+            self.assertEqual(compile_in("g1"), 0)
+            self.assertEqual(stats.read_text().splitlines(), ["M", "H", "M"])
+            subprocess.run([clang, str(root / "g1" / "obj" / "main.o"), "-o", str(exe)], check=True)
+            self.assertEqual(subprocess.run([str(exe)]).returncode, 1)
+            # 4. Different optimization flag -> MISS
+            self.assertEqual(compile_in("g0", opt="-O1"), 0)
+            self.assertEqual(stats.read_text().splitlines(), ["M", "H", "M", "M"])
+            # 5. LRU gc evicts oldest entries past keep_bytes (outside grace_s)
+            objs = list(cache_dir.glob("*/*.o"))
+            self.assertEqual(len(objs), 3)
+            old_t = time.time() - 7200
+            for idx, p in enumerate(objs):
+                os.utime(p, (old_t + idx * 10, old_t + idx * 10))
+            gone = objcache.gc(cache_dir, keep_bytes=1, grace_s=60.0)
+            self.assertEqual(len(gone), 3)
+            self.assertEqual(list(cache_dir.glob("*/*.o")), [])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -28,6 +28,7 @@ import secrets
 import shlex
 import shutil
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
@@ -116,17 +117,27 @@ def slots_of(cpus: int, mem_mb: int, task_cpus: int, task_mem_mb: int) -> int:
 
 
 def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: int, notes: list[str],
-           need: int | None = None, named: bool = False, max_age: float = 0.0) -> list[Offer]:
+           need: int | None = None, named: bool = False, max_age: float = 0.0,
+           reads: dict[str, object] | None = None) -> list[Offer]:
     """What each backend of WHERES could start for this run now, read at once, best first (most slots, then ORDER).
     NEED: the tasks to run at once, the most a Slurm or cpucluster1 offer asks for (a lab machine is taken whole). A
     backend that can't be read is left out, its reason in NOTES. cpucluster1 counts only while it can take jobs (its
     read's takes_jobs), and is left out without a word otherwise, unless NAMED: asked for alone by name, it is offered
     as read, and sbatch says why it refuses. Our Condor jobs waiting in its queue will take free machines first: as
-    many of the best free machines are left out. MAX_AGE: scheduler reads of this machine's tools that recent do."""
+    many of the best free machines are left out. MAX_AGE: scheduler reads of this machine's tools that recent do.
+    READS: optional already-completed backend reads (or Refused exceptions) to reuse without re-querying."""
     tc, mb_cpu = max(task_cpus, 1), max(1, -(-task_mem_mb // max(task_cpus, 1)))
+    pre = reads or {}
 
     def condor() -> list[Offer]:
-        c = B.read_condor(max_age)
+        if "condor" in pre:
+            c_raw = pre["condor"]
+            if isinstance(c_raw, Refused):
+                raise c_raw
+            assert isinstance(c_raw, B.Condor)
+            c = c_raw
+        else:
+            c = B.read_condor(max_age)
         idle = sum(1 for j in c.jobs if j.state == "idle")
         free = sorted(((slots_of(m.cpus, m.memory_mb, task_cpus, task_mem_mb), m) for m in c.free(tc, task_mem_mb)),
                       key=lambda x: (-x[0], -x[1].cpus, x[1].name))[idle:]
@@ -134,7 +145,14 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
 
     def cpucluster() -> list[Offer]:
         try:
-            c = B.read_cpucluster(max_age)
+            if "cpucluster1" in pre:
+                c_raw = pre["cpucluster1"]
+                if isinstance(c_raw, Refused):
+                    raise c_raw
+                assert isinstance(c_raw, B.CpuCluster)
+                c = c_raw
+            else:
+                c = B.read_cpucluster(max_age)
         except Refused:
             if named:
                 raise
@@ -171,7 +189,15 @@ def offers(wheres: tuple[str, ...], task_cpus: int, task_mem_mb: int, time_s: in
 
     def slurm() -> list[Offer]:
         units = None if need is None or not task_cpus else need * tc
-        slots = B.slurm_starts_now(B.read_slurm(max_age), tc, units, time_s, max(B.CPU_JOB_MIN_MEM_MB, mb_cpu))
+        if "slurm" in pre:
+            s_raw = pre["slurm"]
+            if isinstance(s_raw, Refused):
+                raise s_raw
+            assert isinstance(s_raw, B.Slurm)
+            sl = s_raw
+        else:
+            sl = B.read_slurm(max_age)
+        slots = B.slurm_starts_now(sl, tc, units, time_s, max(B.CPU_JOB_MIN_MEM_MB, mb_cpu))
         seen: set[str] = set()
         out: list[Offer] = []
         for x in slots:  # one a node: slots on one node's several partitions are the same CPUs
@@ -215,9 +241,13 @@ class Task:
     lines: list[str]
 
 
-def tasks_of(cmd: list[str], lines: list[str] | None, chunk: int) -> list[Task]:
+def tasks_of(cmd: list[str], lines: list[str] | None, chunk: int,
+             extra_env: list[tuple[str, str]] | None = None) -> list[Task]:
     """One task (CMD) when LINES is None; else CMD once a CHUNK of LINES. {} is the line (CHUNK 1 only), {file} a file
-    of the task's lines, {out} its OUT, {cpus} its CPUs; with none of {} and {file}, the line's words are appended."""
+    of the task's lines, {out} its OUT, {cpus} its CPUs; with none of {} and {file}, the line's words are appended.
+    EXTRA_ENV prepends `env KEY=VAL ...` so pooled pieces can run tasks with custom environment variables."""
+    if extra_env:
+        cmd = ["env", *(f"{k}={v}" for k, v in extra_env), *cmd]
     if lines is None:
         return [Task(cmd, [])]
     if chunk < 1:
@@ -624,25 +654,44 @@ def cancel_unstarted(rid: str, pieces: list[str]) -> None:
     J.say(f"run {rid}: {len(unstarted)} pieces that never started cancelled at once")
 
 
-def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) -> dict[str, object]:
+def _write_progress(out: Path, data: dict[str, object]) -> None:
+    tmp = out / f".progress.{os.getpid()}.tmp"
+    try:
+        tmp.write_text(json.dumps(data, indent=1) + "\n")
+        os.replace(tmp, out / "progress.json")
+    except OSError:
+        tmp.unlink(missing_ok=True)
+
+
+def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS,
+           stop: threading.Event | None = None) -> dict[str, object]:
     """RID followed until every task is done, or its pieces were lost MAX_ROUNDS times: results fetched as they come,
-    pieces replaced when every one is gone and tasks are left. Its summary (also runs/ID/summary.json)."""
+    pieces replaced when every one is gone and tasks are left. Its summary (also runs/ID/summary.json).
+    If STOP is set before the run finishes, returns {} cleanly without closing the run."""
     s = read_settings(rid)
     out = out_root / rid
     out.mkdir(parents=True, exist_ok=True)
     (out / "run.json").write_text(json.dumps(asdict(s), indent=1) + "\n")
     have = {int(p.name) for p in out.iterdir() if p.name.isdigit() and (p / "result.json").exists()}
+    codes_seen: dict[int, object] = {n: result_of(out, n).get("code") for n in have}
     shown, dead_since, w = "", None, J.Waiter()
     wanted: list[str] = []  # the pieces whose states the next read brings
     finals: dict[str, J.State] = {}
     placed_at, seen_running, progress, moved_at = s.created or time.time(), set[str](), (-1, -1), time.time()
+    t0 = s.created or time.time()
     tick = time.time()
 
     def pause() -> None:  # a read every POLL_S from the last one's start: the reads' own time isn't added to it
         nonlocal tick
-        time.sleep(max(0.0, poll_s - (time.time() - tick)))
+        dt = max(0.0, poll_s - (time.time() - tick))
+        if stop is not None:
+            stop.wait(dt)
+        else:
+            time.sleep(dt)
         tick = time.time()
     while True:
+        if stop is not None and stop.is_set():
+            return {}
         try:
             snap = view.get(runs=[rid], jobs=wanted)
             sec = snap.run(rid)
@@ -653,6 +702,8 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
             if new:
                 fetch(rid, new, out)
                 have |= set(new)
+                for n in new:
+                    codes_seen[n] = result_of(out, n).get("code")
             live = [p for p in pr.pieces if p not in finals]
             wanted = live
             states = snap.states(live) if live else {}
@@ -667,12 +718,23 @@ def follow(rid: str, poll_s: float = J.POLL_S, out_root: Path = J.LOCAL_RUNS) ->
                 if f.phase == "held":
                     J.say(f"run {rid}: piece {J.describe(pid, f)}")
         running = sum(1 for st in states.values() if st.phase == "running")
-        line = (f"run {rid}: {len(have)} of {s.tasks} tasks done, {len(pr.claimed - have)} running; pieces: "
-                f"{running} running, {sum(1 for p in pr.pieces if p not in finals) - running} waiting, "
-                f"{len(finals)} ended")
+        waiting_pieces = sum(1 for p in pr.pieces if p not in finals) - running
+        failed_n = sum(1 for c in codes_seen.values() if c != 0)
+        elapsed = max(0.0, now - t0)
+        rate = (len(have) / elapsed * 60.0) if elapsed >= 1.0 and have else 0.0
+        pct = (100.0 * len(have) / s.tasks) if s.tasks else 100.0
+        extra = (f", {failed_n} failed" if failed_n else "") + (f", {rate:.1f}/min" if rate > 0 else "")
+        line = (f"run {rid}: {len(have)} of {s.tasks} tasks done ({pct:.0f}%), {len(pr.claimed - have)} running{extra}; "
+                f"pieces: {running} running, {waiting_pieces} waiting, {len(finals)} ended")
         if line != shown:
             J.say(line)
             shown = line
+            _write_progress(out, {
+                "id": rid, "tasks": s.tasks, "done": len(have), "ok": len(have) - failed_n, "failed": failed_n,
+                "running": len(pr.claimed - have), "pct": round(pct, 1), "elapsed_s": round(elapsed, 1),
+                "tasks_per_min": round(rate, 2), "pieces_running": running, "pieces_waiting": waiting_pieces,
+                "pieces_ended": len(finals), "updated": round(now, 3),
+            })
         if len(have) >= s.tasks or pr.closed:
             if not pr.closed:
                 mark_closed(rid)

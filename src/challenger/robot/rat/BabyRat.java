@@ -10,6 +10,7 @@ import challenger.robot.LastCat;
 import challenger.robot.Strategy;
 import challenger.robot.rat.combat.CombatStrategy;
 import challenger.robot.rat.goHome.AntColony;
+import challenger.util.MineEstimate;
 import challenger.util.Rng;
 import static challenger.Game.*;
 import static challenger.util.Util.*;
@@ -383,9 +384,38 @@ public class BabyRat {
     }
 
     public static void attack(RobotInfo info, int damage) throws GameActionException {
-        if (info.getType() != UnitType.BABY_RAT) {
+        if (info.getType() == UnitType.CAT) {
             damage = 10;
+        } else if (info.getType() == UnitType.RAT_KING) {
+            int all = rc.getAllCheese();
+            int hp = info.getHealth();
+            int need = hp > 10 ? CombatStrategy.getCheeseNeeded(hp - 10) : 0;
+            if (hp > 10 && need <= all && (need <= 37 || (all >= 1200 && need <= 145))) {
+                damage = hp;
+            } else if (all >= 400 && MineEstimate.atLeast(5) >= 5) {
+                damage = 12;
+            } else {
+                damage = 10;
+            }
+        } else if (MineEstimate.atLeast(5) >= 5) {
+            int hp = info.getHealth();
+            int all = rc.getAllCheese();
+            if (hp == 13 && all >= 400) damage = 13;
+            else if (hp == 14 && all >= 800) damage = 14;
         }
-        rc.attack(myLoc.add(myLoc.directionTo(info.location)), CombatStrategy.getCheeseNeeded(damage - 10));
+        MapLocation targetLoc = myLoc.add(myLoc.directionTo(info.location));
+        if (!rc.canAttack(targetLoc) && info.getType() == UnitType.RAT_KING) {
+            for (Direction d : relatedDirections(myDir)) {
+                MapLocation cand = myLoc.add(d);
+                if (rc.canAttack(cand)) {
+                    RobotInfo r = rc.senseRobotAtLocation(cand);
+                    if (r != null && r.getID() == info.getID()) {
+                        targetLoc = cand;
+                        break;
+                    }
+                }
+            }
+        }
+        rc.attack(targetLoc, CombatStrategy.getCheeseNeeded(damage - 10));
     }
 }

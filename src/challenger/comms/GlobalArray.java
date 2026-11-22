@@ -53,6 +53,7 @@ public class GlobalArray {
     // lower bits: store target rat id modulo 255 (255 = null)
     // upper bits: strategy index (0 to 3)
     private static final int KING_EXPAND = 21;
+    private static final int LOOK_RIGHT_FLAG = 1 << 9;
     private static final int RAT_SPAWN_INFO = 22;  // spam until MIN_CHEESE is hit
     private static final int MAP_CHUNK_START = 32; // slots 32-37
     private static final int MAP_CHUNK_SLOTS = 6;
@@ -131,6 +132,17 @@ public class GlobalArray {
     public static boolean isKingExpanded(int i) throws GameActionException {
         int x = rc.readSharedArray(KING_EXPAND);
         return (1 & x >> kingId) != 0;
+    }
+
+    public static void setLookRight() throws GameActionException {
+        int x = rc.readSharedArray(KING_EXPAND);
+        if ((x & LOOK_RIGHT_FLAG) == 0) {
+            rc.writeSharedArray(KING_EXPAND, x | LOOK_RIGHT_FLAG);
+        }
+    }
+
+    public static boolean isLookRight() throws GameActionException {
+        return (rc.readSharedArray(KING_EXPAND) & LOOK_RIGHT_FLAG) != 0;
     }
 
     public static int loadSpawnInfo() throws GameActionException {
@@ -457,6 +469,9 @@ public class GlobalArray {
         cur_sym = rc.readSharedArray(SYMMETRY);
         if (cur_sym != 0) {
             CellTracker.setSymmetry(cur_sym);
+            if (team == Team.B && cur_sym == CellTracker.Symmetry.Vertical.ordinal()) {
+                challenger.Pathfinder.lookRight = true;
+            }
         }
     }
 

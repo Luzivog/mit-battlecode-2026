@@ -1,6 +1,7 @@
 package challenger.robot.king;
 
 import challenger.CellTracker;
+import challenger.Pathfinder;
 import challenger.comms.GlobalArray;
 import static challenger.Game.*;
 import challenger.robot.Strategy;
@@ -40,6 +41,7 @@ public class RatKing {
         }
         // indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
         CellTracker.storeVisibleCellsKing();
+        if (time == 1) Pathfinder.noteKingScanOrder();
 
         RobotTracker.reset();
 

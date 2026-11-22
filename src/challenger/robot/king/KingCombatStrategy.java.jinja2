@@ -188,56 +188,6 @@ public class KingCombatStrategy extends Strategy {
         return false;
     }
 
-    private boolean placeDefensiveDirt() throws GameActionException {
-        if (!rc.isActionReady()) return false;
-        if (RobotTracker.numCats == 0) return false;
-
-        RobotInfo nearestCat = RobotTracker.sortedCats[0];
-        MapLocation catLoc = nearestCat.location;
-        if (nearestCat == null) return false;
-        if (catLoc.distanceSquaredTo(myLoc) >= 20) return false;
-
-        int bestScore = -1000000;
-        MapLocation bestLoc = null;
-
-        for (MapInfo info: rc.senseNearbyMapInfos()) {
-            MapLocation loc = info.getMapLocation();
-            if (!rc.canPlaceDirt(loc)) continue;
-            if ((challenger.Tune.KING_TRAPS & 4) != 0 && info.getTrap() != TrapType.NONE) continue;
-            if (loc.distanceSquaredTo(catLoc) > myLoc.distanceSquaredTo(catLoc)) continue;
-
-            int numDirts = 0;
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    if (!rc.onTheMap(new MapLocation(loc.x + dx, loc.y + dy))) continue;
-                    MapInfo checkInfo = rc.senseMapInfo(new MapLocation(loc.x + dx, loc.y + dy));
-                    if (checkInfo.isDirt()) {
-                        numDirts++;
-                    }
-                }
-            }
-
-            // i tested this with thresh = 4
-            // it performs basically the same
-            if (numDirts >= 2) continue;
-
-            int score = -loc.distanceSquaredTo(catLoc);
-
-            if (score > bestScore) {
-                bestScore = score;
-                bestLoc = loc;
-            }
-        }
-
-        if (bestLoc != null) {
-            rc.placeDirt(bestLoc);
-            return true;
-        }
-
-        return false;
-
-    }
-
     // TODO: only dig if we havent seen the cat in some time
     private boolean digSurroundingDirt() throws GameActionException {
         if (!rc.isActionReady()) return false;
@@ -386,7 +336,6 @@ public class KingCombatStrategy extends Strategy {
         }
         if (RobotTracker.numCats > 0) {
             if ((challenger.Tune.KING_TRAPS & 4) != 0) placeDefensiveCatTrap();
-            placeDefensiveDirt();
         }
         if ((challenger.Tune.KING_TRAPS & 2) != 0 && RobotTracker.numEnemies > 0) {
             placeDefensiveRatTrap();
@@ -404,7 +353,17 @@ public class KingCombatStrategy extends Strategy {
                 }
             }
             if(bestEnemy != null && rc.canAttack(bestEnemy.location)) {
-                rc.attack(bestEnemy.location);
+                int kCheese = 0;
+                int g = rc.getGlobalCheese();
+                if (KingSpawningStrategy.isRichMap() && bestEnemy.type == UnitType.BABY_RAT && bestEnemy.health > 10) {
+                    if (bestEnemy.health <= 14 && g >= 400) {
+                        int need = (bestEnemy.health - 11) * (bestEnemy.health - 11) + 1;
+                        if (need <= g) kCheese = need;
+                    } else if (g >= 300) {
+                        kCheese = 2;
+                    }
+                }
+                rc.attack(bestEnemy.location, kCheese);
             } else if(RobotTracker.numCats > 0) {
                 biteCat(RobotTracker.sortedCats[0]);
             } else {

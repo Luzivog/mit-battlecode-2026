@@ -379,7 +379,7 @@ class BugnavInstance {
             // indicate(rightBug.pos);
             // rc.setIndicatorDot(rightBug.pos, 255, 0, 255);
 
-            } else if(Tune.SG_LOOK_RIGHT != 0) {
+            } else if(Pathfinder.lookRight) {
                 if(rightBug.nextPathIndex > leftBug.nextPathIndex) {
                                 // indicate("advance left");
             leftBug.outOfSight = false;
@@ -429,7 +429,7 @@ class BugnavInstance {
 
 
         // SG_LOOK_RIGHT mirrors the left-first rules (advance order above, arrival, ties, the draw): docs/theory/sg-seat-gaps.md
-        if(Tune.SG_LOOK_RIGHT != 0) {
+        if(Pathfinder.lookRight) {
         if(rightBug.arrived) {
                     var bug = rightBug;
         if(bug.leftTurn) {
@@ -2069,10 +2069,19 @@ class BugnavInstance {
 }
 
 public class Pathfinder {
-    public static void init() {
+    public static boolean lookRight;
+
+    public static void noteKingScanOrder() throws GameActionException {
+        if (team == Team.B && CellTracker.kingScanOrder == 2) {
+            GlobalArray.setLookRight();
+        }
+    }
+
+    public static void init() throws GameActionException {
         if(time <= 2) {
             Config.dirtAllowed = true;
         }
+        lookRight = Tune.SG_LOOK_RIGHT != 0 || (team == Team.B && GlobalArray.isLookRight());
     }
     static BugnavInstance bug;
     // The king's bug hand at a new target (Tune.KING_HAND). On VERTICAL maps the right hand loses for team A and wins for

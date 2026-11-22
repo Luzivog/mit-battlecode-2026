@@ -21,7 +21,8 @@ public class KingCombatStrategy extends Strategy {
     private boolean placeDefensiveRatTrap() throws GameActionException {
         if (!rc.isActionReady()) return false;
         if (rc.isCooperation()) return false;
-        if (rc.getGlobalCheese() < 550 || rc.getNumberRatTraps() >= TrapType.RAT_TRAP.maxCount) return false;
+        int minBank = rc.getHealth() <= 400 ? 150 : 250;
+        if (rc.getGlobalCheese() < minBank || rc.getNumberRatTraps() >= TrapType.RAT_TRAP.maxCount) return false;
         if (RobotTracker.numEnemies == 0) return false;
 
         boolean hasThreat = false;
@@ -33,7 +34,7 @@ public class KingCombatStrategy extends Strategy {
             if (d2 <= 8 && robot.health <= GameConstants.RAT_BITE_DAMAGE && rc.canAttack(robot.location)) {
                 return false;
             }
-            if (!hasThreat && robot.type == UnitType.BABY_RAT && d2 <= 16) {
+            if (!hasThreat && ((robot.type == UnitType.BABY_RAT && d2 <= 16) || (robot.type == UnitType.RAT_KING && d2 <= 25))) {
                 hasThreat = true;
             }
         }

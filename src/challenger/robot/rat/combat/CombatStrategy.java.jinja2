@@ -385,7 +385,7 @@ public class CombatStrategy extends Strategy {
                 && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0
                 && rc.getRawCheese() < 20
                 && !GlobalArray.hasActiveFormation()
-                && (rc.getID() % 2 == 0 || GlobalArray.numberOfRatsAlive >= 10)) {
+                && rc.getID() % 3 == 0 && GlobalArray.numberOfRatsAlive >= 12 && rc.getAllCheese() >= 500) {
                 return true;
             }
             if ((challenger.Tune.COOP_CTRL & 16) != 0

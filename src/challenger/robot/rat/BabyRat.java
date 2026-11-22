@@ -90,7 +90,7 @@ public class BabyRat {
         if (!rc.isActionReady()) return;
         if (RobotTracker.numCats > 0 && rc.isCooperation() && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0) {
             if ((Tune.COOP_CTRL & 1) != 0) {
-                if (rc.getAllCheese() < 100 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount) return;
+                if (rc.getAllCheese() < 200 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount) return;
                 RobotInfo cat = null;
                 for (int i = 0; i < RobotTracker.numCats; i++) {
                     RobotInfo cand = RobotTracker.sortedCats[i];

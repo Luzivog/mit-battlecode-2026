@@ -654,6 +654,28 @@ class ObjCacheTest(unittest.TestCase):
             self.assertEqual(len(gone), 3)
             self.assertEqual(list(cache_dir.glob("*/*.o")), [])
 
+    def test_shim_preserves_clangpp_argv0_for_cpp_linking(self):
+        import shutil
+        import subprocess
+        clang = shutil.which("clang++")
+        if not clang:
+            self.skipTest("clang++ not installed")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            oc_env, stats = native._objcache_env(root / "objcache")
+            self.assertTrue(oc_env)
+            self.assertTrue(Path(oc_env["BCX_REAL_CXX"]).name.startswith("clang++"), oc_env["BCX_REAL_CXX"])
+            src = root / "cpp_link.cpp"
+            obj = root / "cpp_link.o"
+            exe = root / "cpp_link"
+            src.write_text('#include <string>\nint main() { std::string s("ok"); return s.size() == 2 ? 0 : 1; }\n')
+            env = dict(os.environ, **oc_env)
+            subprocess.run(["clang++", "-std=c++20", "-c", str(src), "-o", str(obj)], env=env, check=True)
+            subprocess.run(["clang++", str(obj), "-o", str(exe)], env=env, check=True)
+            self.assertEqual(subprocess.run([str(exe)]).returncode, 0)
+            if stats:
+                stats.unlink(missing_ok=True)
+
 
 if __name__ == "__main__":
     unittest.main()

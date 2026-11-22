@@ -409,7 +409,14 @@ def _objcache_env(cache_dir: Path) -> tuple[dict[str, str], Path | None]:
     OBJCACHE is disabled or clang++ is unavailable."""
     if not OBJCACHE:
         return {}, None
-    real_cxx = shutil.which("clang++")
+    shim_dir = cache_dir / "bin"
+    # Resolve clang++ skipping our own shim_dir, and preserve the symlink path (e.g. /usr/bin/clang++ -> clang)
+    # because clang selects C++ mode & links libstdc++ based on argv[0].
+    search_path = os.pathsep.join(
+        p for p in os.environ.get("PATH", "").split(os.pathsep)
+        if p and Path(p).resolve() != shim_dir.resolve()
+    )
+    real_cxx = shutil.which("clang++", path=search_path)
     if not real_cxx:
         return {}, None
     real_path = Path(real_cxx).resolve()
@@ -418,7 +425,6 @@ def _objcache_env(cache_dir: Path) -> tuple[dict[str, str], Path | None]:
         cid = f"{toolchain()}|{real_path}|{st.st_size}|{st.st_mtime_ns}"
     except OSError:
         cid = toolchain()
-    shim_dir = cache_dir / "bin"
     shim_dir.mkdir(parents=True, exist_ok=True)
     shim = shim_dir / "clang++"
     script = f"#!{sys.executable} -S\nimport sys\nsys.path.insert(0, {str(Path(__file__).resolve().parent)!r})\nimport objcache\nsys.exit(objcache.main())\n"
@@ -430,8 +436,8 @@ def _objcache_env(cache_dir: Path) -> tuple[dict[str, str], Path | None]:
     fd, stats_name = tempfile.mkstemp(prefix=".stats.", dir=cache_dir)
     os.close(fd)
     stats_file = Path(stats_name)
-    path_env = f"{shim_dir}{os.pathsep}{os.environ.get('PATH', '')}"
-    return {"PATH": path_env, "BCX_REAL_CXX": str(real_path), "BCX_OBJCACHE_DIR": str(cache_dir),
+    path_env = f"{shim_dir}{os.pathsep}{search_path}"
+    return {"PATH": path_env, "BCX_REAL_CXX": real_cxx, "BCX_OBJCACHE_DIR": str(cache_dir),
             "BCX_OBJCACHE_ID": cid, "BCX_OBJCACHE_STATS": str(stats_file)}, stats_file
 
 

@@ -286,10 +286,10 @@ public class KingFormationCoordinatorStrategy extends Strategy {
         if (GlobalArray.getFormationTarget() != null) return;
 
         boolean mineFreeReady = (Tune.COOP_CTRL & 4) != 0
-            && rc.isCooperation() && time >= 100 && time < LOCK_IN_ROUND
+            && rc.isCooperation() && time >= 130 && time < LOCK_IN_ROUND
             && kings == 1 && numRats >= 12
-            && Game.knownCheeseMines.size() == 0
-            && catRace && rc.getGlobalCheese() >= 1000;
+            && RatKing.totalCheeseInflow >= 100
+            && catRace && rc.getGlobalCheese() >= 1200;
 
         // A cooperation search that found no site is repeated only when its inputs grow: more known mines, fewer
         // symmetries. Repeated every turn, it cost the king 1.6k bytecode a turn on rose (in cooperation to r2000).

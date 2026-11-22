@@ -25,6 +25,7 @@ public class BabyRat {
     public static CombatStrategy combatStrategy;
 
     public static boolean transferSwitch = false;
+    private static boolean catTrapsExpired = false;
 
     public static void init() throws GameActionException {
         int payload = GlobalArray.loadSpawnInfo();
@@ -53,7 +54,7 @@ public class BabyRat {
         return Math.max(dx, dy);
     }
 
-    private static boolean tryPlaceBestCatTrap(RobotInfo cat) throws GameActionException {
+    private static boolean tryPlaceBestCatTrap(RobotInfo cat, boolean detectExpired) throws GameActionException {
         if (!rc.isActionReady()) return false;
         int cx = cat.location.x, cy = cat.location.y;
         int fx = cat.direction.dx, fy = cat.direction.dy;
@@ -65,7 +66,16 @@ public class BabyRat {
         int bestScore = Integer.MIN_VALUE;
         for (Direction off : relatedDirections(myDir)) {
             MapLocation targ = myLoc.add(off);
-            if (!rc.canPlaceCatTrap(targ)) continue;
+            if (!rc.canPlaceCatTrap(targ)) {
+                if (detectExpired && rc.canSenseLocation(targ)) {
+                    MapInfo info = rc.senseMapInfo(targ);
+                    if (info.isPassable() && !info.hasCheeseMine() && info.getTrap() == TrapType.NONE && rc.senseRobotAtLocation(targ) == null) {
+                        catTrapsExpired = true;
+                        return false;
+                    }
+                }
+                continue;
+            }
             int c1 = chebTo2x2(targ, nx, ny);
             int c2 = chebTo2x2(targ, nx2, ny2);
             if (c1 > 1 && c2 > 1) continue;
@@ -88,64 +98,103 @@ public class BabyRat {
     public static void considerPlacingCatTrap() throws GameActionException {
         if (LastCat.isHoldEnabled() && RobotTracker.numCats > 0) LastCat.defuseTraps();
         if (!rc.isActionReady()) return;
-        if (RobotTracker.numCats > 0 && rc.isCooperation() && RobotTracker.numEnemies == 0 && EnemyManager.numKnownEnemies == 0) {
-            if ((Tune.COOP_CTRL & 1) != 0) {
-                if (rc.getAllCheese() < 200 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount) return;
-                RobotInfo cat = null;
-                for (int i = 0; i < RobotTracker.numCats; i++) {
-                    RobotInfo cand = RobotTracker.sortedCats[i];
-                    if (cand == null) continue;
-                    if (dist(myLoc, cand) > 13) break;
-                    if (LastCat.isHoldEnabled() && !LastCat.mayDamage(cand, TrapType.CAT_TRAP.damage)) continue;
-                    cat = cand;
+        if (RobotTracker.numCats == 0) return;
+        boolean coop = rc.isCooperation();
+        if (coop) {
+            if (RobotTracker.numEnemies != 0 || EnemyManager.numKnownEnemies != 0) return;
+        } else {
+            if ((Tune.KING_TRAPS & 4) == 0 || catTrapsExpired || rc.getBackstabbingTeam() == team) return;
+            if (rc.getAllCheese() < 100 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount) return;
+            if (GlobalArray.nearestRatKing == null) return;
+        }
+
+        if (!coop || (Tune.COOP_CTRL & 1) != 0) {
+            if (coop && (rc.getAllCheese() < 200 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount)) return;
+            RobotInfo cat = null;
+            for (int i = 0; i < RobotTracker.numCats; i++) {
+                RobotInfo cand = RobotTracker.sortedCats[i];
+                if (cand == null) continue;
+                if (dist(myLoc, cand) > 13) break;
+                if (!coop && cand.location.distanceSquaredTo(GlobalArray.nearestRatKing) > 36) continue;
+                if (LastCat.isHoldEnabled() && !LastCat.mayDamage(cand, TrapType.CAT_TRAP.damage)) continue;
+                cat = cand;
+                break;
+            }
+            if (cat == null) return;
+
+            boolean placed = tryPlaceBestCatTrap(cat, !coop);
+            if (!coop && (catTrapsExpired || RobotTracker.numEnemies > 0)) return;
+            int cx = cat.location.x, cy = cat.location.y;
+            int fx = cat.direction.dx, fy = cat.direction.dy;
+            if (!placed && rc.canTurn()) {
+                MapLocation aim = cat.location.translate(fx, fy);
+                Direction turnDir = myLoc.directionTo(aim);
+                if (turnDir == Direction.CENTER) turnDir = myLoc.directionTo(cat.location);
+                if (turnDir != Direction.CENTER && turnDir != myDir) {
+                    turn(turnDir);
+                    if (rc.isActionReady() && (!LastCat.isHoldEnabled() || LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage))) {
+                        placed = tryPlaceBestCatTrap(cat, !coop);
+                        if (!coop && catTrapsExpired) return;
+                    }
+                }
+            }
+            // If standing in the cat's sight cone or next-step crush footprint, step to safety.
+            boolean inDanger = canCatSense(myLocX - cx, myLocY - cy, cat.direction)
+                || chebTo2x2(myLoc, cx + fx, cy + fy) == 0;
+            if (inDanger && rc.isMovementReady()) {
+                Direction bestMove = null;
+                int bestMoveScore = Integer.MIN_VALUE;
+                for (Direction moveDir : directions) {
+                    if (!rc.canMove(moveDir)) continue;
+                    MapLocation nxt = myLoc.add(moveDir);
+                    boolean nxtSeen = canCatSense(nxt.x - cx, nxt.y - cy, cat.direction);
+                    boolean nxtCrush = chebTo2x2(nxt, cx + fx, cy + fy) == 0;
+                    int score = (nxtSeen ? 0 : 200) + (nxtCrush ? -300 : 0) + dist(nxt, cat) * 4;
+                    if (moveDir == myDir) score += 5;
+                    if (score > bestMoveScore) {
+                        bestMoveScore = score;
+                        bestMove = moveDir;
+                    }
+                }
+                if (bestMove != null) {
+                    rawMove(bestMove);
+                    if (!placed && rc.isActionReady() && (!LastCat.isHoldEnabled() || LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage))) {
+                        tryPlaceBestCatTrap(cat, !coop);
+                    }
+                }
+            }
+            return;
+        }
+
+        RobotInfo cat = RobotTracker.sortedCats[0];
+        if (LastCat.isHoldEnabled() && !LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return;
+        if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
+            for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
+                MapLocation targ = myLoc.add(off);
+                MapLocation bruh = targ.add(targ.directionTo(cat.location));
+                if (rc.canSenseLocation(bruh)) {
+                    RobotInfo r = rc.senseRobotAtLocation(bruh);
+                    if (r != null && r.location.equals(cat.location) && rc.canPlaceCatTrap(targ)) {
+                        rc.placeCatTrap(targ);
+                    }
+                }
+            }
+            if (rc.canTurn()) {
+                for (Direction dir : directions) {
+                    if (dir == myDir) continue;
+                    if (canSense(myLoc, cat.location, dir)) {
+                        turn(dir);
+                        break;
+                    }
+                }
+            }
+            for (Direction _moveDir : relatedDirections(myLoc.directionTo(cat.location))) {
+                Direction moveDir = _moveDir.opposite();
+                if (rc.canMove(moveDir)) {
+                    rawMove(moveDir);
                     break;
                 }
-                if (cat == null) return;
-
-                boolean placed = tryPlaceBestCatTrap(cat);
-                int cx = cat.location.x, cy = cat.location.y;
-                int fx = cat.direction.dx, fy = cat.direction.dy;
-                if (!placed && rc.canTurn()) {
-                    MapLocation aim = cat.location.translate(fx, fy);
-                    Direction turnDir = myLoc.directionTo(aim);
-                    if (turnDir == Direction.CENTER) turnDir = myLoc.directionTo(cat.location);
-                    if (turnDir != Direction.CENTER && turnDir != myDir) {
-                        turn(turnDir);
-                        if (rc.isActionReady() && (!LastCat.isHoldEnabled() || LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage))) {
-                            placed = tryPlaceBestCatTrap(cat);
-                        }
-                    }
-                }
-                // If standing in the cat's sight cone or next-step crush footprint, step to safety.
-                boolean inDanger = canCatSense(myLocX - cx, myLocY - cy, cat.direction)
-                    || chebTo2x2(myLoc, cx + fx, cy + fy) == 0;
-                if (inDanger && rc.isMovementReady()) {
-                    Direction bestMove = null;
-                    int bestMoveScore = Integer.MIN_VALUE;
-                    for (Direction moveDir : directions) {
-                        if (!rc.canMove(moveDir)) continue;
-                        MapLocation nxt = myLoc.add(moveDir);
-                        boolean nxtSeen = canCatSense(nxt.x - cx, nxt.y - cy, cat.direction);
-                        boolean nxtCrush = chebTo2x2(nxt, cx + fx, cy + fy) == 0;
-                        int score = (nxtSeen ? 0 : 200) + (nxtCrush ? -300 : 0) + dist(nxt, cat) * 4;
-                        if (moveDir == myDir) score += 5;
-                        if (score > bestMoveScore) {
-                            bestMoveScore = score;
-                            bestMove = moveDir;
-                        }
-                    }
-                    if (bestMove != null) {
-                        rawMove(bestMove);
-                        if (!placed && rc.isActionReady() && (!LastCat.isHoldEnabled() || LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage))) {
-                            tryPlaceBestCatTrap(cat);
-                        }
-                    }
-                }
-                return;
             }
-
-            RobotInfo cat = RobotTracker.sortedCats[0];
-            if (LastCat.isHoldEnabled() && !LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return;
             if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
                 for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
                     MapLocation targ = myLoc.add(off);
@@ -154,34 +203,6 @@ public class BabyRat {
                         RobotInfo r = rc.senseRobotAtLocation(bruh);
                         if (r != null && r.location.equals(cat.location) && rc.canPlaceCatTrap(targ)) {
                             rc.placeCatTrap(targ);
-                        }
-                    }
-                }
-                if (rc.canTurn()) {
-                    for (Direction dir : directions) {
-                        if (dir == myDir) continue;
-                        if (canSense(myLoc, cat.location, dir)) {
-                            turn(dir);
-                            break;
-                        }
-                    }
-                }
-                for (Direction _moveDir : relatedDirections(myLoc.directionTo(cat.location))) {
-                    Direction moveDir = _moveDir.opposite();
-                    if (rc.canMove(moveDir)) {
-                        rawMove(moveDir);
-                        break;
-                    }
-                }
-                if (cat.location.isWithinDistanceSquared(myLoc, 9, cat.direction, 90, true)) {
-                    for (Direction off : relatedDirections(myLoc.directionTo(cat.location))) {
-                        MapLocation targ = myLoc.add(off);
-                        MapLocation bruh = targ.add(targ.directionTo(cat.location));
-                        if (rc.canSenseLocation(bruh)) {
-                            RobotInfo r = rc.senseRobotAtLocation(bruh);
-                            if (r != null && r.location.equals(cat.location) && rc.canPlaceCatTrap(targ)) {
-                                rc.placeCatTrap(targ);
-                            }
                         }
                     }
                 }

@@ -14,6 +14,98 @@ import challenger.CellTracker;
 
 public class KingCombatStrategy extends Strategy {
 
+    private static final int[] RING_DX = {0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1};
+    private static final int[] RING_DY = {2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, 0, 1, 2, 2};
+    private static boolean catTrapsExpired = false;
+
+    private boolean placeDefensiveCatTrap() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        if (RobotTracker.numCats == 0) return false;
+        if (rc.getAllCheese() < 100 || rc.getNumberCatTraps() >= TrapType.CAT_TRAP.maxCount) return false;
+        boolean coop = rc.isCooperation();
+        if (!coop && (catTrapsExpired || rc.getBackstabbingTeam() == team)) return false;
+
+        RobotInfo cat = RobotTracker.sortedCats[0];
+        if (cat == null) return false;
+        int catDistSq = dist(myLoc, cat);
+        if (catDistSq > 20) return false;
+        if (challenger.robot.LastCat.isHoldEnabled() && !challenger.robot.LastCat.mayDamage(cat, TrapType.CAT_TRAP.damage)) return false;
+
+        long blockedMask = 0L;
+        if (rc.getNumberCatTraps() > 0) {
+            for (MapInfo info : rc.senseNearbyMapInfos(18)) {
+                if (info.getTrap() == TrapType.CAT_TRAP) {
+                    int tx = info.getMapLocation().x - myLocX;
+                    int ty = info.getMapLocation().y - myLocY;
+                    for (int ox = -1; ox <= 1; ox++) {
+                        int nx = tx + ox;
+                        if (nx < -2 || nx > 2) continue;
+                        for (int oy = -1; oy <= 1; oy++) {
+                            int ny = ty + oy;
+                            if (ny < -2 || ny > 2) continue;
+                            blockedMask |= 1L << ((nx + 2) * 5 + (ny + 2));
+                        }
+                    }
+                }
+            }
+        }
+
+        int cx = cat.location.x;
+        int cy = cat.location.y;
+        int fx = cat.direction.dx;
+        int fy = cat.direction.dy;
+        int ncx = cx + fx;
+        int ncy = cy + fy;
+        int faceDot = (2 * myLocX - 2 * cx - 1) * fx + (2 * myLocY - 2 * cy - 1) * fy;
+
+        int bestScore = Integer.MIN_VALUE;
+        MapLocation bestLoc = null;
+        for (int r = 0; r < 16; r++) {
+            int rx = RING_DX[r];
+            int ry = RING_DY[r];
+            if ((blockedMask & (1L << ((rx + 2) * 5 + (ry + 2)))) != 0L) continue;
+            MapLocation loc = new MapLocation(myLocX + rx, myLocY + ry);
+            if (!rc.canPlaceCatTrap(loc)) {
+                if (!coop && rc.onTheMap(loc)) {
+                    MapInfo info = rc.senseMapInfo(loc);
+                    if (info.isPassable() && !info.hasCheeseMine() && info.getTrap() == TrapType.NONE && rc.senseRobotAtLocation(loc) == null) {
+                        catTrapsExpired = true;
+                        return false;
+                    }
+                }
+                continue;
+            }
+
+            int ndx = ncx - loc.x;
+            if (ndx < 0) ndx = -ndx - 1;
+            int ndy = ncy - loc.y;
+            if (ndy < 0) ndy = -ndy - 1;
+            int nextCheb = ndx > ndy ? ndx : ndy;
+            int curCheb = chebyshevDistance(loc, cat);
+            int locCatDistSq = dist(loc, cat);
+
+            if (nextCheb > 1 && !(curCheb <= 2 && locCatDistSq < catDistSq && faceDot >= 0)) continue;
+
+            int score = -locCatDistSq;
+            if (nextCheb == 0) score += 50;
+            else if (nextCheb == 1) score += 40;
+            if (curCheb == 1) score += 25;
+            else if (curCheb == 2) score += 10;
+            if (locCatDistSq < catDistSq) score += 15;
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestLoc = loc;
+            }
+        }
+
+        if (bestLoc != null) {
+            rc.placeCatTrap(bestLoc);
+            return true;
+        }
+        return false;
+    }
+
     private boolean placeDefensiveDirt() throws GameActionException {
         if (!rc.isActionReady()) return false;
         if (RobotTracker.numCats == 0) return false;
@@ -29,6 +121,7 @@ public class KingCombatStrategy extends Strategy {
         for (MapInfo info: rc.senseNearbyMapInfos()) {
             MapLocation loc = info.getMapLocation();
             if (!rc.canPlaceDirt(loc)) continue;
+            if ((challenger.Tune.KING_TRAPS & 4) != 0 && info.getTrap() != TrapType.NONE) continue;
             if (loc.distanceSquaredTo(catLoc) > myLoc.distanceSquaredTo(catLoc)) continue;
 
             int numDirts = 0;
@@ -581,9 +674,8 @@ public class KingCombatStrategy extends Strategy {
             if(move != Direction.CENTER && rc.canMove(move)) RatKing.rawMove(move);
         }
         if (RobotTracker.numCats > 0) {
+            if ((challenger.Tune.KING_TRAPS & 4) != 0) placeDefensiveCatTrap();
             placeDefensiveDirt();
-        } else {
-            digSurroundingDirt();
         }
         if(rc.isActionReady()) {
             RobotInfo bestEnemy = null;
@@ -597,10 +689,12 @@ public class KingCombatStrategy extends Strategy {
                     bestHp = robot.health;
                 }
             }
-            if(bestEnemy != null) {
+            if(bestEnemy != null && rc.canAttack(bestEnemy.location)) {
                 rc.attack(bestEnemy.location);
             } else if(RobotTracker.numCats > 0) {
                 biteCat(RobotTracker.sortedCats[0]);
+            } else {
+                digSurroundingDirt();
             }
         }
         return true;

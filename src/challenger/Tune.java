@@ -136,5 +136,5 @@ public final class Tune {
     // Book.AT_DIRT) in CellTracker, every cell seen (MS's ms_okb v2 oracle as book data).
     public static final int AT_MAP = 0; // tune: 1 [0, 1] the map's walls and dirt from the book: 0 off (main), 1 on
     // P7: king-trap asymmetry bitmask (1: baby rats trap enemy kings, 2: own king defensive rat traps, 4: king & backstab-victim cat traps).
-    public static final int KING_TRAPS = 4; // tune: 1 [0, 7] king-trap asymmetry bitmask (1 enemy-king, 2 king-def-rat, 4 king+victim-cat)
+    public static final int KING_TRAPS = 7; // tune: 1 [0, 7] king-trap asymmetry bitmask (1 enemy-king, 2 king-def-rat, 4 king+victim-cat)
 }

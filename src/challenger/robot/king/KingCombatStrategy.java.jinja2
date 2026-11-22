@@ -16,6 +16,89 @@ public class KingCombatStrategy extends Strategy {
     private static final int[] RING_DY = {2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, 0, 1, 2, 2};
     private static boolean catTrapsExpired = false;
 
+    private boolean placeDefensiveRatTrap() throws GameActionException {
+        if (!rc.isActionReady()) return false;
+        if (rc.isCooperation()) return false;
+        if (rc.getGlobalCheese() < 550 || rc.getNumberRatTraps() >= TrapType.RAT_TRAP.maxCount) return false;
+        if (RobotTracker.numEnemies == 0) return false;
+
+        boolean hasThreat = false;
+        int enemyLim = RobotTracker.numEnemies < 8 ? RobotTracker.numEnemies : 8;
+        for (int idx = 0; idx < RobotTracker.numEnemies; idx++) {
+            RobotInfo robot = RobotTracker.sortedEnemies[idx];
+            if (robot == null) continue;
+            int d2 = robot.location.distanceSquaredTo(myLoc);
+            if (d2 <= 8 && robot.health <= GameConstants.RAT_BITE_DAMAGE && rc.canAttack(robot.location)) {
+                return false;
+            }
+            if (!hasThreat && robot.type == UnitType.BABY_RAT && d2 <= 16) {
+                hasThreat = true;
+            }
+        }
+        if (!hasThreat) return false;
+
+        long blockedMask = 0L;
+        if (rc.getNumberRatTraps() > 0) {
+            for (MapInfo info : rc.senseNearbyMapInfos(18)) {
+                if (info.getTrap() == TrapType.RAT_TRAP) {
+                    int tx = info.getMapLocation().x - myLocX;
+                    int ty = info.getMapLocation().y - myLocY;
+                    for (int ox = -1; ox <= 1; ox++) {
+                        int nx = tx + ox;
+                        if (nx < -2 || nx > 2) continue;
+                        for (int oy = -1; oy <= 1; oy++) {
+                            int ny = ty + oy;
+                            if (ny < -2 || ny > 2) continue;
+                            blockedMask |= 1L << ((nx + 2) * 5 + (ny + 2));
+                        }
+                    }
+                }
+            }
+        }
+
+        int bestScore = 0;
+        MapLocation bestLoc = null;
+        for (int r = 0; r < 16; r++) {
+            int rx = RING_DX[r];
+            int ry = RING_DY[r];
+            if ((blockedMask & (1L << ((rx + 2) * 5 + (ry + 2)))) != 0L) continue;
+            MapLocation loc = new MapLocation(myLocX + rx, myLocY + ry);
+            if (!rc.canPlaceRatTrap(loc)) continue;
+
+            int score = 0;
+            for (int idx = 0; idx < enemyLim; idx++) {
+                RobotInfo e = RobotTracker.sortedEnemies[idx];
+                if (e == null) continue;
+                int cheb = chebyshevDistance(loc, e);
+                if (cheb > 2) continue;
+                int eScore = (cheb <= 1 ? 20 : 12);
+                if (loc.distanceSquaredTo(e.location) < myLoc.distanceSquaredTo(e.location)) {
+                    eScore += 8;
+                }
+                if (e.type == UnitType.RAT_KING) {
+                    eScore += 15;
+                } else {
+                    if (e.getCarryingRobot() != null) eScore += 12;
+                    if (e.health >= 50) eScore += 6;
+                    if (e.health <= TrapType.RAT_TRAP.damage && e.health > GameConstants.RAT_BITE_DAMAGE) eScore += 4;
+                    int dot = (loc.x - e.location.x) * e.direction.dx + (loc.y - e.location.y) * e.direction.dy;
+                    if (dot > 0) eScore += 6;
+                }
+                score += eScore;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestLoc = loc;
+            }
+        }
+
+        if (bestLoc != null) {
+            rc.placeRatTrap(bestLoc);
+            return true;
+        }
+        return false;
+    }
+
     private boolean placeDefensiveCatTrap() throws GameActionException {
         if (!rc.isActionReady()) return false;
         if (RobotTracker.numCats == 0) return false;
@@ -303,6 +386,9 @@ public class KingCombatStrategy extends Strategy {
         if (RobotTracker.numCats > 0) {
             if ((challenger.Tune.KING_TRAPS & 4) != 0) placeDefensiveCatTrap();
             placeDefensiveDirt();
+        }
+        if ((challenger.Tune.KING_TRAPS & 2) != 0 && RobotTracker.numEnemies > 0) {
+            placeDefensiveRatTrap();
         }
         if(rc.isActionReady()) {
             RobotInfo bestEnemy = null;

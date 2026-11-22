@@ -56,6 +56,29 @@ public final class TryTrap {
     static int weightCompTime;
     static int bytecodeStart, bytecodeBudget;
     static boolean shouldDefRun;
+    static RobotInfo kingTarget;
+
+    private static RobotInfo findTrapableEnemyKing() {
+        if ((challenger.Tune.KING_TRAPS & 1) == 0) return null;
+        if (rc.getGlobalCheese() < 700 && rc.getRawCheese() < 20) return null;
+        if (rc.getAllCheese() < TrapType.RAT_TRAP.buildCost || rc.getNumberRatTraps() >= TrapType.RAT_TRAP.maxCount) return null;
+        int biteDmg = CombatStrategy.getBiteDamage();
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() == UnitType.RAT_KING && chebyshevDistance(myLoc, info) <= 2 && info.getHealth() > biteDmg) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasRatTrapNear(MapLocation loc) throws GameActionException {
+        if (rc.getNumberRatTraps() == 0) return false;
+        for (MapInfo mi : rc.senseNearbyMapInfos(loc, 2)) {
+            if (mi.getTrap() == TrapType.RAT_TRAP) return true;
+        }
+        return false;
+    }
 
     public static boolean verifyCanRun() throws GameActionException {
         if (!rc.isActionReady() || !confirmCanPlace()) return false;
@@ -110,9 +133,11 @@ public final class TryTrap {
     }
 
     public static boolean run() throws GameActionException {
-        if (!verifyCanRun()) return false;
+        if (!rc.isActionReady()) return false;
+        kingTarget = findTrapableEnemyKing();
+        if (kingTarget == null && !confirmCanPlace()) return false;
         bandEnemy = findBandEnemy();
-        shouldDefRun = bandEnemy != null || globalShouldRun();
+        shouldDefRun = kingTarget != null || bandEnemy != null || globalShouldRun();
         if (!shouldDefRun && !shouldRunEarlyExit()) return false;
 
         bytecodeStart = Clock.getBytecodeNum();
@@ -162,11 +187,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX {% if dx %} + {{ dx }}{% endif %}, myLocY {% if dy %} + {{ dy }}{% endif %});
             if (!rc.canSenseLocation(loc)) {
-                {{ wvar(dx, dy) }} = -1000;
+                {{ wvar(dx, dy) }} = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine(){% if dx != 0 or dy != 0 %} || rc.senseRobotAtLocation(loc) != null{% endif %}) {
-                    {{ wvar(dx, dy) }} = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE{% if dx != 0 or dy != 0 %} || rc.senseRobotAtLocation(loc) != null{% endif %}) {
+                    {{ wvar(dx, dy) }} = -10000;
                 } else {
                     {{ wvar(dx, dy) }} = 0;
                 }
@@ -184,8 +209,42 @@ public final class TryTrap {
             addAdjacentWeight(d.rotateLeft(), challenger.Tune.BAND_W_SIDE);
             addAdjacentWeight(d.rotateRight(), challenger.Tune.BAND_W_SIDE);
         }
+        if (kingTarget != null) {
+            int biteDmg = CombatStrategy.getBiteDamage();
+            for (int i = 0; i < RobotTracker.numEnemies; i++) {
+                RobotInfo info = RobotTracker.sortedEnemies[i];
+                if (info.getType() == UnitType.RAT_KING && chebyshevDistance(myLoc, info) <= 2 && info.getHealth() > biteDmg) {
+                    applyKingTrapWeights(info);
+                }
+            }
+        }
 
         {# // Profiler.pop("TryTrap.computeWeights"); #}
+    }
+
+    private static void applyKingTrapWeights(RobotInfo king) {
+        int kx = king.location.x;
+        int ky = king.location.y;
+        int vx = kx - myLocX;
+        int vy = ky - myLocY;
+        {% for dy in range(2, -3, -1) %}
+        {% for dx in range(-2, 3) %}
+        {% if dx != 0 or dy != 0 %}
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if ({{ wvar(dx, dy) }} > -50) {
+            int tx = myLocX {% if dx %} + {{ dx }}{% endif %} - kx;
+            int ty = myLocY {% if dy %} + {{ dy }}{% endif %} - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                {{ wvar(dx, dy) }} = ({{ wvar(dx, dy) }} > 0 ? {{ wvar(dx, dy) }} : 0) + kw;
+            }
+        }
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
     }
 
     private static void addAdjacentWeight(Direction d, double v) {
@@ -441,6 +500,7 @@ public final class TryTrap {
     public static boolean miniRun() throws GameActionException {
         if (!verifyCanRun()) return false;
         shouldDefRun = globalShouldRun();
+        RobotInfo miniKing = findTrapableEnemyKing();
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;
@@ -478,6 +538,25 @@ public final class TryTrap {
                             if (ang <= 3) s2 += 4 - ang;
                         }
                     }
+                }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    {% for idx in range(3) %}
+                    if (s{{ idx }} > -50 && !hasRatTrapNear(loc{{ idx }})) {
+                        int tx = loc{{ idx }}.x - kx;
+                        int ty = loc{{ idx }}.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s{{ idx }} = (s{{ idx }} > 0 ? s{{ idx }} : 0) + kw;
+                        }
+                    }
+                    {% endfor %}
                 }
                 double bestScore = -1;
                 MapLocation bestLoc = null;

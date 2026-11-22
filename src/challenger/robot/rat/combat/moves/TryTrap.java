@@ -63,6 +63,29 @@ public final class TryTrap {
     static int weightCompTime;
     static int bytecodeStart, bytecodeBudget;
     static boolean shouldDefRun;
+    static RobotInfo kingTarget;
+
+    private static RobotInfo findTrapableEnemyKing() {
+        if ((challenger.Tune.KING_TRAPS & 1) == 0) return null;
+        if (rc.getGlobalCheese() < 700 && rc.getRawCheese() < 20) return null;
+        if (rc.getAllCheese() < TrapType.RAT_TRAP.buildCost || rc.getNumberRatTraps() >= TrapType.RAT_TRAP.maxCount) return null;
+        int biteDmg = CombatStrategy.getBiteDamage();
+        for (int i = 0; i < RobotTracker.numEnemies; i++) {
+            RobotInfo info = RobotTracker.sortedEnemies[i];
+            if (info.getType() == UnitType.RAT_KING && chebyshevDistance(myLoc, info) <= 2 && info.getHealth() > biteDmg) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasRatTrapNear(MapLocation loc) throws GameActionException {
+        if (rc.getNumberRatTraps() == 0) return false;
+        for (MapInfo mi : rc.senseNearbyMapInfos(loc, 2)) {
+            if (mi.getTrap() == TrapType.RAT_TRAP) return true;
+        }
+        return false;
+    }
 
     public static boolean verifyCanRun() throws GameActionException {
         if (!rc.isActionReady() || !confirmCanPlace()) return false;
@@ -117,9 +140,11 @@ public final class TryTrap {
     }
 
     public static boolean run() throws GameActionException {
-        if (!verifyCanRun()) return false;
+        if (!rc.isActionReady()) return false;
+        kingTarget = findTrapableEnemyKing();
+        if (kingTarget == null && !confirmCanPlace()) return false;
         bandEnemy = findBandEnemy();
-        shouldDefRun = bandEnemy != null || globalShouldRun();
+        shouldDefRun = kingTarget != null || bandEnemy != null || globalShouldRun();
         if (!shouldDefRun && !shouldRunEarlyExit()) return false;
 
         bytecodeStart = Clock.getBytecodeNum();
@@ -245,11 +270,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + 2);
             if (!rc.canSenseLocation(loc)) {
-                w_m2_2 = -1000;
+                w_m2_2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m2_2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_2 = -10000;
                 } else {
                     w_m2_2 = 0;
                 }
@@ -258,11 +283,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + 2);
             if (!rc.canSenseLocation(loc)) {
-                w_m1_2 = -1000;
+                w_m1_2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m1_2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_2 = -10000;
                 } else {
                     w_m1_2 = 0;
                 }
@@ -271,11 +296,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX , myLocY  + 2);
             if (!rc.canSenseLocation(loc)) {
-                w_0_2 = -1000;
+                w_0_2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_0_2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_2 = -10000;
                 } else {
                     w_0_2 = 0;
                 }
@@ -284,11 +309,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + 2);
             if (!rc.canSenseLocation(loc)) {
-                w_1_2 = -1000;
+                w_1_2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_1_2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_2 = -10000;
                 } else {
                     w_1_2 = 0;
                 }
@@ -297,11 +322,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + 2);
             if (!rc.canSenseLocation(loc)) {
-                w_2_2 = -1000;
+                w_2_2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_2_2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_2 = -10000;
                 } else {
                     w_2_2 = 0;
                 }
@@ -310,11 +335,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + 1);
             if (!rc.canSenseLocation(loc)) {
-                w_m2_1 = -1000;
+                w_m2_1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m2_1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_1 = -10000;
                 } else {
                     w_m2_1 = 0;
                 }
@@ -323,11 +348,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + 1);
             if (!rc.canSenseLocation(loc)) {
-                w_m1_1 = -1000;
+                w_m1_1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m1_1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_1 = -10000;
                 } else {
                     w_m1_1 = 0;
                 }
@@ -336,11 +361,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX , myLocY  + 1);
             if (!rc.canSenseLocation(loc)) {
-                w_0_1 = -1000;
+                w_0_1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_0_1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_1 = -10000;
                 } else {
                     w_0_1 = 0;
                 }
@@ -349,11 +374,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + 1);
             if (!rc.canSenseLocation(loc)) {
-                w_1_1 = -1000;
+                w_1_1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_1_1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_1 = -10000;
                 } else {
                     w_1_1 = 0;
                 }
@@ -362,11 +387,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + 1);
             if (!rc.canSenseLocation(loc)) {
-                w_2_1 = -1000;
+                w_2_1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_2_1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_1 = -10000;
                 } else {
                     w_2_1 = 0;
                 }
@@ -375,11 +400,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -2, myLocY );
             if (!rc.canSenseLocation(loc)) {
-                w_m2_0 = -1000;
+                w_m2_0 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m2_0 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_0 = -10000;
                 } else {
                     w_m2_0 = 0;
                 }
@@ -388,11 +413,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -1, myLocY );
             if (!rc.canSenseLocation(loc)) {
-                w_m1_0 = -1000;
+                w_m1_0 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m1_0 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_0 = -10000;
                 } else {
                     w_m1_0 = 0;
                 }
@@ -401,11 +426,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX , myLocY );
             if (!rc.canSenseLocation(loc)) {
-                w_0_0 = -1000;
+                w_0_0 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine()) {
-                    w_0_0 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE) {
+                    w_0_0 = -10000;
                 } else {
                     w_0_0 = 0;
                 }
@@ -414,11 +439,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 1, myLocY );
             if (!rc.canSenseLocation(loc)) {
-                w_1_0 = -1000;
+                w_1_0 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_1_0 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_0 = -10000;
                 } else {
                     w_1_0 = 0;
                 }
@@ -427,11 +452,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 2, myLocY );
             if (!rc.canSenseLocation(loc)) {
-                w_2_0 = -1000;
+                w_2_0 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_2_0 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_0 = -10000;
                 } else {
                     w_2_0 = 0;
                 }
@@ -440,11 +465,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + -1);
             if (!rc.canSenseLocation(loc)) {
-                w_m2_m1 = -1000;
+                w_m2_m1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m2_m1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_m1 = -10000;
                 } else {
                     w_m2_m1 = 0;
                 }
@@ -453,11 +478,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + -1);
             if (!rc.canSenseLocation(loc)) {
-                w_m1_m1 = -1000;
+                w_m1_m1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m1_m1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_m1 = -10000;
                 } else {
                     w_m1_m1 = 0;
                 }
@@ -466,11 +491,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX , myLocY  + -1);
             if (!rc.canSenseLocation(loc)) {
-                w_0_m1 = -1000;
+                w_0_m1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_0_m1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_m1 = -10000;
                 } else {
                     w_0_m1 = 0;
                 }
@@ -479,11 +504,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + -1);
             if (!rc.canSenseLocation(loc)) {
-                w_1_m1 = -1000;
+                w_1_m1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_1_m1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_m1 = -10000;
                 } else {
                     w_1_m1 = 0;
                 }
@@ -492,11 +517,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + -1);
             if (!rc.canSenseLocation(loc)) {
-                w_2_m1 = -1000;
+                w_2_m1 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_2_m1 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_m1 = -10000;
                 } else {
                     w_2_m1 = 0;
                 }
@@ -505,11 +530,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -2, myLocY  + -2);
             if (!rc.canSenseLocation(loc)) {
-                w_m2_m2 = -1000;
+                w_m2_m2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m2_m2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m2_m2 = -10000;
                 } else {
                     w_m2_m2 = 0;
                 }
@@ -518,11 +543,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + -1, myLocY  + -2);
             if (!rc.canSenseLocation(loc)) {
-                w_m1_m2 = -1000;
+                w_m1_m2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_m1_m2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_m1_m2 = -10000;
                 } else {
                     w_m1_m2 = 0;
                 }
@@ -531,11 +556,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX , myLocY  + -2);
             if (!rc.canSenseLocation(loc)) {
-                w_0_m2 = -1000;
+                w_0_m2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_0_m2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_0_m2 = -10000;
                 } else {
                     w_0_m2 = 0;
                 }
@@ -544,11 +569,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 1, myLocY  + -2);
             if (!rc.canSenseLocation(loc)) {
-                w_1_m2 = -1000;
+                w_1_m2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_1_m2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_1_m2 = -10000;
                 } else {
                     w_1_m2 = 0;
                 }
@@ -557,11 +582,11 @@ public final class TryTrap {
         {
             MapLocation loc = new MapLocation(myLocX  + 2, myLocY  + -2);
             if (!rc.canSenseLocation(loc)) {
-                w_2_m2 = -1000;
+                w_2_m2 = -10000;
             } else {
                 MapInfo info = rc.senseMapInfo(loc);
-                if (!info.isPassable() || info.hasCheeseMine() || rc.senseRobotAtLocation(loc) != null) {
-                    w_2_m2 = -1000;
+                if (!info.isPassable() || info.hasCheeseMine() || info.getTrap() != TrapType.NONE || rc.senseRobotAtLocation(loc) != null) {
+                    w_2_m2 = -10000;
                 } else {
                     w_2_m2 = 0;
                 }
@@ -577,7 +602,311 @@ public final class TryTrap {
             addAdjacentWeight(d.rotateLeft(), challenger.Tune.BAND_W_SIDE);
             addAdjacentWeight(d.rotateRight(), challenger.Tune.BAND_W_SIDE);
         }
+        if (kingTarget != null) {
+            int biteDmg = CombatStrategy.getBiteDamage();
+            for (int i = 0; i < RobotTracker.numEnemies; i++) {
+                RobotInfo info = RobotTracker.sortedEnemies[i];
+                if (info.getType() == UnitType.RAT_KING && chebyshevDistance(myLoc, info) <= 2 && info.getHealth() > biteDmg) {
+                    applyKingTrapWeights(info);
+                }
+            }
+        }
 
+    }
+
+    private static void applyKingTrapWeights(RobotInfo king) {
+        int kx = king.location.x;
+        int ky = king.location.y;
+        int vx = kx - myLocX;
+        int vy = ky - myLocY;
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m2_2 > -50) {
+            int tx = myLocX  + -2 - kx;
+            int ty = myLocY  + 2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m2_2 = (w_m2_2 > 0 ? w_m2_2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m1_2 > -50) {
+            int tx = myLocX  + -1 - kx;
+            int ty = myLocY  + 2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m1_2 = (w_m1_2 > 0 ? w_m1_2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_0_2 > -50) {
+            int tx = myLocX  - kx;
+            int ty = myLocY  + 2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_0_2 = (w_0_2 > 0 ? w_0_2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_1_2 > -50) {
+            int tx = myLocX  + 1 - kx;
+            int ty = myLocY  + 2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_1_2 = (w_1_2 > 0 ? w_1_2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_2_2 > -50) {
+            int tx = myLocX  + 2 - kx;
+            int ty = myLocY  + 2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_2_2 = (w_2_2 > 0 ? w_2_2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m2_1 > -50) {
+            int tx = myLocX  + -2 - kx;
+            int ty = myLocY  + 1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m2_1 = (w_m2_1 > 0 ? w_m2_1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m1_1 > -50) {
+            int tx = myLocX  + -1 - kx;
+            int ty = myLocY  + 1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m1_1 = (w_m1_1 > 0 ? w_m1_1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_0_1 > -50) {
+            int tx = myLocX  - kx;
+            int ty = myLocY  + 1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_0_1 = (w_0_1 > 0 ? w_0_1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_1_1 > -50) {
+            int tx = myLocX  + 1 - kx;
+            int ty = myLocY  + 1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_1_1 = (w_1_1 > 0 ? w_1_1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_2_1 > -50) {
+            int tx = myLocX  + 2 - kx;
+            int ty = myLocY  + 1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_2_1 = (w_2_1 > 0 ? w_2_1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m2_0 > -50) {
+            int tx = myLocX  + -2 - kx;
+            int ty = myLocY  - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m2_0 = (w_m2_0 > 0 ? w_m2_0 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m1_0 > -50) {
+            int tx = myLocX  + -1 - kx;
+            int ty = myLocY  - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m1_0 = (w_m1_0 > 0 ? w_m1_0 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_1_0 > -50) {
+            int tx = myLocX  + 1 - kx;
+            int ty = myLocY  - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_1_0 = (w_1_0 > 0 ? w_1_0 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_2_0 > -50) {
+            int tx = myLocX  + 2 - kx;
+            int ty = myLocY  - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_2_0 = (w_2_0 > 0 ? w_2_0 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m2_m1 > -50) {
+            int tx = myLocX  + -2 - kx;
+            int ty = myLocY  + -1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m2_m1 = (w_m2_m1 > 0 ? w_m2_m1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m1_m1 > -50) {
+            int tx = myLocX  + -1 - kx;
+            int ty = myLocY  + -1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m1_m1 = (w_m1_m1 > 0 ? w_m1_m1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_0_m1 > -50) {
+            int tx = myLocX  - kx;
+            int ty = myLocY  + -1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_0_m1 = (w_0_m1 > 0 ? w_0_m1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_1_m1 > -50) {
+            int tx = myLocX  + 1 - kx;
+            int ty = myLocY  + -1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_1_m1 = (w_1_m1 > 0 ? w_1_m1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_2_m1 > -50) {
+            int tx = myLocX  + 2 - kx;
+            int ty = myLocY  + -1 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_2_m1 = (w_2_m1 > 0 ? w_2_m1 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m2_m2 > -50) {
+            int tx = myLocX  + -2 - kx;
+            int ty = myLocY  + -2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m2_m2 = (w_m2_m2 > 0 ? w_m2_m2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_m1_m2 > -50) {
+            int tx = myLocX  + -1 - kx;
+            int ty = myLocY  + -2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_m1_m2 = (w_m1_m2 > 0 ? w_m1_m2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_0_m2 > -50) {
+            int tx = myLocX  - kx;
+            int ty = myLocY  + -2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_0_m2 = (w_0_m2 > 0 ? w_0_m2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_1_m2 > -50) {
+            int tx = myLocX  + 1 - kx;
+            int ty = myLocY  + -2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_1_m2 = (w_1_m2 > 0 ? w_1_m2 : 0) + kw;
+            }
+        }
+        // > -50 preserves both unpassable (-10000) and applyTrapWeights Chebyshev-1 spacing (-100).
+        if (w_2_m2 > -50) {
+            int tx = myLocX  + 2 - kx;
+            int ty = myLocY  + -2 - ky;
+            int ax = tx < 0 ? -tx : tx;
+            int ay = ty < 0 ? -ty : ty;
+            if ((ax > ay ? ax : ay) == 2) {
+                int dot = tx * vx + ty * vy;
+                double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                w_2_m2 = (w_2_m2 > 0 ? w_2_m2 : 0) + kw;
+            }
+        }
     }
 
     private static void addAdjacentWeight(Direction d, double v) {
@@ -5232,6 +5561,7 @@ private static void placeWNWC() {
     public static boolean miniRun() throws GameActionException {
         if (!verifyCanRun()) return false;
         shouldDefRun = globalShouldRun();
+        RobotInfo miniKing = findTrapableEnemyKing();
         if (weightCompTime != time) {
             clearWeights();
             weightSource = myLoc;
@@ -5267,6 +5597,45 @@ private static void placeWNWC() {
                         if (eloc.distanceSquaredTo(loc2) <= 2) {
                             int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
                             if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
                         }
                     }
                 }
@@ -5321,6 +5690,45 @@ private static void placeWNWC() {
                         }
                     }
                 }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
+                        }
+                    }
+                }
                 double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
@@ -5369,6 +5777,45 @@ private static void placeWNWC() {
                         if (eloc.distanceSquaredTo(loc2) <= 2) {
                             int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
                             if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
                         }
                     }
                 }
@@ -5423,6 +5870,45 @@ private static void placeWNWC() {
                         }
                     }
                 }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
+                        }
+                    }
+                }
                 double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
@@ -5471,6 +5957,45 @@ private static void placeWNWC() {
                         if (eloc.distanceSquaredTo(loc2) <= 2) {
                             int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
                             if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
                         }
                     }
                 }
@@ -5525,6 +6050,45 @@ private static void placeWNWC() {
                         }
                     }
                 }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
+                        }
+                    }
+                }
                 double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
@@ -5576,6 +6140,45 @@ private static void placeWNWC() {
                         }
                     }
                 }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
+                        }
+                    }
+                }
                 double bestScore = -1;
                 MapLocation bestLoc = null;
                 if (rc.canPlaceRatTrap(loc0) && s0 > bestScore) {
@@ -5624,6 +6227,45 @@ private static void placeWNWC() {
                         if (eloc.distanceSquaredTo(loc2) <= 2) {
                             int ang = angleDistance(rinfo.direction, eloc.directionTo(loc2));
                             if (ang <= 3) s2 += 4 - ang;
+                        }
+                    }
+                }
+                if (miniKing != null) {
+                    int kx = miniKing.location.x;
+                    int ky = miniKing.location.y;
+                    int vx = kx - x;
+                    int vy = ky - y;
+                    if (s0 > -50 && !hasRatTrapNear(loc0)) {
+                        int tx = loc0.x - kx;
+                        int ty = loc0.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s0 = (s0 > 0 ? s0 : 0) + kw;
+                        }
+                    }
+                    if (s1 > -50 && !hasRatTrapNear(loc1)) {
+                        int tx = loc1.x - kx;
+                        int ty = loc1.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s1 = (s1 > 0 ? s1 : 0) + kw;
+                        }
+                    }
+                    if (s2 > -50 && !hasRatTrapNear(loc2)) {
+                        int tx = loc2.x - kx;
+                        int ty = loc2.y - ky;
+                        int ax = tx < 0 ? -tx : tx;
+                        int ay = ty < 0 ? -ty : ty;
+                        if ((ax > ay ? ax : ay) == 2) {
+                            int dot = tx * vx + ty * vy;
+                            double kw = 20.0 + (dot > 0 ? 6.0 : (dot == 0 ? 3.0 : 0.0));
+                            s2 = (s2 > 0 ? s2 : 0) + kw;
                         }
                     }
                 }

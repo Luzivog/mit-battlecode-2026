@@ -20,6 +20,7 @@ public final class LastCat {
 
     private static final int TRAP_DAMAGE = TrapType.CAT_TRAP.damage;
     private static int lastLowCatRound = -100;
+    private static int holdStartRound = -1;
 
     public static boolean isHoldEnabled() {
         return Tune.PM_COOP_HOLD != 0 || (Tune.COOP_CTRL & 8) != 0;
@@ -35,7 +36,7 @@ public final class LastCat {
         return true;
     }
 
-    // Whether the last-cat hold is currently active.
+    // Whether the last-cat hold is currently active (strictly time-bounded so a multi-cat map never holds forever).
     public static boolean isHoldActive() {
         if (!rc.isCooperation()) return false;
         if (Tune.PM_COOP_HOLD != 0) {
@@ -44,7 +45,11 @@ public final class LastCat {
         if ((Tune.COOP_CTRL & 8) == 0) return false;
         if (time >= 1800) return false;
         if (GlobalArray.countRatKings() != 1) return false;
-        return GlobalArray.hasActiveFormation() || rc.getGlobalCheese() >= 300;
+        if (GlobalArray.hasActiveFormation()) {
+            return holdStartRound < 0 || time - holdStartRound <= 55;
+        }
+        if (time >= 220 || rc.getGlobalCheese() < 400) return false;
+        return holdStartRound < 0 || time - holdStartRound <= 45;
     }
 
     public static void noteLowCat() {
@@ -55,11 +60,23 @@ public final class LastCat {
         return time - lastLowCatRound <= 25;
     }
 
+    private static boolean shouldHoldCat(RobotInfo cat) {
+        if (Tune.PM_COOP_HOLD != 0) return true;
+        if (!isLastCat(cat)) return false;
+        if (!GlobalArray.hasActiveFormation()
+            && GlobalArray.nearestRatKing != null
+            && cat.location.distanceSquaredTo(GlobalArray.nearestRatKing) <= 20) {
+            return false;
+        }
+        return true;
+    }
+
     // May we deal `damage` to this cat now?
     public static boolean mayDamage(RobotInfo cat, int damage) {
         if (!isHoldActive()) return true;
-        if (Tune.PM_COOP_HOLD == 0 && !isLastCat(cat)) return true;
+        if (!shouldHoldCat(cat)) return true;
         if (cat.health > damage + TRAP_DAMAGE * rc.getNumberCatTraps()) return true;
+        if (holdStartRound < 0) holdStartRound = time;
         lastLowCatRound = time;
         return false;
     }
@@ -72,12 +89,13 @@ public final class LastCat {
         boolean threatened = false;
         for (int i = RobotTracker.numCats - 1; i >= 0; i--) {
             RobotInfo cat = RobotTracker.sortedCats[i];
-            if (cat != null && cat.health <= traps && (Tune.PM_COOP_HOLD != 0 || isLastCat(cat))) {
+            if (cat != null && cat.health <= traps && shouldHoldCat(cat)) {
                 threatened = true;
                 break;
             }
         }
         if (!threatened) return;
+        if (holdStartRound < 0) holdStartRound = time;
         lastLowCatRound = time;
         for (Direction d : Util.allDirections) {
             MapLocation loc = myLoc.add(d);

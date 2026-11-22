@@ -1,6 +1,7 @@
 package challenger.robot.king;
 
 import challenger.CellTracker;
+import challenger.comms.GlobalArray;
 import static challenger.Game.*;
 import challenger.robot.Strategy;
 import challenger.RobotTracker;
@@ -16,16 +17,27 @@ public class RatKing {
     public static Strategy primaryStrategy;
     public static boolean is5x5;
     public static boolean spawnedThisTurn;
+    public static int totalCheeseInflow;
+    private static int prevGlobalCheese;
+    private static int prevCheeseRound;
 
     public static void init() {
         if (challenger.Book.CAT_LANE != null) challenger.CatLanes.loadBook();
         primaryStrategy = new RatKingStrategy();
         is5x5 = false;
+        totalCheeseInflow = 0;
+        prevGlobalCheese = -1;
+        prevCheeseRound = -1;
     }
 
     public static void run() throws GameActionException {
         // indicate("5x5: " + is5x5);
         spawnedThisTurn = false;
+        int curGlobal = rc.getGlobalCheese();
+        if (prevGlobalCheese >= 0 && time > prevCheeseRound) {
+            int gain = curGlobal - prevGlobalCheese + 2 * GlobalArray.countRatKings() * (time - prevCheeseRound);
+            if (gain > 0) totalCheeseInflow += gain;
+        }
         // indicate(rc.getGlobalCheese() + " cheese, " + rc.getHealth() + " HP");
         CellTracker.storeVisibleCellsKing();
 
@@ -36,6 +48,13 @@ public class RatKing {
         // indicate("before primary strat: " + Clock.getBytecodeNum());
 
         primaryStrategy.runTick();
+
+        int endGlobal = rc.getGlobalCheese();
+        if (!spawnedThisTurn && endGlobal > curGlobal) {
+            totalCheeseInflow += endGlobal - curGlobal;
+        }
+        prevGlobalCheese = endGlobal;
+        prevCheeseRound = time;
     }
 
     public static void rawMove(Direction dir) throws GameActionException {

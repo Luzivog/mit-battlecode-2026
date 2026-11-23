@@ -55,19 +55,12 @@ official engine with a per-turn bytecode limit. This repo starts from the public
 5. Move only through the bot's wrappers (`docs/architecture.md` §6, §9), never `rc.move`/`rc.turn` directly.
 6. Bytecode is tight (rats average ~11k of 17.5k, kings ~13k of 20k). Any change shifts bytecode and randomness, so
    close games flip: judge a change only with the evaluation tools, never on a few games.
-7. A number in the bot comes from the rules or a measurement. Find the root cause before changing anything; fix by
-   deleting first, simplifying second, adding last. No fallbacks.
-8. Work in your own worktree on your own branch, commit small, push your branch to `origin`. Never push `main`,
-   never open a PR. The integrator merges.
-9. Heavy work (many games, engine builds, long runs) goes through the Imperial tools, `tools/run` and `tools/compute`
+7. Push your branch to `origin`. Never push `main`, never open a PR. The integrator merges.
+8. Heavy work (many games, engine builds, long runs) goes through the Imperial tools, `tools/run` and `tools/compute`
    (the compute skill, `.claude/skills/compute/`).
-   This machine (clankerland, 16 cores) is shared: never stop or change anything you didn't start.
-10. Wait only in the background. Start every wait (`tools/games wait ID`, `tools/tune wait`, `tools/compute wait`, a
-   long build) as a background command, then do other work or end your turn: its exit wakes you. Never poll in the
-   foreground (`until ...; do sleep ...; done`, a foreground wait): while it runs you read no result and no message.
-   Wait so that each result wakes you: `tools/games wait --any ID ID...` returns at the first verdict (and names the
+9. Wait so that each result wakes you: `tools/games wait --any ID ID...` returns at the first verdict (and names the
    rest), `tools/tune wait NAME --next` at each run's end.
-11. Keep instructions short and plain: no history, no quotes, no README files. Never estimate how long work will take.
+10. Keep instructions short and plain: no history, no quotes, no README files.
 
 ## Commands
 
